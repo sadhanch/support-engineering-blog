@@ -1,0 +1,242 @@
+/* ==========================================================
+   SEDS — Support Engineering Design System
+   File: typography.css
+   Purpose: Global typography styles
+   Version: 0.1.0
+   ========================================================== */
+
+
+/* ----------------------------------------------------------
+   Body
+---------------------------------------------------------- */
+
+body {
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-normal);
+    color: var(--text-primary);
+}
+
+
+/* ----------------------------------------------------------
+   Headings
+---------------------------------------------------------- */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+    color: var(--color-primary);
+
+    font-weight: var(--font-weight-bold);
+
+    line-height: var(--line-height-tight);
+
+    margin-bottom: var(--space-4);
+
+}
+
+h1 {
+    font-size: var(--font-size-4xl);
+}
+
+h2 {
+    font-size: var(--font-size-3xl);
+
+    margin-top: var(--space-8);
+}
+
+h3 {
+    font-size: var(--font-size-2xl);
+
+    margin-top: var(--space-7);
+}
+
+h4 {
+    font-size: var(--font-size-xl);
+
+    margin-top: var(--space-6);
+}
+
+h5 {
+    font-size: var(--font-size-lg);
+
+    margin-top: var(--space-5);
+}
+
+h6 {
+    font-size: var(--font-size-md);
+
+    margin-top: var(--space-5);
+}
+
+
+/* ----------------------------------------------------------
+   Paragraphs
+---------------------------------------------------------- */
+
+p {
+
+    margin-bottom: var(--space-5);
+
+    color: var(--text-primary);
+
+}
+
+
+/* ----------------------------------------------------------
+   Links
+---------------------------------------------------------- */
+
+a {
+
+    color: var(--color-accent);
+
+    transition: color var(--transition-fast);
+
+}
+
+a:hover {
+
+    color: var(--color-primary);
+
+}
+
+
+/* ----------------------------------------------------------
+   Lists
+---------------------------------------------------------- */
+
+article ul,
+article ol {
+
+    margin-bottom: var(--space-5);
+
+    padding-left: var(--space-5);
+
+}
+
+article ul {
+
+    list-style: disc;
+
+}
+
+article ol {
+
+    list-style: decimal;
+
+}
+
+article li {
+
+    margin-bottom: var(--space-2);
+
+}
+
+
+/* ----------------------------------------------------------
+   Blockquotes
+---------------------------------------------------------- */
+
+blockquote {
+
+    margin: var(--space-6) 0;
+
+    padding: var(--space-5);
+
+    border-left: 4px solid var(--color-accent);
+
+    background: var(--surface-secondary);
+
+    color: var(--text-secondary);
+
+    font-style: italic;
+
+}
+
+
+/* ----------------------------------------------------------
+   Inline Code
+---------------------------------------------------------- */
+
+code {
+
+    font-family: var(--font-family-code);
+
+    background: var(--surface-tertiary);
+
+    padding: 0.15rem 0.35rem;
+
+    border-radius: var(--radius-sm);
+
+    font-size: 0.9em;
+
+}
+
+
+/* ----------------------------------------------------------
+   Code Blocks
+---------------------------------------------------------- */
+
+pre {
+
+    margin: var(--space-6) 0;
+
+    padding: var(--space-5);
+
+    overflow-x: auto;
+
+    background: var(--surface-code);
+
+    color: var(--text-inverse);
+
+    border-radius: var(--radius-md);
+
+}
+
+pre code {
+
+    background: transparent;
+
+    color: inherit;
+
+    padding: 0;
+
+}
+
+
+/* ----------------------------------------------------------
+   Horizontal Rule
+---------------------------------------------------------- */
+
+hr {
+
+    margin: var(--space-8) 0;
+
+    border: 0;
+
+    border-top: 1px solid var(--border-default);
+
+}
+
+
+/* ----------------------------------------------------------
+   Strong & Emphasis
+---------------------------------------------------------- */
+
+strong {
+
+    font-weight: var(--font-weight-bold);
+
+}
+
+em {
+
+    font-style: italic;
+
+}
