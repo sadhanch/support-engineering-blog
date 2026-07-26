@@ -1,4 +1,7 @@
+/* Blogger Integration */
+
 @import url("blogger-base.css");
+@import url("blogger-layout.css");
 @import url("blogger-header.css");
 @import url("blogger-navigation.css");
 @import url("blogger-article.css");
