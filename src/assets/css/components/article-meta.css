@@ -1,0 +1,67 @@
+/* ==========================================================
+   Article Header
+   ========================================================== */
+
+.article-header {
+
+    margin-bottom: var(--space-10);
+
+}
+
+.article-category {
+
+    display: inline-block;
+
+    margin-bottom: var(--space-3);
+
+}
+
+.article-title {
+
+    margin-bottom: var(--space-4);
+
+}
+
+.article-subtitle {
+
+    margin-bottom: var(--space-6);
+
+    max-width: 65ch;
+
+}
+
+.article-meta {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: var(--space-6);
+
+}
+
+.meta-item {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: var(--space-2);
+
+}
+
+.meta-label {
+
+    font-size: 0.875rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: .05em;
+
+}
+
+.status {
+
+    font-weight: 600;
+
+}

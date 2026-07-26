@@ -1,0 +1,78 @@
+/* ==========================================================
+   Callouts
+   ========================================================== */
+
+.callout {
+
+    margin: var(--space-8) 0;
+
+    padding: var(--space-6);
+
+    border-left: 4px solid;
+
+    border-radius: var(--radius-md);
+
+}
+
+.callout-title {
+
+    font-weight: 600;
+
+    margin-bottom: var(--space-3);
+
+}
+
+.callout p:last-child {
+
+    margin-bottom: 0;
+
+}
+
+.callout-tip {
+
+    border-color: var(--color-success);
+
+}
+
+.callout-note {
+
+    border-color: var(--color-info);
+
+}
+
+.callout-warning {
+
+    border-color: var(--color-warning);
+
+}
+
+.callout-important {
+
+    border-color: var(--color-danger);
+
+}
+
+.callout-tip {
+
+    background: rgba(34,197,94,.06);
+
+}
+
+.callout-note {
+
+    background: rgba(59,130,246,.06);
+
+}
+
+.callout-warning {
+
+    background: rgba(245,158,11,.06);
+
+}
+
+.callout-important {
+
+    background: rgba(239,68,68,.06);
+
+}
+

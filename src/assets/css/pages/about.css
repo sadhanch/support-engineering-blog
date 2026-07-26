@@ -1,0 +1,35 @@
+/* ==========================================================
+   Homepage - About Author
+   ========================================================== */
+
+.about-card {
+
+    background: var(--surface-primary);
+
+    border: 1px solid var(--border-default);
+
+    border-radius: var(--radius-lg);
+
+    padding: var(--space-8);
+
+}
+
+.about-content {
+
+    max-width: 720px;
+
+}
+
+.about-content h2 {
+
+    margin-bottom: var(--space-4);
+
+}
+
+.about-content p {
+
+    margin-bottom: var(--space-4);
+
+    color: var(--text-secondary);
+
+}

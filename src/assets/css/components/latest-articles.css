@@ -1,0 +1,79 @@
+/* ==========================================================
+   SEDS — Latest Articles
+   ========================================================== */
+
+.latest-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: var(--space-5);
+
+}
+
+.latest-item {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: var(--space-6);
+
+    padding: var(--space-5);
+
+    background: var(--surface-primary);
+
+    border: 1px solid var(--border-default);
+
+    border-radius: var(--radius-lg);
+
+    transition:
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+
+}
+
+.latest-item:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow: var(--shadow-md);
+
+}
+
+.latest-item h3 {
+
+    margin-bottom: var(--space-2);
+
+}
+
+.latest-item p {
+
+    color: var(--text-secondary);
+
+    margin-bottom: 0;
+
+}
+
+.latest-item a {
+
+    white-space: nowrap;
+
+    font-weight: var(--font-weight-medium);
+
+}
+
+@media (max-width: 768px) {
+
+    .latest-item {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+}

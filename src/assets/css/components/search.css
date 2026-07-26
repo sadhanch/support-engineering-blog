@@ -1,0 +1,43 @@
+/* ==========================================================
+   Search
+   ========================================================== */
+
+.search-form {
+
+    display: flex;
+
+    gap: var(--space-3);
+
+    margin-top: var(--space-6);
+
+}
+
+.search-form input {
+
+    flex: 1;
+
+    padding: 1rem 1.25rem;
+
+    border: 1px solid var(--border-default);
+
+    border-radius: var(--radius-md);
+
+    font: inherit;
+
+}
+
+.search-form button {
+
+    padding: 1rem 1.5rem;
+
+    border-radius: var(--radius-md);
+
+    background: var(--color-primary);
+
+    color: var(--text-inverse);
+
+    font: inherit;
+
+    cursor: pointer;
+
+}
