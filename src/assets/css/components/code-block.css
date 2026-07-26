@@ -4,26 +4,34 @@
 
 .code-block {
 
-    padding: 1rem;
-
-    tab-size: 4;
-
-    border: 1px solid #ccc;
-
-    background: #f5f5f5;
-
-    color: #000;
-
     overflow-x: auto;
 
+    padding: var(--space-6);
+
+    margin: var(--space-8) 0;
+
+    border: 1px solid var(--border-default);
+
+    border-radius: var(--radius-lg);
+
+    background: var(--surface-secondary);
+
     white-space: pre;
+
+    tab-size: 4;
 
 }
 
 .code-block code {
 
-    font-family: Consolas, Monaco, monospace;
-
     display: block;
+
+    font-family: var(--font-family-code);
+
+    font-size: var(--font-size-sm);
+
+    line-height: var(--line-height-normal);
+
+    color: var(--text-primary);
 
 }
