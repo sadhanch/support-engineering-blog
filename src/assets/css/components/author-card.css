@@ -1,0 +1,45 @@
+/* ==========================================================
+   Author Card
+   ========================================================== */
+
+.author-card {
+
+    margin-top: var(--space-12);
+
+    padding: var(--space-8);
+
+    background: var(--surface-secondary);
+
+    border: 1px solid var(--border-default);
+
+    border-radius: var(--radius-lg);
+
+}
+
+.author-content h2 {
+
+    margin-bottom: var(--space-4);
+
+}
+
+.author-content p {
+
+    margin: 0;
+
+    color: var(--text-secondary);
+
+    line-height: var(--line-height-relaxed);
+
+}
+
+.author-badges {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: var(--space-3);
+
+    margin-top: var(--space-5);
+
+}

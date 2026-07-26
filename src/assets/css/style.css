@@ -27,6 +27,12 @@
 @import url("components/newsletter.css");
 @import url("components/callouts.css");
 @import url("components/code-block.css");
+@import url("components/image-caption.css");
+@import url("components/badges.css");
+@import url("components/checklist.css");
+@import url("components/references.css");
+@import url("components/related-articles.css");
+@import url("components/author-card.css");
 
 @import url("components/article-content.css");
 @import url("components/article-meta.css");
