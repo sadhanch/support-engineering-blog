@@ -10,6 +10,20 @@ module.exports = {
         version: packageJson.version
     },
 
+    templates: {
+
+        METADATA: "metadataTemplate",
+
+        LAYOUT: "layoutTemplate",
+
+        WIDGETS: "widgetsTemplate",
+
+        INCLUDES: "includesTemplate",
+
+        VARIABLES: "variablesTemplate",
+
+    },
+
     paths: {
 
         root: ROOT,
@@ -72,6 +86,14 @@ module.exports = {
             "templates",
             "includes",
             "includes.xml"
+        ),
+
+        variablesTemplate: path.join(
+            ROOT,
+            "src",
+            "templates",
+            "variables",
+            "variables.xml"
         ),
 
     }

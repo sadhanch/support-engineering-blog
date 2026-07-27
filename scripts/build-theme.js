@@ -2,6 +2,7 @@ const logger = require("./lib/logger");
 const config = require("./lib/config");
 const utils = require("./lib/utils");
 const assemble = require("./lib/assembler");
+const loadTemplates = require("./lib/template-loader");
 
 function buildTheme(cssResult) {
 
@@ -12,22 +13,8 @@ function buildTheme(cssResult) {
     const template = utils.readFile(
         config.paths.themeTemplate
     );
-    
-    const metadata = utils.readFile(
-        config.paths.metadataTemplate
-    );
 
-    const layout = utils.readFile(
-        config.paths.layoutTemplate
-    );
-
-    const widgets = utils.readFile(
-        config.paths.widgetsTemplate
-    );
-
-    const includes = utils.readFile(
-        config.paths.includesTemplate
-    );
+    const templates = loadTemplates();
 
     // Phase 2: Assemble theme
 
@@ -35,16 +22,10 @@ function buildTheme(cssResult) {
 
         BLOGGER_CSS: css,
 
-        METADATA: metadata,
-
-        LAYOUT: layout,
-
-        WIDGETS: widgets,
-
-        INCLUDES: includes
+        ...templates
 
     };
-    
+
     const theme = assemble(
         template,
         replacements
@@ -66,25 +47,14 @@ function buildTheme(cssResult) {
         config.paths.themeTemplate
     );
 
-    logger.info(
-        "Metadata",
-        config.paths.metadataTemplate
-    );
+    for (const name of Object.keys(templates)) {
 
-    logger.info(
-        "Layout",
-        config.paths.layoutTemplate
-    );
+        logger.info(
+            name,
+            "Loaded"
+        );
 
-    logger.info(
-        "Widgets",
-        config.paths.widgetsTemplate
-    );
-
-    logger.info(
-        "Includes",
-        config.paths.includesTemplate
-    );
+    }
 
     logger.info(
         "Output",

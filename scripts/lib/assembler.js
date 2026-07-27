@@ -11,6 +11,16 @@ function assemble(template, replacements) {
 
     }
 
+    const unresolved = output.match(/{{[^}]+}}/g);
+
+    if (unresolved) {
+
+        throw new Error(
+            `Unresolved placeholders: ${unresolved.join(", ")}`
+        );
+
+    }
+
     return output;
 
 }
