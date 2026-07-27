@@ -12,7 +12,7 @@
 
 Support Engineering Blog is a personal project built to provide high-quality technical documentation, migration guides, troubleshooting articles, and research-driven content focused on Microsoft 365 and enterprise technologies.
 
-Rather than functioning as a traditional technology blog, the project is designed around the principles of technical documentation—prioritizing clarity, readability, maintainability, and trust.
+Rather than functioning as a traditional technology blog, the project is designed around the principles of technical documentation - prioritizing clarity, readability, maintainability, and trust.
 
 The website is powered by **SEDS (Support Engineering Design System)**, a custom design system created specifically for long-form technical content.
 
