@@ -1,139 +1,61 @@
 const fs = require("fs");
 const path = require("path");
-const packageJson = require("../package.json");
 
-// --------------------------------------------------
-// Configuration
-// --------------------------------------------------
+const config = require("./lib/config");
+const utils = require("./lib/utils");
+const buildBanner = require("./lib/banner");
 
-const config = {
-    entry: path.join(
-        __dirname,
-        "..",
-        "src",
-        "assets",
-        "css",
-        "blogger",
-        "blogger.css"
-    ),
-
-    output: path.join(
-        __dirname,
-        "..",
-        "build",
-        "blogger.css"
-    )
-};
-
-// --------------------------------------------------
-// Build Statistics
-// --------------------------------------------------
-
-const stats = {
-    files: 0,
-    start: Date.now()
-};
-
-// --------------------------------------------------
-// Utility Functions
-// --------------------------------------------------
-
-function formatBytes(bytes) {
-    if (bytes < 1024) return `${bytes} B`;
-
-    return `${(bytes / 1024).toFixed(2)} KB`;
-}
-
-function buildBanner() {
-
-    const today = new Date().toISOString();
-
-    return `/*==========================================
- Support Engineering Blog
- Version : ${packageJson.version}
- Build   : ${today}
-==========================================*/
-
-`;
-
-}
-
-// --------------------------------------------------
-// CSS Processing
-// --------------------------------------------------
-
-function processCSS(filePath) {
+function processCSS(filePath, stats) {
 
     stats.files++;
 
-    const css = fs.readFileSync(filePath, "utf8");
+    const css = utils.readFile(filePath);
 
     return css.replace(
         /@import\s+url\("(.+?)"\);/g,
-        (_, importedFile) => {
+        (_, importFile) => {
 
-            const importedPath = path.join(
+            const importPath = path.join(
                 path.dirname(filePath),
-                importedFile
+                importFile
             );
 
-            if (!fs.existsSync(importedPath)) {
-
+            if (!fs.existsSync(importPath)) {
                 throw new Error(
-                    `Missing CSS file:\n${importedPath}`
+                    `Missing CSS file:\n${importPath}`
                 );
-
             }
 
-            return processCSS(importedPath);
+            return processCSS(importPath, stats);
 
         }
     );
 
 }
-
-// --------------------------------------------------
-// Write Output
-// --------------------------------------------------
-
-function writeOutput(css) {
-
-    fs.mkdirSync(
-        path.dirname(config.output),
-        {
-            recursive: true
-        }
-    );
-
-    fs.writeFileSync(
-        config.output,
-        css
-    );
-
-}
-
-// --------------------------------------------------
-// Build
-// --------------------------------------------------
 
 function buildCSS() {
 
+    const stats = {
+        files: 0,
+        start: Date.now()
+    };
+
     const css =
         buildBanner() +
-        processCSS(config.entry);
+        processCSS(config.paths.cssEntry, stats);
 
-    writeOutput(css);
-
-    const elapsed = Date.now() - stats.start;
-
-    const size = fs.statSync(config.output).size;
+    utils.writeFile(
+        config.paths.cssOutput,
+        css
+    );
 
     return {
-        output: config.output,
-        files: stats.files,
-        size,
-        elapsed
-    };
+    css,
+    output: config.paths.cssOutput,
+    files: stats.files,
+    size: fs.statSync(config.paths.cssOutput).size,
+    elapsed: Date.now() - stats.start
+};
 
 }
 

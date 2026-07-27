@@ -1,37 +1,31 @@
 const buildCSS = require("./build-css");
 const buildTheme = require("./build-theme");
 
+const logger = require("./lib/logger");
+const utils = require("./lib/utils");
+
 function runBuild() {
 
-    console.log("");
-    console.log("======================================");
-    console.log(" Support Engineering Blog Builder");
-    console.log("======================================");
-    console.log("");
+    logger.header("Support Engineering Blog Builder");
 
     try {
 
-        const cssResult = buildCSS();
+    const cssResult = buildCSS();
 
-        console.log("CSS Build");
-        console.log("--------------------------------------");
-        console.log(`Files Processed : ${cssResult.files}`);
-        console.log(`Output Size     : ${(cssResult.size / 1024).toFixed(2)} KB`);
-        console.log(`Build Time      : ${cssResult.elapsed} ms`);
-        console.log("");
+    logger.section("CSS Build");
+    logger.info("Files", cssResult.files);
+    logger.info("Output", cssResult.output);
+    logger.info("Size", utils.formatBytes(cssResult.size));
+    logger.info("Time", `${cssResult.elapsed} ms`);
 
-        console.log("✅ Build completed successfully.");
-        console.log("");
+    buildTheme(cssResult.css);
+
+    logger.success("Build completed successfully.");
 
     } catch (error) {
 
-        console.error("");
-        console.error("❌ Build Failed");
-        console.error("");
-        console.error(error.message);
-        console.error("");
-
-        process.exit(1);
+    logger.error(error.message);
+    process.exit(1);
 
     }
 
