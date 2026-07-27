@@ -1,6 +1,7 @@
 const logger = require("./lib/logger");
 const config = require("./lib/config");
 const utils = require("./lib/utils");
+const assemble = require("./lib/assembler");
 
 function buildTheme(cssResult) {
 
@@ -30,8 +31,6 @@ function buildTheme(cssResult) {
 
     // Phase 2: Assemble theme
 
-    let theme = template;
-
     const replacements = {
 
         BLOGGER_CSS: css,
@@ -45,15 +44,11 @@ function buildTheme(cssResult) {
         INCLUDES: includes
 
     };
-
-    for (const [placeholder, content] of Object.entries(replacements)) {
-
-        theme = theme.replace(
-            `{{${placeholder}}}`,
-            content
-        );
-
-    }
+    
+    const theme = assemble(
+        template,
+        replacements
+    );
 
     // Phase 3: Write output
 
