@@ -1,5 +1,7 @@
 const buildCSS = require("./build-css");
 const buildTheme = require("./build-theme");
+const validateBuild = require("./validate");
+const verifyBuild = require("./verify");
 
 const logger = require("./lib/logger");
 const utils = require("./lib/utils");
@@ -10,22 +12,25 @@ function runBuild() {
 
     try {
 
-    const cssResult = buildCSS();
+        validateBuild();
 
-    logger.section("CSS Build");
-    logger.info("Files", cssResult.files);
-    logger.info("Output", cssResult.output);
-    logger.info("Size", utils.formatBytes(cssResult.size));
-    logger.info("Time", `${cssResult.elapsed} ms`);
+        const cssResult = buildCSS();
 
-    buildTheme(cssResult.css);
+        logger.section("CSS Build");
+        logger.info("Files", cssResult.files);
+        logger.info("Output", cssResult.output);
+        logger.info("Size", utils.formatBytes(cssResult.size));
+        logger.info("Time", `${cssResult.elapsed} ms`);
 
-    logger.success("Build completed successfully.");
+        buildTheme(cssResult);
+
+        verifyBuild();
+        logger.success("Build completed successfully.");
 
     } catch (error) {
 
-    logger.error(error.message);
-    process.exit(1);
+        logger.error(error.message);
+        process.exit(1);
 
     }
 
