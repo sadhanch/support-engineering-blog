@@ -40,7 +40,39 @@ module.exports = {
             ROOT,
             "build",
             "theme.xml"
-        )
+        ),
+
+        metadataTemplate: path.join(
+            ROOT,
+            "src",
+            "templates",
+            "metadata",
+            "metadata.xml"
+        ),
+
+        layoutTemplate: path.join(
+            ROOT,
+            "src",
+            "templates",
+            "layout",
+            "layout.xml"
+        ),
+
+        widgetsTemplate: path.join(
+            ROOT,
+            "src",
+            "templates",
+            "widgets",
+            "widgets.xml"
+        ),
+
+        includesTemplate: path.join(
+            ROOT,
+            "src",
+            "templates",
+            "includes",
+            "includes.xml"
+        ),
 
     }
 

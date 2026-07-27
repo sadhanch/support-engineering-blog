@@ -1,3 +1,11 @@
+{{METADATA}}
+
 <b:skin><![CDATA[
 {{BLOGGER_CSS}}
 ]]></b:skin>
+
+{{LAYOUT}}
+
+{{WIDGETS}}
+
+{{INCLUDES}}
