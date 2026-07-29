@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+============================================================
+SEDS Widget
+============================================================
+
+Widget Name : PageList
+Blogger Type: PageList
+
+Purpose
+-------
+Render Blogger Pages using the SEDS navigation system.
+
+Ownership
+---------
+Blogger
+  • Page data
+  • URLs
+  • Active page state
+  • Page ordering
+
+SEDS
+  • HTML structure
+  • CSS classes
+  • Accessibility
+  • Responsive presentation
+
+============================================================
+-->
+
+<!-- ======================================================
+     Main Entry Point
+====================================================== -->
+
+<b:includable id='main'>
+
+  <!--
+    The main includable is the widget entry point.
+
+    It intentionally delegates all rendering to the
+    content includable.
+
+    Keeping this orchestration separate allows the
+    rendering pipeline to remain modular and mirrors
+    Blogger's native widget lifecycle.
+  -->
+
+  <b:include name='content'/>
+
+</b:includable>
+
+<!-- ======================================================
+     Widget Content
+====================================================== -->
+
+<b:includable id='content'>
+    <!-- Widget container -->
+</b:includable>
+
+<!-- ======================================================
+     Page Collection
+====================================================== -->
+
+<b:includable id='pageList'>
+    <!-- Loop through pages -->
+</b:includable>
+
+<!-- ======================================================
+     Individual Page
+====================================================== -->
+
+<b:includable id='pageLink'>
+    <!-- Render one page -->
+</b:includable>
+
+<!-- ======================================================
+     Overflow Navigation
+====================================================== -->
+
+<b:includable id='overflowButton'>
+    <!-- Responsive overflow -->
+</b:includable>
