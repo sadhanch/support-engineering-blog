@@ -35,17 +35,6 @@ SEDS
 
 <b:includable id='main'>
 
-  <!--
-    The main includable is the widget entry point.
-
-    It intentionally delegates all rendering to the
-    content includable.
-
-    Keeping this orchestration separate allows the
-    rendering pipeline to remain modular and mirrors
-    Blogger's native widget lifecycle.
-  -->
-
   <b:include name='content'/>
 
 </b:includable>
@@ -56,24 +45,21 @@ SEDS
 
 <b:includable id='content'>
 
-  <!--
-    SEDS provides the semantic navigation container while
-    Blogger continues to own the navigation data.
+  <b:if cond='data:links'>
 
-    Rendering of the individual navigation items is delegated
-    to the pageList includable.
-  -->
+    <nav class='seds-navigation'
+         data-widget='pagelist'
+         aria-label='Primary navigation'>
 
-  <nav class='seds-navigation'
-       aria-label='Primary navigation'>
+      <ul class='seds-navigation__list'>
 
-    <ul class='seds-navigation__list'>
+        <b:include name='pageList'/>
 
-      <b:include name='pageList'/>
+      </ul>
 
-    </ul>
+    </nav>
 
-  </nav>
+  </b:if>
 
 </b:includable>
 
@@ -83,15 +69,10 @@ SEDS
 
 <b:includable id='pageList'>
 
-  <!--
-    Blogger owns the page collection.
-
-    SEDS simply iterates over the supplied data and delegates
-    rendering of each navigation item to pageLink.
-  -->
-
   <b:loop values='data:links' var='link'>
-    <b:include name='pageLink' data='link'/>
+
+    <b:include name='pageLink'/>
+
   </b:loop>
 
 </b:includable>
@@ -100,21 +81,20 @@ SEDS
      Individual Page
 ====================================================== -->
 
-<b:includable id='pageLink' var='link'>
-
-  <!--
-    Render a single navigation item.
-
-    Active state is determined exclusively by Blogger through
-    data:link.isCurrentPage.
-  -->
+<b:includable id='pageLink'>
 
   <li class='seds-navigation__item'>
 
-    <a expr:href='data:link.target'
-       expr:class='data:link.isCurrentPage ?
-         "seds-navigation__link seds-navigation__link--active" :
-         "seds-navigation__link"'>
+    <b:class cond='data:link.isCurrentPage'
+             name='seds-navigation__item--active'/>
+
+    <a class='seds-navigation__link'
+        expr:href='data:link.href'>
+
+      <b:if cond='data:link.isCurrentPage'>
+        <b:attr name='aria-current'
+                value='page'/>
+      </b:if>
 
       <data:link.name/>
 
@@ -129,5 +109,12 @@ SEDS
 ====================================================== -->
 
 <b:includable id='overflowButton'>
-    <!-- Responsive overflow -->
+
+  <!--
+  Reserved for future responsive navigation.
+
+  SEDS v0.3.0 intentionally preserves this includable
+  to maintain Blogger's widget contract.
+  -->
+
 </b:includable>
