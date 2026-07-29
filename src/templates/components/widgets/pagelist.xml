@@ -55,7 +55,26 @@ SEDS
 ====================================================== -->
 
 <b:includable id='content'>
-    <!-- Widget container -->
+
+  <!--
+    SEDS provides the semantic navigation container while
+    Blogger continues to own the navigation data.
+
+    Rendering of the individual navigation items is delegated
+    to the pageList includable.
+  -->
+
+  <nav class='seds-navigation'
+       aria-label='Primary navigation'>
+
+    <ul class='seds-navigation__list'>
+
+      <b:include name='pageList'/>
+
+    </ul>
+
+  </nav>
+
 </b:includable>
 
 <!-- ======================================================
@@ -63,15 +82,46 @@ SEDS
 ====================================================== -->
 
 <b:includable id='pageList'>
-    <!-- Loop through pages -->
+
+  <!--
+    Blogger owns the page collection.
+
+    SEDS simply iterates over the supplied data and delegates
+    rendering of each navigation item to pageLink.
+  -->
+
+  <b:loop values='data:links' var='link'>
+    <b:include name='pageLink' data='link'/>
+  </b:loop>
+
 </b:includable>
 
 <!-- ======================================================
      Individual Page
 ====================================================== -->
 
-<b:includable id='pageLink'>
-    <!-- Render one page -->
+<b:includable id='pageLink' var='link'>
+
+  <!--
+    Render a single navigation item.
+
+    Active state is determined exclusively by Blogger through
+    data:link.isCurrentPage.
+  -->
+
+  <li class='seds-navigation__item'>
+
+    <a expr:href='data:link.target'
+       expr:class='data:link.isCurrentPage ?
+         "seds-navigation__link seds-navigation__link--active" :
+         "seds-navigation__link"'>
+
+      <data:link.name/>
+
+    </a>
+
+  </li>
+
 </b:includable>
 
 <!-- ======================================================
