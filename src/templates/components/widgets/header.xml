@@ -7,16 +7,13 @@
      Status     : Stable
 
      Purpose
-     -------
      Displays the global site header including the blog
      title, optional description, and primary navigation.
 
      Depends On
-     ----------
      navigation.xml (Future)
 
      Used By
-     -------
      Homepage
      Article
      Search
@@ -53,11 +50,17 @@
 
         </div>
 
-                <!-- ==================================================
+        <!-- ==================================================
              Primary Navigation
         =================================================== -->
 
-        {{NAVIGATION}}
+        <nav
+            class='site-navigation'
+            aria-label='Primary Navigation'>
+
+            <!-- Navigation component will be added in Sprint 9.3 -->
+
+        </nav>
 
     </div>
 

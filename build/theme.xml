@@ -6,6 +6,10 @@
     xmlns:data='http://www.google.com/2005/gml/data'
     xmlns:expr='http://www.google.com/2005/gml/expr'>
 
+<html>
+
+<head>
+
 <!-- ==========================================================
      SEDS — Support Engineering Design System
      Component : Document Metadata
@@ -118,7 +122,7 @@
 /*==========================================
  Support Engineering Blog
  Version : 1.0.0
- Build   : 2026-07-29T11:38:29.961Z
+ Build   : 2026-07-29T19:50:03.736Z
 ==========================================*/
 
 /* Blogger Integration */
@@ -274,17 +278,9 @@ input:focus-visible {
 
 ]]></b:skin>
 
-<!-- ========================================================= -->
-<!-- Theme Layout                                               -->
-<!-- ========================================================= -->
+</head>
 
-<b:section
-    id='main'
-    class='main'
-    showaddelement='yes'/>
-
-<!-- Theme Widgets -->
-
+<body>
 
 <!-- ==========================================================
      SEDS — Support Engineering Design System
@@ -295,7 +291,6 @@ input:focus-visible {
      Status     : Stable
 
      Purpose
-     -------
      Assembles reusable site-wide components.
 ========================================================== -->
 
@@ -308,16 +303,13 @@ input:focus-visible {
      Status     : Stable
 
      Purpose
-     -------
      Displays the global site header including the blog
      title, optional description, and primary navigation.
 
      Depends On
-     ----------
      navigation.xml (Future)
 
      Used By
-     -------
      Homepage
      Article
      Search
@@ -354,43 +346,17 @@ input:focus-visible {
 
         </div>
 
-                <!-- ==================================================
+        <!-- ==================================================
              Primary Navigation
         =================================================== -->
 
-        <!-- ==========================================================
-     SEDS — Support Engineering Design System
+        <nav
+            class='site-navigation'
+            aria-label='Primary Navigation'>
 
-     Component  : Primary Navigation
-     File       : navigation.xml
-     Version    : 1.0.0
-     Status     : Stable
+            <!-- Navigation component will be added in Sprint 9.3 -->
 
-     Purpose
-     -------
-     Displays the site's primary navigation.
-
-     Notes
-     -----
-     Version 1 provides only the structural markup.
-     Blogger Page data will be integrated in Sprint 9.4.
-========================================================== -->
-
-<nav
-    class='site-navigation'
-    aria-label='Primary Navigation'>
-
-    <!-- Navigation Items -->
-
-</nav>
-
-<!-- ==========================================================
-     Future Enhancements
-
-     • Blogger Pages Integration
-     • Mobile Navigation
-     • Active Page Highlight
-========================================================== -->
+        </nav>
 
     </div>
 
@@ -404,5 +370,21 @@ input:focus-visible {
      • Theme Switcher
      • Announcement Banner
 ========================================================== -->
+
+<!-- ========================================================= -->
+<!-- Theme Layout                                               -->
+<!-- ========================================================= -->
+
+<b:section
+    id='main'
+    class='main'
+    showaddelement='yes'/>
+
+<!-- Theme Widgets -->
+
+
+</body>
+
+</html>
 
 </b:template>

@@ -1,0 +1,102 @@
+<!-- ==========================================================
+     SEDS — Support Engineering Design System
+
+     Widget     : Blog
+     File       : blog.xml
+     Version    : 1.0.0
+     Status     : Foundation
+
+     Purpose
+     Defines the primary rendering pipeline for the Blogger
+     Blog widget.
+
+     Blogger Contract
+     Public Entry Point:
+         main
+
+     Internal Pipeline:
+         main
+             ↓
+         content
+             ↓
+         posts
+             ↓
+         post
+
+     Engineering Principles
+     • Single public entry point
+     • One responsibility per includable
+     • Blogger owns data
+     • SEDS owns presentation
+========================================================== -->
+
+<!-- ==========================================================
+     Entry Point
+
+     Blogger invokes this includable automatically.
+========================================================== -->
+
+<b:includable id='main'>
+
+    <b:include name='content'/>
+
+</b:includable>
+
+<!-- ==========================================================
+     Content Pipeline
+
+     Coordinates the rendering of blog posts.
+
+     Future Responsibilities
+
+     • Pagination
+     • Comments
+     • Empty state
+========================================================== -->
+
+<b:includable id='content'>
+
+    <b:include name='posts'/>
+
+</b:includable>
+
+<!-- ==========================================================
+     Post Collection
+
+     Iterates through Blogger's post collection.
+
+     Blogger owns:
+     • data:posts
+
+     SEDS owns:
+     • Collection structure
+========================================================== -->
+
+<b:includable id='posts'>
+
+    <b:loop values='data:posts' var='post'>
+
+        <b:include name='post'/>
+
+    </b:loop>
+
+</b:includable>
+
+<!-- ==========================================================
+     Post Renderer
+
+     Renders one post.
+
+     Future Responsibilities
+
+     • Header
+     • Metadata
+     • Body
+     • Footer
+========================================================== -->
+
+<b:includable id='post'>
+
+    <!-- Placeholder for Version 1.1 -->
+
+</b:includable>

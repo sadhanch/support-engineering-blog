@@ -6,6 +6,10 @@
     xmlns:data='http://www.google.com/2005/gml/data'
     xmlns:expr='http://www.google.com/2005/gml/expr'>
 
+<html>
+
+<head>
+
 {{METADATA}}
 
 {{VARIABLES}}
@@ -14,10 +18,18 @@
 {{BLOGGER_CSS}}
 ]]></b:skin>
 
+</head>
+
+<body>
+
+{{INCLUDES}}
+
 {{LAYOUT}}
 
 {{WIDGETS}}
 
-{{INCLUDES}}
+</body>
+
+</html>
 
 </b:template>

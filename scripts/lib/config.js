@@ -37,6 +37,34 @@ module.exports = {
     },
 
     // =====================================================
+    // XML Validation Files
+    // =====================================================
+
+    validationFiles: [
+
+        "themeTemplate",
+
+        "metadataTemplate",
+
+        "variablesTemplate",
+
+        "layoutTemplate",
+
+        "widgetsTemplate",
+
+        "includesTemplate",
+
+        "headerTemplate",
+
+        "navigationTemplate",
+
+        "blogTemplate",
+
+        "pageListTemplate"
+
+    ],
+
+    // =====================================================
     // Build Paths
     // =====================================================
 
@@ -143,6 +171,24 @@ module.exports = {
             "components",
             "includes",
             "navigation.xml"
+        ),
+
+        blogTemplate: path.join(
+            ROOT,
+            "src",
+            "templates",
+            "components",
+            "widgets",
+            "blog.xml"
+        ),
+
+        pageListTemplate: path.join(
+            ROOT,
+            "src",
+            "templates",
+            "components",
+            "widgets",
+            "pagelist.xml"
         ),
 
     }
