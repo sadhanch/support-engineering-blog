@@ -1,11 +1,124 @@
-<!-- Theme Metadata -->
+<?xml version="1.0" encoding="UTF-8"?>
 
+<b:template
+    xmlns='http://www.w3.org/1999/xhtml'
+    xmlns:b='http://www.google.com/2005/gml/b'
+    xmlns:data='http://www.google.com/2005/gml/data'
+    xmlns:expr='http://www.google.com/2005/gml/expr'>
+
+<!-- ==========================================================
+     SEDS — Support Engineering Design System
+     Component : Document Metadata
+     File      : metadata.xml
+     Version   : 1.0.0
+     ========================================================== -->
+
+<!-- ==========================================================
+     Browser Compatibility
+     ========================================================== -->
+
+<meta charset='UTF-8'/>
+
+<meta
+    content='width=device-width, initial-scale=1'
+    name='viewport'/>
+
+<meta
+    content='IE=edge'
+    http-equiv='X-UA-Compatible'/>
+
+<meta
+    content='telephone=no'
+    name='format-detection'/>
+
+<!-- ==========================================================
+     Search Engine Optimization
+     ========================================================== -->
+
+<!-- Reserved for future implementation -->
+
+<!-- ==========================================================
+     Social Sharing
+     ========================================================== -->
+
+<!-- Reserved for future implementation -->
+
+<!-- ==========================================================
+     Mobile Enhancements
+     ========================================================== -->
+
+<!-- Reserved for future implementation -->
+
+<!-- ==========================================================
+     Blogger Platform
+     ========================================================== -->
+
+<!-- Reserved for future implementation -->
+
+<!-- ==========================================================
+     SEDS — Support Engineering Design System
+     File: variables.xml
+     Purpose: Blogger Theme Variables
+     Version: 1.0.0
+     ========================================================== -->
+
+<!-- ==========================================================
+     BRANDING
+     ========================================================== -->
+
+<Variable
+    name="brand.primary.color"
+    description="Primary Brand Color"
+    type="color"
+    default="#0D1B2A"/>
+
+<Variable
+    name="brand.accent.color"
+    description="Accent Color"
+    type="color"
+    default="#1E73BE"/>
+
+<!-- ==========================================================
+     PAGE COLORS
+     ========================================================== -->
+
+<Variable
+    name="page.background.color"
+    description="Page Background"
+    type="color"
+    default="#FFFFFF"/>
+
+<Variable
+    name="text.primary.color"
+    description="Primary Text Color"
+    type="color"
+    default="#1F2937"/>
+
+<!-- ==========================================================
+     TYPOGRAPHY
+     ========================================================== -->
+
+<Variable
+    name="font.body"
+    description="Body Font"
+    type="font"
+    default="Inter"/>
+
+<!-- ==========================================================
+     LAYOUT
+     ========================================================== -->
+
+<Variable
+    name="layout.max.width"
+    description="Site Width"
+    type="length"
+    default="1280px"/>
 
 <b:skin><![CDATA[
 /*==========================================
  Support Engineering Blog
  Version : 1.0.0
- Build   : 2026-07-27T18:47:44.030Z
+ Build   : 2026-07-29T10:00:54.942Z
 ==========================================*/
 
 /* Blogger Integration */
@@ -161,10 +274,135 @@ input:focus-visible {
 
 ]]></b:skin>
 
-<!-- Theme Metadata -->
+<!-- ========================================================= -->
+<!-- Theme Layout                                               -->
+<!-- ========================================================= -->
 
+<b:section
+    id='main'
+    class='main'
+    showaddelement='yes'/>
 
 <!-- Theme Widgets -->
 
 
-<!-- Shared Includes -->
+<!-- ==========================================================
+     SEDS — Support Engineering Design System
+
+     Component  : Includes
+     File       : includes.xml
+     Version    : 1.0.0
+     Status     : Stable
+
+     Purpose
+     -------
+     Assembles reusable site-wide components.
+========================================================== -->
+
+<!-- ==========================================================
+     SEDS — Support Engineering Design System
+
+     Component  : Global Site Header
+     File       : header.xml
+     Version    : 1.0.0
+     Status     : Stable
+
+     Purpose
+     -------
+     Displays the global site header including the blog
+     title, optional description, and primary navigation.
+
+     Depends On
+     ----------
+     navigation.xml (Future)
+
+     Used By
+     -------
+     Homepage
+     Article
+     Search
+     Archive
+========================================================== -->
+
+<header class='site-header' role='banner'>
+
+    <div class='container'>
+
+        <!-- ==================================================
+             Site Branding
+        =================================================== -->
+
+        <div class='site-branding'>
+
+            <a
+                class='site-title'
+                expr:href='data:blog.homepageUrl'>
+
+                <data:blog.title/>
+
+            </a>
+
+            <b:if cond='data:blog.description'>
+
+                <p class='site-description'>
+
+                    <data:blog.description/>
+
+                </p>
+
+            </b:if>
+
+        </div>
+
+                <!-- ==================================================
+             Primary Navigation
+        =================================================== -->
+
+        <!-- ==========================================================
+     SEDS — Support Engineering Design System
+
+     Component  : Primary Navigation
+     File       : navigation.xml
+     Version    : 1.0.0
+     Status     : Stable
+
+     Purpose
+     -------
+     Displays the site's primary navigation.
+
+     Notes
+     -----
+     Version 1 provides only the structural markup.
+     Blogger Page data will be integrated in Sprint 9.4.
+========================================================== -->
+
+<nav
+    class='site-navigation'
+    aria-label='Primary Navigation'>
+
+    <!-- Navigation Items -->
+
+</nav>
+
+<!-- ==========================================================
+     Future Enhancements
+
+     • Blogger Pages Integration
+     • Mobile Navigation
+     • Active Page Highlight
+========================================================== -->
+
+    </div>
+
+</header>
+
+<!-- ==========================================================
+     Future Enhancements
+
+     • Sticky Header
+     • Search
+     • Theme Switcher
+     • Announcement Banner
+========================================================== -->
+
+</b:template>

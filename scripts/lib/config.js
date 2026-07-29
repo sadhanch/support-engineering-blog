@@ -5,14 +5,24 @@ const ROOT = path.resolve(__dirname, "..", "..");
 
 module.exports = {
 
+    // =====================================================
+    // Project Information
+    // =====================================================
+
     project: {
         name: "Support Engineering Blog",
         version: packageJson.version
     },
 
+    // =====================================================
+    // Template Placeholder Mapping
+    // =====================================================
+
     templates: {
 
         METADATA: "metadataTemplate",
+
+        VARIABLES: "variablesTemplate",
 
         LAYOUT: "layoutTemplate",
 
@@ -20,13 +30,23 @@ module.exports = {
 
         INCLUDES: "includesTemplate",
 
-        VARIABLES: "variablesTemplate",
+        HEADER: "headerTemplate",
+
+        NAVIGATION: "navigationTemplate"
 
     },
+
+    // =====================================================
+    // Build Paths
+    // =====================================================
 
     paths: {
 
         root: ROOT,
+
+        // ---------------------------------------------
+        // CSS
+        // ---------------------------------------------
 
         cssEntry: path.join(
             ROOT,
@@ -43,6 +63,10 @@ module.exports = {
             "blogger.css"
         ),
 
+        // ---------------------------------------------
+        // Theme
+        // ---------------------------------------------
+
         themeTemplate: path.join(
             ROOT,
             "src",
@@ -56,19 +80,32 @@ module.exports = {
             "theme.xml"
         ),
 
+        // ---------------------------------------------
+        // Theme Components
+        // ---------------------------------------------
+
         metadataTemplate: path.join(
             ROOT,
             "src",
             "templates",
+            "components",
             "metadata",
             "metadata.xml"
+        ),
+
+        variablesTemplate: path.join(
+            ROOT,
+            "src",
+            "templates",
+            "components",
+            "variables",
+            "variables.xml"
         ),
 
         layoutTemplate: path.join(
             ROOT,
             "src",
             "templates",
-            "layout",
             "layout.xml"
         ),
 
@@ -76,6 +113,7 @@ module.exports = {
             ROOT,
             "src",
             "templates",
+            "components",
             "widgets",
             "widgets.xml"
         ),
@@ -84,16 +122,27 @@ module.exports = {
             ROOT,
             "src",
             "templates",
+            "components",
             "includes",
             "includes.xml"
         ),
 
-        variablesTemplate: path.join(
+        headerTemplate: path.join(
             ROOT,
             "src",
             "templates",
-            "variables",
-            "variables.xml"
+            "components",
+            "includes",
+            "header.xml"
+        ),
+
+        navigationTemplate: path.join(
+            ROOT,
+            "src",
+            "templates",
+            "components",
+            "includes",
+            "navigation.xml"
         ),
 
     }

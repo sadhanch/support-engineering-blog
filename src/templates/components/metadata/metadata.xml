@@ -1,6 +1,15 @@
-<!-- ========================================================= -->
-<!-- Theme Metadata                                             -->
-<!-- ========================================================= -->
+<!-- ==========================================================
+     SEDS — Support Engineering Design System
+     Component : Document Metadata
+     File      : metadata.xml
+     Version   : 1.0.0
+     ========================================================== -->
+
+<!-- ==========================================================
+     Browser Compatibility
+     ========================================================== -->
+
+<meta charset='UTF-8'/>
 
 <meta
     content='width=device-width, initial-scale=1'
@@ -9,3 +18,31 @@
 <meta
     content='IE=edge'
     http-equiv='X-UA-Compatible'/>
+
+<meta
+    content='telephone=no'
+    name='format-detection'/>
+
+<!-- ==========================================================
+     Search Engine Optimization
+     ========================================================== -->
+
+<!-- Reserved for future implementation -->
+
+<!-- ==========================================================
+     Social Sharing
+     ========================================================== -->
+
+<!-- Reserved for future implementation -->
+
+<!-- ==========================================================
+     Mobile Enhancements
+     ========================================================== -->
+
+<!-- Reserved for future implementation -->
+
+<!-- ==========================================================
+     Blogger Platform
+     ========================================================== -->
+
+<!-- Reserved for future implementation -->

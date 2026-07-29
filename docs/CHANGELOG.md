@@ -6,6 +6,62 @@ The format is inspired by Keep a Changelog and follows Semantic Versioning where
 
 ---
 
+## [0.4.0] - 2026-07-28
+
+**Milestone:** Framework Foundation Complete
+
+### Added
+
+- Introduced a modular Blogger XML template system.
+- Added `theme.xml` as the root Blogger template.
+- Added dedicated `variables.xml` component for Blogger Theme Designer integration.
+- Added placeholder-driven template assembly supporting reusable XML components.
+- Added Blogger theme variable specification as the public customization API.
+
+### Changed
+
+- Reorganized XML templates into a component-based architecture:
+
+  - `components/metadata`
+  - `components/variables`
+  - `components/widgets`
+  - `components/includes`
+
+- Promoted `theme.xml` to the composition root of the generated Blogger theme.
+- Updated build configuration to use configuration-driven template loading.
+- Expanded the design token system by introducing `--font-family-heading`.
+- Introduced `--layout-max-width` as a forward-compatible alias for `--container-width`.
+
+### Architecture
+
+- Established a clear separation between:
+  - Design Tokens
+  - Blogger Theme Variables
+  - XML Components
+  - Theme Assembly Pipeline
+- Defined the Blogger Theme Designer as the public customization layer for SEDS.
+- Classified design tokens into:
+  - Public
+  - Protected
+  - Internal
+
+### Build
+
+- Verified successful generation of the Blogger theme using the modular XML assembly pipeline.
+- Confirmed automatic loading of Metadata, Variables, Layout, Widgets, and Includes during build.
+
+### Documentation
+
+- Documented the first version of the SEDS Theme Variable Specification.
+- Established a versioned customization strategy for future Blogger theme development.
+
+### Developer Experience
+
+- Standardized XML component headers across the project.
+- Formalized sprint completion using a Definition of Done workflow.
+
+---
+
 ## [0.3.0] - 2026-07-27
 
 ### Added
