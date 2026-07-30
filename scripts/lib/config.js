@@ -10,29 +10,10 @@ module.exports = {
     // =====================================================
 
     project: {
+
         name: "Support Engineering Blog",
+
         version: packageJson.version
-    },
-
-    // =====================================================
-    // Template Placeholder Mapping
-    // =====================================================
-
-    templates: {
-
-        METADATA: "metadataTemplate",
-
-        VARIABLES: "variablesTemplate",
-
-        LAYOUT: "layoutTemplate",
-
-        WIDGETS: "widgetsTemplate",
-
-        INCLUDES: "includesTemplate",
-
-        HEADER: "headerTemplate",
-
-        NAVIGATION: "navigationTemplate"
 
     },
 
@@ -48,19 +29,7 @@ module.exports = {
 
         "variablesTemplate",
 
-        "layoutTemplate",
-
-        "widgetsTemplate",
-
-        "includesTemplate",
-
-        "headerTemplate",
-
-        "navigationTemplate",
-
-        "blogTemplate",
-
-        "pageListTemplate"
+        "layoutTemplate"
 
     ],
 
@@ -99,6 +68,7 @@ module.exports = {
             ROOT,
             "src",
             "templates",
+            "theme",
             "theme.xml"
         ),
 
@@ -109,14 +79,13 @@ module.exports = {
         ),
 
         // ---------------------------------------------
-        // Theme Components
+        // Template Files
         // ---------------------------------------------
 
         metadataTemplate: path.join(
             ROOT,
             "src",
             "templates",
-            "components",
             "metadata",
             "metadata.xml"
         ),
@@ -125,7 +94,6 @@ module.exports = {
             ROOT,
             "src",
             "templates",
-            "components",
             "variables",
             "variables.xml"
         ),
@@ -134,62 +102,20 @@ module.exports = {
             ROOT,
             "src",
             "templates",
+            "layout",
             "layout.xml"
         ),
 
-        widgetsTemplate: path.join(
-            ROOT,
-            "src",
-            "templates",
-            "components",
-            "widgets",
-            "widgets.xml"
-        ),
+        // ---------------------------------------------
+        // Widget Directory
+        // ---------------------------------------------
 
-        includesTemplate: path.join(
+        widgetsDirectory: path.join(
             ROOT,
             "src",
             "templates",
-            "components",
-            "includes",
-            "includes.xml"
-        ),
-
-        headerTemplate: path.join(
-            ROOT,
-            "src",
-            "templates",
-            "components",
-            "includes",
-            "header.xml"
-        ),
-
-        navigationTemplate: path.join(
-            ROOT,
-            "src",
-            "templates",
-            "components",
-            "includes",
-            "navigation.xml"
-        ),
-
-        blogTemplate: path.join(
-            ROOT,
-            "src",
-            "templates",
-            "components",
-            "widgets",
-            "blog.xml"
-        ),
-
-        pageListTemplate: path.join(
-            ROOT,
-            "src",
-            "templates",
-            "components",
-            "widgets",
-            "pagelist.xml"
-        ),
+            "widgets"
+        )
 
     }
 

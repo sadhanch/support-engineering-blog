@@ -10,10 +10,6 @@ function buildTheme(cssResult) {
 
     const css = cssResult.css;
 
-    const template = utils.readFile(
-        config.paths.themeTemplate
-    );
-
     const templates = loadTemplates();
 
     // Phase 2: Assemble theme
@@ -22,12 +18,18 @@ function buildTheme(cssResult) {
 
         BLOGGER_CSS: css,
 
-        ...templates
+        METADATA: templates.metadata,
+
+        VARIABLES: templates.variables,
+
+        LAYOUT: templates.layout,
+
+        WIDGETS: templates.widgets
 
     };
 
     const theme = assemble(
-        template,
+        templates.template,
         replacements
     );
 
@@ -47,14 +49,25 @@ function buildTheme(cssResult) {
         config.paths.themeTemplate
     );
 
-    for (const name of Object.keys(templates)) {
+    logger.info(
+        "Metadata",
+        config.paths.metadataTemplate
+    );
 
-        logger.info(
-            name,
-            "Loaded"
-        );
+    logger.info(
+        "Variables",
+        config.paths.variablesTemplate
+    );
 
-    }
+    logger.info(
+        "Layout",
+        config.paths.layoutTemplate
+    );
+
+    logger.info(
+        "Widgets",
+        config.paths.widgetsDirectory
+    );
 
     logger.info(
         "Output",

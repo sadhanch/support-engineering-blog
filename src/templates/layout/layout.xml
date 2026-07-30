@@ -1,8 +1,61 @@
-<!-- ========================================================= -->
-<!-- Theme Layout                                               -->
-<!-- ========================================================= -->
+<!-- ==========================================================
+     SEDS Layout
+     Version : 1.0.0
 
-<b:section
-    id='main'
-    class='main'
-    showaddelement='yes'/>
+     Responsibility
+     Defines the page structure and Blogger sections.
+
+     This file owns:
+       - Semantic HTML
+       - Blogger Sections
+       - Widget Placement
+
+     This file does NOT own:
+       - Widget implementation
+       - Widget rendering
+       - Business logic
+========================================================== -->
+
+<header class="site-header">
+
+    <b:section
+        id="header"
+        class="seds-header"
+        maxwidgets="1"
+        showaddelement="no"/>
+
+</header>
+
+<div class="site-layout">
+
+    <main class="site-main">
+
+        <b:section
+            id="main"
+            class="seds-main"
+            maxwidgets="1"
+            showaddelement="yes"/>
+
+    </main>
+
+    <aside class="site-sidebar">
+
+        <b:section
+            id="sidebar"
+            class="seds-sidebar"
+            maxwidgets="10"
+            showaddelement="yes"/>
+
+    </aside>
+
+</div>
+
+<footer class="site-footer">
+
+    <b:section
+        id="footer"
+        class="seds-footer"
+        maxwidgets="10"
+        showaddelement="yes"/>
+
+</footer>

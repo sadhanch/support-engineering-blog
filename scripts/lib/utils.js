@@ -27,31 +27,54 @@ function writeFile(filePath, content) {
 
     fs.writeFileSync(
         filePath,
-        content
+        content,
+        "utf8"
     );
+
+}
+
+function fileExists(filePath) {
+
+    return fs.existsSync(filePath);
 
 }
 
 function formatBytes(bytes) {
 
     if (bytes < 1024) {
+
         return `${bytes} B`;
+
     }
 
-    return `${(bytes / 1024).toFixed(2)} KB`;
+    if (bytes < 1024 * 1024) {
+
+        return `${(bytes / 1024).toFixed(2)} KB`;
+
+    }
+
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 
 }
 
 function normalizePath(filePath) {
 
-    return filePath.replace(/\\/g, "/");
+    return path.normalize(filePath);
 
 }
 
 module.exports = {
+
     ensureDirectory,
+
     readFile,
+
     writeFile,
+
+    fileExists,
+
     formatBytes,
+
     normalizePath
+
 };

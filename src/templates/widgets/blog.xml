@@ -1,102 +1,15 @@
-<!-- ==========================================================
-     SEDS — Support Engineering Design System
+<b:widget id='Blog1' type='Blog' ...>
 
-     Widget     : Blog
-     File       : blog.xml
-     Version    : 1.0.0
-     Status     : Foundation
+    <b:includable id='main'>
 
-     Purpose
-     Defines the primary rendering pipeline for the Blogger
-     Blog widget.
+        <b:include name='route'/>
 
-     Blogger Contract
-     Public Entry Point:
-         main
+    </b:includable>
 
-     Internal Pipeline:
-         main
-             ↓
-         content
-             ↓
-         posts
-             ↓
-         post
+    <b:includable id='route'>
 
-     Engineering Principles
-     • Single public entry point
-     • One responsibility per includable
-     • Blogger owns data
-     • SEDS owns presentation
-========================================================== -->
+        <!-- Empty for now -->
 
-<!-- ==========================================================
-     Entry Point
+    </b:includable>
 
-     Blogger invokes this includable automatically.
-========================================================== -->
-
-<b:includable id='main'>
-
-    <b:include name='content'/>
-
-</b:includable>
-
-<!-- ==========================================================
-     Content Pipeline
-
-     Coordinates the rendering of blog posts.
-
-     Future Responsibilities
-
-     • Pagination
-     • Comments
-     • Empty state
-========================================================== -->
-
-<b:includable id='content'>
-
-    <b:include name='posts'/>
-
-</b:includable>
-
-<!-- ==========================================================
-     Post Collection
-
-     Iterates through Blogger's post collection.
-
-     Blogger owns:
-     • data:posts
-
-     SEDS owns:
-     • Collection structure
-========================================================== -->
-
-<b:includable id='posts'>
-
-    <b:loop values='data:posts' var='post'>
-
-        <b:include name='post'/>
-
-    </b:loop>
-
-</b:includable>
-
-<!-- ==========================================================
-     Post Renderer
-
-     Renders one post.
-
-     Future Responsibilities
-
-     • Header
-     • Metadata
-     • Body
-     • Footer
-========================================================== -->
-
-<b:includable id='post'>
-
-    <!-- Placeholder for Version 1.1 -->
-
-</b:includable>
+</b:widget>

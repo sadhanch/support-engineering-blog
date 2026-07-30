@@ -1,0 +1,205 @@
+---
+id: INV-005
+title: Investigation — `post`
+status: In Progress
+widget: Blog
+includable: post
+source: Essential Light Blogger Theme
+last_updated: 2026-07-30
+---
+
+# Investigation — `post`
+
+## Objective
+
+Determine the exact responsibilities of the `post` includable.
+
+This investigation is based exclusively on the Blog widget contained in the Essential Light Blogger theme.
+
+No architectural assumptions should be made until they are supported by evidence.
+
+---
+
+# Investigation Checklist
+
+## Identity
+
+| Field | Value |
+|-------|-------|
+| Widget | Blog |
+| Includable | `post` |
+| Category | Posts |
+| Proposed Role | Composite Renderer *(Hypothesis)* |
+
+---
+
+# Source Definition
+
+> Record the complete `<b:includable id='post'>` definition before making any observations.
+
+---
+
+# Parameters
+
+Record every declared parameter.
+
+| Parameter | Required | Notes |
+|-----------|----------|------|
+| *(To be determined)* | | |
+
+---
+
+# Variables Used
+
+Record every Blogger variable referenced by this includable.
+
+| Variable | Purpose | Evidence |
+|----------|---------|----------|
+| | | |
+
+Examples include:
+
+- `data:post`
+- `data:view`
+- `data:messages`
+- `data:blog`
+
+Do not assume usage—record only variables present in the source.
+
+---
+
+# Included Includables
+
+List every `<b:include>` executed directly by this includable.
+
+| Include | Conditional | Evidence |
+|----------|-------------|----------|
+| | | |
+
+---
+
+# Conditional Branches
+
+Record every Blogger conditional.
+
+| Condition | Purpose |
+|-----------|---------|
+| | |
+
+Examples:
+
+- `<b:if>`
+- `<b:switch>`
+- `<b:case>`
+
+---
+
+# Loops
+
+Record every iteration.
+
+| Loop | Purpose |
+|------|---------|
+| | |
+
+Examples:
+
+- `<b:loop>`
+
+---
+
+# HTML Structure
+
+Describe the HTML produced by this includable.
+
+Suggested outline:
+
+```text
+Post Container
+├── Header
+├── Content
+├── Footer
+└── Comments
+```
+
+Only include elements that are directly rendered here.
+
+---
+
+# Direct Responsibilities
+
+List responsibilities supported by evidence.
+
+- [ ]
+- [ ]
+- [ ]
+
+---
+
+# Non-Responsibilities
+
+List responsibilities that are **not** performed here.
+
+Examples:
+
+- Does not prepare the posts collection.
+- Does not perform routing.
+- Does not configure advertisements.
+
+Only include statements supported by evidence.
+
+---
+
+# Dependencies
+
+Internal dependencies:
+
+-
+
+External dependencies:
+
+-
+
+---
+
+# Evidence Log
+
+Each confirmed observation receives an identifier.
+
+## F-005-001
+
+**Observation**
+
+...
+
+**Evidence**
+
+```xml
+...
+```
+
+---
+
+## F-005-002
+
+...
+
+---
+
+# Questions Raised
+
+Record unanswered questions uncovered during the investigation.
+
+1.
+
+2.
+
+3.
+
+---
+
+# Preliminary Conclusion
+
+Summarize only what has been verified.
+
+Avoid describing expected behavior or inferred architecture.

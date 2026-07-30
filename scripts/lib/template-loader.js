@@ -1,19 +1,64 @@
+const fs = require("fs");
+const path = require("path");
+
 const config = require("./config");
 const utils = require("./utils");
 
-function loadTemplates() {
+function loadDirectory(directory) {
 
-    const templates = {};
+    if (!fs.existsSync(directory)) {
 
-    for (const [placeholder, pathKey] of Object.entries(config.templates)) {
-
-        templates[placeholder] = utils.readFile(
-            config.paths[pathKey]
+        throw new Error(
+            `Directory not found: ${directory}`
         );
 
     }
 
-    return templates;
+    return fs
+        .readdirSync(directory)
+        .filter(file =>
+
+            file.endsWith(".xml") &&
+            !file.startsWith(".")
+
+        )
+        .sort()
+        .map(file =>
+
+            utils.readFile(
+                path.join(directory, file)
+            )
+
+        )
+        .join("\n\n");
+
+}
+
+function loadTemplates() {
+
+    return {
+
+        template: utils.readFile(
+            config.paths.themeTemplate
+        ),
+
+        metadata: utils.readFile(
+            config.paths.metadataTemplate
+        ),
+
+        variables: utils.readFile(
+            config.paths.variablesTemplate
+        ),
+
+        layout: utils.readFile(
+            config.paths.layoutTemplate
+        ),
+
+        widgets: loadDirectory(
+            config.paths.widgetsDirectory
+        )
+
+    };
 
 }
 
