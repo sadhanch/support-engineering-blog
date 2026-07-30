@@ -2,7 +2,7 @@
    SEDS — Support Engineering Design System
    File: base.css
    Purpose: Global application styling
-   Version: 0.1.0
+   Version: 1.0.0
    ========================================================== */
 
 
@@ -11,19 +11,15 @@
 ---------------------------------------------------------- */
 
 html {
-    font-size: 16px;
+    font-size: 100%;
+    scroll-padding-top: 6rem;
 }
 
 body {
-
     background-color: var(--surface-secondary);
-
     color: var(--text-primary);
-
     font-family: var(--font-family-base);
-
     line-height: var(--line-height-normal);
-
 }
 
 
@@ -37,74 +33,52 @@ main {
 
 
 /* ----------------------------------------------------------
-   Containers
----------------------------------------------------------- */
-
-.container {
-
-    width: min(100% - 2rem, var(--container-width));
-
-    margin-inline: auto;
-
-}
-
-.content-container {
-
-    width: min(100% - 2rem, var(--content-width));
-
-    margin-inline: auto;
-
-}
-
-
-/* ----------------------------------------------------------
-   Sections
----------------------------------------------------------- */
-
-section {
-
-    padding-block: var(--space-8);
-
-}
-
-
-/* ----------------------------------------------------------
-   Images
+   Media
 ---------------------------------------------------------- */
 
 img {
-
     height: auto;
-
-    border-radius: var(--radius-md);
-
 }
 
 
 /* ----------------------------------------------------------
-   Tables
----------------------------------------------------------- */
-
-.table-responsive {
-
-    overflow-x: auto;
-
-    margin-block: var(--space-6);
-
-}
-
-
-/* ----------------------------------------------------------
-   Smooth Transitions
+   Global Interactive Elements
 ---------------------------------------------------------- */
 
 a,
 button {
-
     transition:
         color var(--transition-fast),
         background-color var(--transition-fast),
         border-color var(--transition-fast),
         box-shadow var(--transition-fast);
+}
 
+
+/* ----------------------------------------------------------
+   Text Selection
+---------------------------------------------------------- */
+
+::selection {
+    background: var(--color-accent);
+    color: var(--text-inverse);
+}
+
+
+/* ----------------------------------------------------------
+   Focus Visibility
+---------------------------------------------------------- */
+
+:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+}
+
+
+/* ----------------------------------------------------------
+   Anchor Targets
+---------------------------------------------------------- */
+
+:target {
+    scroll-margin-top: 6rem;
 }

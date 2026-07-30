@@ -1,8 +1,8 @@
 /* ==========================================================
    SEDS — Support Engineering Design System
    File: variables.css
-   Purpose: Global design tokens
-   Version: 0.1.0
+   Purpose: Global Design Tokens
+   Version: 1.0.0
    ========================================================== */
 
 :root {
@@ -13,8 +13,8 @@
 
     --color-primary: #0D1B2A;
     --color-accent: #1E73BE;
-    --color-success: #107C41;
 
+    --color-success: #107C41;
     --color-warning: #F59E0B;
     --color-danger: #DC2626;
 
@@ -23,33 +23,53 @@
 
 
     /* ======================================================
-       SURFACE COLORS
+       NEUTRAL PALETTE
+       Foundation colors
        ====================================================== */
 
-    --surface-primary: #FFFFFF;
-    --surface-secondary: #F8FAFC;
-    --surface-tertiary: #F1F5F9;
-    --surface-code: #0F172A;
+    --gray-50:  #F8FAFC;
+    --gray-100: #F1F5F9;
+    --gray-200: #E5E7EB;
+    --gray-300: #CBD5E1;
+    --gray-400: #94A3B8;
+    --gray-500: #6B7280;
+    --gray-600: #475569;
+    --gray-700: #334155;
+    --gray-800: #1F2937;
+    --gray-900: #0F172A;
+
+
+    /* ======================================================
+       SURFACE COLORS
+       Semantic tokens
+       ====================================================== */
+
+    --surface-primary: var(--color-white);
+    --surface-secondary: var(--gray-50);
+    --surface-tertiary: var(--gray-100);
+    --surface-code: var(--gray-900);
 
 
     /* ======================================================
        TEXT COLORS
+       Semantic tokens
        ====================================================== */
 
-    --text-primary: #1F2937;
-    --text-secondary: #6B7280;
-    --text-muted: #94A3B8;
-    --text-inverse: #FFFFFF;
+    --text-primary: var(--gray-800);
+    --text-secondary: var(--gray-500);
+    --text-muted: var(--gray-400);
+    --text-inverse: var(--color-white);
 
 
     /* ======================================================
        BORDER COLORS
+       Semantic tokens
        ====================================================== */
 
-    --border-default: #E5E7EB;
-    --border-light: #F1F5F9;
-    --border-dark: #CBD5E1;
-    --border-subtle: #e9eef3;
+    --border-default: var(--gray-200);
+    --border-light: var(--gray-100);
+    --border-dark: var(--gray-300);
+    --border-subtle: #E9EEF3;
 
 
     /* ======================================================
@@ -112,11 +132,11 @@
        BORDER RADIUS
        ====================================================== */
 
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
-    --radius-pill: 999px;
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-pill: 999rem;
 
 
     /* ======================================================
@@ -124,9 +144,7 @@
        ====================================================== */
 
     --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
-
     --shadow-md: 0 4px 10px rgba(15, 23, 42, 0.10);
-
     --shadow-lg: 0 10px 25px rgba(15, 23, 42, 0.15);
 
 
@@ -134,19 +152,38 @@
        LAYOUT
        ====================================================== */
 
-    --container-width: 1280px;
-    --layout-max-width: 1280px;
-    --content-width: 760px;
-    --sidebar-width: 320px;
+    --container-width: 80rem;        /* 1280px */
+    --content-width: 47.5rem;        /* 760px */
+    --reader-toolkit-width: 20rem;   /* 320px */
 
 
     /* ======================================================
-       TRANSITIONS
+       RESPONSIVE BREAKPOINTS
+       Documentation tokens
+       ------------------------------------------------------
+       NOTE:
+       CSS custom properties cannot currently be used inside
+       @media queries directly. These values act as the single
+       source of truth for the design system and should match
+       the breakpoints used throughout the project.
        ====================================================== */
 
-    --transition-fast: 150ms ease-in-out;
-    --transition-normal: 250ms ease-in-out;
-    --transition-slow: 400ms ease-in-out;
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1536px;
+
+
+    /* ======================================================
+       MOTION
+       ====================================================== */
+
+    --ease-standard: ease-in-out;
+
+    --transition-fast: 150ms var(--ease-standard);
+    --transition-normal: 250ms var(--ease-standard);
+    --transition-slow: 400ms var(--ease-standard);
 
 
     /* ======================================================
@@ -156,5 +193,5 @@
     --z-dropdown: 100;
     --z-sticky: 200;
     --z-fixed: 300;
-    --z-modal: 1000;   
+    --z-modal: 1000;
 }
