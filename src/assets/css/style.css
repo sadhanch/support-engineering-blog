@@ -1,0 +1,11 @@
+/* ==========================================================
+   SEDS — Support Engineering Design System
+   File: style.css
+   Purpose: Global stylesheet entry point
+   Version: 1.0.0
+   ========================================================== */
+
+@import "./base/variables.css";
+@import "./base/reset.css";
+@import "./base/typography.css";
+@import "./base/base.css";
