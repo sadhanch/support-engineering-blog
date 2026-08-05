@@ -1,0 +1,253 @@
+/* ==========================================================
+   SEDS — Support Engineering Design System
+   File: header.css
+   Purpose: Global site header
+   Version: 2.0.0
+   ========================================================== */
+
+/* ----------------------------------------------------------
+   Site Header
+---------------------------------------------------------- */
+
+.site-header {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: var(--z-sticky);
+
+    background: rgba(255, 255, 255, 0.88);
+
+    backdrop-filter: blur(18px);
+
+    -webkit-backdrop-filter: blur(18px);
+
+    border-bottom: 1px solid var(--border-default);
+
+}
+
+.site-header nav {
+
+    display: flex;
+
+    align-items: center;
+
+    height: 100%;
+
+}
+
+
+/* ----------------------------------------------------------
+   Header Container
+---------------------------------------------------------- */
+
+.header-container {
+
+    width: min(100% - 2rem, var(--container-width));
+
+    min-height: var(--header-height);
+
+    padding-block: var(--space-2);
+
+    margin-inline: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: var(--space-6);
+
+}
+
+
+/* ----------------------------------------------------------
+   Logo
+---------------------------------------------------------- */
+
+.site-logo {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    font-size: 1.75rem;
+
+    letter-spacing: -0.03em;
+
+    font-weight: var(--font-weight-bold);
+
+    color: var(--color-primary);
+
+    white-space: nowrap;
+
+    transition: color var(--transition-fast);
+
+}
+
+.site-logo:hover {
+
+    color: var(--color-accent);
+
+}
+
+.site-logo__text {
+
+    display: inline-block;
+
+    letter-spacing: -0.03em;
+
+}
+
+
+/* ----------------------------------------------------------
+   Navigation
+---------------------------------------------------------- */
+
+.site-navigation {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: var(--space-6);
+
+    margin-left: auto;
+
+    list-style: none;
+
+    height: 100%;
+
+    padding: 0;
+
+    margin-block: 0;
+
+}
+
+.site-navigation a {
+
+    position: relative;
+
+    color: var(--text-secondary);
+
+    font-weight: var(--font-weight-medium);
+
+    transition: color var(--transition-fast);
+
+}
+
+.site-navigation a:hover,
+
+.site-navigation a:focus-visible {
+
+    color: var(--color-primary);
+
+}
+
+
+/* ----------------------------------------------------------
+   Animated Underline
+---------------------------------------------------------- */
+
+.site-navigation a::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    bottom: -6px;
+
+    width: 100%;
+
+    height: 2px;
+
+    background: var(--color-accent);
+
+    transform: scaleX(0);
+
+    transform-origin: left;
+
+    transition: transform var(--transition-fast);
+
+}
+
+.site-navigation a:hover::after,
+
+.site-navigation a:focus-visible::after {
+
+    transform: scaleX(1);
+
+}
+
+
+/* ----------------------------------------------------------
+   Search Button
+---------------------------------------------------------- */
+
+.search-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: .5rem;
+
+    padding: .6rem 1rem;
+
+    border: 1px solid var(--border-default);
+
+    border-radius: var(--radius-pill);
+
+    background: var(--surface-primary);
+
+    color: var(--text-secondary);
+
+    transition:
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+
+}
+
+.search-button:hover {
+
+    border-color: var(--color-accent);
+
+    color: var(--color-primary);
+
+    transform: translateY(-2px);
+
+    box-shadow: var(--shadow-sm);
+
+}
+
+.search-button:active {
+
+    transform: translateY(0);
+
+    box-shadow: none;
+
+}
+
+
+/* ----------------------------------------------------------
+   Responsive Navigation
+---------------------------------------------------------- */
+
+@media (max-width: 768px) {
+
+    .site-navigation {
+
+        display: none;
+
+    }
+
+}

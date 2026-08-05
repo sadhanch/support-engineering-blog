@@ -1,0 +1,54 @@
+---
+import { getHomepageArticles } from "../../lib/articles";
+
+import ArticleCard from "../ui/ArticleCard.astro";
+import Container from "../layout/Container.astro";
+import Section from "../layout/Section.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+
+const homepage = await getHomepageArticles();
+---
+
+<Section>
+
+    <Container>
+
+        <SectionHeader
+
+            title={homepage.title}
+
+            description={homepage.description}
+
+        />
+
+        <div class="article-grid">
+
+            {
+
+                homepage.articles.map((article) => (
+
+                    <ArticleCard
+
+                        href={`/articles/${article.id}`}
+
+                        category={article.data.category}
+
+                        title={article.data.title}
+
+                        description={article.data.excerpt}
+
+                        readingTime={article.readingTime}
+
+                        updated={article.formattedDate}
+
+                    />
+
+                ))
+
+            }
+
+        </div>
+
+    </Container>
+
+</Section>

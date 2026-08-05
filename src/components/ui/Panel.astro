@@ -1,0 +1,41 @@
+---
+interface Props {
+
+    title?: string;
+
+}
+
+const {
+
+    title
+
+} = Astro.props;
+---
+
+<section class="panel">
+
+    {
+
+        title && (
+
+            <header class="panel__header">
+
+                <h2>
+
+                    {title}
+
+                </h2>
+
+            </header>
+
+        )
+
+    }
+
+    <div class="panel__content">
+
+        <slot />
+
+    </div>
+
+</section>

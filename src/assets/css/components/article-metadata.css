@@ -1,0 +1,45 @@
+/* ==========================================================
+   SEDS — Article Metadata
+   ========================================================== */
+
+.article-metadata {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: var(--space-5);
+
+}
+
+.metadata-item {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: var(--space-1);
+
+}
+
+.metadata-label {
+
+    font-size: var(--font-size-xs);
+
+    text-transform: uppercase;
+
+    letter-spacing: .08em;
+
+    color: var(--text-tertiary);
+
+    font-weight: var(--font-weight-semibold);
+
+}
+
+.metadata-value {
+
+    color: var(--text-primary);
+
+    font-weight: var(--font-weight-medium);
+
+}

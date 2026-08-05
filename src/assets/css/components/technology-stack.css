@@ -1,0 +1,35 @@
+/* ==========================================================
+   SEDS — Technology Stack
+   ========================================================== */
+
+.technology-stack {
+
+    margin-top: var(--space-6);
+
+}
+
+.technology-stack__title {
+
+    margin-bottom: var(--space-3);
+
+    font-size: var(--font-size-sm);
+
+    font-weight: var(--font-weight-semibold);
+
+    text-transform: uppercase;
+
+    letter-spacing: .05em;
+
+    color: var(--text-secondary);
+
+}
+
+.technology-stack__badges {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: var(--space-2);
+
+}

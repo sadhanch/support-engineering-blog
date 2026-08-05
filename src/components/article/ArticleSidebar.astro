@@ -1,0 +1,58 @@
+---
+import ArticleInformation from "./widgets/ArticleInformation.astro";
+import NavigationPanel from "./NavigationPanel.astro";
+
+interface Heading {
+
+    depth: number;
+
+    slug: string;
+
+    text: string;
+
+}
+
+interface Props {
+
+    category: string;
+
+    readingTime: string;
+
+    updated: string;
+
+    headings?: Heading[];
+
+}
+
+const {
+
+    category,
+
+    readingTime,
+
+    updated,
+
+    headings = []
+
+} = Astro.props;
+---
+
+<aside class="article-sidebar">
+
+    <ArticleInformation
+
+        category={category}
+
+        readingTime={readingTime}
+
+        updated={updated}
+
+    />
+
+    <NavigationPanel
+
+    headings={headings}
+
+    />
+
+</aside>

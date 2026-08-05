@@ -1,0 +1,65 @@
+---
+import Card from "./Card.astro";
+import Metadata from "./Metadata.astro";
+
+interface Props {
+
+    href: string;
+
+    category: string;
+
+    title: string;
+
+    description: string;
+
+    readingTime: string;
+
+    updated: string;
+
+}
+
+const {
+
+    href,
+
+    category,
+
+    title,
+
+    description,
+
+    readingTime,
+
+    updated
+
+} = Astro.props;
+---
+
+<Card
+    href={href}
+    class="article-card"
+>
+
+    <Metadata
+
+        category={category}
+
+        readingTime={readingTime}
+
+        updated={updated}
+
+    />
+
+    <h3 class="article-card__title">
+
+        {title}
+
+    </h3>
+
+    <p class="article-card__description">
+
+        {description}
+
+    </p>
+
+</Card>

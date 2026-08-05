@@ -1,0 +1,52 @@
+---
+import { site } from "../../config/site";
+import SearchButton from "../ui/SearchButton.astro";
+---
+
+<header class="site-header">
+
+    <div class="header-container">
+
+        <a
+            href="/"
+            class="site-logo"
+            aria-label={site.title}
+        >
+
+            <span class="site-logo__text">
+
+                {site.shortTitle}
+
+            </span>
+
+        </a>
+
+        <nav aria-label="Primary Navigation">
+
+            <ul class="site-navigation">
+
+                {
+                    site.navigation.map((item) => (
+
+                        <li>
+
+                            <a href={item.href}>
+
+                                {item.label}
+
+                            </a>
+
+                        </li>
+
+                    ))
+                }
+
+            </ul>
+
+        </nav>
+
+        <SearchButton />
+
+    </div>
+
+</header>

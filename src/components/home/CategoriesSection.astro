@@ -1,0 +1,44 @@
+---
+import Section from "../layout/Section.astro";
+import Container from "../layout/Container.astro";
+
+import CategoryCard from "../ui/CategoryCard.astro";
+
+import { categories } from "../../data/categories";
+
+import SectionHeader from "../ui/SectionHeader.astro";
+---
+
+<Section>
+
+    <Container>
+
+        <SectionHeader
+
+            title="Categories"
+
+            description="Browse articles organized by Microsoft technologies and engineering disciplines."
+
+        />
+
+        <div class="category-grid">
+
+            {
+
+                categories.map(category => (
+
+                    <CategoryCard
+
+                        {...category}
+
+                    />
+
+                ))
+
+            }
+
+        </div>
+
+    </Container>
+
+</Section>

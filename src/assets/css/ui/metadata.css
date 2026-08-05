@@ -1,0 +1,25 @@
+/* ==========================================================
+   Metadata
+   ========================================================== */
+
+.metadata {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: .5rem;
+
+    align-items: center;
+
+    color: var(--text-secondary);
+
+    font-size: var(--font-size-sm);
+
+}
+
+.metadata span[aria-hidden] {
+
+    color: var(--text-muted);
+
+}

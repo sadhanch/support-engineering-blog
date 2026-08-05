@@ -1,0 +1,51 @@
+---
+import Badge from "../ui/Badge.astro";
+
+interface Props {
+
+    technology: string[];
+
+}
+
+const {
+
+    technology
+
+} = Astro.props;
+---
+
+{
+
+    technology.length > 0 && (
+
+        <section class="technology-stack">
+
+            <h2 class="technology-stack__title">
+
+                Technology
+
+            </h2>
+
+            <div class="technology-stack__badges">
+
+                {
+
+                    technology.map((item) => (
+
+                        <Badge>
+
+                            {item}
+
+                        </Badge>
+
+                    ))
+
+                }
+
+            </div>
+
+        </section>
+
+    )
+
+}

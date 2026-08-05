@@ -1,0 +1,74 @@
+---
+interface Props {
+
+    type?: "information" | "tip" | "warning" | "important" | "best-practice";
+
+    title?: string;
+
+}
+
+const {
+
+    type = "information",
+
+    title
+
+} = Astro.props;
+
+const defaults = {
+
+    information: {
+        icon: "ℹ",
+        title: "Information"
+    },
+
+    tip: {
+        icon: "💡",
+        title: "Tip"
+    },
+
+    warning: {
+        icon: "⚠",
+        title: "Warning"
+    },
+
+    important: {
+        icon: "❗",
+        title: "Important"
+    },
+
+    "best-practice": {
+        icon: "✅",
+        title: "Best Practice"
+    }
+
+};
+
+const config = defaults[type];
+---
+
+<aside class={`callout callout--${type}`}>
+
+    <header class="callout__header">
+
+        <span class="callout__icon">
+
+            {config.icon}
+
+        </span>
+
+        <strong>
+
+            {title ?? config.title}
+
+        </strong>
+
+    </header>
+
+    <div class="callout__content">
+
+        <slot />
+
+    </div>
+
+</aside>

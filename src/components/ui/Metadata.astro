@@ -1,0 +1,27 @@
+---
+interface Props {
+    category: string;
+    readingTime: string;
+    updated: string;
+}
+
+const {
+    category,
+    readingTime,
+    updated
+} = Astro.props;
+---
+
+<div class="metadata">
+
+    <span>{category}</span>
+
+    <span aria-hidden="true">•</span>
+
+    <span>{readingTime}</span>
+
+    <span aria-hidden="true">•</span>
+
+    <span>Updated {updated}</span>
+
+</div>

@@ -1,0 +1,120 @@
+/* ==========================================================
+   SEDS — Support Engineering Design System
+   File: footer.css
+   Purpose: Global footer
+   Version: 1.0.0
+   ========================================================== */
+
+.site-footer {
+
+    margin-top: var(--space-10);
+
+    padding-block: var(--space-8);
+
+    background: var(--surface-primary);
+
+    border-top: 1px solid var(--border-default);
+
+}
+
+.footer-grid {
+
+    display: grid;
+
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+
+    gap: var(--space-7);
+
+}
+
+.footer-brand h3 {
+
+    margin-bottom: var(--space-3);
+
+}
+
+.footer-brand p {
+
+    max-width: 24rem;
+
+    color: var(--text-secondary);
+
+}
+
+.site-footer h4 {
+
+    margin-bottom: var(--space-3);
+
+    font-size: var(--font-size-md);
+
+}
+
+.site-footer ul {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: var(--space-3);
+
+    padding: 0;
+
+    margin: 0;
+
+    list-style: none;
+
+}
+
+.site-footer a {
+
+    color: var(--text-secondary);
+
+    transition: color var(--transition-fast);
+
+}
+
+.site-footer a:hover {
+
+    color: var(--color-accent);
+
+}
+
+.footer-bottom {
+
+    margin-top: var(--space-8);
+
+    padding-top: var(--space-5);
+
+    border-top: 1px solid var(--border-default);
+
+}
+
+.footer-bottom p {
+
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-size: var(--font-size-sm);
+
+}
+
+@media (max-width: 992px) {
+
+    .footer-grid {
+
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+
+}
+
+@media (max-width: 640px) {
+
+    .footer-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}

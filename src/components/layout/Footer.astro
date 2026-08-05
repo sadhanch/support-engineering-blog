@@ -1,5 +1,138 @@
+---
+import { site } from "../../config/site";
+import Container from "./Container.astro";
+---
+
 <footer class="site-footer">
-    <div class="container">
-        <slot />
-    </div>
+
+    <Container>
+
+        <div class="footer-grid">
+
+            <div class="footer-brand">
+
+                <h3>
+
+                    {site.title}
+
+                </h3>
+
+                <p>
+
+                    {site.description}
+
+                </p>
+
+            </div>
+
+            <div>
+
+                <h4>
+
+                    Explore
+
+                </h4>
+
+                <ul>
+
+                    {
+
+                        site.footer.explore.map(link => (
+
+                            <li>
+
+                                <a href={link.href}>
+
+                                    {link.label}
+
+                                </a>
+
+                            </li>
+
+                        ))
+
+                    }
+
+                </ul>
+
+            </div>
+
+            <div>
+
+                <h4>
+
+                    Resources
+
+                </h4>
+
+                <ul>
+
+                    {
+
+                        site.footer.resources.map(link => (
+
+                            <li>
+
+                                <a href={link.href}>
+
+                                    {link.label}
+
+                                </a>
+
+                            </li>
+
+                        ))
+
+                    }
+
+                </ul>
+
+            </div>
+
+            <div>
+
+                <h4>
+
+                    Legal
+
+                </h4>
+
+                <ul>
+
+                    {
+
+                        site.footer.legal.map(link => (
+
+                            <li>
+
+                                <a href={link.href}>
+
+                                    {link.label}
+
+                                </a>
+
+                            </li>
+
+                        ))
+
+                    }
+
+                </ul>
+
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+
+            <p>
+
+                © 2026 {site.title}. Designed for Microsoft 365 administrators and support engineers.
+
+            </p>
+
+        </div>
+
+    </Container>
+
 </footer>

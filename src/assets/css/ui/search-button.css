@@ -1,0 +1,54 @@
+/* ==========================================================
+   SEDS — Support Engineering Design System
+   File: search-button.css
+   Purpose: Global search button
+   Version: 1.1.0
+   ========================================================== */
+
+.search-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: var(--space-3);
+
+    white-space: nowrap;
+
+}
+
+.search-button__shortcut {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: .2rem .5rem;
+
+    border: 1px solid var(--border-default);
+
+    border-radius: var(--radius-sm);
+
+    background: var(--surface-secondary);
+
+    color: var(--text-muted);
+
+    font-size: var(--font-size-xs);
+
+    font-weight: var(--font-weight-semibold);
+
+    line-height: 1;
+
+}
+
+@media (max-width: 1024px) {
+
+    .search-button__shortcut {
+
+        display: none;
+
+    }
+
+}

@@ -1,0 +1,103 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/layout/Container.astro";
+
+import Button from "../components/ui/Button.astro";
+import Badge from "../components/ui/Badge.astro";
+import Panel from "../components/ui/Panel.astro";
+import Callout from "../components/ui/Callout.astro";
+---
+
+<BaseLayout
+
+    title="SEDS Design System"
+
+    description="Internal component showcase"
+
+>
+
+    <Container>
+
+        <h1>
+
+            SEDS Design System
+
+        </h1>
+
+        <p>
+
+            Internal showcase of reusable UI components.
+
+        </p>
+
+        <hr />
+
+        <h2>
+
+            Buttons
+
+        </h2>
+
+        <Button>
+
+            Primary Button
+
+        </Button>
+
+        <Button variant="secondary">
+
+            Secondary Button
+
+        </Button>
+
+        <Button variant="ghost">
+
+            Ghost Button
+
+        </Button>
+
+        <hr />
+
+        <h2>
+
+            Badges
+
+        </h2>
+
+        <Badge>
+
+            Microsoft 365
+
+        </Badge>
+
+        <Badge>
+
+            Exchange Online
+
+        </Badge>
+
+        <hr />
+
+        <Panel title="Panel">
+
+            <p>
+
+                This is a reusable panel component.
+
+            </p>
+
+        </Panel>
+
+        <Callout type="tip">
+
+            <p>
+
+                Always test changes in a non-production tenant first.
+
+            </p>
+
+        </Callout>
+
+    </Container>
+
+</BaseLayout>

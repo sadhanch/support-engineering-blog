@@ -1,0 +1,57 @@
+---
+interface Props {
+
+    summary?: string[];
+
+}
+
+const {
+
+    summary = []
+
+} = Astro.props;
+
+if (summary.length === 0) {
+
+    return;
+
+}
+---
+
+<section class="key-takeaways">
+
+    <header class="key-takeaways__header">
+
+        <span class="key-takeaways__icon">
+
+            💡
+
+        </span>
+
+        <h2>
+
+            Key Takeaways
+
+        </h2>
+
+    </header>
+
+    <ul>
+
+        {
+
+            summary.map((item) => (
+
+                <li>
+
+                    {item}
+
+                </li>
+
+            ))
+
+        }
+
+    </ul>
+
+</section>

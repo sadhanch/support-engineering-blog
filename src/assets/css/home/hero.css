@@ -1,0 +1,66 @@
+/* ==========================================================
+   SEDS — Support Engineering Design System
+   File: hero.css
+   Purpose: Homepage hero
+   Version: 1.0.0
+   ========================================================== */
+
+.hero {
+
+    display: grid;
+
+    align-items: center;
+
+    min-height: 34rem;
+
+}
+
+.hero-content {
+
+    max-width: 760px;
+
+}
+
+.hero-eyebrow {
+
+    margin-bottom: var(--space-4);
+
+    color: var(--color-accent);
+
+    font-size: var(--font-size-sm);
+
+    font-weight: var(--font-weight-bold);
+
+    letter-spacing: .12em;
+
+    text-transform: uppercase;
+
+}
+
+.hero-title {
+
+    margin-bottom: var(--space-5);
+
+}
+
+.hero-description {
+
+    max-width: 65ch;
+
+    margin-bottom: var(--space-7);
+
+    color: var(--text-secondary);
+
+    font-size: var(--font-size-lg);
+
+}
+
+.hero-actions {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: var(--space-4);
+
+}

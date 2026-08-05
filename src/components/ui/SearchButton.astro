@@ -1,0 +1,31 @@
+---
+import Button from "./Button.astro";
+
+interface Props {
+    href?: string;
+}
+
+const {
+    href = "/search"
+} = Astro.props;
+---
+
+<Button
+    href={href}
+    variant="secondary"
+    class="search-button"
+>
+
+    <span>
+
+        Search
+
+    </span>
+
+    <span class="search-button__shortcut">
+
+        Ctrl&nbsp;+&nbsp;K
+
+    </span>
+
+</Button>

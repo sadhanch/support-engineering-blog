@@ -1,0 +1,19 @@
+.learning-path-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: var(--space-5);
+
+}
+
+@media (max-width: 1024px) {
+
+    .learning-path-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}

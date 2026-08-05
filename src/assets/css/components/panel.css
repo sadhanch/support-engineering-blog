@@ -1,0 +1,45 @@
+/* ==========================================================
+   SEDS — Panel
+   ========================================================== */
+
+.panel {
+
+    background: var(--surface-primary);
+
+    border: 1px solid var(--border-default);
+
+    border-radius: var(--radius-lg);
+
+    overflow: hidden;
+
+}
+
+.panel + .panel {
+
+    margin-top: var(--space-6);
+
+}
+
+.panel__header {
+
+    padding: var(--space-5);
+
+    border-bottom: 1px solid var(--border-default);
+
+}
+
+.panel__header h2 {
+
+    margin: 0;
+
+    font-size: var(--font-size-base);
+
+    font-weight: var(--font-weight-semibold);
+
+}
+
+.panel__content {
+
+    padding: var(--space-5);
+
+}

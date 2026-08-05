@@ -1,0 +1,53 @@
+/* ==========================================================
+   SEDS — Reading Progress
+   ========================================================== */
+
+.reading-progress {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: var(--space-3);
+
+    margin-top: var(--space-8);
+
+}
+
+.reading-progress__header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    font-size: var(--font-size-sm);
+
+    font-weight: var(--font-weight-medium);
+
+}
+
+.reading-progress__track {
+
+    height: .45rem;
+
+    background: var(--surface-secondary);
+
+    border-radius: var(--radius-pill);
+
+    overflow: hidden;
+
+}
+
+.reading-progress__bar {
+
+    width: 0;
+
+    height: 100%;
+
+    background: var(--color-accent);
+
+    transition: width .15s linear;
+
+}

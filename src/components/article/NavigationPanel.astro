@@ -1,0 +1,41 @@
+---
+import Panel from "../ui/Panel.astro";
+import TableOfContents from "./widgets/TableOfContents.astro";
+import ReadingProgress from "./widgets/ReadingProgress.astro";
+
+interface Heading {
+
+    depth: number;
+
+    slug: string;
+
+    text: string;
+
+}
+
+interface Props {
+
+    headings?: Heading[];
+
+}
+
+const {
+
+    headings = []
+
+} = Astro.props;
+---
+
+<Panel title="Navigation">
+
+    <TableOfContents
+
+        headings={headings}
+
+    />
+
+    <hr class="navigation-divider" />
+
+    <ReadingProgress />
+
+</Panel>

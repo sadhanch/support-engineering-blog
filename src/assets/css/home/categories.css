@@ -1,0 +1,36 @@
+/* ==========================================================
+   SEDS — Support Engineering Design System
+   File: categories.css
+   Purpose: Homepage categories section
+   Version: 1.1.0
+   ========================================================== */
+
+.category-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: var(--space-5);
+
+}
+
+@media (max-width: 1200px) {
+
+    .category-grid {
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .category-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}

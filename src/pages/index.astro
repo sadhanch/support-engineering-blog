@@ -2,19 +2,30 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 import Header from "../components/layout/Header.astro";
-import Footer from "../components/layout/Footer.astro";
+
+import Hero from "../components/home/Hero.astro";
+
+import CategoriesSection from "../components/home/CategoriesSection.astro";
+
+import LatestArticlesSection from "../components/home/LatestArticlesSection.astro";
+
+import LearningPathsSection from "../components/home/LearningPathsSection.astro";
 ---
 
-<BaseLayout
-    title="Support Engineering Blog"
->
+<BaseLayout>
 
     <Header />
 
     <main>
 
-    </main>
+        <Hero />
 
-    <Footer />
+        <LatestArticlesSection />
+
+        <CategoriesSection />
+
+        <LearningPathsSection />
+
+    </main>
 
 </BaseLayout>

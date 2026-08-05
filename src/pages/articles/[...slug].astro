@@ -1,0 +1,69 @@
+---
+import { render } from "astro:content";
+
+import ArticleLayout from "../../layouts/ArticleLayout.astro";
+
+import { getArticleBySlug } from "../../lib/articles";
+
+export async function getStaticPaths() {
+
+    const { getAllArticles } = await import("../../lib/articles");
+
+    const articles = await getAllArticles();
+
+    return articles.map((article) => ({
+
+        params: {
+
+            slug: article.id
+
+        }
+
+    }));
+
+}
+
+const { slug } = Astro.params;
+
+const article = await getArticleBySlug(slug!);
+
+if (!article) {
+
+    throw new Error("Article not found.");
+
+}
+
+const {
+
+    Content,
+
+    headings
+
+} = await render(article);
+---
+
+<ArticleLayout
+
+    title={article.data.title}
+
+    description={article.data.description}
+
+    category={article.data.category}
+
+    readingTime={article.readingTime}
+
+    updated={article.formattedDate}
+
+    summary={article.data.summary}
+
+    headings={headings}
+
+    technology={article.data.technology}
+
+    references={article.data.references}
+
+>
+
+    <Content />
+
+</ArticleLayout>

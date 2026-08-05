@@ -1,0 +1,77 @@
+---
+interface Reference {
+
+    title: string;
+
+    url: string;
+
+    description: string;
+
+}
+
+interface Props {
+
+    references?: Reference[];
+
+}
+
+const {
+
+    references = []
+
+} = Astro.props;
+---
+
+{
+
+    references.length > 0 && (
+
+        <section class="references">
+
+            <h2>
+
+                References
+
+            </h2>
+
+            <ul>
+
+                {
+
+                    references.map((reference) => (
+
+                        <li>
+
+                            <a
+
+                                href={reference.url}
+
+                                target="_blank"
+
+                                rel="noopener noreferrer"
+
+                            >
+
+                                {reference.title}
+
+                            </a>
+
+                            <p>
+
+                                {reference.description}
+
+                            </p>
+
+                        </li>
+
+                    ))
+
+                }
+
+            </ul>
+
+        </section>
+
+    )
+
+}

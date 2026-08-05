@@ -1,0 +1,40 @@
+/* ==========================================================
+   SEDS — Support Engineering Design System
+   File: section-header.css
+   Purpose: Reusable section heading
+   Version: 1.0.0
+   ========================================================== */
+
+.section-header {
+
+    margin-bottom: var(--space-7);
+
+}
+
+.section-header h2 {
+
+    margin-bottom: var(--space-3);
+
+}
+
+.section-header p {
+
+    max-width: 42rem;
+
+    color: var(--text-secondary);
+
+    margin: 0;
+
+}
+
+.section-header--center {
+
+    text-align: center;
+
+}
+
+.section-header--center p {
+
+    margin-inline: auto;
+
+}

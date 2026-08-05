@@ -1,0 +1,94 @@
+---
+import Badge from "./Badge.astro";
+
+interface Props {
+
+    title: string;
+
+    description: string;
+
+    level: "Beginner" | "Intermediate" | "Advanced";
+
+    articles: number;
+
+    duration: string;
+
+    href: string;
+
+}
+
+const {
+
+    title,
+
+    description,
+
+    level,
+
+    articles,
+
+    duration,
+
+    href
+
+} = Astro.props;
+
+const badgeVariant =
+
+    level === "Beginner"
+        ? "success"
+        : level === "Intermediate"
+            ? "info"
+            : "warning";
+---
+
+<a
+    href={href}
+    class="learning-path-card"
+>
+
+    <div class="learning-path-card__meta">
+
+        <Badge variant={badgeVariant}>
+
+            {level}
+
+        </Badge>
+
+        <span>
+
+            {duration}
+
+        </span>
+
+    </div>
+
+    <h3>
+
+        {title}
+
+    </h3>
+
+    <p>
+
+        {description}
+
+    </p>
+
+    <div class="learning-path-card__footer">
+
+        <span>
+
+            {articles} Articles
+
+        </span>
+
+        <span>
+
+            Start Learning →
+
+        </span>
+
+    </div>
+
+</a>

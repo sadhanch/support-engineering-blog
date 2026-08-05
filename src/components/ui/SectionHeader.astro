@@ -1,0 +1,45 @@
+---
+interface Props {
+
+    title: string;
+
+    description?: string;
+
+    align?: "left" | "center";
+
+}
+
+const {
+
+    title,
+
+    description,
+
+    align = "left"
+
+} = Astro.props;
+---
+
+<header class:list={["section-header", `section-header--${align}`]}>
+
+    <h2>
+
+        {title}
+
+    </h2>
+
+    {
+
+        description && (
+
+            <p>
+
+                {description}
+
+            </p>
+
+        )
+
+    }
+
+</header>

@@ -1,0 +1,79 @@
+---
+import Panel from "../../ui/Panel.astro";
+
+interface Props {
+
+    category: string;
+
+    readingTime: string;
+
+    updated: string;
+
+}
+
+const {
+
+    category,
+
+    readingTime,
+
+    updated
+
+} = Astro.props;
+---
+
+<Panel title="Article">
+
+    <div class="article-metadata">
+
+        <div class="metadata-item">
+
+            <span class="metadata-label">
+
+                Category
+
+            </span>
+
+            <span class="metadata-value">
+
+                {category}
+
+            </span>
+
+        </div>
+
+        <div class="metadata-item">
+
+            <span class="metadata-label">
+
+                Reading Time
+
+            </span>
+
+            <span class="metadata-value">
+
+                {readingTime}
+
+            </span>
+
+        </div>
+
+        <div class="metadata-item">
+
+            <span class="metadata-label">
+
+                Last Updated
+
+            </span>
+
+            <span class="metadata-value">
+
+                {updated}
+
+            </span>
+
+        </div>
+
+    </div>
+
+</Panel>

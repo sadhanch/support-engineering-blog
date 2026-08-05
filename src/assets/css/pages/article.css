@@ -1,0 +1,87 @@
+/* ==========================================================
+   SEDS — Article Page
+   ========================================================== */
+
+.article-page {
+
+    padding-block: var(--space-10);
+
+}
+
+.article-header {
+
+    margin-bottom: var(--space-8);
+
+}
+
+.article-category {
+
+    display: inline-block;
+
+    margin-bottom: var(--space-3);
+
+    color: var(--color-accent);
+
+    font-size: var(--font-size-sm);
+
+    font-weight: var(--font-weight-semibold);
+
+    text-transform: uppercase;
+
+    letter-spacing: .08em;
+
+}
+
+.article-description {
+
+    max-width: 70ch;
+
+    color: var(--text-secondary);
+
+}
+
+.article-layout {
+
+    display: grid;
+
+    grid-template-columns: 280px minmax(0, 1fr);
+
+    gap: var(--space-10);
+
+    align-items: start;
+
+}
+
+.article-sidebar {
+
+    position: sticky;
+
+    top: calc(var(--header-height) + var(--space-6));
+
+}
+
+.article-content {
+
+    min-width: 0;
+
+    max-width: 72ch;
+
+}
+
+@media (max-width: 992px) {
+
+    .article-layout {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .article-sidebar {
+
+        position: static;
+
+        order: 2;
+
+    }
+
+}

@@ -1,0 +1,151 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+import Container from "../components/layout/Container.astro";
+import ArticleSidebar from "../components/article/ArticleSidebar.astro";
+import QuickSummary from "../components/article/widgets/QuickSummary.astro";
+import TechnologyStack from "../components/article/TechnologyStack.astro";
+import References from "../components/article/References.astro";
+
+interface Heading {
+
+    depth: number;
+
+    slug: string;
+
+    text: string;
+
+}
+
+interface Props {
+
+    title: string;
+
+    description: string;
+
+    category: string;
+
+    readingTime: string;
+
+    updated: string;
+
+    summary?: string[];
+
+    headings?: Heading[];
+
+    technology?: string[];
+
+    references?: {
+
+        title: string;
+
+        url: string;
+
+        description: string;
+
+    }[];
+
+}
+
+const {
+
+    title,
+
+    description,
+
+    category,
+
+    readingTime,
+
+    updated,
+
+    summary,
+
+    headings = [],
+
+    technology,
+
+    references = [],
+
+} = Astro.props;
+---
+
+<BaseLayout
+
+    title={title}
+
+    description={description}
+
+>
+
+    <main class="article-page">
+
+        <Container>
+
+            <header class="article-header">
+
+                <span class="article-category">
+
+                    {category}
+
+                </span>
+
+                <h1>
+
+                    {title}
+
+                </h1>
+
+                <p class="article-description">
+
+                    {description}
+
+                </p>
+
+                <TechnologyStack
+
+                    technology={technology}
+
+                />
+
+            </header>
+
+            <div class="article-layout">
+
+                <ArticleSidebar
+
+                    category={category}
+
+                    readingTime={readingTime}
+
+                    updated={updated}
+
+                    headings={headings}
+
+                />
+
+                <article class="article-content">
+
+                    <QuickSummary
+
+                        summary={summary}
+
+                    />
+
+                    <slot />
+
+                    <References
+
+                        references={references}
+
+                    />
+
+                </article>
+
+            </div>
+
+        </Container>
+
+    </main>
+
+</BaseLayout>

@@ -1,0 +1,57 @@
+/* ==========================================================
+   SEDS — Table of Contents
+   ========================================================== */
+
+.table-of-contents ul {
+
+    list-style: none;
+
+    margin: 0;
+
+    padding: 0;
+
+}
+
+.table-of-contents li {
+
+    margin-bottom: var(--space-3);
+
+}
+
+.table-of-contents a {
+
+    color: var(--text-secondary);
+
+    text-decoration: none;
+
+    transition: color .2s ease;
+
+}
+
+.table-of-contents a:hover {
+
+    color: var(--color-accent);
+
+}
+
+.depth-3 {
+
+    padding-left: var(--space-4);
+
+}
+
+.depth-4 {
+
+    padding-left: var(--space-8);
+
+}
+
+.navigation-divider {
+
+    margin-block: var(--space-5);
+
+    border: 0;
+
+    border-top: 1px solid var(--border-default);
+
+}

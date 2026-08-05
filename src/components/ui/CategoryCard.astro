@@ -1,0 +1,60 @@
+---
+interface Props {
+
+    href: string;
+
+    title: string;
+
+    description: string;
+
+    articleCount: number;
+
+}
+
+const {
+
+    href,
+
+    title,
+
+    description,
+
+    articleCount
+
+} = Astro.props;
+---
+
+<a
+    href={href}
+    class="category-card"
+>
+
+    <h3 class="category-card__title">
+
+        {title}
+
+    </h3>
+
+    <p class="category-card__description">
+
+        {description}
+
+    </p>
+
+    <div class="category-card__footer">
+
+        <span class="category-card__count">
+
+            {articleCount} Articles
+
+        </span>
+
+        <span class="category-card__link">
+
+            Browse →
+
+        </span>
+
+    </div>
+
+</a>

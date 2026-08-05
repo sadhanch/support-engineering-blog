@@ -1,0 +1,57 @@
+---
+interface Heading {
+
+    depth: number;
+
+    slug: string;
+
+    text: string;
+
+}
+
+interface Props {
+
+    headings?: Heading[];
+
+}
+
+const {
+
+    headings = []
+
+} = Astro.props;
+---
+
+{
+
+    headings.length > 0 && (
+
+        <nav class="table-of-contents">
+
+            <ul>
+
+                {
+
+                    headings.map((heading) => (
+
+                        <li class={`depth-${heading.depth}`}>
+
+                            <a href={`#${heading.slug}`}>
+
+                                {heading.text}
+
+                            </a>
+
+                        </li>
+
+                    ))
+
+                }
+
+            </ul>
+
+        </nav>
+
+    )
+
+}

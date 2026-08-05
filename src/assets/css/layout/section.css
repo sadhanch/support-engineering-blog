@@ -1,0 +1,24 @@
+/* ==========================================================
+   SEDS — Support Engineering Design System
+   File: section.css
+   Purpose: Section spacing
+   Version: 1.0.0
+   ========================================================== */
+
+.section {
+
+    padding-block: var(--space-8);
+
+}
+
+.section:first-child {
+
+    padding-top: var(--space-6);
+
+}
+
+.section:last-child {
+
+    padding-bottom: var(--space-8);
+
+}
