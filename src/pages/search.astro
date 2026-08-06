@@ -1,0 +1,172 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+import Container from "../components/layout/Container.astro";
+import Section from "../components/layout/Section.astro";
+
+import TechnologyChip from "../components/ui/TechnologyChip.astro";
+import ArticleListItem from "../components/article/ArticleListItem.astro";
+
+import { getAllTechnologies } from "../lib/technologies";
+import { getLatestArticles } from "../lib/articles";
+
+const technologies = await getAllTechnologies();
+
+const latestArticles = await getLatestArticles(3);
+
+const popularTechnologies = technologies
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 6);
+---
+
+<BaseLayout
+
+    title="Search"
+
+    description="Search articles and technical guides."
+
+>
+
+    <main class="search-page">
+
+        <Section>
+
+            <Container>
+
+                <header class="search-header">
+
+                    <h1>
+
+                        Search the Knowledge Base
+
+                    </h1>
+
+                    <p>
+
+                        Find articles, research, and practical guidance for Microsoft 365 administrators and support engineers.
+
+                    </p>
+
+                </header>
+
+                <div class="search-box">
+
+                    <input
+
+                        id="search-input"
+
+                        type="search"
+
+                        placeholder="Search articles and technical guides..."
+
+                        aria-label="Search"
+
+                        autocomplete="off"
+
+                        spellcheck="false"
+
+                    />
+
+                </div>
+
+                <section
+
+                    id="search-results-container"
+
+                    class="search-results"
+
+                    hidden
+
+                >
+
+                </section>
+
+                <section
+
+                    id="search-discovery-container"
+
+                    class="search-discovery"
+
+                >
+
+                    <section class="search-recent">
+
+                        <h2>
+
+                            Recently Published
+
+                        </h2>
+
+                        {
+
+                            latestArticles.map((article) => (
+
+                                <ArticleListItem
+
+                                    href={`/articles/${article.id}`}
+
+                                    title={article.data.title}
+
+                                    category={article.data.category}
+
+                                    excerpt={article.data.excerpt}
+
+                                    readingTime={article.readingTime}
+
+                                />
+
+                            ))
+
+                        }
+
+                    </section>
+
+                    <section class="search-technologies">
+
+                        <h2>
+
+                            Popular Technologies
+
+                        </h2>
+
+                        <div class="search-technologies__list">
+
+                            {
+
+                                popularTechnologies.map((technology) => (
+
+                                    <TechnologyChip
+
+                                        name={technology.name}
+
+                                        slug={technology.slug}
+
+                                        count={technology.count}
+
+                                    />
+
+                                ))
+
+                            }
+
+                        </div>
+
+                    </section>
+
+                </section>
+
+            </Container>
+
+        </Section>
+
+    </main>
+
+    <script type="module">
+
+        import { initializeSearch } from "../scripts/search";
+
+        initializeSearch();
+
+    </script>
+
+</BaseLayout>

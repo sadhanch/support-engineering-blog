@@ -1,0 +1,81 @@
+/* ==========================================================
+   SEDS — Technology Chip
+   ========================================================== */
+
+.technology-chip {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: var(--space-2);
+
+    padding: var(--space-3) var(--space-4);
+
+    border: 1px solid var(--border-default);
+
+    border-radius: var(--radius-pill);
+
+    background: var(--surface-secondary);
+
+    color: var(--text-primary);
+
+    text-decoration: none;
+
+    font-size: var(--font-caption);
+
+    font-weight: var(--font-weight-medium);
+
+    transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+
+}
+
+.technology-chip:hover {
+
+    background: var(--surface-primary);
+
+    border-color: var(--color-accent);
+
+    transform: translateY(-2px);
+
+    box-shadow: var(--shadow-sm);
+
+}
+
+.technology-chip:focus-visible {
+
+    outline: 2px solid var(--color-accent);
+
+    outline-offset: 3px;
+
+}
+
+.technology-chip__count {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 1.75rem;
+
+    height: 1.75rem;
+
+    padding-inline: var(--space-2);
+
+    border-radius: var(--radius-pill);
+
+    background: var(--surface-tertiary);
+
+    color: var(--text-secondary);
+
+    font-size: var(--font-overline);
+
+    font-weight: var(--font-weight-semibold);
+
+}

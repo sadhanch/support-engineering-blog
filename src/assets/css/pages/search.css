@@ -1,0 +1,152 @@
+/* ==========================================================
+   SEDS — Search Page
+   ========================================================== */
+
+.search-page {
+
+    padding-block: var(--space-10);
+
+}
+
+/* ==========================================================
+   Hero
+   ========================================================== */
+
+.search-header {
+
+    max-width: 48rem;
+
+    margin-inline: auto;
+
+    margin-bottom: var(--space-8);
+
+    text-align: center;
+
+}
+
+.search-header p {
+
+    max-width: 65ch;
+
+    margin-inline: auto;
+
+    color: var(--text-secondary);
+
+}
+
+/* ==========================================================
+   Search Input
+   ========================================================== */
+
+.search-box {
+
+    max-width: 44rem;
+
+    margin-inline: auto;
+
+    margin-bottom: var(--space-section);
+
+}
+
+.search-box input {
+
+    width: 100%;
+
+    padding: 1.25rem 1.5rem;
+
+    border: 1px solid var(--border-default);
+
+    border-radius: var(--radius-lg);
+
+    background: var(--surface-primary);
+
+    color: var(--text-primary);
+
+    font-family: inherit;
+
+    font-size: var(--font-body-lg);
+
+    box-shadow: var(--shadow-sm);
+
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+
+}
+
+.search-box input::placeholder {
+
+    color: var(--text-secondary);
+
+}
+
+.search-box input:focus {
+
+    outline: none;
+
+    border-color: var(--color-accent);
+
+    box-shadow:
+        0 0 0 3px rgba(30, 115, 190, 0.12),
+        var(--shadow-sm);
+
+}
+
+/* ==========================================================
+   Discovery
+   ========================================================== */
+
+.search-discovery {
+
+    max-width: 48rem;
+
+    margin-inline: auto;
+
+}
+
+.search-discovery section + section {
+
+    margin-top: calc(var(--space-section) * 1.25);
+
+}
+
+.search-recent h2,
+.search-technologies h2 {
+
+    margin-bottom: var(--space-5);
+
+    font-size: var(--font-h3);
+
+    line-height: var(--line-height-tight);
+
+}
+
+.search-technologies__list {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: var(--space-4);
+
+}
+
+/* ==========================================================
+   Search Results
+   ========================================================== */
+
+.search-results {
+
+    max-width: 48rem;
+
+    margin-inline: auto;
+
+    margin-bottom: var(--space-section);
+
+}
+
+.search-results[hidden] {
+
+    display: none;
+
+}

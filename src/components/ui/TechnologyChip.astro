@@ -1,0 +1,49 @@
+---
+interface Props {
+
+    name: string;
+
+    slug: string;
+
+    count: number;
+
+}
+
+const {
+
+    name,
+
+    slug,
+
+    count
+
+} = Astro.props;
+---
+
+<a
+
+    href={`/technology/${slug}`}
+
+    class="technology-chip"
+
+>
+
+    <span class="technology-chip__name">
+
+        {name}
+
+    </span>
+
+    <span
+
+        class="technology-chip__count"
+
+        aria-label={`${count} article${count === 1 ? "" : "s"}`}
+
+    >
+
+        {count}
+
+    </span>
+
+</a>

@@ -1,0 +1,53 @@
+/* ==========================================================
+   SEDS — Search Result Item
+   ========================================================== */
+
+.search-result-item {
+
+    padding-block: var(--space-6);
+
+    border-bottom: 1px solid var(--border-subtle);
+
+}
+
+.search-result-item:last-child {
+
+    border-bottom: none;
+
+}
+
+.search-result-item__title {
+
+    display: inline-block;
+
+    margin-bottom: var(--space-2);
+
+    color: var(--text-primary);
+
+    font-size: var(--font-h3);
+
+    font-weight: var(--font-weight-semibold);
+
+    line-height: 1.35;
+
+    text-decoration: none;
+
+    transition: color var(--transition-fast);
+
+}
+
+.search-result-item__title:hover {
+
+    color: var(--color-accent);
+
+}
+
+.search-result-item__excerpt {
+
+    margin-top: var(--space-3);
+
+    color: var(--text-secondary);
+
+    line-height: var(--line-height-relaxed);
+
+}

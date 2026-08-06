@@ -30,6 +30,7 @@
 @import "./ui/button.css";
 @import "./ui/card.css";
 @import "./ui/badge.css";
+@import "./ui/technology-chip.css";
 @import "./ui/metadata.css";
 @import "./ui/article-card.css";
 @import "./ui/search-button.css";
@@ -63,6 +64,7 @@
 @import "./components/related-articles.css";
 @import "./components/metadata.css";
 @import "./components/article-list-item.css";
+@import "./components/search-result-item.css";
 
 /* ==========================================================
    Pages
@@ -71,3 +73,4 @@
 @import "./pages/article.css";
 @import "./pages/technology.css";
 @import "./pages/category.css";
+@import "./pages/search.css";

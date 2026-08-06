@@ -1,16 +1,23 @@
 ---
 import "../assets/css/style.css";
 
+import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
 
 interface Props {
+
     title?: string;
+
     description?: string;
+
 }
 
 const {
+
     title = "Support Engineering Blog",
+
     description = "Technical documentation, Microsoft 365 administration, and support engineering resources."
+
 } = Astro.props;
 ---
 
@@ -42,6 +49,8 @@ const {
 </head>
 
 <body>
+
+    <Header />
 
     <slot />
 

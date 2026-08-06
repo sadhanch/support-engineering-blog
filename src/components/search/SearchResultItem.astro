@@ -1,0 +1,68 @@
+---
+import Metadata from "../ui/metadata/Metadata.astro";
+import MetadataItem from "../ui/metadata/MetadataItem.astro";
+
+interface Props {
+
+    url: string;
+
+    title: string;
+
+    excerpt: string;
+
+    category?: string;
+
+}
+
+const {
+
+    url,
+
+    title,
+
+    excerpt,
+
+    category
+
+} = Astro.props;
+---
+
+<article class="search-result-item">
+
+    <a
+
+        href={url}
+
+        class="search-result-item__title"
+
+    >
+
+        {title}
+
+    </a>
+
+    {
+
+        category && (
+
+            <Metadata>
+
+                <MetadataItem
+
+                    label={category}
+
+                />
+
+            </Metadata>
+
+        )
+
+    }
+
+    <p class="search-result-item__excerpt">
+
+        {excerpt}
+
+    </p>
+
+</article>
