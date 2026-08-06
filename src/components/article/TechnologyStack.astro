@@ -1,6 +1,8 @@
 ---
 import Badge from "../ui/Badge.astro";
 
+import { slugify } from "../../utils/slug";
+
 interface Props {
 
     technology: string[];
@@ -32,11 +34,23 @@ const {
 
                     technology.map((item) => (
 
-                        <Badge>
+                        <a
 
-                            {item}
+                            href={`/technology/${slugify(item)}`}
 
-                        </Badge>
+                            class="technology-stack__link"
+
+                            aria-label={`View all articles about ${item}`}
+
+                        >
+
+                            <Badge>
+
+                                {item}
+
+                            </Badge>
+
+                        </a>
 
                     ))
 

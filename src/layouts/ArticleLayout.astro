@@ -6,6 +6,9 @@ import ArticleSidebar from "../components/article/ArticleSidebar.astro";
 import QuickSummary from "../components/article/widgets/QuickSummary.astro";
 import TechnologyStack from "../components/article/TechnologyStack.astro";
 import References from "../components/article/References.astro";
+import RelatedArticles from "../components/article/RelatedArticles.astro";
+
+import { slugify } from "../utils/slug";
 
 interface Heading {
 
@@ -45,6 +48,20 @@ interface Props {
 
     }[];
 
+    relatedArticles?: {
+
+        id: string;
+
+        data: {
+
+            title: string;
+
+        };
+
+        readingTime: string;
+
+    }[];
+
 }
 
 const {
@@ -67,6 +84,8 @@ const {
 
     references = [],
 
+    relatedArticles = [],
+
 } = Astro.props;
 ---
 
@@ -84,11 +103,19 @@ const {
 
             <header class="article-header">
 
-                <span class="article-category">
+                <a
+
+                    href={`/category/${slugify(category)}`}
+
+                    class="article-category"
+
+                    aria-label={`View all articles in the ${category} category`}
+
+                >
 
                     {category}
 
-                </span>
+                </a>
 
                 <h1>
 
@@ -137,6 +164,12 @@ const {
                     <References
 
                         references={references}
+
+                    />
+
+                    <RelatedArticles
+
+                        articles={relatedArticles}
 
                     />
 

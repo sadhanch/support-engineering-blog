@@ -1,0 +1,103 @@
+---
+import Metadata from "../ui/metadata/Metadata.astro";
+import MetadataItem from "../ui/metadata/MetadataItem.astro";
+
+interface Article {
+
+    id: string;
+
+    data: {
+
+        title: string;
+
+        category: string;
+
+        excerpt: string;
+
+    };
+
+    readingTime: string;
+
+}
+
+interface Props {
+
+    title?: string;
+
+    articles?: Article[];
+
+}
+
+const {
+
+    title = "Recommended Reading",
+
+    articles = []
+
+} = Astro.props;
+---
+
+{
+
+    articles.length > 0 && (
+
+        <section class="related-articles">
+
+            <h2>
+
+                {title}
+
+            </h2>
+
+            <ul>
+
+                {
+
+                    articles.map((article) => (
+
+                        <li>
+
+                            <a
+                                class="related-articles__title"
+                                href={`/articles/${article.id}`}
+                            >
+
+                                {article.data.title}
+
+                            </a>
+
+                            <Metadata>
+
+                                <MetadataItem
+
+                                    label={article.data.category}
+
+                                />
+
+                                <MetadataItem
+
+                                    label={article.readingTime}
+
+                                />
+
+                            </Metadata>
+
+                            <p class="related-articles__excerpt">
+
+                                {article.data.excerpt}
+
+                            </p>
+
+                        </li>
+
+                    ))
+
+                }
+
+            </ul>
+
+        </section>
+
+    )
+
+}

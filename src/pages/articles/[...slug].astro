@@ -3,7 +3,12 @@ import { render } from "astro:content";
 
 import ArticleLayout from "../../layouts/ArticleLayout.astro";
 
-import { getArticleBySlug } from "../../lib/articles";
+import {
+    getArticleBySlug,
+    getAllArticles
+} from "../../lib/articles";
+
+import { getRelatedArticles } from "../../lib/relatedArticles";
 
 export async function getStaticPaths() {
 
@@ -26,6 +31,13 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 
 const article = await getArticleBySlug(slug!);
+
+const allArticles = await getAllArticles();
+
+const relatedArticles = getRelatedArticles(
+    article!,
+    allArticles
+);
 
 if (!article) {
 
@@ -61,6 +73,8 @@ const {
     technology={article.data.technology}
 
     references={article.data.references}
+
+    relatedArticles={relatedArticles}
 
 >
 

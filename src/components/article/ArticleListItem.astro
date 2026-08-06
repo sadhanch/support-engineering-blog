@@ -1,0 +1,73 @@
+---
+import Metadata from "../ui/metadata/Metadata.astro";
+import MetadataItem from "../ui/metadata/MetadataItem.astro";
+import { slugify } from "../../utils/slug";
+
+interface Props {
+
+    href: string;
+
+    title: string;
+
+    category: string;
+
+    excerpt: string;
+
+    readingTime: string;
+
+}
+
+const {
+
+    href,
+
+    title,
+
+    category,
+
+    excerpt,
+
+    readingTime
+
+} = Astro.props;
+---
+
+<article class="article-list-item">
+
+    <a
+
+        href={href}
+
+        class="article-list-item__title"
+
+    >
+
+        {title}
+
+    </a>
+
+    <Metadata>
+
+        <MetadataItem
+
+            label={category}
+
+            href={`/category/${slugify(category)}`}
+
+        />
+
+        <MetadataItem
+
+            label={readingTime}
+
+        />
+
+    </Metadata>
+
+    <p class="article-list-item__excerpt">
+
+        {excerpt}
+
+    </p>
+
+</article>

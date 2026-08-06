@@ -1,0 +1,23 @@
+/* ==========================================================
+   SEDS — Category Page
+   ========================================================== */
+
+.category-header {
+
+    margin-bottom: var(--space-section);
+
+}
+
+.category-header p {
+
+    margin-top: var(--space-3);
+
+    color: var(--text-secondary);
+
+}
+
+.category-articles {
+
+    margin-top: var(--space-section);
+
+}

@@ -1,0 +1,110 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/layout/Container.astro";
+import Section from "../../components/layout/Section.astro";
+
+import ArticleListItem from "../../components/article/ArticleListItem.astro";
+
+import {
+    getAllCategories,
+    getArticlesByCategory
+} from "../../lib/categories";
+
+export async function getStaticPaths() {
+
+    const categories = await getAllCategories();
+
+    return categories.map((category) => ({
+
+        params: {
+
+            slug: category.slug
+
+        },
+
+        props: {
+
+            category
+
+        }
+
+    }));
+
+}
+
+const {
+
+    category
+
+} = Astro.props;
+
+const articles = await getArticlesByCategory(
+    category.slug
+);
+
+const articleCountText = `${category.count} ${
+    category.count === 1
+        ? "article"
+        : "articles"
+}`;
+---
+
+<BaseLayout
+
+    title={category.name}
+
+    description={`Articles in the ${category.name} category.`}
+
+>
+
+    <Section>
+
+        <Container>
+
+            <header class="category-header">
+
+                <h1>
+
+                    {category.name}
+
+                </h1>
+
+                <p>
+
+                    {articleCountText}
+
+                </p>
+
+            </header>
+
+            <section class="category-articles">
+
+                {
+
+                    articles.map((article) => (
+
+                        <ArticleListItem
+
+                            href={`/articles/${article.id}`}
+
+                            title={article.data.title}
+
+                            category={article.data.category}
+
+                            excerpt={article.data.excerpt}
+
+                            readingTime={article.readingTime}
+
+                        />
+
+                    ))
+
+                }
+
+            </section>
+
+        </Container>
+
+    </Section>
+
+</BaseLayout>

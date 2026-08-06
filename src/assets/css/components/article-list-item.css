@@ -1,0 +1,55 @@
+/* ==========================================================
+   SEDS — Article List Item
+   ========================================================== */
+
+.article-list-item {
+
+    padding-block: var(--space-stack-md);
+
+    border-bottom: 1px solid var(--border-subtle);
+
+}
+
+.article-list-item:last-child {
+
+    border-bottom: none;
+
+}
+
+.article-list-item__title {
+
+    display: inline-block;
+
+    margin-bottom: var(--space-3);
+
+    color: var(--text-primary);
+
+    font-size: var(--font-h3);
+
+    font-weight: var(--font-weight-semibold);
+
+    line-height: 1.35;
+
+    text-decoration: none;
+
+    transition: color var(--transition-fast);
+
+}
+
+.article-list-item__title:hover {
+
+    color: var(--color-accent);
+
+}
+
+.article-list-item__excerpt {
+
+    margin: 0;
+
+    max-width: var(--measure-content);
+
+    color: var(--text-secondary);
+
+    line-height: var(--line-height-relaxed);
+
+}

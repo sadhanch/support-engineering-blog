@@ -1,0 +1,103 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/layout/Container.astro";
+import Section from "../../components/layout/Section.astro";
+import ArticleListItem from "../../components/article/ArticleListItem.astro";
+
+import {
+    getAllTechnologies,
+    getArticlesByTechnology
+} from "../../lib/technologies";
+
+export async function getStaticPaths() {
+
+    const technologies = await getAllTechnologies();
+
+    return technologies.map((technology) => ({
+
+        params: {
+
+            slug: technology.slug
+
+        },
+
+        props: {
+
+            technology
+
+        }
+
+    }));
+
+}
+
+const { technology } = Astro.props;
+
+const articles = await getArticlesByTechnology(
+    technology.slug
+);
+
+const articleCountText = `${technology.count} ${
+    technology.count === 1 ? "article" : "articles"
+}`;
+---
+
+<BaseLayout
+
+    title={technology.name}
+
+    description={`Articles about ${technology.name}.`}
+
+>
+
+    <Section>
+
+        <Container>
+
+            <header class="technology-header">
+
+                <h1>
+
+                    {technology.name}
+
+                </h1>
+
+                <p>
+
+                    {articleCountText}
+
+                </p>
+
+            </header>
+
+            <section class="technology-articles">
+
+                {
+
+                    articles.map((article) => (
+
+                        <ArticleListItem
+
+                            href={`/articles/${article.id}`}
+
+                            title={article.data.title}
+
+                            category={article.data.category}
+
+                            excerpt={article.data.excerpt}
+
+                            readingTime={article.readingTime}
+
+                        />
+
+                    ))
+
+                }
+
+            </section>
+
+        </Container>
+
+    </Section>
+
+</BaseLayout>

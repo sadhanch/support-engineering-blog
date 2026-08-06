@@ -3,6 +3,15 @@
    File: variables.css
    Purpose: Global Design Tokens
    Version: 1.0.0
+
+   Design Principles
+
+   1. Components consume semantic tokens.
+   2. Semantic tokens consume foundation tokens.
+   3. Components never use foundation tokens directly.
+   4. Spacing follows an 8px rhythm.
+   5. Typography uses role-based tokens.
+   6. Prefer whitespace over decoration.
    ========================================================== */
 
 :root {
@@ -57,7 +66,7 @@
 
     --text-primary: var(--gray-800);
     --text-secondary: var(--gray-500);
-    --text-muted: var(--gray-400);
+    --text-tertiary: var(--gray-400);
     --text-inverse: var(--color-white);
 
 
@@ -110,6 +119,26 @@
     --line-height-normal: 1.6;
     --line-height-relaxed: 1.8;
 
+    /* ======================================================
+       TYPOGRAPHY ROLES
+       ====================================================== */
+
+    --font-display: var(--font-size-4xl);
+
+    --font-h1: var(--font-size-3xl);
+
+    --font-h2: var(--font-size-2xl);
+
+    --font-h3: var(--font-size-xl);
+
+    --font-body-lg: var(--font-size-lg);
+
+    --font-body: var(--font-size-md);
+
+    --font-caption: var(--font-size-sm);
+
+    --font-overline: var(--font-size-xs);
+
 
     /* ======================================================
        SPACING SCALE
@@ -127,6 +156,22 @@
     --space-9: 5rem;      /* 80px */
     --space-10: 6rem;     /* 96px */
 
+ /* ======================================================
+    SPACING ROLES
+    ====================================================== */
+
+    --space-inline: var(--space-4);
+
+    --space-stack-xs: var(--space-3);
+
+    --space-stack-sm: var(--space-4);
+
+    --space-stack-md: var(--space-6);
+
+    --space-stack-lg: var(--space-8);
+
+    --space-section: var(--space-10);
+
 
     /* ======================================================
        BORDER RADIUS
@@ -137,6 +182,7 @@
     --radius-lg: 0.75rem;
     --radius-xl: 1rem;
     --radius-pill: 999rem;
+    --radius-round: 50%;
 
 
     /* ======================================================
@@ -155,6 +201,7 @@
     --container-width: 80rem;        /* 1280px */
     --content-width: 47.5rem;        /* 760px */
     --reader-toolkit-width: 20rem;   /* 320px */
+    --header-height: 4.5rem;
 
 
     /* ======================================================
@@ -181,9 +228,23 @@
 
     --ease-standard: ease-in-out;
 
-    --transition-fast: 150ms var(--ease-standard);
-    --transition-normal: 250ms var(--ease-standard);
-    --transition-slow: 400ms var(--ease-standard);
+    --duration-fast: 150ms;
+
+    --duration-normal: 250ms;
+
+    --duration-slow: 400ms;
+
+    --transition-fast:
+      var(--duration-fast)
+      var(--ease-standard);
+
+    --transition-normal:
+      var(--duration-normal)
+      var(--ease-standard);
+
+    --transition-slow:
+      var(--duration-slow)
+      var(--ease-standard);
 
 
     /* ======================================================
@@ -196,8 +257,51 @@
     --z-modal: 1000;
 
     /* ======================================================
-      HEADER
-      ====================================================== */
+       CONTENT
+       ====================================================== */
 
-   --header-height: 4.5rem;
+    --measure-content: 68ch;
+
+    --measure-wide: 80ch;
+
+    --measure-code: 100%;
+
+    --heading-spacing: var(--space-8);
+
+    --section-spacing: var(--space-10);
+
+    --paragraph-spacing: var(--space-5);
+
+    --list-spacing: var(--space-3);
+
+    --blockquote-spacing: var(--space-6);
+
+    /* ======================================================
+       OPACITY
+       ====================================================== */
+
+    --opacity-disabled: .4;
+
+    --opacity-muted: .6;
+
+    --opacity-overlay: .8;
+
+ /* ======================================================
+   COMPONENT TOKENS
+
+   Reserved for component-specific semantic tokens.
+
+   Examples
+
+   --button-height
+
+   --button-padding-inline
+
+   --panel-padding
+
+   --panel-gap
+
+   --badge-padding-inline
+
+   ====================================================== */
 }

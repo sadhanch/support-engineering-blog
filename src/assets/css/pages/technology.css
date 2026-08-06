@@ -1,0 +1,23 @@
+/* ==========================================================
+   SEDS — Technology Page
+   ========================================================== */
+
+.technology-header {
+
+    margin-bottom: var(--space-section);
+
+}
+
+.technology-header p {
+
+    margin-top: var(--space-3);
+
+    color: var(--text-secondary);
+
+}
+
+.technology-articles {
+
+    margin-top: var(--space-section);
+
+}

@@ -4,13 +4,13 @@
 
 .article-page {
 
-    padding-block: var(--space-10);
+    padding-block: var(--space-section);
 
 }
 
 .article-header {
 
-    margin-bottom: var(--space-8);
+    margin-bottom: var(--space-stack-lg);
 
 }
 
@@ -22,7 +22,7 @@
 
     color: var(--color-accent);
 
-    font-size: var(--font-size-sm);
+    font-size: var(--font-caption);
 
     font-weight: var(--font-weight-semibold);
 
@@ -30,11 +30,31 @@
 
     letter-spacing: .08em;
 
+    text-decoration: none;
+
+    transition: color var(--transition-fast);
+
+}
+
+.article-category:hover {
+
+    color: var(--color-primary);
+
+}
+
+.article-category:focus-visible {
+
+    outline: 2px solid var(--color-accent);
+
+    outline-offset: 2px;
+
+    border-radius: var(--radius-sm);
+
 }
 
 .article-description {
 
-    max-width: 70ch;
+    max-width: var(--measure-content);
 
     color: var(--text-secondary);
 
