@@ -7,7 +7,7 @@
 
 .site-footer {
 
-    margin-top: var(--space-10);
+    margin-top: var(--space-8);
 
     padding-block: var(--space-8);
 
@@ -111,9 +111,41 @@
 
 @media (max-width: 640px) {
 
+    .site-footer {
+
+        text-align: center;
+
+    }
+
+    .site-footer h4 {
+
+        margin-bottom: var(--space-4);
+
+    }
+
     .footer-grid {
 
         grid-template-columns: 1fr;
+
+        gap: var(--space-8);
+
+    }
+
+    .footer-brand p {
+
+        margin-inline: auto;
+
+    }
+
+    .site-footer ul {
+
+        align-items: center;
+
+    }
+
+    .footer-bottom {
+
+        text-align: center;
 
     }
 

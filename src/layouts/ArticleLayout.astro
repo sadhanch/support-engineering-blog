@@ -99,9 +99,9 @@ const {
 
     <main
 
-        class="article-page"
+        id="main-content"
 
-        data-pagefind-body
+        class="article-page"
 
     >
 
@@ -109,14 +109,35 @@ const {
 
             <header class="article-header">
 
+                <span
+                    hidden
+                    data-pagefind-meta="category"
+                >
+
+                    {category}
+
+                </span>
+
+                <span
+                    hidden
+                    data-pagefind-meta="reading_time"
+                >
+
+                    {readingTime}
+
+                </span>
+
+                <span
+                    hidden
+                    data-pagefind-meta="description"
+                >
+                    {description}
+                </span>
+
                 <a
-
                     href={`/category/${slugify(category)}`}
-
                     class="article-category"
-
                     aria-label={`View all articles in the ${category} category`}
-
                 >
 
                     {category}
@@ -145,25 +166,48 @@ const {
 
             <div class="article-layout">
 
-                <ArticleSidebar
+                <div class="article-sidebar--desktop">
 
-                    category={category}
+                    <ArticleSidebar
 
-                    readingTime={readingTime}
+                        category={category}
 
-                    updated={updated}
+                        readingTime={readingTime}
 
-                    headings={headings}
+                        updated={updated}
 
-                />
+                        headings={headings}
 
-                <article class="article-content">
+                    />
+
+                </div>
+
+                <article
+                    class="article-content"
+                    data-pagefind-body
+                >
 
                     <QuickSummary
 
                         summary={summary}
 
                     />
+
+                    <div class="article-sidebar--mobile">
+
+                        <ArticleSidebar
+
+                            category={category}
+
+                            readingTime={readingTime}
+
+                            updated={updated}
+
+                            headings={headings}
+
+                        />
+
+                    </div>
 
                     <slot />
 
@@ -173,11 +217,15 @@ const {
 
                     />
 
-                    <RelatedArticles
+                    <div data-pagefind-ignore>
 
-                        articles={relatedArticles}
+                        <RelatedArticles
 
-                    />
+                            articles={relatedArticles}
+
+                        />
+
+                    </div>
 
                 </article>
 

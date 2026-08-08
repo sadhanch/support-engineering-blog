@@ -13,6 +13,7 @@
 @import "./base/reset.css";
 @import "./base/typography.css";
 @import "./base/base.css";
+@import "./base/accessibility.css";
 
 /* ==========================================================
    Layout

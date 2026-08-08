@@ -1,6 +1,7 @@
 ---
 import "../assets/css/style.css";
 
+import { site } from "../config/site";
 import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
 
@@ -21,41 +22,80 @@ const {
 } = Astro.props;
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 
 <html lang="en">
 
-<head>
+    <head>
 
-    <meta charset="UTF-8" />
+        <meta charset="UTF-8" />
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
 
-    <title>{title}</title>
+        <title>{title}</title>
 
-    <meta
-        name="description"
-        content={description}
-    />
+        <meta
+            name="description"
+            content={description}
+        />
 
-    <link
-        rel="icon"
-        href="/favicon/favicon.ico"
-    />
+        <meta
+            name="author"
+            content={site.author}
+        />
 
-</head>
+        <meta
+            name="robots"
+            content="index, follow"
+        />
 
-<body>
+        <meta
+            name="theme-color"
+            content={site.themeColor}
+        />
 
-    <Header />
+        <link
+            rel="canonical"
+            href={Astro.url.href}
+        />
 
-    <slot />
+        <link
+            rel="icon"
+            href="/favicon/favicon.ico"
+        />
 
-    <Footer />
+    </head>
 
-</body>
+    <body>
+
+        <a
+            href="#main-content"
+            class="skip-link"
+        >
+
+            Skip to main content
+
+        </a>
+
+        <Header />
+
+        <slot />
+
+        <Footer />
+
+        <script type="module">
+
+            import {
+                initializeGlobalSearch
+            } from "../scripts/global-search";
+
+            initializeGlobalSearch();
+
+        </script>
+
+    </body>
 
 </html>

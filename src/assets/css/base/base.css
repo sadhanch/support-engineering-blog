@@ -27,8 +27,35 @@ body {
    Main Layout
 ---------------------------------------------------------- */
 
-main {
+html,
+body {
+
+    height: 100%;
+
+}
+
+body {
+
     min-height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    background-color: var(--surface-secondary);
+
+    color: var(--text-primary);
+
+    font-family: var(--font-family-base);
+
+    line-height: var(--line-height-normal);
+
+}
+
+main {
+
+    flex: 1;
+
 }
 
 

@@ -2,11 +2,21 @@
    SEDS — Article Page
    ========================================================== */
 
+
+/* ==========================================================
+   Article Page
+   ========================================================== */
+
 .article-page {
 
     padding-block: var(--space-section);
 
 }
+
+
+/* ==========================================================
+   Article Header
+   ========================================================== */
 
 .article-header {
 
@@ -60,6 +70,11 @@
 
 }
 
+
+/* ==========================================================
+   Article Layout
+   ========================================================== */
+
 .article-layout {
 
     display: grid;
@@ -72,13 +87,41 @@
 
 }
 
-.article-sidebar {
+
+/* ==========================================================
+   Desktop Reader's Toolkit
+   ========================================================== */
+
+.article-sidebar--desktop {
+
+    display: block;
 
     position: sticky;
 
-    top: calc(var(--header-height) + var(--space-6));
+    top: 6rem;
+
+    align-self: start;
 
 }
+
+
+/* ==========================================================
+   Mobile Reader's Toolkit
+   ----------------------------------------------------------
+   Hidden by default.
+   Displayed only at the mobile breakpoint.
+   ========================================================== */
+
+.article-sidebar--mobile {
+
+    display: none;
+
+}
+
+
+/* ==========================================================
+   Article Content
+   ========================================================== */
 
 .article-content {
 
@@ -88,6 +131,11 @@
 
 }
 
+
+/* ==========================================================
+   Tablet / Mobile
+   ========================================================== */
+
 @media (max-width: 992px) {
 
     .article-layout {
@@ -96,11 +144,17 @@
 
     }
 
-    .article-sidebar {
+    .article-sidebar--desktop {
 
-        position: static;
+        display: none;
 
-        order: 2;
+    }
+
+    .article-sidebar--mobile {
+
+        display: block;
+
+        margin-block: var(--space-8);
 
     }
 

@@ -9,6 +9,22 @@ export const site = {
 
     url: "https://blog.sadhan.ch",
 
+    author: "Sadhan",
+
+    language: "en",
+
+    themeColor: "#0F172A",
+
+    social: {
+
+        github: "https://github.com/sadhanch/support-engineering-blog",
+
+        linkedin: "https://www.linkedin.com/in/sadhanhansda/",
+
+        x: "https://x.com/sadhan_hansda"
+
+    },
+
     navigation: [
 
         {
@@ -67,18 +83,13 @@ export const site = {
             },
 
             {
-                label: "Newsletter",
-                href: "/newsletter"
-            },
-
-            {
                 label: "RSS",
                 href: "/rss.xml"
             },
 
             {
                 label: "GitHub",
-                href: "https://github.com/yourusername/support-engineering-blog"
+                href: "https://github.com/sadhanch/"
             }
 
         ],

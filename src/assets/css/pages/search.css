@@ -150,3 +150,127 @@
     display: none;
 
 }
+
+.search-result-item__title {
+
+    display: inline-block;
+
+    margin-bottom: var(--space-2);
+
+    font-size: var(--font-h3);
+
+    font-weight: var(--font-weight-semibold);
+
+    line-height: var(--line-height-tight);
+
+}
+
+.search-result-item__meta {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: var(--space-2);
+
+    margin-bottom: var(--space-4);
+
+    color: var(--text-secondary);
+
+    font-size: var(--font-size-sm);
+
+}
+
+.search-result-item__excerpt {
+
+    color: var(--text-secondary);
+
+    line-height: var(--line-height-relaxed);
+
+}
+
+.search-result-item {
+
+    padding-block: var(--space-6);
+
+}
+
+.search-result-item + .search-result-item {
+
+    border-top: 1px solid var(--border-default);
+
+}
+
+/* ==========================================================
+   Search Status
+   ========================================================== */
+
+.search-status {
+
+    max-width: 48rem;
+
+    margin-inline: auto;
+
+    margin-bottom: var(--space-6);
+
+    color: var(--text-secondary);
+
+    font-size: var(--font-size-sm);
+
+    font-weight: var(--font-weight-medium);
+
+}
+
+/* ==========================================================
+   Search Empty State
+   ========================================================== */
+
+.search-empty {
+
+    padding-block: var(--space-10);
+
+    text-align: center;
+
+}
+
+.search-empty h2 {
+
+    margin-bottom: var(--space-3);
+
+}
+
+.search-empty p {
+
+    color: var(--text-secondary);
+
+    max-width: 40rem;
+
+    margin-inline: auto;
+
+}
+
+/* ==========================================================
+   Highlighted Search Matches
+   ========================================================== */
+
+.search-result-item mark {
+
+    background: rgba(30, 115, 190, 0.14);
+
+    color: inherit;
+
+    padding-inline: 0.15rem;
+
+    border-radius: var(--radius-sm);
+
+}
+
+.search-result-item--active {
+
+    outline: 2px solid var(--color-accent);
+
+    outline-offset: 4px;
+
+    border-radius: var(--radius-md);
+
+}
