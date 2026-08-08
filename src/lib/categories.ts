@@ -1,3 +1,10 @@
+/**
+ * ==========================================================
+ * SEDS — Category Data Helpers
+ * Purpose: Builds category listings and category-filtered article collections.
+ * ==========================================================
+ */
+
 import { getAllArticles } from "./articles";
 import { slugify } from "../utils/slug";
 

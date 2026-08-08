@@ -1,4 +1,9 @@
 ---
+/* ==========================================================
+   SEDS — Base Layout
+   Purpose: Global HTML document shell, metadata, header, footer, and global search shortcut initialization.
+   ========================================================== */
+
 import "../assets/css/style.css";
 
 import { site } from "../config/site";
@@ -15,16 +20,16 @@ interface Props {
 
 const {
 
-    title = "Support Engineering Blog",
+    title = site.title,
 
-    description = "Technical documentation, Microsoft 365 administration, and support engineering resources."
+    description = site.description
 
 } = Astro.props;
 ---
 
 <!doctype html>
 
-<html lang="en">
+<html lang={site.language}>
 
     <head>
 

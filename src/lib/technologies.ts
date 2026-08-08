@@ -1,3 +1,10 @@
+/**
+ * ==========================================================
+ * SEDS — Technology Data Helpers
+ * Purpose: Builds technology listings and technology-filtered article collections.
+ * ==========================================================
+ */
+
 import { getAllArticles } from "./articles";
 import { slugify } from "../utils/slug";
 

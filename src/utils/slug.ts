@@ -1,6 +1,13 @@
 /**
  * ==========================================================
  * SEDS — Slug Utilities
+ * Purpose: Provides canonical slug creation and validation helpers.
+ * ==========================================================
+ */
+
+/**
+ * ==========================================================
+ * SEDS — Slug Utilities
  * ----------------------------------------------------------
  * Generates canonical URL-friendly slugs used throughout
  * the documentation platform.

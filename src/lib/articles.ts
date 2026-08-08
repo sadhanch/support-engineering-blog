@@ -1,3 +1,10 @@
+/**
+ * ==========================================================
+ * SEDS — Article Data Helpers
+ * Purpose: Loads, filters, sorts, and enriches article content.
+ * ==========================================================
+ */
+
 import { getCollection } from "astro:content";
 
 import { calculateReadingTime } from "../utils/content";

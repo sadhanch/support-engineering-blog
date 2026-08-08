@@ -1,3 +1,10 @@
+/**
+ * ==========================================================
+ * SEDS — Content Utilities
+ * Purpose: Provides reading-time calculation for article content.
+ * ==========================================================
+ */
+
 export function calculateReadingTime(content: string): string {
 
     const wordsPerMinute = 200;

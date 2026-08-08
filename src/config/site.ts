@@ -1,3 +1,10 @@
+/**
+ * ==========================================================
+ * SEDS — Site Configuration
+ * Purpose: Central source for site identity, navigation, footer links, author, and theme metadata.
+ * ==========================================================
+ */
+
 export const site = {
 
     title: "Support Engineering Blog",

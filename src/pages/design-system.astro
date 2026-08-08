@@ -1,4 +1,9 @@
 ---
+/* ==========================================================
+   SEDS — Design System Showcase
+   Purpose: Internal component showcase used to inspect reusable UI primitives.
+   ========================================================== */
+
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Container from "../components/layout/Container.astro";
 
@@ -16,7 +21,15 @@ import Callout from "../components/ui/Callout.astro";
 
 >
 
-    <Container>
+    <main
+
+        id="main-content"
+
+        class="design-system-page"
+
+    >
+
+        <Container>
 
         <h1>
 
@@ -98,6 +111,8 @@ import Callout from "../components/ui/Callout.astro";
 
         </Callout>
 
-    </Container>
+        </Container>
+
+    </main>
 
 </BaseLayout>

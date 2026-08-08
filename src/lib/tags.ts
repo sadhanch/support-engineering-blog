@@ -1,3 +1,10 @@
+/**
+ * ==========================================================
+ * SEDS — Tag Data Helpers
+ * Purpose: Builds tag listings and tag-filtered article collections.
+ * ==========================================================
+ */
+
 import { getAllArticles } from "./articles";
 import { slugify } from "../utils/slug";
 

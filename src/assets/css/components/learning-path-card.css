@@ -1,3 +1,8 @@
+/* ==========================================================
+   SEDS — Learning Path Card
+   Purpose: Styles the reusable learning path card component.
+   ========================================================== */
+
 .learning-path-card {
 
     display: flex;

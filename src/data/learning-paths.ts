@@ -1,3 +1,10 @@
+/**
+ * ==========================================================
+ * SEDS — Learning Path Data
+ * Purpose: Static learning path cards currently displayed on the homepage.
+ * ==========================================================
+ */
+
 export interface LearningPath {
 
     title: string;

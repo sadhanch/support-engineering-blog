@@ -1,3 +1,10 @@
+/**
+ * ==========================================================
+ * SEDS — Homepage Category Data
+ * Purpose: Static category cards currently displayed on the homepage.
+ * ==========================================================
+ */
+
 export interface Category {
 
     title: string;

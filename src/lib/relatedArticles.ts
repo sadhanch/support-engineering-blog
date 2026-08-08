@@ -1,3 +1,10 @@
+/**
+ * ==========================================================
+ * SEDS — Related Article Logic
+ * Purpose: Scores and selects related articles using category, technology, and tag overlap.
+ * ==========================================================
+ */
+
 import type { CollectionEntry } from "astro:content";
 
 type Article = CollectionEntry<"articles"> & {
