@@ -1,0 +1,15 @@
+<b:widget id='Blog1' type='Blog' ...>
+
+    <b:includable id='main'>
+
+        <b:include name='route'/>
+
+    </b:includable>
+
+    <b:includable id='route'>
+
+        <!-- Empty for now -->
+
+    </b:includable>
+
+</b:widget>

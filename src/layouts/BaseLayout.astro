@@ -34,6 +34,8 @@ interface Props {
 
     author?: string;
 
+    robots?: string;
+
 }
 
 
@@ -51,7 +53,9 @@ const {
 
     section,
 
-    author = site.author
+    author = site.author,
+
+    robots = "index, follow"
 
 } = Astro.props;
 
@@ -160,10 +164,7 @@ const structuredData = type === "article"
 
 <!doctype html>
 
-<html
-    lang={site.language}
-    data-ga-id={googleAnalyticsId}
->
+<html lang="en" data-ga-id="G-M35DC3WSK8">
 
 <head>
 
@@ -233,7 +234,7 @@ const structuredData = type === "article"
 
     <meta
         name="robots"
-        content="index, follow"
+        content={robots}
     />
 
     <meta

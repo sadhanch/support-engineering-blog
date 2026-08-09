@@ -1,0 +1,13 @@
+<!-- ==========================================================
+     SEDS — Support Engineering Design System
+
+     Component  : Includes
+     File       : includes.xml
+     Version    : 1.0.0
+     Status     : Stable
+
+     Purpose
+     Assembles reusable site-wide components.
+========================================================== -->
+
+{{HEADER}}

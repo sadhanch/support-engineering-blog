@@ -1,0 +1,58 @@
+<!-- ==========================================================
+     SEDS — Support Engineering Design System
+     File: variables.xml
+     Purpose: Blogger Theme Variables
+     Version: 1.0.0
+     ========================================================== -->
+
+<!-- ==========================================================
+     BRANDING
+     ========================================================== -->
+
+<Variable
+    name="brand.primary.color"
+    description="Primary Brand Color"
+    type="color"
+    default="#0D1B2A"/>
+
+<Variable
+    name="brand.accent.color"
+    description="Accent Color"
+    type="color"
+    default="#1E73BE"/>
+
+<!-- ==========================================================
+     PAGE COLORS
+     ========================================================== -->
+
+<Variable
+    name="page.background.color"
+    description="Page Background"
+    type="color"
+    default="#FFFFFF"/>
+
+<Variable
+    name="text.primary.color"
+    description="Primary Text Color"
+    type="color"
+    default="#1F2937"/>
+
+<!-- ==========================================================
+     TYPOGRAPHY
+     ========================================================== -->
+
+<Variable
+    name="font.body"
+    description="Body Font"
+    type="font"
+    default="Inter"/>
+
+<!-- ==========================================================
+     LAYOUT
+     ========================================================== -->
+
+<Variable
+    name="layout.max.width"
+    description="Site Width"
+    type="length"
+    default="1280px"/>

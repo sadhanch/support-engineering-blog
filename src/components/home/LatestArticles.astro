@@ -1,0 +1,81 @@
+---
+import Section from "../layout/Section.astro";
+import Container from "../layout/Container.astro";
+import ArticleCard from "../ui/ArticleCard.astro";
+---
+
+<Section>
+
+    <Container>
+
+        <div class="section-heading">
+
+            <h2>
+
+                Latest Articles
+
+            </h2>
+
+            <p>
+
+                Recent engineering guides and technical documentation.
+
+            </p>
+
+        </div>
+
+        <div class="article-grid">
+
+            <ArticleCard
+
+                href="#"
+
+                category="Microsoft 365"
+
+                title="Project Online is Retiring"
+
+                description="Understand the retirement timeline, migration paths and strategic implications."
+
+                readingTime="10 min"
+
+                updated="July 2026"
+
+            />
+
+            <ArticleCard
+
+                href="#"
+
+                category="PowerShell"
+
+                title="PowerShell Logging Best Practices"
+
+                description="Create maintainable scripts with consistent logging and error handling."
+
+                readingTime="7 min"
+
+                updated="July 2026"
+
+            />
+
+            <ArticleCard
+
+                href="#"
+
+                category="Identity"
+
+                title="Understanding Microsoft Entra ID"
+
+                description="Learn authentication, Conditional Access and identity fundamentals."
+
+                readingTime="12 min"
+
+                updated="July 2026"
+
+            />
+
+        </div>
+
+    </Container>
+
+</Section>
