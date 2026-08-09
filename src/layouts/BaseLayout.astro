@@ -1,14 +1,22 @@
 ---
-/* ==========================================================
-   SEDS — Base Layout
-   Purpose: Global HTML document shell, metadata, header, footer, and global search shortcut initialization.
-   ========================================================== */
+/*
+==========================================================
+SEDS — Base Layout
+Purpose:
+Provides the global HTML document shell, SEO metadata,
+social sharing metadata, header, footer, consent banner,
+and global client-side initialization.
+==========================================================
+*/
 
 import "../assets/css/style.css";
 
 import { site } from "../config/site";
+
 import Header from "../components/layout/Header.astro";
 import Footer from "../components/layout/Footer.astro";
+import ConsentBanner from "../components/ui/ConsentBanner.astro";
+
 
 interface Props {
 
@@ -16,91 +24,465 @@ interface Props {
 
     description?: string;
 
+    type?: "website" | "article";
+
+    publishedTime?: Date;
+
+    modifiedTime?: Date;
+
+    section?: string;
+
+    author?: string;
+
 }
+
 
 const {
 
     title = site.title,
 
-    description = site.description
+    description = site.description,
+
+    type = "website",
+
+    publishedTime,
+
+    modifiedTime,
+
+    section,
+
+    author = site.author
 
 } = Astro.props;
+
+
+const canonicalUrl =
+    `${site.url}${Astro.url.pathname}`;
+
+
+const socialImage =
+    `${site.url}${site.seo.defaultImage}`;
+
+
+/*
+==========================================================
+Google Analytics
+----------------------------------------------------------
+The Measurement ID is supplied through the public
+environment variable:
+
+PUBLIC_GA_MEASUREMENT_ID
+
+Analytics itself is NOT loaded here.
+
+The consent manager loads GA4 only after the visitor
+grants analytics consent.
+==========================================================
+*/
+
+const googleAnalyticsId =
+    import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
+
+
+const structuredData = type === "article"
+
+    ? {
+
+        "@context": "https://schema.org",
+
+        "@type": "BlogPosting",
+
+        "@id": `${canonicalUrl}#article`,
+
+        headline: title,
+
+        description,
+
+        url: canonicalUrl,
+
+        image: [
+            socialImage
+        ],
+
+        datePublished:
+            publishedTime?.toISOString(),
+
+        ...(modifiedTime && {
+            dateModified:
+                modifiedTime.toISOString()
+        }),
+
+        author: {
+
+            "@type": "Person",
+
+            name: author
+
+        },
+
+        publisher: {
+
+            "@type": "Organization",
+
+            name: site.title,
+
+            url: site.url
+
+        },
+
+        ...(section && {
+            articleSection: section
+        }),
+
+        inLanguage: site.language
+
+    }
+
+    : {
+
+        "@context": "https://schema.org",
+
+        "@type": "WebSite",
+
+        "@id": `${site.url}/#website`,
+
+        name: site.title,
+
+        description: site.description,
+
+        url: site.url,
+
+        inLanguage: site.language
+
+    };
+
 ---
 
 <!doctype html>
 
-<html lang={site.language}>
+<html
+    lang={site.language}
+    data-ga-id={googleAnalyticsId}
+>
 
-    <head>
+<head>
 
-        <meta charset="UTF-8" />
+    <meta charset="UTF-8" />
 
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-        />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
 
-        <title>{title}</title>
 
-        <meta
-            name="description"
-            content={description}
-        />
+    <!-- ==================================================
+         Theme Initialization
+         ================================================== -->
 
-        <meta
-            name="author"
-            content={site.author}
-        />
+    <script is:inline>
 
-        <meta
-            name="robots"
-            content="index, follow"
-        />
+        (() => {
 
-        <meta
-            name="theme-color"
-            content={site.themeColor}
-        />
+            const savedTheme =
+                localStorage.getItem("seb-theme");
 
-        <link
-            rel="canonical"
-            href={Astro.url.href}
-        />
 
-        <link
-            rel="icon"
-            href="/favicon/favicon.ico"
-        />
+            if (savedTheme === "dark") {
 
-    </head>
+                document.documentElement.dataset.theme =
+                    "dark";
 
-    <body>
+            }
 
-        <a
-            href="#main-content"
-            class="skip-link"
-        >
 
-            Skip to main content
+            else if (
 
-        </a>
+                savedTheme !== "light" &&
 
-        <Header />
+                window.matchMedia(
+                    "(prefers-color-scheme: dark)"
+                ).matches
 
-        <slot />
+            ) {
 
-        <Footer />
+                document.documentElement.dataset.theme =
+                    "dark";
 
-        <script type="module">
+            }
 
-            import {
-                initializeGlobalSearch
-            } from "../scripts/global-search";
+        })();
 
-            initializeGlobalSearch();
+    </script>
 
-        </script>
 
-    </body>
+    <!-- ==================================================
+         Primary Metadata
+         ================================================== -->
+
+    <title>{title}</title>
+
+    <meta
+        name="description"
+        content={description}
+    />
+
+    <meta
+        name="author"
+        content={author}
+    />
+
+    <meta
+        name="robots"
+        content="index, follow"
+    />
+
+    <meta
+        name="theme-color"
+        content={site.themeColor}
+    />
+
+    <link
+        rel="canonical"
+        href={canonicalUrl}
+    />
+
+
+    <!-- ==================================================
+         Open Graph
+         ================================================== -->
+
+    <meta
+        property="og:type"
+        content={type}
+    />
+
+    <meta
+        property="og:site_name"
+        content={site.title}
+    />
+
+    <meta
+        property="og:title"
+        content={title}
+    />
+
+    <meta
+        property="og:description"
+        content={description}
+    />
+
+    <meta
+        property="og:url"
+        content={canonicalUrl}
+    />
+
+    <meta
+        property="og:image"
+        content={socialImage}
+    />
+
+    <meta
+        property="og:locale"
+        content="en_US"
+    />
+
+
+    <!-- ==================================================
+         Article-specific Open Graph Metadata
+         ================================================== -->
+
+    {
+
+        type === "article" && (
+
+            <>
+
+                {
+
+                    publishedTime && (
+
+                        <meta
+                            property="article:published_time"
+                            content={publishedTime.toISOString()}
+                        />
+
+                    )
+
+                }
+
+
+                {
+
+                    modifiedTime && (
+
+                        <meta
+                            property="article:modified_time"
+                            content={modifiedTime.toISOString()}
+                        />
+
+                    )
+
+                }
+
+
+                {
+
+                    section && (
+
+                        <meta
+                            property="article:section"
+                            content={section}
+                        />
+
+                    )
+
+                }
+
+
+                <meta
+                    property="article:author"
+                    content={author}
+                />
+
+            </>
+
+        )
+
+    }
+
+
+    <!-- ==================================================
+         X / Twitter Card
+         ================================================== -->
+
+    <meta
+        name="twitter:card"
+        content="summary_large_image"
+    />
+
+    <meta
+        name="twitter:title"
+        content={title}
+    />
+
+    <meta
+        name="twitter:description"
+        content={description}
+    />
+
+    <meta
+        name="twitter:image"
+        content={socialImage}
+    />
+
+    <meta
+        name="twitter:creator"
+        content="@sadhan_hansda"
+    />
+
+
+    <!-- ==================================================
+         Structured Data / JSON-LD
+         ================================================== -->
+
+    <script
+        type="application/ld+json"
+        set:html={JSON.stringify(structuredData)}
+    ></script>
+
+
+    <!-- ==================================================
+         Site Identity
+         ================================================== -->
+
+    <link
+        rel="icon"
+        href="/favicon/favicon.ico"
+    />
+
+    <link
+        rel="alternate"
+        type="application/rss+xml"
+        title="Support Engineering Blog RSS Feed"
+        href="/rss.xml"
+    />
+
+</head>
+
+
+<body>
+
+    <!-- ==================================================
+         Accessibility
+         ================================================== -->
+
+    <a
+        href="#main-content"
+        class="skip-link"
+    >
+
+        Skip to main content
+
+    </a>
+
+
+    <!-- ==================================================
+         Global Header
+         ================================================== -->
+
+    <Header />
+
+
+    <!-- ==================================================
+         Page Content
+         ================================================== -->
+
+    <slot />
+
+
+    <!-- ==================================================
+         Analytics Consent
+         ================================================== -->
+
+    <ConsentBanner />
+
+
+    <!-- ==================================================
+         Global Footer
+         ================================================== -->
+
+    <Footer />
+
+
+    <!-- ==================================================
+         Global Client-side Initialization
+         ================================================== -->
+
+    <script type="module">
+
+        import {
+            initializeGlobalSearch
+        } from "../scripts/global-search";
+
+
+        import {
+            initializeTheme
+        } from "../scripts/theme";
+
+
+        import {
+            initializeAnalyticsConsent
+        } from "../scripts/analytics-consent";
+
+
+        initializeGlobalSearch();
+
+        initializeTheme();
+
+        initializeAnalyticsConsent();
+
+    </script>
+
+</body>
 
 </html>

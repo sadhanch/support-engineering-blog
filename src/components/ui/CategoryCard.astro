@@ -1,8 +1,11 @@
 ---
-/* ==========================================================
-   SEDS — Category Card
-   Purpose: Homepage category card.
-   ========================================================== */
+/**
+ * ==========================================================
+ * SEDS — Category Card
+ * Purpose: Displays a homepage category with its description,
+ * published article count, and navigation destination.
+ * ==========================================================
+ */
 
 interface Props {
 
@@ -34,17 +37,31 @@ const {
     class="category-card"
 >
 
+    <!-- ==================================================
+         Category Title
+         ================================================== -->
+
     <h3 class="category-card__title">
 
         {title}
 
     </h3>
 
+
+    <!-- ==================================================
+         Category Description
+         ================================================== -->
+
     <p class="category-card__description">
 
         {description}
 
     </p>
+
+
+    <!-- ==================================================
+         Category Metadata and Navigation
+         ================================================== -->
 
     <div class="category-card__footer">
 

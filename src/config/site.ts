@@ -1,7 +1,8 @@
 /**
  * ==========================================================
  * SEDS — Site Configuration
- * Purpose: Central source for site identity, navigation, footer links, author, and theme metadata.
+ * Purpose: Central source for site identity, navigation,
+ * footer links, social profiles, and SEO metadata.
  * ==========================================================
  */
 
@@ -16,11 +17,17 @@ export const site = {
 
     url: "https://blog.sadhan.ch",
 
-    author: "Sadhan",
+    author: "Sadhan Chandra",
 
     language: "en",
 
     themeColor: "#0F172A",
+
+    seo: {
+
+        defaultImage: "/og-cover.png"
+
+    },
 
     social: {
 
@@ -112,11 +119,6 @@ export const site = {
                 label: "Terms",
                 href: "/terms"
             },
-
-            {
-                label: "License",
-                href: "/license"
-            }
 
         ]
 

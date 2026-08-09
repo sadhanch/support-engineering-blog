@@ -66,6 +66,7 @@
 @import "./components/metadata.css";
 @import "./components/article-list-item.css";
 @import "./components/search-result-item.css";
+@import "./components/consent-banner.css";
 
 /* ==========================================================
    Pages
@@ -75,3 +76,9 @@
 @import "./pages/technology.css";
 @import "./pages/category.css";
 @import "./pages/search.css";
+@import "./pages/articles.css";
+@import "./pages/topics.css";
+@import "./pages/learning-paths.css";
+@import "./pages/learning-path.css";
+@import "./pages/about.css";
+@import "./pages/legal.css";

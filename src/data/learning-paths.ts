@@ -1,11 +1,14 @@
 /**
  * ==========================================================
  * SEDS — Learning Path Data
- * Purpose: Static learning path cards currently displayed on the homepage.
+ * Purpose: Defines curated learning paths and the ordered
+ * articles that belong to each path.
  * ==========================================================
  */
 
 export interface LearningPath {
+
+    slug: string;
 
     title: string;
 
@@ -13,17 +16,27 @@ export interface LearningPath {
 
     level: "Beginner" | "Intermediate" | "Advanced";
 
-    articles: number;
-
-    duration: string;
-
-    href: string;
+    steps: string[];
 
 }
+
+
+/* ==========================================================
+   Learning Path Definitions
+   ----------------------------------------------------------
+   The order of the article IDs in `steps` determines the
+   learning sequence.
+
+   Learning Paths are editorially curated. They are not
+   automatically generated from categories, technologies,
+   or tags.
+   ========================================================== */
 
 export const learningPaths: LearningPath[] = [
 
     {
+
+        slug: "microsoft-365",
 
         title: "Microsoft 365 Administration",
 
@@ -32,15 +45,13 @@ export const learningPaths: LearningPath[] = [
 
         level: "Beginner",
 
-        articles: 18,
-
-        duration: "8 Hours",
-
-        href: "/learning-paths/microsoft-365"
+        steps: []
 
     },
 
     {
+
+        slug: "azure",
 
         title: "Azure Fundamentals",
 
@@ -49,15 +60,13 @@ export const learningPaths: LearningPath[] = [
 
         level: "Beginner",
 
-        articles: 15,
-
-        duration: "6 Hours",
-
-        href: "/learning-paths/azure"
+        steps: []
 
     },
 
     {
+
+        slug: "support-engineering",
 
         title: "Support Engineering",
 
@@ -66,11 +75,7 @@ export const learningPaths: LearningPath[] = [
 
         level: "Intermediate",
 
-        articles: 22,
-
-        duration: "10 Hours",
-
-        href: "/learning-paths/support-engineering"
+        steps: []
 
     }
 

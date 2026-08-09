@@ -1,7 +1,13 @@
 ---
 /* ==========================================================
-   SEDS — Quick Summary
-   Purpose: Displays the article key takeaways near the beginning of the article.
+   SEDS — Key Takeaways
+   ----------------------------------------------------------
+   Purpose:
+   Presents a short summary of the most important points
+   before the main article content.
+
+   Used By:
+   ArticleLayout.astro
    ========================================================== */
 
 interface Props {
@@ -26,12 +32,6 @@ if (summary.length === 0) {
 <section class="key-takeaways">
 
     <header class="key-takeaways__header">
-
-        <span class="key-takeaways__icon">
-
-            💡
-
-        </span>
 
         <h2>
 

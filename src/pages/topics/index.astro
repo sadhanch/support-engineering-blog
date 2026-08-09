@@ -1,0 +1,122 @@
+---
+/**
+ * ==========================================================
+ * SEDS — Topics Directory
+ * Purpose: Displays the available technology topics and
+ * directs readers to the corresponding technology archive.
+ * ==========================================================
+ */
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/layout/Container.astro";
+import Section from "../../components/layout/Section.astro";
+
+import { getAllTechnologies } from "../../lib/technologies";
+import { slugify } from "../../utils/slug";
+
+const technologies = await getAllTechnologies();
+---
+
+<BaseLayout
+
+    title="Topics | Support Engineering Blog"
+
+    description="Explore articles by Microsoft technologies, platforms, and engineering topics."
+
+>
+
+    <main
+
+        id="main-content"
+
+        class="topics-page"
+
+    >
+
+        <Section>
+
+            <Container>
+
+                <!-- ==================================================
+                     Topics Header
+                     ================================================== -->
+
+                <header class="topics-header">
+
+                    <h1>
+
+                        Topics
+
+                    </h1>
+
+                    <p>
+
+                        Explore articles by Microsoft technologies,
+                        platforms, and engineering topics.
+
+                    </p>
+
+                </header>
+
+
+                <!-- ==================================================
+                     Topic Directory
+                     ================================================== -->
+
+                <section
+                    class="topics-grid"
+                    aria-label="Technology topics"
+                >
+
+                    {
+
+                        technologies.map((technology) => (
+
+                            <a
+
+                                href={`/technology/${slugify(technology.name)}`}
+
+                                class="topic-card"
+
+                            >
+
+                                <h2 class="topic-card__title">
+
+                                    {technology.name}
+
+                                </h2>
+
+                                <div class="topic-card__footer">
+
+                                    <span class="topic-card__count">
+
+                                        {technology.count}
+                                        {technology.count === 1
+                                            ? " Article"
+                                            : " Articles"}
+
+                                    </span>
+
+                                    <span class="topic-card__link">
+
+                                        Explore →
+
+                                    </span>
+
+                                </div>
+
+                            </a>
+
+                        ))
+
+                    }
+
+                </section>
+
+            </Container>
+
+        </Section>
+
+    </main>
+
+</BaseLayout>

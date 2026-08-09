@@ -32,7 +32,7 @@ featured: true
 
 draft: false
 
-author: "Sadhan"
+author: "Sadhan Chandra"
 
 references:
   - title: Microsoft Learn
@@ -44,7 +44,7 @@ references:
     description: Microsoft licensing and subscription information.
 ---
 
-# Understanding Planner Premium
+## Understanding Planner Premium
 
 Microsoft Planner Premium is Microsoft's enterprise work management solution designed for teams that require advanced planning capabilities beyond the features available in Planner Basic.
 

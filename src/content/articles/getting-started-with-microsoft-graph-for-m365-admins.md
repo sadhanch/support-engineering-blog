@@ -30,7 +30,7 @@ featured: true
 
 draft: false
 
-author: "Sadhan"
+author: "Sadhan Chandra"
 
 references:
   - title: Microsoft Graph Documentation
@@ -38,7 +38,7 @@ references:
     description: Official Microsoft Graph documentation.
 ---
 
-# Getting Started with Microsoft Graph
+## Getting Started with Microsoft Graph
 
 Microsoft Graph provides a unified API for accessing Microsoft 365 services.
 

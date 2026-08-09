@@ -1,0 +1,24 @@
+/* ==========================================================
+   SEDS — Learning Paths Page
+   Purpose: Styles for the Learning Paths directory.
+   ========================================================== */
+
+
+/* ==========================================================
+   Empty State
+   ----------------------------------------------------------
+   Used when no published Learning Paths are currently
+   available.
+   ========================================================== */
+
+.learning-paths-empty {
+
+    max-width: var(--measure-content);
+
+    margin-inline: auto;
+
+    color: var(--text-secondary);
+
+    text-align: center;
+
+}

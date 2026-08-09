@@ -1,0 +1,177 @@
+/* ==========================================================
+SEDS — Legal Pages
+File: legal.css
+Purpose: Privacy Policy and Terms of Use pages.
+Version: 1.0.0
+========================================================== */
+
+
+/* ----------------------------------------------------------
+Legal Page
+---------------------------------------------------------- */
+
+.legal-page {
+
+    padding-block: var(--space-section);
+
+}
+
+
+/* ----------------------------------------------------------
+Legal Content
+---------------------------------------------------------- */
+
+.legal-content {
+
+    width: min(100%, var(--content-width));
+
+    margin-inline: auto;
+
+}
+
+
+/* ----------------------------------------------------------
+Legal Header
+---------------------------------------------------------- */
+
+.legal-header {
+
+    margin-bottom: var(--space-9);
+
+    padding-bottom: var(--space-6);
+
+    border-bottom: 1px solid var(--border-default);
+
+}
+
+
+.legal-header__eyebrow {
+
+    margin-bottom: var(--space-3);
+
+    color: var(--color-accent);
+
+    font-size: var(--font-overline);
+
+    font-weight: var(--font-weight-semibold);
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+
+}
+
+
+.legal-header h1 {
+
+    margin: 0 0 var(--space-3);
+
+}
+
+
+.legal-header > p:last-child {
+
+    margin: 0;
+
+    color: var(--text-secondary);
+
+    font-size: var(--font-caption);
+
+}
+
+
+/* ----------------------------------------------------------
+Legal Sections
+---------------------------------------------------------- */
+
+.legal-content section {
+
+    margin-top: var(--space-8);
+
+}
+
+
+.legal-content section:first-of-type {
+
+    margin-top: 0;
+
+}
+
+
+.legal-content h2 {
+
+    margin-bottom: var(--space-4);
+
+}
+
+
+.legal-content p {
+
+    max-width: var(--measure-content);
+
+    margin-bottom: var(--paragraph-spacing);
+
+    color: var(--text-primary);
+
+}
+
+
+.legal-content p:last-child {
+
+    margin-bottom: 0;
+
+}
+
+
+/* ----------------------------------------------------------
+Links
+---------------------------------------------------------- */
+
+.legal-content a {
+
+    color: var(--color-accent);
+
+    text-decoration-thickness: 1px;
+
+    text-underline-offset: 3px;
+
+    transition:
+        color var(--transition-fast);
+
+}
+
+
+.legal-content a:hover {
+
+    color: var(--color-primary);
+
+}
+
+
+/* ----------------------------------------------------------
+Responsive
+---------------------------------------------------------- */
+
+@media (max-width: 768px) {
+
+    .legal-page {
+
+        padding-block: var(--space-8);
+
+    }
+
+    .legal-header {
+
+        margin-bottom: var(--space-7);
+
+        padding-bottom: var(--space-5);
+
+    }
+
+    .legal-content section {
+
+        margin-top: var(--space-7);
+
+    }
+
+}

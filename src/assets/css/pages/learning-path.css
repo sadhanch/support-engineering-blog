@@ -1,0 +1,153 @@
+/* ==========================================================
+   SEDS — Learning Path Page
+   Purpose: Styles for individual Learning Path pages.
+   ========================================================== */
+
+
+/* ==========================================================
+   Learning Path Header
+   ========================================================== */
+
+.learning-path-header {
+
+    max-width: var(--measure-content);
+
+    margin-bottom: var(--space-stack-lg);
+
+}
+
+.learning-path-header__level {
+
+    margin-bottom: var(--space-3);
+
+    color: var(--color-accent);
+
+    font-size: var(--font-caption);
+
+    font-weight: var(--font-weight-semibold);
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.08em;
+
+}
+
+.learning-path-header__description {
+
+    color: var(--text-secondary);
+
+}
+
+.learning-path-header__meta {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: var(--space-4);
+
+    margin-top: var(--space-5);
+
+    color: var(--text-secondary);
+
+    font-size: var(--font-caption);
+
+}
+
+
+/* ==========================================================
+   Learning Path Steps
+   ========================================================== */
+
+.learning-path-steps {
+
+    max-width: var(--measure-content);
+
+}
+
+.learning-path-steps > h2 {
+
+    margin-bottom: var(--space-6);
+
+}
+
+.learning-path-steps ol {
+
+    display: grid;
+
+    gap: var(--space-6);
+
+    margin: 0;
+
+    padding: 0;
+
+    list-style: none;
+
+}
+
+
+/* ==========================================================
+   Individual Learning Path Step
+   ========================================================== */
+
+.learning-path-step {
+
+    display: grid;
+
+    grid-template-columns: 3rem minmax(0, 1fr);
+
+    gap: var(--space-5);
+
+    align-items: start;
+
+}
+
+.learning-path-step__number {
+
+    padding-top: 0.2rem;
+
+    color: var(--text-secondary);
+
+    font-size: var(--font-caption);
+
+    font-weight: var(--font-weight-semibold);
+
+    letter-spacing: 0.04em;
+
+}
+
+.learning-path-step__content {
+
+    min-width: 0;
+
+}
+
+
+/* ==========================================================
+   Empty State
+   ========================================================== */
+
+.learning-path-empty {
+
+    max-width: var(--measure-content);
+
+    color: var(--text-secondary);
+
+}
+
+
+/* ==========================================================
+   Responsive Layout
+   ========================================================== */
+
+@media (max-width: 600px) {
+
+    .learning-path-step {
+
+        grid-template-columns: 2rem minmax(0, 1fr);
+
+        gap: var(--space-3);
+
+    }
+
+}

@@ -31,7 +31,7 @@ featured: false
 
 draft: false
 
-author: "Sadhan"
+author: "Sadhan Chandra"
 
 references:
   - title: Microsoft Learn
@@ -39,7 +39,7 @@ references:
     description: Microsoft Project documentation.
 ---
 
-# Microsoft Project vs Planner Premium
+## Microsoft Project vs Planner Premium
 
 Choosing the correct project management platform depends on the complexity of your projects and your organization's collaboration requirements.
 

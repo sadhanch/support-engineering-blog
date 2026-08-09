@@ -1,7 +1,8 @@
 /**
  * ==========================================================
- * SEDS — Homepage Category Data
- * Purpose: Static category cards currently displayed on the homepage.
+ * SEDS — Category Configuration
+ * Purpose: Defines the editorial information and homepage
+ * visibility for supported article categories.
  * ==========================================================
  */
 
@@ -11,11 +12,24 @@ export interface Category {
 
     description: string;
 
-    href: string;
+    slug: string;
 
-    articleCount: number;
+    featured: boolean;
+
+    order: number;
 
 }
+
+
+/* ==========================================================
+   Category Definitions
+   ----------------------------------------------------------
+   This file controls the categories that are intentionally
+   represented on the site.
+
+   Article counts are NOT stored here.
+   They are calculated from the published article collection.
+   ========================================================== */
 
 export const categories: Category[] = [
 
@@ -23,11 +37,14 @@ export const categories: Category[] = [
 
         title: "Microsoft 365",
 
-        description: "Administration, Exchange, SharePoint, Teams and Entra ID.",
+        description:
+            "Administration, Exchange, SharePoint, Teams and Entra ID.",
 
-        href: "/categories/microsoft-365",
+        slug: "microsoft-365",
 
-        articleCount: 24
+        featured: true,
+
+        order: 1
 
     },
 
@@ -35,11 +52,14 @@ export const categories: Category[] = [
 
         title: "Azure",
 
-        description: "Identity, virtual machines, networking and cloud services.",
+        description:
+            "Identity, virtual machines, networking and cloud services.",
 
-        href: "/categories/azure",
+        slug: "azure",
 
-        articleCount: 18
+        featured: true,
+
+        order: 2
 
     },
 
@@ -47,11 +67,14 @@ export const categories: Category[] = [
 
         title: "Power Platform",
 
-        description: "Power Apps, Power Automate and Dataverse.",
+        description:
+            "Power Apps, Power Automate and Dataverse.",
 
-        href: "/categories/power-platform",
+        slug: "power-platform",
 
-        articleCount: 15
+        featured: true,
+
+        order: 3
 
     },
 
@@ -59,11 +82,14 @@ export const categories: Category[] = [
 
         title: "Windows",
 
-        description: "Windows administration and endpoint management.",
+        description:
+            "Windows administration and endpoint management.",
 
-        href: "/categories/windows",
+        slug: "windows",
 
-        articleCount: 21
+        featured: true,
+
+        order: 4
 
     }
 

@@ -1,7 +1,8 @@
 /**
  * ==========================================================
  * SEDS — Related Article Logic
- * Purpose: Scores and selects related articles using category, technology, and tag overlap.
+ * Purpose: Scores and selects related articles using
+ * category, technology, and tag overlap.
  * ==========================================================
  */
 
@@ -12,6 +13,29 @@ type Article = CollectionEntry<"articles"> & {
     formattedDate: string;
 };
 
+
+/* ==========================================================
+   Related Article Scoring
+   ----------------------------------------------------------
+   These weights define how strongly each taxonomy relationship
+   influences the Recommended Reading results.
+
+   Technology → strongest relationship
+   Tags       → conceptual relationship
+   Category   → broad relationship
+   ========================================================== */
+
+const CATEGORY_WEIGHT = 1;
+
+const TECHNOLOGY_WEIGHT = 3;
+
+const TAG_WEIGHT = 2;
+
+
+/* ==========================================================
+   Get Related Articles
+   ========================================================== */
+
 export function getRelatedArticles(
     currentArticle: Article,
     allArticles: Article[],
@@ -19,34 +43,72 @@ export function getRelatedArticles(
 ) {
 
     return allArticles
-        .filter((article) => article.id !== currentArticle.id)
+
+        /* --------------------------------------------------
+           Exclude the article currently being viewed.
+           -------------------------------------------------- */
+
+        .filter(
+            (article) =>
+                article.id !== currentArticle.id
+        )
+
+        /* --------------------------------------------------
+           Calculate a relevance score for every remaining
+           article.
+           -------------------------------------------------- */
+
         .map((article) => {
 
             let score = 0;
 
-            // Same category
+
+            /* ------------------------------------------------
+               Same Category
+               Broadest relationship.
+               ------------------------------------------------ */
+
             if (
                 article.data.category ===
                 currentArticle.data.category
             ) {
-                score += 1;
+
+                score += CATEGORY_WEIGHT;
+
             }
 
-            // Shared technologies
+
+            /* ------------------------------------------------
+               Shared Technologies
+               Strongest relationship.
+               ------------------------------------------------ */
+
             const sharedTechnology =
-                article.data.technology.filter((item) =>
-                    currentArticle.data.technology.includes(item)
+                article.data.technology.filter(
+                    (item) =>
+                        currentArticle.data.technology.includes(item)
                 ).length;
 
-            score += sharedTechnology * 3;
+            score +=
+                sharedTechnology *
+                TECHNOLOGY_WEIGHT;
 
-            // Shared tags
+
+            /* ------------------------------------------------
+               Shared Tags
+               Conceptual relationship.
+               ------------------------------------------------ */
+
             const sharedTags =
-                article.data.tags.filter((tag) =>
-                    currentArticle.data.tags.includes(tag)
+                article.data.tags.filter(
+                    (tag) =>
+                        currentArticle.data.tags.includes(tag)
                 ).length;
 
-            score += sharedTags * 2;
+            score +=
+                sharedTags *
+                TAG_WEIGHT;
+
 
             return {
 
@@ -57,9 +119,53 @@ export function getRelatedArticles(
             };
 
         })
-        .filter(({ score }) => score > 0)
-        .sort((a, b) => b.score - a.score)
+
+        /* --------------------------------------------------
+           Articles with no meaningful relationship are
+           excluded.
+           -------------------------------------------------- */
+
+        .filter(
+            ({ score }) =>
+                score > 0
+        )
+
+        /* --------------------------------------------------
+           Sort by relevance first.
+
+           If two articles have the same relevance score,
+           prefer the more recently published article.
+           -------------------------------------------------- */
+
+        .sort((a, b) => {
+
+            if (b.score !== a.score) {
+
+                return b.score - a.score;
+
+            }
+
+            return (
+                b.article.data.publishDate.getTime() -
+                a.article.data.publishDate.getTime()
+            );
+
+        })
+
+        /* --------------------------------------------------
+           Limit the number of recommendations.
+           -------------------------------------------------- */
+
         .slice(0, limit)
-        .map(({ article }) => article);
+
+        /* --------------------------------------------------
+           Return the original article objects expected by
+           the RelatedArticles component.
+           -------------------------------------------------- */
+
+        .map(
+            ({ article }) =>
+                article
+        );
 
 }

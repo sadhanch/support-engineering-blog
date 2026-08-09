@@ -1,0 +1,233 @@
+---
+/**
+ * ==========================================================
+ * SEDS — Learning Path Page
+ * Purpose: Generates individual Learning Path pages from
+ * curated Learning Path definitions.
+ * ==========================================================
+ */
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/layout/Container.astro";
+import Section from "../../components/layout/Section.astro";
+import ArticleListItem from "../../components/article/ArticleListItem.astro";
+
+import {
+    getAllLearningPaths
+} from "../../lib/learningPaths";
+
+
+/* ==========================================================
+   Static Paths
+   ----------------------------------------------------------
+   Generates a page for every configured Learning Path.
+   ========================================================== */
+
+export async function getStaticPaths() {
+
+    const learningPaths =
+        await getAllLearningPaths();
+
+    return learningPaths.map((path) => ({
+
+        params: {
+
+            slug: path.slug
+
+        },
+
+        props: {
+
+            path
+
+        }
+
+    }));
+
+}
+
+
+/* ==========================================================
+   Page Data
+   ========================================================== */
+
+const {
+
+    path
+
+} = Astro.props;
+
+
+/* ==========================================================
+   Safety Check
+   ========================================================== */
+
+if (!path) {
+
+    throw new Error(
+        "Learning Path not found."
+    );
+
+}
+---
+
+<BaseLayout
+
+    title={path.title}
+
+    description={path.description}
+
+>
+
+    <main
+
+        id="main-content"
+
+        class="learning-path-page"
+
+    >
+
+        <Section>
+
+            <Container>
+
+                <!-- ==================================================
+                     Learning Path Header
+                     ================================================== -->
+
+                <header class="learning-path-header">
+
+                    <p class="learning-path-header__level">
+
+                        {path.level}
+
+                    </p>
+
+                    <h1>
+
+                        {path.title}
+
+                    </h1>
+
+                    <p class="learning-path-header__description">
+
+                        {path.description}
+
+                    </p>
+
+                    <div class="learning-path-header__meta">
+
+                        <span>
+
+                            {path.steps.length} {
+                                path.steps.length === 1
+                                    ? "Article"
+                                    : "Articles"
+                            }
+
+                        </span>
+
+                        <span>
+
+                            {path.readingTime}
+
+                        </span>
+
+                    </div>
+
+                </header>
+
+
+                <!-- ==================================================
+                     Learning Path Steps
+                     --------------------------------------------------
+                     The order is determined by the `steps` array
+                     in learning-paths.ts.
+                     ================================================== -->
+
+                {
+
+                    path.steps.length > 0 ? (
+
+                        <section class="learning-path-steps">
+
+                            <h2>
+
+                                Learning Path
+
+                            </h2>
+
+                            <ol>
+
+                                {
+
+                                    path.steps.map(
+                                        (article, index) => (
+
+                                            <li
+                                                class="learning-path-step"
+                                            >
+
+                                                <div
+                                                    class="learning-path-step__number"
+                                                    aria-hidden="true"
+                                                >
+
+                                                    {String(
+                                                        index + 1
+                                                    ).padStart(2, "0")}
+
+                                                </div>
+
+                                                <div
+                                                    class="learning-path-step__content"
+                                                >
+
+                                                    <ArticleListItem
+
+                                                        href={`/articles/${article.id}`}
+
+                                                        title={article.data.title}
+
+                                                        category={article.data.category}
+
+                                                        excerpt={article.data.excerpt}
+
+                                                        readingTime={article.readingTime}
+
+                                                    />
+
+                                                </div>
+
+                                            </li>
+
+                                        )
+                                    )
+
+                                }
+
+                            </ol>
+
+                        </section>
+
+                    ) : (
+
+                        <p class="learning-path-empty">
+
+                            This Learning Path is currently being
+                            developed. Check back soon for the
+                            complete learning journey.
+
+                        </p>
+
+                    )
+
+                }
+
+            </Container>
+
+        </Section>
+
+    </main>
+
+</BaseLayout>

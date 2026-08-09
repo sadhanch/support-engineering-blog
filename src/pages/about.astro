@@ -1,0 +1,713 @@
+---
+/**
+ * ==========================================================
+ * SEDS — About Page
+ * Purpose: Introduces the author, editorial purpose, history,
+ * and long-term vision of Support Engineering Blog.
+ * ==========================================================
+ */
+
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/layout/Container.astro";
+import Section from "../components/layout/Section.astro";
+---
+
+<BaseLayout
+
+    title="About Support Engineering Blog"
+
+    description="Learn about Sadhan, the story behind Support Engineering Blog, and the vision for building a dependable technical almanac for Microsoft technology professionals."
+
+>
+
+    <main
+
+        id="main-content"
+
+        class="about-page"
+
+    >
+
+        <!-- ==================================================
+             Introduction
+             ================================================== -->
+
+        <Section>
+
+            <Container>
+
+                <header class="about-header">
+
+                    <p class="about-header__eyebrow">
+
+                        ABOUT SUPPORT ENGINEERING BLOG
+
+                    </p>
+
+                    <h1>
+
+                        A practical knowledge base built from
+                        five years of supporting Microsoft technologies.
+
+                    </h1>
+
+                    <p class="about-header__description">
+
+                        Support Engineering Blog was created to document
+                        the problems, patterns, solutions, and lessons
+                        that emerge from working with Microsoft
+                        technologies every day — and to make that
+                        knowledge easier for others to find when they
+                        need it.
+
+                    </p>
+
+                </header>
+
+            </Container>
+
+        </Section>
+
+
+        <!-- ==================================================
+             Meet the Author
+             ================================================== -->
+
+        <Section>
+
+            <Container>
+
+                <article class="about-content">
+
+                    <section>
+
+                        <h2>
+
+                            Meet the Person Behind the Blog
+
+                        </h2>
+
+                        <p>
+
+                            I'm <strong>Sadhan Chandra</strong>, a Senior
+                            Technical Advisor and support engineer who
+                            has spent the last five years working with
+                            Microsoft technologies.
+
+                        </p>
+
+                        <p>
+
+                            My work involves helping administrators and
+                            users troubleshoot issues across the
+                            Microsoft ecosystem. Microsoft 365 is a broad
+                            part of that work, and my current focus is
+                            Dynamics 365. Over the years, I've also worked
+                            with other Microsoft products and gained
+                            experience with areas such as Active Directory
+                            and Windows 365 Enterprise.
+
+                        </p>
+
+                        <p>
+
+                            One thing that has remained consistent
+                            throughout that experience is the process of
+                            understanding what a platform can accomplish
+                            with the tools it already provides.
+
+                        </p>
+
+                        <p>
+
+                            Before introducing another dependency, service,
+                            or third-party solution, I like to understand
+                            how far the native capabilities of the
+                            platform can take us.
+
+                        </p>
+
+                        <p>
+
+                            That philosophy is one of the things that
+                            eventually shaped this blog.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- ==================================================
+                         Why the Blog Exists
+                         ================================================== -->
+
+                    <section>
+
+                        <h2>
+
+                            Why I Started This Blog
+
+                        </h2>
+
+                        <p>
+
+                            Working in technical support changes the way
+                            you look at documentation.
+
+                        </p>
+
+                        <p>
+
+                            During troubleshooting, I've repeatedly
+                            encountered situations where the information
+                            needed to resolve an issue either wasn't
+                            documented in enough detail, was difficult
+                            to find, or didn't quite reflect what happens
+                            in a real support scenario.
+
+                        </p>
+
+                        <p>
+
+                            At the same time, support conversations reveal
+                            patterns.
+
+                        </p>
+
+                        <p>
+
+                            When administrators and technical support
+                            teams from different organizations encounter
+                            similar problems, recurring issues become
+                            easier to recognize. When a solution emerges
+                            from one of those situations, that knowledge
+                            can be valuable beyond the original incident.
+
+                        </p>
+
+                        <p>
+
+                            I wanted a place where I could document those
+                            experiences.
+
+                        </p>
+
+                        <p>
+
+                            Not simply as a collection of solutions, but
+                            as a way of explaining <strong>what happened,
+                            why it happened, how it can be addressed, and
+                            what someone else can learn from it.</strong>
+
+                        </p>
+
+                        <p>
+
+                            That's the reason Support Engineering Blog
+                            exists.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- ==================================================
+                         Career Journey
+                         ================================================== -->
+
+                    <section>
+
+                        <h2>
+
+                            From Software Engineering to Support Engineering
+
+                        </h2>
+
+                        <p>
+
+                            When I started my career, I originally wanted
+                            to become a software engineer.
+
+                        </p>
+
+                        <p>
+
+                            Instead, I found myself working as a support
+                            engineer for Microsoft products.
+
+                        </p>
+
+                        <p>
+
+                            What initially wasn't the path I had imagined
+                            became the career I've now spent around five
+                            years building.
+
+                        </p>
+
+                        <p>
+
+                            Support engineering taught me something that
+                            isn't always obvious from documentation alone:
+                            knowing how a product works is only one part
+                            of solving a problem.
+
+                        </p>
+
+                        <p>
+
+                            You also need to understand how people
+                            actually use it, where things can go wrong,
+                            how to isolate a problem, and how to explain
+                            the solution clearly enough that someone else
+                            can apply it.
+
+                        </p>
+
+                        <p>
+
+                            This blog is, in part, an attempt to document
+                            that experience as it continues to grow.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- ==================================================
+                         Audience
+                         ================================================== -->
+
+                    <section>
+
+                        <h2>
+
+                            Who Is This Blog For?
+
+                        </h2>
+
+                        <p>
+
+                            The primary audience is <strong>Microsoft 365 Global Administrators
+                            and support engineers</strong> working with
+                            Microsoft technologies.
+
+                        </p>
+
+                        <p>
+
+                            These are people who often need an answer
+                            quickly, but who also need to understand the
+                            reasoning behind that answer.
+
+                        </p>
+
+                        <p>
+
+                            The blog also covers areas that are useful to
+                            project managers. My experience working with
+                            Microsoft's project management products,
+                            including Planner and Project, has given me
+                            an interest in helping project teams
+                            understand how they can make better use of
+                            the tools available within their
+                            organizations.
+
+                        </p>
+
+                        <p>
+
+                            And for people entering support engineering,
+                            I want the blog to provide something that
+                            traditional documentation often cannot: <strong>real-world scenarios.</strong>
+
+                        </p>
+
+                        <p>
+
+                            Some articles will explore a technology or
+                            concept in depth. Others may be designed as
+                            an immediate troubleshooting reference where
+                            the goal is simply:
+
+                        </p>
+
+                        <blockquote>
+
+                            Follow these steps and get the problem
+                            resolved.
+
+                        </blockquote>
+
+                        <p>
+
+                            Both have their place.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- ==================================================
+                         Blogger Journey
+                         ================================================== -->
+
+                    <section>
+
+                        <h2>
+
+                            From Blogger to Support Engineering Blog
+
+                        </h2>
+
+                        <p>
+
+                            The first version of this blog began on <strong>Blogger</strong>.
+
+                        </p>
+
+                        <p>
+
+                            That choice wasn't accidental. I had already
+                            used Blogger for a personal project back in
+                            2008, when I was still in school. I developed
+                            an appreciation for text-heavy websites that
+                            could organize information clearly without
+                            unnecessary bells and whistles.
+
+                        </p>
+
+                        <p>
+
+                            That philosophy stayed with me. I started the
+                            blog with Blogger's <strong>Essential Light</strong> theme, one of my favorites, and gradually
+                            personalized the structure to make the site
+                            feel like my own.
+
+                        </p>
+
+                        <p>
+
+                            Blogger actually took the project surprisingly
+                            far. I could get a lot from the platform's
+                            native capabilities without having to build
+                            everything from scratch. That suited the way
+                            I like to work: understand what a platform
+                            already provides before reaching for
+                            something else.
+
+                        </p>
+
+                        <p>
+
+                            But as the blog grew, so did the ideas behind
+                            it.
+
+                        </p>
+
+                        <p>
+
+                            I began thinking less about individual pages
+                            and more about how the entire collection of
+                            technical information should work. How should
+                            readers discover an article? How should related
+                            information be connected? What should someone
+                            know before investing ten minutes in an
+                            article? How could the site help someone find
+                            an answer quickly when they were already
+                            dealing with a support issue?
+
+                        </p>
+
+                        <p>
+
+                            Those questions eventually led to features
+                            such as structured article metadata,
+                            categories, technologies, search, related
+                            articles, references, reading time, and
+                            Learning Paths. Each was added because of a
+                            real problem I had encountered while reading
+                            or working with technical content.
+
+                        </p>
+
+                        <p>
+
+                            The limitations of Blogger also became more
+                            noticeable. Its older XML-based template
+                            structure made deeper customization and
+                            maintaining new functionality increasingly
+                            difficult. More importantly, I wanted the
+                            website itself to represent the way I think
+                            technical information should be organized.
+
+                        </p>
+
+                        <p>
+
+                            So we made the decision to rebuild it from scratch, no pre-made templates.
+
+                        </p>
+
+                        <p>
+
+                            <strong>Astro</strong> became the foundation
+                            because it gave us the control we were looking
+                            for without forcing the site to become
+                            unnecessarily complicated. We could keep the
+                            content at the center while building a proper
+                            structure around it — from content collections
+                            and metadata to search, RSS, sitemaps,
+                            related content, and Learning Paths.
+
+                        </p>
+
+                        <p>
+
+                            The result is not simply a new version of the
+                            old blog. It is the result of gradually
+                            discovering what this publication needed to
+                            become.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- ==================================================
+                         Information Architecture
+                         ================================================== -->
+
+                    <section>
+
+                        <h2>
+
+                            Why the Site Is Structured This Way
+
+                        </h2>
+
+                        <p>
+
+                            Every part of the site exists for a reason.
+
+                        </p>
+
+                        <p>
+
+                            That reason comes largely from experience as
+                            a reader and as a support engineer.
+
+                        </p>
+
+                        <p>
+
+                            I've seen well-written technical content get
+                            overlooked because the intent wasn't clear
+                            at the beginning. I've also encountered
+                            articles where the information needed to
+                            solve a problem was buried somewhere deep
+                            inside an otherwise useful piece of
+                            documentation.
+
+                        </p>
+
+                        <p>
+
+                            When you're working through more than twenty
+                            support issues in a day, time matters.
+
+                        </p>
+
+                        <p>
+
+                            You shouldn't have to read an entire article
+                            just to determine whether it contains the
+                            information you need.
+
+                        </p>
+
+                        <p>
+
+                            That's why the site emphasizes things such
+                            as:
+
+                        </p>
+
+                        <ul>
+
+                            <li>
+
+                                <strong>Clear article descriptions</strong> so the purpose is apparent before reading.
+
+                            </li>
+
+                            <li>
+
+                                <strong>Key takeaways</strong> so the
+                                important points are immediately visible.
+
+                            </li>
+
+                            <li>
+
+                                <strong>Categories and technologies</strong> to provide meaningful ways to explore
+                                related content.
+
+                            </li>
+
+                            <li>
+
+                                <strong>Reading time</strong> to help
+                                readers decide how much time an article
+                                requires.
+
+                            </li>
+
+                            <li>
+
+                                <strong>References</strong> to make the
+                                supporting material visible.
+
+                            </li>
+
+                            <li>
+
+                                <strong>Related articles</strong> to
+                                connect one problem or concept with
+                                another.
+
+                            </li>
+
+                            <li>
+
+                                <strong>Learning Paths</strong> to turn
+                                individual articles into structured
+                                learning journeys.
+
+                            </li>
+
+                            <li>
+
+                                <strong>Search</strong> to help readers
+                                find information when they already know
+                                what they are looking for.
+
+                            </li>
+
+                        </ul>
+
+                        <p>
+
+                            The goal isn't to add features for the sake
+                            of adding features.
+
+                        </p>
+
+                        <p>
+
+                            The goal is to <strong>reduce the time between a question
+                            and useful information.</strong>
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- ==================================================
+                         Vision
+                         ================================================== -->
+
+                    <section>
+
+                        <h2>
+
+                            What I Want This Blog to Become
+
+                        </h2>
+
+                        <p>
+
+                            Ultimately, I don't want Support Engineering
+                            Blog to be just another technical blog.
+
+                        </p>
+
+                        <p>
+
+                            I want it to become an <strong>almanac that people can depend
+                            on.</strong>
+
+                        </p>
+
+                        <p>
+
+                            Something that a Microsoft 365 administrator
+                            can return to when they need to understand a
+                            problem.
+
+                        </p>
+
+                        <p>
+
+                            Something that a support engineer can use
+                            when investigating a scenario.
+
+                        </p>
+
+                        <p>
+
+                            Something that a project manager can consult
+                            when trying to make better use of Microsoft's
+                            project management tools.
+
+                        </p>
+
+                        <p>
+
+                            And eventually, something that someone
+                            beginning a career in this field can use to
+                            understand not only <em>what</em> to do, but <em>how experienced support engineers think
+                            about problems.</em>
+
+                        </p>
+
+                        <p>
+
+                            The technologies will change.
+
+                        </p>
+
+                        <p>
+
+                            Products will evolve. Features will be
+                            renamed. Services will be retired and
+                            replaced.
+
+                        </p>
+
+                        <p>
+
+                            The purpose of the blog, however, will remain
+                            the same:
+
+                        </p>
+
+                        <blockquote>
+
+                            Document useful knowledge. Explain it clearly.
+                            Make it easier for the next person to solve
+                            the problem.
+
+                        </blockquote>
+
+                    </section>
+
+                </article>
+
+            </Container>
+
+        </Section>
+
+    </main>
+
+</BaseLayout>

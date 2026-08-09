@@ -1,7 +1,10 @@
 ---
 /* ==========================================================
    SEDS — Article Page
-   Purpose: Generates individual article pages from the content collection.
+   ----------------------------------------------------------
+   Purpose:
+   Generates individual article pages from the content
+   collection and passes article data into ArticleLayout.
    ========================================================== */
 
 import { render } from "astro:content";
@@ -15,9 +18,8 @@ import {
 
 import { getRelatedArticles } from "../../lib/relatedArticles";
 
-export async function getStaticPaths() {
 
-    const { getAllArticles } = await import("../../lib/articles");
+export async function getStaticPaths() {
 
     const articles = await getAllArticles();
 
@@ -33,22 +35,25 @@ export async function getStaticPaths() {
 
 }
 
+
 const { slug } = Astro.params;
 
 const article = await getArticleBySlug(slug!);
-
-const allArticles = await getAllArticles();
-
-const relatedArticles = getRelatedArticles(
-    article!,
-    allArticles
-);
 
 if (!article) {
 
     throw new Error("Article not found.");
 
 }
+
+
+const allArticles = await getAllArticles();
+
+const relatedArticles = getRelatedArticles(
+    article,
+    allArticles
+);
+
 
 const {
 
@@ -70,6 +75,12 @@ const {
     readingTime={article.readingTime}
 
     updated={article.formattedDate}
+
+    publishDate={article.data.publishDate}
+
+    updatedDate={article.data.updatedDate}
+
+    author={article.data.author}
 
     summary={article.data.summary}
 

@@ -1,0 +1,160 @@
+/* ==========================================================
+   SEDS — About Page
+   File: about.css
+   Purpose: About page typography and layout.
+   ========================================================== */
+
+
+/* ==========================================================
+   About Header
+   ========================================================== */
+
+.about-header {
+
+    max-width: var(--measure-content);
+
+}
+
+.about-header__eyebrow {
+
+    margin-bottom: var(--space-3);
+
+    color: var(--text-secondary);
+
+    font-size: var(--font-caption);
+
+    font-weight: var(--font-weight-semibold);
+
+    letter-spacing: 0.08em;
+
+}
+
+.about-header h1 {
+
+    max-width: 52rem;
+
+}
+
+.about-header__description {
+
+    max-width: 48rem;
+
+    margin-top: var(--space-5);
+
+    color: var(--text-secondary);
+
+    font-size: 1.125rem;
+
+    line-height: 1.7;
+
+}
+
+
+/* ==========================================================
+   About Content
+   ========================================================== */
+
+.about-content {
+
+    max-width: var(--measure-content);
+
+}
+
+.about-content section {
+
+    margin-bottom: var(--space-12);
+
+}
+
+.about-content section:last-child {
+
+    margin-bottom: 0;
+
+}
+
+.about-content h2 {
+
+    margin-bottom: var(--space-5);
+
+}
+
+.about-content p {
+
+    margin-bottom: var(--space-4);
+
+}
+
+.about-content p:last-child {
+
+    margin-bottom: 0;
+
+}
+
+
+/* ==========================================================
+   Lists
+   ========================================================== */
+
+.about-content ul {
+
+    margin-block: var(--space-5);
+
+    padding-left: 1.5rem;
+
+}
+
+.about-content li {
+
+    margin-bottom: var(--space-3);
+
+    padding-left: var(--space-2);
+
+}
+
+.about-content li:last-child {
+
+    margin-bottom: 0;
+
+}
+
+
+/* ==========================================================
+   Editorial Quotes
+   ========================================================== */
+
+.about-content blockquote {
+
+    margin-block: var(--space-6);
+
+    padding-left: var(--space-5);
+
+    border-left: 3px solid var(--color-accent);
+
+    color: var(--text-primary);
+
+    font-size: 1.125rem;
+
+    font-weight: var(--font-weight-medium);
+
+}
+
+
+/* ==========================================================
+   Responsive
+   ========================================================== */
+
+@media (max-width: 768px) {
+
+    .about-header__description {
+
+        font-size: 1rem;
+
+    }
+
+    .about-content section {
+
+        margin-bottom: var(--space-10);
+
+    }
+
+}

@@ -1,0 +1,39 @@
+/* ==========================================================
+   SEDS — Articles Archive
+   Purpose: Layout and responsive styling for the
+   published articles archive.
+   ========================================================== */
+
+
+/* ==========================================================
+   Archive Header
+   ========================================================== */
+
+.articles-header {
+
+    margin-bottom: var(--space-stack-lg);
+
+}
+
+.articles-header p {
+
+    max-width: var(--measure-content);
+
+    color: var(--text-secondary);
+
+}
+
+
+/* ==========================================================
+   Article List
+   ========================================================== */
+
+.articles-list {
+
+    display: grid;
+
+    gap: var(--space-8);
+
+    max-width: var(--measure-content);
+
+}

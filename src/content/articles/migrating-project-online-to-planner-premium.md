@@ -32,7 +32,7 @@ featured: false
 
 draft: false
 
-author: "Sadhan"
+author: "Sadhan Chandra"
 
 references:
   - title: Microsoft Learn
@@ -40,7 +40,7 @@ references:
     description: Official Microsoft Project documentation.
 ---
 
-# Migrating from Project Online to Planner Premium
+## Migrating from Project Online to Planner Premium
 
 Migration is more than moving projects from one platform to another. Organizations should understand existing workloads, licensing, integrations, and business processes before beginning the transition.
 

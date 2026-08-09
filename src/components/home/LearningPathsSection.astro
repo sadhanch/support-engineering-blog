@@ -1,49 +1,73 @@
 ---
-/* ==========================================================
-   SEDS — Homepage Learning Paths Section
-   Purpose: Displays learning path cards on the homepage.
-   ========================================================== */
+/**
+ * ==========================================================
+ * SEDS — Homepage Learning Paths Section
+ * Purpose: Displays published learning paths on the homepage.
+ * ==========================================================
+ */
 
 import Container from "../layout/Container.astro";
-import Section from "../layout/Section.astro";
-
+import SectionHeader from "../ui/SectionHeader.astro";
 import LearningPathCard from "../ui/LearningPathCard.astro";
 
-import { learningPaths } from "../../data/learning-paths";
+import { getPublishedLearningPaths } from "../../lib/learningPaths";
 
-import SectionHeader from "../ui/SectionHeader.astro";
+const learningPaths = await getPublishedLearningPaths();
 ---
 
-<Section>
+{
 
-    <Container>
+    learningPaths.length > 0 && (
 
-        <SectionHeader
+        <Container>
 
-            title="Learning Paths"
+            <!-- ==================================================
+                 Section Header
+                 ================================================== -->
 
-            description="Follow structured journeys designed to build practical expertise."
+            <SectionHeader
 
-        />
+                title="Learning Paths"
 
-        <div class="learning-path-grid">
+                description="Follow structured journeys designed to build practical expertise."
 
-            {
+            />
 
-                learningPaths.map(path => (
 
-                    <LearningPathCard
+            <!-- ==================================================
+                 Learning Path Cards
+                 ================================================== -->
 
-                        {...path}
+            <div class="learning-path-grid">
 
-                    />
+                {
 
-                ))
+                    learningPaths.map((path) => (
 
-            }
+                        <LearningPathCard
 
-        </div>
+                            title={path.title}
 
-    </Container>
+                            description={path.description}
 
-</Section>
+                            level={path.level}
+
+                            articles={path.steps.length}
+
+                            readingTime={path.readingTime}
+
+                            href={`/learning-paths/${path.slug}`}
+
+                        />
+
+                    ))
+
+                }
+
+            </div>
+
+        </Container>
+
+    )
+
+}

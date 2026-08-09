@@ -1,8 +1,10 @@
 ---
-/* ==========================================================
-   SEDS — Learning Path Card
-   Purpose: Homepage learning path card.
-   ========================================================== */
+/**
+ * ==========================================================
+ * SEDS — Learning Path Card
+ * Purpose: Homepage and directory card for a Learning Path.
+ * ==========================================================
+ */
 
 import Badge from "./Badge.astro";
 
@@ -16,7 +18,7 @@ interface Props {
 
     articles: number;
 
-    duration: string;
+    readingTime: string;
 
     href: string;
 
@@ -32,25 +34,38 @@ const {
 
     articles,
 
-    duration,
+    readingTime,
 
     href
 
 } = Astro.props;
 
+
 const badgeVariant =
 
     level === "Beginner"
+
         ? "success"
+
         : level === "Intermediate"
+
             ? "info"
+
             : "warning";
+
 ---
 
 <a
+
     href={href}
+
     class="learning-path-card"
+
 >
+
+    <!-- ==================================================
+         Learning Path Metadata
+         ================================================== -->
 
     <div class="learning-path-card__meta">
 
@@ -62,11 +77,16 @@ const badgeVariant =
 
         <span>
 
-            {duration}
+            {readingTime}
 
         </span>
 
     </div>
+
+
+    <!-- ==================================================
+         Learning Path Title
+         ================================================== -->
 
     <h3>
 
@@ -74,17 +94,28 @@ const badgeVariant =
 
     </h3>
 
+
+    <!-- ==================================================
+         Learning Path Description
+         ================================================== -->
+
     <p>
 
         {description}
 
     </p>
 
+
+    <!-- ==================================================
+         Learning Path Summary
+         ================================================== -->
+
     <div class="learning-path-card__footer">
 
         <span>
 
-            {articles} Articles
+            {articles}
+            {articles === 1 ? " Article" : " Articles"}
 
         </span>
 

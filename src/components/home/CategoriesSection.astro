@@ -1,49 +1,56 @@
 ---
-/* ==========================================================
-   SEDS — Homepage Categories Section
-   Purpose: Displays the homepage category cards.
-   ========================================================== */
+/**
+ * ==========================================================
+ * SEDS — Homepage Categories Section
+ * Purpose: Displays featured categories using editorial
+ * category configuration and live published article counts.
+ * ==========================================================
+ */
 
 import Section from "../layout/Section.astro";
 import Container from "../layout/Container.astro";
 
 import CategoryCard from "../ui/CategoryCard.astro";
 
-import { categories } from "../../data/categories";
-
 import SectionHeader from "../ui/SectionHeader.astro";
+
+import { getFeaturedCategories } from "../../lib/categories";
+
+const categories = await getFeaturedCategories();
 ---
 
-<Section>
+<Container>
 
-    <Container>
+    <SectionHeader
 
-        <SectionHeader
+        title="Categories"
 
-            title="Categories"
+        description="Browse articles organized by Microsoft technologies and engineering disciplines."
 
-            description="Browse articles organized by Microsoft technologies and engineering disciplines."
+    />
 
-        />
+    <div class="category-grid">
 
-        <div class="category-grid">
+        {
 
-            {
+            categories.map((category) => (
 
-                categories.map(category => (
+                <CategoryCard
 
-                    <CategoryCard
+                    title={category.name}
 
-                        {...category}
+                    description={category.description}
 
-                    />
+                    href={`/category/${category.slug}`}
 
-                ))
+                    articleCount={category.count}
 
-            }
+                />
 
-        </div>
+            ))
 
-    </Container>
+        }
 
-</Section>
+    </div>
+
+</Container>

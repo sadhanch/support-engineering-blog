@@ -1,0 +1,61 @@
+---
+/*
+==========================================================
+SEDS — Analytics Consent Banner
+Purpose: Requests permission before optional analytics
+is loaded.
+==========================================================
+*/
+
+---
+
+<div
+    class="consent-banner"
+    id="consent-banner"
+    role="dialog"
+    aria-labelledby="consent-banner-title"
+    aria-describedby="consent-banner-description"
+    hidden
+>
+
+    <div class="consent-banner__content">
+
+        <h2 id="consent-banner-title">
+            Help us improve SEB
+        </h2>
+
+        <p id="consent-banner-description">
+            Support Engineering Blog uses Google Analytics to
+            understand which content is useful and improve the
+            site. Analytics is optional and will only be enabled
+            if you allow it.
+        </p>
+
+        <p>
+            You can change your choice later from the Privacy Policy.
+        </p>
+
+    </div>
+
+
+    <div class="consent-banner__actions">
+
+        <button
+            type="button"
+            class="button"
+            id="consent-accept"
+        >
+            Allow Analytics
+        </button>
+
+        <button
+            type="button"
+            class="button button--outline"
+            id="consent-decline"
+        >
+            Decline
+        </button>
+
+    </div>
+
+</div>

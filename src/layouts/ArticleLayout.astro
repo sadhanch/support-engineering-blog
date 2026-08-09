@@ -1,12 +1,20 @@
 ---
 /* ==========================================================
    SEDS — Article Layout
-   Purpose: Shared article-page structure including Reader's Toolkit, content, references, and related articles.
+   ----------------------------------------------------------
+   Purpose:
+   Provides the shared structure for individual articles,
+   including article metadata, Reader's Toolkit, content,
+   references, and related articles.
+
+   SEO metadata is passed to BaseLayout, while the article
+   content itself remains independent of the document shell.
    ========================================================== */
 
 import BaseLayout from "./BaseLayout.astro";
 
 import Container from "../components/layout/Container.astro";
+
 import ArticleSidebar from "../components/article/ArticleSidebar.astro";
 import QuickSummary from "../components/article/widgets/QuickSummary.astro";
 import TechnologyStack from "../components/article/TechnologyStack.astro";
@@ -14,6 +22,13 @@ import References from "../components/article/References.astro";
 import RelatedArticles from "../components/article/RelatedArticles.astro";
 
 import { slugify } from "../utils/slug";
+
+
+/* ==========================================================
+   Heading Type
+   ----------------------------------------------------------
+   Used by the Reader's Toolkit / Table of Contents.
+   ========================================================== */
 
 interface Heading {
 
@@ -25,7 +40,16 @@ interface Heading {
 
 }
 
+
+/* ==========================================================
+   Article Layout Props
+   ========================================================== */
+
 interface Props {
+
+    /* ------------------------------------------------------
+       Primary article metadata
+       ------------------------------------------------------ */
 
     title: string;
 
@@ -37,11 +61,33 @@ interface Props {
 
     updated: string;
 
+
+    /* ------------------------------------------------------
+       Machine-readable publication metadata
+       Used by BaseLayout for SEO / Open Graph.
+       ------------------------------------------------------ */
+
+    publishDate: Date;
+
+    updatedDate?: Date;
+
+    author: string;
+
+
+    /* ------------------------------------------------------
+       Article content
+       ------------------------------------------------------ */
+
     summary?: string[];
 
     headings?: Heading[];
 
     technology?: string[];
+
+
+    /* ------------------------------------------------------
+       References
+       ------------------------------------------------------ */
 
     references?: {
 
@@ -52,6 +98,11 @@ interface Props {
         description: string;
 
     }[];
+
+
+    /* ------------------------------------------------------
+       Related articles
+       ------------------------------------------------------ */
 
     relatedArticles?: {
 
@@ -69,6 +120,11 @@ interface Props {
 
 }
 
+
+/* ==========================================================
+   Props
+   ========================================================== */
+
 const {
 
     title,
@@ -81,6 +137,12 @@ const {
 
     updated,
 
+    publishDate,
+
+    updatedDate,
+
+    author,
+
     summary,
 
     headings = [],
@@ -89,9 +151,10 @@ const {
 
     references = [],
 
-    relatedArticles = [],
+    relatedArticles = []
 
 } = Astro.props;
+
 ---
 
 <BaseLayout
@@ -99,6 +162,16 @@ const {
     title={title}
 
     description={description}
+
+    type="article"
+
+    publishedTime={publishDate}
+
+    modifiedTime={updatedDate}
+
+    section={category}
+
+    author={author}
 
 >
 
@@ -112,7 +185,20 @@ const {
 
         <Container>
 
+
+            <!-- ==================================================
+                 Article Header
+                 ================================================== -->
+
             <header class="article-header">
+
+
+                <!-- ==================================================
+                     Pagefind Metadata
+                     --------------------------------------------------
+                     These hidden elements provide structured metadata
+                     for the client-side Pagefind search index.
+                     ================================================== -->
 
                 <span
                     hidden
@@ -123,6 +209,7 @@ const {
 
                 </span>
 
+
                 <span
                     hidden
                     data-pagefind-meta="reading_time"
@@ -132,12 +219,20 @@ const {
 
                 </span>
 
+
                 <span
                     hidden
                     data-pagefind-meta="description"
                 >
+
                     {description}
+
                 </span>
+
+
+                <!-- ==================================================
+                     Article Category
+                     ================================================== -->
 
                 <a
                     href={`/category/${slugify(category)}`}
@@ -149,17 +244,32 @@ const {
 
                 </a>
 
+
+                <!-- ==================================================
+                     Article Title
+                     ================================================== -->
+
                 <h1>
 
                     {title}
 
                 </h1>
 
+
+                <!-- ==================================================
+                     Article Description
+                     ================================================== -->
+
                 <p class="article-description">
 
                     {description}
 
                 </p>
+
+
+                <!-- ==================================================
+                     Technology Stack
+                     ================================================== -->
 
                 <TechnologyStack
 
@@ -169,7 +279,24 @@ const {
 
             </header>
 
+
+            <!-- ==================================================
+                 Article Layout
+                 --------------------------------------------------
+                 Desktop:
+                 Reader's Toolkit occupies the left column.
+
+                 Mobile / Tablet:
+                 Desktop sidebar is hidden and the mobile
+                 Reader's Toolkit is displayed within the article.
+                 ================================================== -->
+
             <div class="article-layout">
+
+
+                <!-- ==================================================
+                     Desktop Reader's Toolkit
+                     ================================================== -->
 
                 <div class="article-sidebar--desktop">
 
@@ -187,16 +314,34 @@ const {
 
                 </div>
 
+
+                <!-- ==================================================
+                     Main Article Content
+                     ================================================== -->
+
                 <article
+
                     class="article-content"
+
                     data-pagefind-body
+
                 >
+
+
+                    <!-- ==================================================
+                         Key Takeaways
+                         ================================================== -->
 
                     <QuickSummary
 
                         summary={summary}
 
                     />
+
+
+                    <!-- ==================================================
+                         Mobile Reader's Toolkit
+                         ================================================== -->
 
                     <div class="article-sidebar--mobile">
 
@@ -214,13 +359,35 @@ const {
 
                     </div>
 
+
+                    <!-- ==================================================
+                         Article Body
+                         --------------------------------------------------
+                         The individual Markdown article is rendered
+                         into this slot.
+                         ================================================== -->
+
                     <slot />
+
+
+                    <!-- ==================================================
+                         References
+                         ================================================== -->
 
                     <References
 
                         references={references}
 
                     />
+
+
+                    <!-- ==================================================
+                         Related Articles
+                         --------------------------------------------------
+                         Excluded from Pagefind indexing so related
+                         content does not interfere with search
+                         results for the current article.
+                         ================================================== -->
 
                     <div data-pagefind-ignore>
 

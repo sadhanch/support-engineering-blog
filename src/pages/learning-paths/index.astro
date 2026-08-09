@@ -1,0 +1,108 @@
+---
+/**
+ * ==========================================================
+ * SEDS — Learning Paths Directory
+ * Purpose: Displays all published Learning Paths.
+ * ==========================================================
+ */
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/layout/Container.astro";
+import Section from "../../components/layout/Section.astro";
+import SectionHeader from "../../components/ui/SectionHeader.astro";
+import LearningPathCard from "../../components/ui/LearningPathCard.astro";
+
+import { getPublishedLearningPaths } from "../../lib/learningPaths";
+
+const learningPaths = await getPublishedLearningPaths();
+---
+
+<BaseLayout
+
+    title="Learning Paths"
+
+    description="Follow structured learning paths designed to build practical Microsoft 365 and support engineering expertise."
+
+>
+
+    <main
+
+        id="main-content"
+
+        class="learning-paths-page"
+
+    >
+
+        <Section>
+
+            <Container>
+
+                <!-- ==================================================
+                     Page Header
+                     ================================================== -->
+
+                <SectionHeader
+
+                    title="Learning Paths"
+
+                    description="Follow structured journeys designed to build practical expertise."
+
+                />
+
+
+                <!-- ==================================================
+                     Learning Path Directory
+                     ================================================== -->
+
+                {
+
+                    learningPaths.length > 0 ? (
+
+                        <div class="learning-path-grid">
+
+                            {
+
+                                learningPaths.map((path) => (
+
+                                    <LearningPathCard
+
+                                        title={path.title}
+
+                                        description={path.description}
+
+                                        level={path.level}
+
+                                        articles={path.steps.length}
+
+                                        duration={path.duration}
+
+                                        href={`/learning-paths/${path.slug}`}
+
+                                    />
+
+                                ))
+
+                            }
+
+                        </div>
+
+                    ) : (
+
+                        <p class="learning-paths-empty">
+
+                            Learning Paths are currently being developed.
+                            Check back soon for structured learning journeys.
+
+                        </p>
+
+                    )
+
+                }
+
+            </Container>
+
+        </Section>
+
+    </main>
+
+</BaseLayout>

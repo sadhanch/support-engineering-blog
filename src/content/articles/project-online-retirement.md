@@ -33,7 +33,7 @@ featured: true
 
 draft: false
 
-author: "Sadhan"
+author: "Sadhan Chandra"
 
 references:
   - title: Microsoft Learn
@@ -45,7 +45,7 @@ references:
     description: Track upcoming Planner and Microsoft 365 features.
 ---
 
-# Project Online Is Retiring
+## Project Online Is Retiring
 
 Microsoft has announced that **Project Online** will reach end of life on **September 30, 2026**.
 
