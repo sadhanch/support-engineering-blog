@@ -81,13 +81,17 @@ references:
     description: "Microsoft documentation describing the transition of Project for the web capabilities into the modern Planner experience."
 
 ---
-import PlannerFitCheck from "../../components/content/PlannerFitCheck.astro"
+import PlannerFitCheck from "../../components/content/PlannerFitCheck.astro";
+import ComparisonTable from "../../components/content/ComparisonTable.astro";
+import WorkManagementJourney from "../../components/content/WorkManagementJourney.astro";
 
 ![Move beyond simple task lists and achieve outcomes that matter](../../assets/images/articles/microsoft-planner-premium-structured-project-delivery/00_hero.png)
 
 For many Microsoft 365 users, Planner has traditionally been the place to organize team tasks, assign work, and keep day-to-day activities moving. A board with tasks, owners, due dates, and status can go a long way when the work is relatively straightforward.
 
 But projects rarely stay straightforward for long.
+
+<WorkManagementJourney />
 
 As work becomes more complex, simply knowing what needs to be done is no longer enough. Project teams need to understand which tasks depend on one another, how a change affects the schedule, which milestones are approaching, and whether the project is still on track.
 
@@ -294,18 +298,74 @@ It makes it better suited to a different class of problem.
 
 <PlannerFitCheck />
 
-Not sure which one applies? The table below provides the same decision framework at a glance.
+Use the guide below to match the complexity of the work to the level of planning capability it requires.
 
-| If the work primarily involves... | Consider |
-|---|---|
-| Assigning and tracking team tasks | Basic |
-| Coordinating recurring operational activities | Basic |
-| Managing a straightforward team initiative | Basic may be sufficient |
-| Coordinating multiple dependent activities | Premium |
-| Building a structured project schedule | Premium |
-| Tracking milestones and critical-path activities | Premium |
-| Understanding workload across project participants | Premium |
-| Managing broader portfolio or enterprise PPM requirements | Evaluate the wider Microsoft ecosystem |
+<ComparisonTable
+  caption="Planner decision guide"
+  columns={[
+    { label: "If the work primarily involves…" },
+    { label: "Consider", emphasis: true },
+    { label: "Why" }
+  ]}
+  rows={[
+    {
+      label: "Assigning and tracking team tasks",
+      cells: [
+        "Basic",
+        "Task assignment and tracking are the primary requirement."
+      ]
+    },
+    {
+      label: "Coordinating recurring operational activities",
+      cells: [
+        "Basic",
+        "The work does not necessarily require structured project scheduling."
+      ]
+    },
+    {
+      label: "Managing a straightforward team initiative",
+      cells: [
+        "Basic may be sufficient",
+        "A simple initiative may not justify Premium capabilities."
+      ]
+    },
+    {
+      label: "Coordinating multiple dependent activities",
+      cells: [
+        "Premium",
+        "Dependencies introduce relationships between activities."
+      ]
+    },
+    {
+      label: "Building a structured project schedule",
+      cells: [
+        "Premium",
+        "Structured scheduling is where Premium capabilities become valuable."
+      ]
+    },
+    {
+      label: "Tracking milestones and critical-path activities",
+      cells: [
+        "Premium",
+        "These require more advanced project-planning capabilities."
+      ]
+    },
+    {
+      label: "Understanding workload across project participants",
+      cells: [
+        "Premium",
+        "Workload visibility becomes increasingly important as delivery complexity grows."
+      ]
+    },
+    {
+      label: "Managing broader portfolio or enterprise PPM requirements",
+      cells: [
+        "Evaluate wider Microsoft ecosystem",
+        "Portfolio, resource, financial and governance requirements may extend beyond individual Premium plans."
+      ]
+    }
+  ]}
+/>
 
 The important point is that this is not a permanent boundary.
 

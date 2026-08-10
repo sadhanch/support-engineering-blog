@@ -1,0 +1,262 @@
+---
+import "../../assets/css/components/work-management-journey.css";
+---
+
+<section
+  class="work-management-journey"
+  aria-labelledby="work-management-journey-title"
+>
+  <div class="work-management-journey__header">
+    <p class="work-management-journey__eyebrow">Work management model</p>
+
+    <h2 id="work-management-journey-title">
+      From individual work to portfolio oversight
+    </h2>
+
+    <p class="work-management-journey__intro">
+      Select a level to see how the nature of work changes as organizations
+      move from individual execution toward broader project and portfolio
+      oversight.
+    </p>
+  </div>
+
+  <div
+    class="work-management-journey__journey"
+    role="tablist"
+    aria-label="Work management levels"
+  >
+    <button
+      type="button"
+      class="work-management-journey__node is-active"
+      role="tab"
+      aria-selected="true"
+      aria-controls="wmj-panel"
+      data-level="tasks"
+      id="wmj-tab-tasks"
+    >
+      <span class="work-management-journey__node-number">01</span>
+      <span class="work-management-journey__node-title">
+        Individual Tasks
+      </span>
+      <span class="work-management-journey__node-question">
+        What needs to be done?
+      </span>
+    </button>
+
+    <span class="work-management-journey__connector" aria-hidden="true">→</span>
+
+    <button
+      type="button"
+      class="work-management-journey__node"
+      role="tab"
+      aria-selected="false"
+      aria-controls="wmj-panel"
+      data-level="team"
+      id="wmj-tab-team"
+      tabindex="-1"
+    >
+      <span class="work-management-journey__node-number">02</span>
+      <span class="work-management-journey__node-title">
+        Team Plans
+      </span>
+      <span class="work-management-journey__node-question">
+        Who is doing what?
+      </span>
+    </button>
+
+    <span class="work-management-journey__connector" aria-hidden="true">→</span>
+
+    <button
+      type="button"
+      class="work-management-journey__node"
+      role="tab"
+      aria-selected="false"
+      aria-controls="wmj-panel"
+      data-level="projects"
+      id="wmj-tab-projects"
+      tabindex="-1"
+    >
+      <span class="work-management-journey__node-number">03</span>
+      <span class="work-management-journey__node-title">
+        Structured Projects
+      </span>
+      <span class="work-management-journey__node-question">
+        How does the work fit together?
+      </span>
+    </button>
+
+    <span class="work-management-journey__connector" aria-hidden="true">→</span>
+
+    <button
+      type="button"
+      class="work-management-journey__node"
+      role="tab"
+      aria-selected="false"
+      aria-controls="wmj-panel"
+      data-level="portfolio"
+      id="wmj-tab-portfolio"
+      tabindex="-1"
+    >
+      <span class="work-management-journey__node-number">04</span>
+      <span class="work-management-journey__node-title">
+        Portfolio Management
+      </span>
+      <span class="work-management-journey__node-question">
+        What should the organization prioritize?
+      </span>
+    </button>
+  </div>
+
+  <div class="work-management-journey__ai">
+    <span class="work-management-journey__ai-label">
+      AI assistance
+    </span>
+
+    <span class="work-management-journey__ai-text">
+      Increasingly assists users across these levels by surfacing information,
+      summarizing work and supporting planning and execution.
+    </span>
+  </div>
+
+  <div
+    class="work-management-journey__panel"
+    id="wmj-panel"
+    role="tabpanel"
+    aria-labelledby="wmj-tab-tasks"
+    tabindex="0"
+  >
+    <div class="work-management-journey__panel-content">
+      <p class="work-management-journey__panel-kicker">
+        Individual Tasks
+      </p>
+
+      <h3 data-panel-title>
+        What needs to be done?
+      </h3>
+
+      <p data-panel-text>
+        Work begins with individual activities, ownership and deadlines.
+        The primary concern is making sure the right work is assigned,
+        understood and completed.
+      </p>
+
+      <div class="work-management-journey__panel-footer">
+        <span data-panel-focus-label>Primary focus</span>
+        <strong data-panel-focus>
+          Assignment and completion
+        </strong>
+      </div>
+    </div>
+  </div>
+
+  <p class="work-management-journey__note">
+    This is a simplified model for understanding how work can become more
+    structured as its coordination requirements increase. It is not a formal
+    Microsoft product hierarchy.
+  </p>
+</section>
+
+<script>
+  const journeys = document.querySelectorAll(".work-management-journey");
+
+  journeys.forEach((journey) => {
+    const nodes = Array.from(
+      journey.querySelectorAll(".work-management-journey__node")
+    );
+
+    const panel = journey.querySelector(
+      ".work-management-journey__panel"
+    );
+
+    const panelKicker = journey.querySelector(
+      ".work-management-journey__panel-kicker"
+    );
+
+    const panelTitle = journey.querySelector("[data-panel-title]");
+    const panelText = journey.querySelector("[data-panel-text]");
+    const panelFocus = journey.querySelector("[data-panel-focus]");
+
+    const content = {
+      tasks: {
+        label: "Individual Tasks",
+        title: "What needs to be done?",
+        text:
+          "Work begins with individual activities, ownership and deadlines. The primary concern is making sure the right work is assigned, understood and completed.",
+        focus: "Assignment and completion"
+      },
+
+      team: {
+        label: "Team Plans",
+        title: "Who is doing what?",
+        text:
+          "Work becomes shared and coordinated across a team. Visibility, ownership and collaboration become more important as multiple people contribute to the same body of work.",
+        focus: "Team coordination"
+      },
+
+      projects: {
+        label: "Structured Projects",
+        title: "How does the work fit together?",
+        text:
+          "As delivery becomes more complex, relationships between activities matter. Dependencies, schedules, milestones, workload and delivery constraints become increasingly important.",
+        focus: "Structured delivery"
+      },
+
+      portfolio: {
+        label: "Portfolio Management",
+        title: "What should the organization prioritize?",
+        text:
+          "Multiple projects can be considered together to provide broader oversight. Portfolio-level views can help organizations understand project status, milestones and where attention may be required.",
+        focus: "Portfolio oversight"
+      }
+    };
+
+    function activate(level) {
+      const selected = content[level];
+
+      if (!selected) return;
+
+      nodes.forEach((node) => {
+        const isActive = node.dataset.level === level;
+
+        node.classList.toggle("is-active", isActive);
+        node.setAttribute("aria-selected", String(isActive));
+        node.tabIndex = isActive ? 0 : -1;
+      });
+
+      panel.setAttribute(
+        "aria-labelledby",
+        `wmj-tab-${level}`
+      );
+
+      panelKicker.textContent = selected.label;
+      panelTitle.textContent = selected.title;
+      panelText.textContent = selected.text;
+      panelFocus.textContent = selected.focus;
+    }
+
+    nodes.forEach((node, index) => {
+      node.addEventListener("click", () => {
+        activate(node.dataset.level);
+      });
+
+      node.addEventListener("keydown", (event) => {
+        let nextIndex = index;
+
+        if (event.key === "ArrowRight") {
+          nextIndex = (index + 1) % nodes.length;
+        }
+
+        if (event.key === "ArrowLeft") {
+          nextIndex = (index - 1 + nodes.length) % nodes.length;
+        }
+
+        if (nextIndex !== index) {
+          event.preventDefault();
+
+          nodes[nextIndex].focus();
+          activate(nodes[nextIndex].dataset.level);
+        }
+      });
+    });
+  });
+</script>

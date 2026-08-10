@@ -1,5 +1,5 @@
 ---
-import "../assets/css/components/planner-fit-check.css";
+import "../../assets/css/components/planner-fit-check.css";
 ---
 
 <section class="planner-fit-check" aria-labelledby="planner-fit-check-title">
@@ -12,305 +12,273 @@ import "../assets/css/components/planner-fit-check.css";
       </p>
     </div>
 
-    <div class="planner-fit-check__progress" aria-live="polite">
-      <span class="planner-fit-check__progress-label">Step</span>
-      <span class="planner-fit-check__progress-value" data-progress-value>1 of 3</span>
+    <div class="planner-fit-check__step-count" aria-live="polite">
+      <span data-step-count>Step 1 of 3</span>
     </div>
   </div>
 
-  <div class="planner-fit-check__progress-bar" aria-hidden="true">
-    <span data-progress-bar></span>
+  <div class="planner-fit-check__progress" aria-hidden="true">
+    <span data-progress></span>
   </div>
 
-  <div class="planner-fit-check__body">
-    <div class="planner-fit-check__step" data-step="1">
-      <p class="planner-fit-check__question">What are you primarily managing?</p>
+  <!-- STEP 1 -->
+  <div class="planner-fit-check__step" data-step="1">
+    <h3>What are you primarily managing?</h3>
 
-      <div class="planner-fit-check__options" role="group" aria-label="Primary workload">
-        <button type="button" class="planner-fit-check__option" data-choice="tasks">
-          <span class="planner-fit-check__option-title">Tasks and routine work</span>
-          <span class="planner-fit-check__option-description">
-            Assigning, tracking and coordinating relatively straightforward work.
-          </span>
-        </button>
+    <div class="planner-fit-check__options">
+      <button type="button" class="planner-fit-check__option" data-value="tasks">
+        <strong>Tasks and routine work</strong>
+        <span>Assigning, tracking and coordinating relatively straightforward work.</span>
+      </button>
 
-        <button type="button" class="planner-fit-check__option" data-choice="project">
-          <span class="planner-fit-check__option-title">A structured project</span>
-          <span class="planner-fit-check__option-description">
-            Delivering an initiative with defined activities, dates and outcomes.
-          </span>
-        </button>
+      <button type="button" class="planner-fit-check__option" data-value="project">
+        <strong>A structured project</strong>
+        <span>Delivering an initiative with defined activities, dates and outcomes.</span>
+      </button>
 
-        <button type="button" class="planner-fit-check__option" data-choice="portfolio">
-          <span class="planner-fit-check__option-title">Multiple projects / enterprise PPM</span>
-          <span class="planner-fit-check__option-description">
-            Coordinating projects at a broader portfolio, resource or governance level.
-          </span>
-        </button>
-      </div>
-    </div>
-
-    <div class="planner-fit-check__step" data-step="2" hidden>
-      <p class="planner-fit-check__question">How does the project work behave?</p>
-
-      <div class="planner-fit-check__options" role="group" aria-label="Project complexity">
-        <button type="button" class="planner-fit-check__option" data-choice="independent">
-          <span class="planner-fit-check__option-title">Mostly independent activities</span>
-          <span class="planner-fit-check__option-description">
-            Tasks have owners and dates, but few activities depend on one another.
-          </span>
-        </button>
-
-        <button type="button" class="planner-fit-check__option" data-choice="dependent">
-          <span class="planner-fit-check__option-title">Multiple dependent activities</span>
-          <span class="planner-fit-check__option-description">
-            The timing or completion of one activity affects another.
-          </span>
-        </button>
-
-        <button type="button" class="planner-fit-check__option" data-choice="complex">
-          <span class="planner-fit-check__option-title">Complex schedule and delivery constraints</span>
-          <span class="planner-fit-check__option-description">
-            The project needs structured scheduling, milestones, workload visibility or critical-path analysis.
-          </span>
-        </button>
-      </div>
-    </div>
-
-    <div class="planner-fit-check__step" data-step="3" hidden>
-      <p class="planner-fit-check__question">What else does the organization need?</p>
-
-      <div class="planner-fit-check__options" role="group" aria-label="Broader management requirements">
-        <button type="button" class="planner-fit-check__option" data-choice="portfolio-visibility">
-          <span class="planner-fit-check__option-title">Portfolio visibility</span>
-          <span class="planner-fit-check__option-description">
-            A consolidated view across multiple Premium projects.
-          </span>
-        </button>
-
-        <button type="button" class="planner-fit-check__option" data-choice="resource-financial">
-          <span class="planner-fit-check__option-title">Resource or financial management</span>
-          <span class="planner-fit-check__option-description">
-            Capacity, resource allocation, financial or investment concerns are central to the model.
-          </span>
-        </button>
-
-        <button type="button" class="planner-fit-check__option" data-choice="enterprise">
-          <span class="planner-fit-check__option-title">Enterprise PPM and governance</span>
-          <span class="planner-fit-check__option-description">
-            Formal portfolio governance, enterprise processes, extensive integrations or specialized PPM capabilities.
-          </span>
-        </button>
-      </div>
-    </div>
-
-    <div class="planner-fit-check__result" data-result hidden aria-live="polite">
-      <span class="planner-fit-check__result-kicker" data-result-kicker>Recommendation</span>
-      <h3 class="planner-fit-check__result-title" data-result-title></h3>
-      <p class="planner-fit-check__result-text" data-result-text></p>
-      <p class="planner-fit-check__result-note" data-result-note></p>
-      <button type="button" class="planner-fit-check__reset" data-reset>
-        Start again
+      <button type="button" class="planner-fit-check__option" data-value="portfolio">
+        <strong>Multiple projects / enterprise PPM</strong>
+        <span>Coordinating projects at a broader portfolio, resource or governance level.</span>
       </button>
     </div>
   </div>
 
-  <div class="planner-fit-check__footer">
+  <!-- STEP 2 -->
+  <div class="planner-fit-check__step" data-step="2" hidden>
+    <h3>How does the project work behave?</h3>
+
+    <div class="planner-fit-check__options">
+      <button type="button" class="planner-fit-check__option" data-value="independent">
+        <strong>Mostly independent activities</strong>
+        <span>Tasks have owners and dates, but few activities depend on one another.</span>
+      </button>
+
+      <button type="button" class="planner-fit-check__option" data-value="dependent">
+        <strong>Multiple dependent activities</strong>
+        <span>The timing or completion of one activity affects another.</span>
+      </button>
+
+      <button type="button" class="planner-fit-check__option" data-value="complex">
+        <strong>Complex schedule and delivery constraints</strong>
+        <span>The project needs structured scheduling, milestones, workload visibility or critical-path analysis.</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="planner-fit-check__step" data-step="3" hidden>
+    <h3>What else does the organization need?</h3>
+
+    <div class="planner-fit-check__options">
+      <button type="button" class="planner-fit-check__option" data-value="portfolio-visibility">
+        <strong>Portfolio visibility</strong>
+        <span>A consolidated view across multiple Premium projects.</span>
+      </button>
+
+      <button type="button" class="planner-fit-check__option" data-value="resource-financial">
+        <strong>Resource or financial management</strong>
+        <span>Capacity, resource allocation, financial or investment concerns are central to the model.</span>
+      </button>
+
+      <button type="button" class="planner-fit-check__option" data-value="enterprise">
+        <strong>Enterprise PPM and governance</strong>
+        <span>Formal portfolio governance, enterprise processes, extensive integrations or specialized PPM capabilities.</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="planner-fit-check__result" data-result hidden>
+    <p class="planner-fit-check__result-label">Recommendation</p>
+    <h3 data-result-title></h3>
+    <p data-result-text></p>
+    <p class="planner-fit-check__result-note" data-result-note></p>
+
+    <button type="button" class="planner-fit-check__reset" data-reset>
+      Start again
+    </button>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="planner-fit-check__controls">
     <button type="button" class="planner-fit-check__back" data-back hidden>
       ← Back
     </button>
-    <span class="planner-fit-check__footer-spacer"></span>
+
     <button type="button" class="planner-fit-check__continue" data-continue disabled>
       Continue →
     </button>
   </div>
 
   <noscript>
-    <div class="planner-fit-check__noscript">
-      <strong>JavaScript is disabled.</strong>
-      Use the practical decision guide table in this article for the same guidance.
-    </div>
+    <p class="planner-fit-check__noscript">
+      JavaScript is disabled. Please use the practical decision guide table in this article.
+    </p>
   </noscript>
 </section>
 
 <script>
-  const root = document.querySelector(".planner-fit-check");
+  const plannerFitChecks = document.querySelectorAll(".planner-fit-check");
 
-  if (root) {
-    const steps = [...root.querySelectorAll("[data-step]")];
-    const progressValue = root.querySelector("[data-progress-value]");
-    const progressBar = root.querySelector("[data-progress-bar]");
+  plannerFitChecks.forEach((root) => {
+    const steps = Array.from(root.querySelectorAll("[data-step]"));
     const continueButton = root.querySelector("[data-continue]");
     const backButton = root.querySelector("[data-back]");
+    const resetButton = root.querySelector("[data-reset]");
     const result = root.querySelector("[data-result]");
-    const resultKicker = root.querySelector("[data-result-kicker]");
     const resultTitle = root.querySelector("[data-result-title]");
     const resultText = root.querySelector("[data-result-text]");
     const resultNote = root.querySelector("[data-result-note]");
-    const resetButton = root.querySelector("[data-reset]");
+    const stepCount = root.querySelector("[data-step-count]");
+    const progress = root.querySelector("[data-progress]");
+    const controls = root.querySelector(".planner-fit-check__controls");
 
     let currentStep = 1;
-    let selected = {};
+    let selectedValue = null;
+    let firstChoice = null;
 
-    const recommendation = {
+    const recommendations = {
       basic: {
-        kicker: "Recommendation",
         title: "Basic Planner may be sufficient",
         text: "Your workload appears to be primarily task-oriented. You may not need Premium project-management capabilities unless the nature of the work becomes more complex.",
         note: "This is a workload assessment, not a licensing determination."
       },
+
       premium: {
-        kicker: "Recommendation",
         title: "Consider Planner Premium",
         text: "Your work has characteristics of structured project delivery. Capabilities such as dependencies, Timeline, milestones, critical-path analysis and workload views may provide meaningful value.",
         note: "Validate the specific capabilities and licenses required for your users before deployment."
       },
+
       ecosystem: {
-        kicker: "Recommendation",
         title: "Evaluate the wider Microsoft ecosystem",
         text: "Your requirements extend beyond individual project execution. Evaluate Planner Premium alongside portfolio, resource, financial, integration and governance requirements.",
         note: "The right architecture depends on the organization's operating model and existing Microsoft investments."
+      },
+
+      portfolio: {
+        title: "Planner Premium may be part of the solution",
+        text: "Your requirement extends beyond a single project. Planner Premium and Portfolios may provide useful visibility across Premium plans, but broader portfolio, resource and governance requirements should be evaluated separately.",
+        note: "Treat this as an architectural decision rather than a simple feature comparison."
       }
     };
 
-    function showStep(stepNumber) {
-      currentStep = stepNumber;
+    function showStep(number) {
+      currentStep = number;
+      selectedValue = null;
 
       steps.forEach((step) => {
-        step.hidden = Number(step.dataset.step) !== currentStep;
+        step.hidden = Number(step.dataset.step) !== number;
       });
-
-      progressValue.textContent = `${currentStep} of 3`;
-      progressBar.style.width = `${(currentStep / 3) * 100}%`;
-      backButton.hidden = currentStep === 1;
-      continueButton.disabled = !selected[`step${currentStep}`];
 
       root.querySelectorAll(".planner-fit-check__option").forEach((option) => {
         option.classList.remove("is-selected");
-        option.setAttribute("aria-pressed", "false");
       });
 
-      const currentSelection = selected[`step${currentStep}`];
+      continueButton.disabled = true;
+      backButton.hidden = number === 1;
 
-      if (currentSelection) {
-        const active = root.querySelector(
-          `[data-step="${currentStep}"] [data-choice="${currentSelection}"]`
-        );
-
-        if (active) {
-          active.classList.add("is-selected");
-          active.setAttribute("aria-pressed", "true");
-        }
-      }
+      stepCount.textContent = `Step ${number} of 3`;
+      progress.style.width = `${(number / 3) * 100}%`;
     }
 
-    function getRecommendation() {
-      if (selected.step1 === "tasks") {
-        return recommendation.basic;
-      }
-
-      if (selected.step1 === "project") {
-        if (selected.step2 === "independent") {
-          return recommendation.basic;
-        }
-
-        return recommendation.premium;
-      }
-
-      if (selected.step1 === "portfolio") {
-        if (selected.step3 === "portfolio-visibility") {
-          return recommendation.premium;
-        }
-
-        return recommendation.ecosystem;
-      }
-
-      return recommendation.premium;
-    }
-
-    function showResult() {
-      const answer = getRecommendation();
-
+    function showResult(recommendation) {
       steps.forEach((step) => {
         step.hidden = true;
       });
 
-      root.querySelector(".planner-fit-check__footer").hidden = true;
-      progressValue.textContent = "Complete";
-      progressBar.style.width = "100%";
-
-      resultKicker.textContent = answer.kicker;
-      resultTitle.textContent = answer.title;
-      resultText.textContent = answer.text;
-      resultNote.textContent = answer.note;
+      controls.hidden = true;
       result.hidden = false;
 
-      resultTitle.focus({ preventScroll: true });
+      stepCount.textContent = "Complete";
+      progress.style.width = "100%";
+
+      resultTitle.textContent = recommendation.title;
+      resultText.textContent = recommendation.text;
+      resultNote.textContent = recommendation.note;
+    }
+
+    function choose(value) {
+      selectedValue = value;
+
+      root
+        .querySelectorAll(`[data-step="${currentStep}"] .planner-fit-check__option`)
+        .forEach((option) => {
+          option.classList.toggle(
+            "is-selected",
+            option.dataset.value === value
+          );
+        });
+
+      continueButton.disabled = false;
     }
 
     root.querySelectorAll(".planner-fit-check__option").forEach((option) => {
-      option.setAttribute("aria-pressed", "false");
-
       option.addEventListener("click", () => {
-        const step = Number(option.closest("[data-step]").dataset.step);
-        const choice = option.dataset.choice;
-
-        selected[`step${step}`] = choice;
-
-        root
-          .querySelectorAll(`[data-step="${step}"] .planner-fit-check__option`)
-          .forEach((item) => {
-            item.classList.remove("is-selected");
-            item.setAttribute("aria-pressed", "false");
-          });
-
-        option.classList.add("is-selected");
-        option.setAttribute("aria-pressed", "true");
-        continueButton.disabled = false;
+        choose(option.dataset.value);
       });
     });
 
     continueButton.addEventListener("click", () => {
-      if (!selected[`step${currentStep}`]) return;
+      if (!selectedValue) return;
 
-      if (currentStep === 1 && selected.step1 === "tasks") {
-        showResult();
-        return;
-      }
+      if (currentStep === 1) {
+        firstChoice = selectedValue;
 
-      if (currentStep === 1 && selected.step1 === "portfolio") {
-        showStep(3);
+        if (selectedValue === "tasks") {
+          showResult(recommendations.basic);
+          return;
+        }
+
+        if (selectedValue === "portfolio") {
+          showStep(3);
+          return;
+        }
+
+        showStep(2);
         return;
       }
 
       if (currentStep === 2) {
-        showResult();
+        if (selectedValue === "independent") {
+          showResult(recommendations.basic);
+        } else {
+          showResult(recommendations.premium);
+        }
+
         return;
       }
 
       if (currentStep === 3) {
-        showResult();
+        if (selectedValue === "portfolio-visibility") {
+          showResult(recommendations.portfolio);
+        } else {
+          showResult(recommendations.ecosystem);
+        }
       }
     });
 
     backButton.addEventListener("click", () => {
-      if (currentStep === 3 && selected.step1 === "portfolio") {
+      if (currentStep === 3 && firstChoice === "portfolio") {
         showStep(1);
         return;
       }
 
-      if (currentStep > 1) {
-        showStep(currentStep - 1);
+      if (currentStep === 2) {
+        showStep(1);
       }
     });
 
     resetButton.addEventListener("click", () => {
-      selected = {};
+      firstChoice = null;
+      selectedValue = null;
+
       result.hidden = true;
-      root.querySelector(".planner-fit-check__footer").hidden = false;
+      controls.hidden = false;
+
       showStep(1);
     });
 
     showStep(1);
-  }
+  });
 </script>

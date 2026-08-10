@@ -1,0 +1,256 @@
+/* ==========================================================
+   SEDS — Work Management Journey
+   Purpose: Interactive work-management model
+   ========================================================== */
+
+.work-management-journey {
+  width: 100%;
+  margin-block: var(--space-10);
+  padding: var(--space-8);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-primary);
+  color: var(--text-primary);
+}
+
+/* ==========================================================
+   Header
+   ========================================================== */
+
+.work-management-journey__header {
+  max-width: 760px;
+}
+
+.work-management-journey__eyebrow {
+  margin: 0 0 var(--space-2);
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.work-management-journey__header h2 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.work-management-journey__intro {
+  margin: var(--space-3) 0 0;
+  color: var(--text-secondary);
+}
+
+/* ==========================================================
+   Journey
+   ========================================================== */
+
+.work-management-journey__journey {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  align-items: stretch;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+}
+
+.work-management-journey__node {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--space-4);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-primary);
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.work-management-journey__node:hover {
+  border-color: var(--color-accent);
+  background: var(--surface-secondary);
+}
+
+.work-management-journey__node:focus-visible {
+  outline: 3px solid color-mix(
+    in srgb,
+    var(--color-accent) 35%,
+    transparent
+  );
+  outline-offset: 2px;
+}
+
+.work-management-journey__node.is-active {
+  border-color: var(--color-accent);
+  background: color-mix(
+    in srgb,
+    var(--color-accent) 7%,
+    var(--surface-primary)
+  );
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.work-management-journey__node-number {
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.work-management-journey__node-title {
+  margin-top: var(--space-2);
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.work-management-journey__node-question {
+  margin-top: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+.work-management-journey__connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-accent);
+  font-size: 1.25rem;
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ==========================================================
+   AI Assistance
+   ========================================================== */
+
+.work-management-journey__ai {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.work-management-journey__ai-label {
+  flex-shrink: 0;
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.work-management-journey__ai-text {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* ==========================================================
+   Detail Panel
+   ========================================================== */
+
+.work-management-journey__panel {
+  margin-top: var(--space-6);
+  padding: var(--space-6);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background: var(--surface-secondary);
+}
+
+.work-management-journey__panel-content {
+  max-width: 720px;
+}
+
+.work-management-journey__panel-kicker {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.work-management-journey__panel h3 {
+  margin: var(--space-2) 0 0;
+  color: var(--text-primary);
+}
+
+.work-management-journey__panel p[data-panel-text] {
+  margin: var(--space-3) 0 0;
+  color: var(--text-secondary);
+}
+
+.work-management-journey__panel-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  font-size: var(--font-size-sm);
+}
+
+.work-management-journey__panel-footer span {
+  color: var(--text-secondary);
+}
+
+.work-management-journey__panel-footer strong {
+  color: var(--text-primary);
+}
+
+/* ==========================================================
+   Editorial Note
+   ========================================================== */
+
+.work-management-journey__note {
+  margin: var(--space-4) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* ==========================================================
+   Mobile
+   ========================================================== */
+
+@media (max-width: 900px) {
+
+  .work-management-journey__journey {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .work-management-journey__connector {
+    min-height: 1.5rem;
+    transform: rotate(90deg);
+  }
+
+  .work-management-journey__node {
+    width: 100%;
+  }
+
+}
+
+@media (max-width: 640px) {
+
+  .work-management-journey {
+    padding: var(--space-5);
+  }
+
+  .work-management-journey__ai {
+    display: block;
+  }
+
+  .work-management-journey__ai-text {
+    display: block;
+    margin-top: var(--space-2);
+  }
+
+  .work-management-journey__panel {
+    padding: var(--space-5);
+  }
+
+}
