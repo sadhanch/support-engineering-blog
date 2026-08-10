@@ -1,140 +1,145 @@
 /* ==========================================================
-   SEDS — Support Engineering Design System
-   File: header.css
-   Purpose: Global site header
-   Version: 2.0.0
-   ========================================================== */
+SEDS — Support Engineering Design System
+File: header.css
+Purpose: Global site header
+Version: 2.0.0
+========================================================== */
 
 /* ----------------------------------------------------------
-   Site Header
+Site Header
 ---------------------------------------------------------- */
 
 .site-header {
 
-    position: sticky;
+position: sticky;
 
-    top: 0;
+top: 0;
 
-    z-index: var(--z-sticky);
+z-index: var(--z-sticky);
 
-    background: var(--surface-header);
+background: var(--surface-header);
 
-    backdrop-filter: blur(18px);
+backdrop-filter: blur(18px);
 
-    -webkit-backdrop-filter: blur(18px);
+-webkit-backdrop-filter: blur(18px);
 
-    border-bottom: 1px solid var(--border-default);
+border-bottom: 1px solid var(--border-default);
+
 
 }
 
 .site-header nav {
 
-    display: flex;
+display: flex;
 
-    align-items: center;
+align-items: center;
 
-    height: 100%;
+height: 100%;
+
 
 }
 
-
 /* ----------------------------------------------------------
-   Header Container
+Header Container
 ---------------------------------------------------------- */
 
 .header-container {
 
-    width: min(100% - 2rem, var(--container-width));
+width: min(100% - 2rem, var(--container-width));
 
-    min-height: var(--header-height);
+min-height: var(--header-height);
 
-    padding-block: var(--space-2);
+padding-block: var(--space-2);
 
-    margin-inline: auto;
+margin-inline: auto;
 
-    display: flex;
+display: flex;
 
-    align-items: center;
+align-items: center;
 
-    justify-content: space-between;
+justify-content: space-between;
 
-    gap: var(--space-6);
+gap: var(--space-6);
+
 
 }
 
-
 /* ----------------------------------------------------------
-   Logo
+Logo
 ---------------------------------------------------------- */
 
 .site-logo {
 
-    display: inline-flex;
+display: inline-flex;
 
-    align-items: center;
+align-items: center;
 
-    font-size: 1.75rem;
+font-size: 1.75rem;
 
-    letter-spacing: -0.03em;
+letter-spacing: -0.03em;
 
-    font-weight: var(--font-weight-bold);
+font-weight: var(--font-weight-bold);
 
-    color: var(--color-primary);
+color: var(--color-primary);
 
-    white-space: nowrap;
+white-space: nowrap;
 
-    transition: color var(--transition-fast);
+transition: color var(--transition-fast);
+
 
 }
 
 .site-logo:hover {
 
-    color: var(--color-accent);
+color: var(--color-accent);
+
 
 }
 
 .site-logo__text {
 
-    display: inline-block;
+display: inline-block;
 
-    letter-spacing: -0.03em;
+letter-spacing: -0.03em;
+
 
 }
 
-
 /* ----------------------------------------------------------
-   Navigation
+Navigation
 ---------------------------------------------------------- */
 
 .site-navigation {
 
-    display: flex;
+display: flex;
 
-    align-items: center;
+align-items: center;
 
-    gap: var(--space-6);
+gap: var(--space-6);
 
-    margin-left: auto;
+margin-left: auto;
 
-    list-style: none;
+list-style: none;
 
-    height: 100%;
+height: 100%;
 
-    padding: 0;
+padding: 0;
 
-    margin-block: 0;
+margin-block: 0;
+
 
 }
 
 .site-navigation a {
 
-    position: relative;
+position: relative;
 
-    color: var(--text-secondary);
+color: var(--text-secondary);
 
-    font-weight: var(--font-weight-medium);
+font-weight: var(--font-weight-medium);
 
-    transition: color var(--transition-fast);
+transition: color var(--transition-fast);
+
 
 }
 
@@ -142,36 +147,37 @@
 
 .site-navigation a:focus-visible {
 
-    color: var(--color-primary);
+color: var(--color-primary);
+
 
 }
 
-
 /* ----------------------------------------------------------
-   Animated Underline
+Animated Underline
 ---------------------------------------------------------- */
 
 .site-navigation a::after {
 
-    content: "";
+content: "";
 
-    position: absolute;
+position: absolute;
 
-    left: 0;
+left: 0;
 
-    bottom: -6px;
+bottom: -6px;
 
-    width: 100%;
+width: 100%;
 
-    height: 2px;
+height: 2px;
 
-    background: var(--color-accent);
+background: var(--color-accent);
 
-    transform: scaleX(0);
+transform: scaleX(0);
 
-    transform-origin: left;
+transform-origin: left;
 
-    transition: transform var(--transition-fast);
+transition: transform var(--transition-fast);
+
 
 }
 
@@ -179,148 +185,152 @@
 
 .site-navigation a:focus-visible::after {
 
-    transform: scaleX(1);
+transform: scaleX(1);
+
 
 }
 
-
 /* ----------------------------------------------------------
-   Search Button
+Search Button
 ---------------------------------------------------------- */
 
 .search-button {
 
-    display: inline-flex;
+display: inline-flex;
 
-    align-items: center;
+align-items: center;
 
-    justify-content: center;
+justify-content: center;
 
-    gap: .5rem;
+gap: .5rem;
 
-    padding: .6rem 1rem;
+padding: .6rem 1rem;
 
-    border: 1px solid var(--border-default);
+border: 1px solid var(--border-default);
 
-    border-radius: var(--radius-pill);
+border-radius: var(--radius-pill);
 
-    background: var(--surface-primary);
+background: var(--surface-primary);
 
-    color: var(--text-secondary);
+color: var(--text-secondary);
 
-    transition:
-        background-color var(--transition-fast),
-        border-color var(--transition-fast),
-        color var(--transition-fast),
-        transform var(--transition-fast),
-        box-shadow var(--transition-fast);
+transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+
 
 }
 
 .search-button:hover {
 
-    border-color: var(--color-accent);
+border-color: var(--color-accent);
 
-    color: var(--color-primary);
+color: var(--color-primary);
 
-    transform: translateY(-2px);
+transform: translateY(-2px);
 
-    box-shadow: var(--shadow-sm);
+box-shadow: var(--shadow-sm);
+
 
 }
 
 .search-button:active {
 
-    transform: translateY(0);
+transform: translateY(0);
 
-    box-shadow: none;
+box-shadow: none;
+
 
 }
 
-
 /* ----------------------------------------------------------
-   Responsive Navigation
+Responsive Navigation
 ---------------------------------------------------------- */
 
 @media (max-width: 768px) {
 
-    .site-navigation {
+.site-navigation {
 
-        display: none;
+    display: none;
 
-    }
+}
+
 
 }
 
 /* ==========================================================
-   Theme Toggle
-   ========================================================== */
+Theme Toggle
+========================================================== */
 
 .header-actions {
 
-    display: flex;
+display: flex;
 
-    align-items: center;
+align-items: center;
 
-    gap: var(--space-2);
+gap: var(--space-2);
+
 
 }
-
 
 .theme-toggle {
 
-    display: inline-flex;
+display: inline-flex;
 
-    align-items: center;
+align-items: center;
 
-    justify-content: center;
+justify-content: center;
 
-    width: 2.5rem;
+width: 2.5rem;
 
-    height: 2.5rem;
+height: 2.5rem;
 
-    padding: 0;
+padding: 0;
 
-    border: 1px solid var(--border-default);
+border: 1px solid var(--border-default);
 
-    border-radius: var(--radius-md);
+border-radius: var(--radius-md);
 
-    background: var(--surface-primary);
+background: var(--surface-primary);
 
-    color: var(--text-primary);
+color: var(--text-primary);
 
-    cursor: pointer;
+cursor: pointer;
 
-    transition:
-        background var(--transition-fast),
-        border-color var(--transition-fast),
-        color var(--transition-fast);
+transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+
 
 }
-
 
 .theme-toggle:hover {
 
-    background: var(--surface-secondary);
+background: var(--surface-secondary);
 
-    border-color: var(--border-dark);
+border-color: var(--border-dark);
+
 
 }
-
 
 .theme-toggle:focus-visible {
 
-    outline: 2px solid var(--color-accent);
+outline: 2px solid var(--color-accent);
 
-    outline-offset: 2px;
+outline-offset: 2px;
+
 
 }
 
-
 .theme-toggle__icon {
 
-    font-size: 1.1rem;
+font-size: 1.1rem;
 
-    line-height: 1;
+line-height: 1;
+
 
 }

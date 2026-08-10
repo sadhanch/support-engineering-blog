@@ -1,0 +1,120 @@
+---
+/* ==========================================================
+   SEDS — Comparison Table
+   File: ComparisonTable.astro
+   Purpose: Reusable responsive comparison table
+   Version: 1.0.0
+   ========================================================== */
+
+interface Column {
+    label: string;
+    emphasis?: boolean;
+}
+
+interface Row {
+    label: string;
+    cells: string[];
+}
+
+interface Props {
+    columns: Column[];
+    rows: Row[];
+    caption?: string;
+    className?: string;
+}
+
+const {
+    columns,
+    rows,
+    caption,
+    className = ""
+} = Astro.props;
+---
+
+<div
+    class:list={[
+        "comparison-table",
+        className
+    ]}
+>
+    <div class="comparison-table__scroll">
+
+        <table>
+
+            {
+                caption && (
+                    <caption>
+                        {caption}
+                    </caption>
+                )
+            }
+
+            <thead>
+
+                <tr>
+
+                    <th scope="col">
+                        {columns[0]?.label}
+                    </th>
+
+                    {
+                        columns.slice(1).map((column) => (
+
+                            <th
+                                scope="col"
+                                class:list={{
+                                    "comparison-table__emphasis":
+                                        column.emphasis
+                                }}
+                            >
+                                {column.label}
+                            </th>
+
+                        ))
+                    }
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {
+                    rows.map((row) => (
+
+                        <tr>
+
+                            <th
+                                scope="row"
+                                class="comparison-table__row-label"
+                            >
+                                {row.label}
+                            </th>
+
+                            {
+                                row.cells.map((cell, index) => (
+
+                                    <td
+                                        class:list={{
+                                            "comparison-table__emphasis":
+                                                columns[index + 1]?.emphasis
+                                        }}
+                                    >
+                                        {cell}
+                                    </td>
+
+                                ))
+                            }
+
+                        </tr>
+
+                    ))
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

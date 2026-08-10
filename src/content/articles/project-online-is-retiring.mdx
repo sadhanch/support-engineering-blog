@@ -131,6 +131,7 @@ references:
 ---
 
 import MilestoneTimeline from "../../components/content/MilestoneTimeline.astro";
+import ComparisonTable from "../../components/content/ComparisonTable.astro";
 
 ![Project Online retirement and what's next](../../assets/images/articles/project-online-retirement/hero.png)
 
@@ -245,20 +246,93 @@ This distinction is important because many of the features commonly associated w
 
 The following table summarizes the capabilities that are most relevant for enterprise customers evaluating a transition from Project Online.
 
-Table: Comparison of Planner in Microsoft 365 (Basic) and Planner Premium capabilities.
-
-| Enterprise capability | Planner in Microsoft 365 (Basic) | Planner Premium |
-| --- | --- | --- |
-| Task management | Grid, Board, Charts, filters, grouping, notifications, copy plan, export to Excel, Assigned to me, Microsoft To Do integration, rich notes, task conversations | Includes all Basic capabilities together with advanced project scheduling and execution features, depending on the assigned license |
-| Scheduling | Schedule view and Outlook calendar integration | Timeline (Gantt), task dependencies, milestones, summary tasks, subtasks, custom calendars, critical path, advanced dependency types |
-| Workload and resource management | Not available | People view identifies resource over- and under-allocation, while Assignments view provides more granular effort tracking |
-| Agile project management | Boards, buckets, and task organization | Backlogs, sprints, goals, custom fields, task history, and conditional formatting |
-| Portfolio management | Not supported | Portfolio views consolidate premium plans. Basic plans, Azure DevOps projects, and Project Online projects are not currently supported within Planner portfolios |
-| AI capabilities | Planner Agent requires Microsoft 365 Copilot licensing | Planner Agent can generate tasks, produce status reports, execute assigned work, and respond to feedback. Microsoft 365 Copilot licensing is required |
-| Data platform and governance | Task data stored in Azure; attachments in SharePoint; conversations stored in Exchange Online | Project data stored in Microsoft Dataverse with Dataverse-based security, governance, and reporting capabilities |
-| Compliance | Supports Microsoft Purview eDiscovery and Legal Hold for group-connected plans | Audit logging is supported, although Microsoft currently notes that Purview eDiscovery does not fully cover premium plans |
-| Automation and APIs | Planner connector for Power Automate and Microsoft Graph supports basic plans | Advanced scheduling operations use Dataverse and Project Scheduling APIs rather than the standard Planner connector |
-| Scale | Up to 9,000 tasks per plan | Up to 3,000 tasks, 300 resources, 2,000 successor links, and 10 custom fields per project |
+<ComparisonTable
+    caption="Comparison of Planner in Microsoft 365 (Basic) and Planner Premium capabilities."
+    columns={[
+        {
+            label: "Enterprise capability"
+        },
+        {
+            label: "Planner in Microsoft 365 (Basic)"
+        },
+        {
+            label: "Planner Premium",
+            emphasis: true
+        }
+    ]}
+    rows={[
+        {
+            label: "Task management",
+            cells: [
+                "Grid, Board, Charts, filters, grouping, notifications, copy plan, export to Excel, Assigned to me, Microsoft To Do integration, rich notes, task conversations",
+                "Includes all Basic capabilities together with advanced project scheduling and execution features, depending on the assigned license"
+            ]
+        },
+        {
+            label: "Scheduling",
+            cells: [
+                "Schedule view and Outlook calendar integration",
+                "Timeline (Gantt), task dependencies, milestones, summary tasks, subtasks, custom calendars, critical path, advanced dependency types"
+            ]
+        },
+        {
+            label: "Workload and resource management",
+            cells: [
+                "Not available",
+                "People view identifies resource over- and under-allocation, while Assignments view provides more granular effort tracking"
+            ]
+        },
+        {
+            label: "Agile project management",
+            cells: [
+                "Boards, buckets, and task organization",
+                "Backlogs, sprints, goals, custom fields, task history, and conditional formatting"
+            ]
+        },
+        {
+            label: "Portfolio management",
+            cells: [
+                "Not supported",
+                "Portfolio views consolidate premium plans. Basic plans, Azure DevOps projects, and Project Online projects are not currently supported within Planner portfolios"
+            ]
+        },
+        {
+            label: "AI capabilities",
+            cells: [
+                "Planner Agent requires Microsoft 365 Copilot licensing",
+                "Planner Agent can generate tasks, produce status reports, execute assigned work, and respond to feedback. Microsoft 365 Copilot licensing is required"
+            ]
+        },
+        {
+            label: "Data platform and governance",
+            cells: [
+                "Task data stored in Azure; attachments in SharePoint; conversations stored in Exchange Online",
+                "Project data stored in Microsoft Dataverse with Dataverse-based security, governance, and reporting capabilities"
+            ]
+        },
+        {
+            label: "Compliance",
+            cells: [
+                "Supports Microsoft Purview eDiscovery and Legal Hold for group-connected plans",
+                "Audit logging is supported, although Microsoft currently notes that Purview eDiscovery does not fully cover premium plans"
+            ]
+        },
+        {
+            label: "Automation and APIs",
+            cells: [
+                "Planner connector for Power Automate and Microsoft Graph supports basic plans",
+                "Advanced scheduling operations use Dataverse and Project Scheduling APIs rather than the standard Planner connector"
+            ]
+        },
+        {
+            label: "Scale",
+            cells: [
+                "Up to 9,000 tasks per plan",
+                "Up to 3,000 tasks, 300 resources, 2,000 successor links, and 10 custom fields per project"
+            ]
+        }
+    ]}
+/>
 
 The comparison illustrates that Planner Basic and Planner Premium are complementary offerings rather than competing products. Planner in Microsoft 365 focuses on lightweight team collaboration and day-to-day task management, whereas Planner Premium extends the platform with capabilities traditionally associated with enterprise project management, including advanced scheduling, portfolio management, workload balancing, and project governance.
 
@@ -336,9 +410,7 @@ Consequently, there is no native "open in Planner" or one-click migration path f
 
 Microsoft's Planner transition guidance also clarifies what customers should expect during this period. Project Online projects do not appear in Planner's My Plans experience, Project Online links are not surfaced within Planner, and Roadmaps are replaced by Planner Portfolios, which currently display only premium Planner plans. Although Project Online APIs and ProjectData OData endpoints remain supported until the service retires, organizations planning a long-term migration should begin evaluating Microsoft Graph and Microsoft Dataverse as the preferred data access platforms for future integrations and reporting.
 
-> **Enterprise Insight**
-
-> **Planner Premium migration is primarily a modernization exercise, not a data migration project. The complexity lies less in moving projects and more in redesigning governance, reporting, automation, and business processes for a modern Microsoft 365 architecture.**
+> <p>**Enterprise Insight**</p>**Planner Premium migration is primarily a modernization exercise, not a data migration project. The complexity lies less in moving projects and more in redesigning governance, reporting, automation, and business processes for a modern Microsoft 365 architecture.**
 
 ### Begin with an Environment Assessment
 

@@ -1,0 +1,457 @@
+/* ==========================================================
+   SEDS — Comparison Table
+   File: comparison-table.css
+   Purpose: Reusable responsive comparison table
+   Version: 1.1.0
+
+   Design principles
+
+   1. Tables fit the article content area on desktop.
+   2. Horizontal scrolling is reserved for small screens.
+   3. Columns use predictable proportions.
+   4. Long-form content wraps inside cells.
+   5. Emphasised columns use vertical visual treatment.
+   ========================================================== */
+
+
+/* ==========================================================
+   Comparison Table Wrapper
+   ========================================================== */
+
+.comparison-table {
+
+    width: 100%;
+
+    margin-block:
+        var(--space-8)
+        var(--space-8);
+
+}
+
+
+/* ==========================================================
+   Scroll Container
+
+   Desktop:
+   No scrolling is required.
+
+   Mobile:
+   Horizontal scrolling is enabled because a three-column
+   comparison table cannot remain comfortably readable
+   within a narrow viewport.
+   ========================================================== */
+
+.comparison-table__scroll {
+
+    width: 100%;
+
+    overflow-x: visible;
+
+    border:
+        1px solid
+        var(--border-default);
+
+    border-radius:
+        var(--radius-lg);
+
+    background:
+        var(--surface-primary);
+
+}
+
+
+/* ==========================================================
+   Table
+   ========================================================== */
+
+.comparison-table table {
+
+    width: 100%;
+
+    /*
+     * Important:
+     * Prevent long content from expanding the table beyond
+     * the available article width.
+     */
+
+    table-layout: fixed;
+
+    border-collapse: separate;
+
+    border-spacing: 0;
+
+    font-size:
+        var(--font-size-sm);
+
+    line-height:
+        var(--line-height-normal);
+
+}
+
+
+/* ==========================================================
+   Column Widths
+
+   The first column identifies the capability.
+
+   The two remaining columns contain the comparison data.
+
+   This keeps the table balanced even when the article
+   content area becomes narrower.
+   ========================================================== */
+
+.comparison-table thead th:first-child,
+.comparison-table tbody th {
+
+    width: 18%;
+
+}
+
+.comparison-table thead th:nth-child(2),
+.comparison-table tbody td:nth-child(2) {
+
+    width: 41%;
+
+}
+
+.comparison-table thead th:nth-child(3),
+.comparison-table tbody td:nth-child(3) {
+
+    width: 41%;
+
+}
+
+
+/* ==========================================================
+   Caption
+   ========================================================== */
+
+.comparison-table caption {
+
+    padding:
+        var(--space-4)
+        var(--space-5);
+
+    text-align: left;
+
+    color:
+        var(--text-secondary);
+
+    font-size:
+        var(--font-size-sm);
+
+    line-height:
+        var(--line-height-normal);
+
+    background:
+        var(--surface-primary);
+
+}
+
+
+/* ==========================================================
+   Header
+   ========================================================== */
+
+.comparison-table thead th {
+
+    padding:
+        var(--space-4)
+        var(--space-5);
+
+    background:
+        var(--surface-secondary);
+
+    color:
+        var(--text-primary);
+
+    font-weight:
+        var(--font-weight-semibold);
+
+    text-align: left;
+
+    vertical-align: middle;
+
+    border-bottom:
+        1px solid
+        var(--border-default);
+
+}
+
+
+/* ==========================================================
+   Header — Emphasised Column
+   ========================================================== */
+
+.comparison-table thead
+.comparison-table__emphasis {
+
+    background:
+        color-mix(
+            in srgb,
+            var(--color-accent) 10%,
+            var(--surface-secondary)
+        );
+
+    color:
+        var(--color-accent);
+
+}
+
+
+/* ==========================================================
+   Body Cells
+   ========================================================== */
+
+.comparison-table tbody th,
+.comparison-table tbody td {
+
+    padding:
+        var(--space-5);
+
+    color:
+        var(--text-secondary);
+
+    text-align: left;
+
+    vertical-align: top;
+
+    border-bottom:
+        1px solid
+        var(--border-subtle);
+
+    /*
+     * Prevent long words, URLs or unusually long strings
+     * from expanding the table.
+     */
+
+    overflow-wrap: anywhere;
+
+    word-break: normal;
+
+}
+
+
+/* ==========================================================
+   Row Labels
+   ========================================================== */
+
+.comparison-table__row-label {
+
+    color:
+        var(--text-primary) !important;
+
+    font-weight:
+        var(--font-weight-semibold);
+
+}
+
+
+/* ==========================================================
+   Row Hover
+   ========================================================== */
+
+.comparison-table tbody tr {
+
+    transition:
+        background-color
+        var(--transition-fast);
+
+}
+
+.comparison-table tbody tr:hover {
+
+    background:
+        var(--surface-secondary);
+
+}
+
+
+/*
+ * Don't override the Premium column's background when
+ * hovering over a row.
+ */
+
+.comparison-table tbody tr:hover
+.comparison-table__emphasis {
+
+    background:
+        color-mix(
+            in srgb,
+            var(--color-accent) 7%,
+            var(--surface-primary)
+        );
+
+}
+
+
+/* ==========================================================
+   Remove Final Border
+   ========================================================== */
+
+.comparison-table tbody tr:last-child th,
+.comparison-table tbody tr:last-child td {
+
+    border-bottom: 0;
+
+}
+
+
+/* ==========================================================
+   Emphasised Column
+
+   Creates the vertical visual treatment requested for
+   Planner Premium.
+
+   Instead of highlighting individual cells horizontally,
+   the entire column receives a subtle accent background.
+   ========================================================== */
+
+.comparison-table__emphasis {
+
+    background:
+        color-mix(
+            in srgb,
+            var(--color-accent) 5%,
+            var(--surface-primary)
+        );
+
+}
+
+
+/* ==========================================================
+   Premium Column — Vertical Accent
+
+   A subtle left border creates a visual boundary between
+   the standard and premium capabilities.
+   ========================================================== */
+
+.comparison-table thead
+.comparison-table__emphasis {
+
+    border-left:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--color-accent) 25%,
+            var(--border-default)
+        );
+
+}
+
+.comparison-table tbody
+.comparison-table__emphasis {
+
+    border-left:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--color-accent) 15%,
+            var(--border-subtle)
+        );
+
+}
+
+
+/* ==========================================================
+   Desktop Optimization
+
+   Keep the table comfortably readable without allowing
+   content to force horizontal scrolling.
+   ========================================================== */
+
+@media (min-width: 1024px) {
+
+    .comparison-table table {
+
+        font-size:
+            var(--font-size-sm);
+
+    }
+
+    .comparison-table thead th,
+    .comparison-table tbody th,
+    .comparison-table tbody td {
+
+        padding:
+            var(--space-4);
+
+    }
+
+}
+
+
+/* ==========================================================
+   Tablet
+   ========================================================== */
+
+@media (max-width: 1023px) and (min-width: 769px) {
+
+    .comparison-table thead th,
+    .comparison-table tbody th,
+    .comparison-table tbody td {
+
+        padding:
+            var(--space-4);
+
+    }
+
+}
+
+
+/* ==========================================================
+   Mobile
+
+   At this point horizontal scrolling is intentional.
+
+   The table remains readable instead of compressing three
+   long-form columns into an unusable layout.
+   ========================================================== */
+
+@media (max-width: 768px) {
+
+    .comparison-table {
+
+        margin-block:
+            var(--space-6)
+            var(--space-6);
+
+    }
+
+
+    .comparison-table__scroll {
+
+        overflow-x: auto;
+
+        -webkit-overflow-scrolling: touch;
+
+    }
+
+
+    .comparison-table table {
+
+        /*
+         * Mobile gets a minimum width so that the content
+         * remains readable while scrolling horizontally.
+         */
+
+        min-width: 760px;
+
+        table-layout: fixed;
+
+        font-size:
+            var(--font-size-sm);
+
+    }
+
+
+    .comparison-table thead th,
+    .comparison-table tbody th,
+    .comparison-table tbody td {
+
+        padding:
+            var(--space-4);
+
+    }
+
+}

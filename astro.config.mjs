@@ -6,27 +6,24 @@ import pagefind from "astro-pagefind";
 import sitemap from "@astrojs/sitemap";
 
 
+import mdx from "@astrojs/mdx";
+
+
 // https://astro.build/config
 
 export default defineConfig({
 
     site: "https://blog.sadhan.ch",
 
-    integrations: [
+    integrations: [pagefind(), sitemap({
 
-        pagefind(),
+        filter: (page) => {
 
-        sitemap({
+            return !page.includes("/search/")
+                && !page.includes("/design-system/");
 
-            filter: (page) => {
+        }
 
-                return !page.includes("/search/")
-                    && !page.includes("/design-system/");
-
-            }
-
-        }),
-
-    ],
+    }), mdx()],
 
 });

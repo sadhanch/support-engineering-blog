@@ -1,72 +1,68 @@
 ---
 /* ==========================================================
-   SEDS — Global Header
-   Purpose: Renders site branding, primary navigation, and global search.
-   ========================================================== */
+SEDS — Global Header
+Purpose: Renders site branding, primary navigation, and global search.
+========================================================== */
 
 import { site } from "../../config/site";
 import SearchButton from "../ui/SearchButton.astro";
 ---
 
-<header class="site-header">
+<div class="header-container">
 
-    <div class="header-container">
+    <a
+        href="/"
+        class="site-logo"
+        aria-label={site.title}
+    >
 
-        <a
-            href="/"
-            class="site-logo"
-            aria-label={site.title}
+        <span class="site-logo__text">
+
+            {site.shortTitle}
+
+        </span>
+
+    </a>
+
+    <nav aria-label="Primary Navigation">
+
+        <ul class="site-navigation">
+
+            {
+                site.navigation.map((item) => (
+
+                    <li>
+
+                        <a href={item.href}>
+
+                            {item.label}
+
+                        </a>
+
+                    </li>
+
+                ))
+            }
+
+        </ul>
+
+    </nav>
+
+    <SearchButton />
+
+    <button
+        type="button"
+        class="theme-toggle"
+        id="theme-toggle"
+        aria-label="Change color theme"
+        title="Change color theme"
+    >
+        <span
+            class="theme-toggle__icon"
+            aria-hidden="true"
         >
+            ◐
+        </span>
+    </button>
 
-            <span class="site-logo__text">
-
-                {site.shortTitle}
-
-            </span>
-
-        </a>
-
-        <nav aria-label="Primary Navigation">
-
-            <ul class="site-navigation">
-
-                {
-                    site.navigation.map((item) => (
-
-                        <li>
-
-                            <a href={item.href}>
-
-                                {item.label}
-
-                            </a>
-
-                        </li>
-
-                    ))
-                }
-
-            </ul>
-
-        </nav>
-
-        <SearchButton />
-
-        <button
-            type="button"
-            class="theme-toggle"
-            id="theme-toggle"
-            aria-label="Change color theme"
-            title="Change color theme"
-        >
-            <span
-                class="theme-toggle__icon"
-                aria-hidden="true"
-            >
-                ◐
-            </span>
-        </button>
-
-    </div>
-
-</header>
+</div>
