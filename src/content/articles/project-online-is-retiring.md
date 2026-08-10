@@ -131,8 +131,7 @@ references:
     description: "Forrester's research on the evolution of Collaborative Work Management platforms and their relationship with enterprise project and portfolio management."
 ---
 
-# Project Online Is Retiring: What It Means for Enterprise Customers and Microsoft's Work Management Strategy
-
+C:\Projects\support-engineering-blog\src\assets\images\articles\project-online-retirement\hero.png
 
 Microsoft's retirement of Project Online marks more than the end of a product—it reflects a broader shift in Microsoft's work management strategy. This paper examines what retirement means for enterprise customers, evaluates the available transition paths, and provides a decision framework for selecting the platform that best aligns with organizational requirements.
 
