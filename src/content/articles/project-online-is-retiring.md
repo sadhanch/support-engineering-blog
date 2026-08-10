@@ -13,7 +13,6 @@ summary:
 category: "Microsoft 365"
 
 technology:
-  - Microsoft 365
   - Microsoft Planner
   - Microsoft Project
   - Microsoft Dataverse
@@ -131,7 +130,9 @@ references:
     description: "Forrester's research on the evolution of Collaborative Work Management platforms and their relationship with enterprise project and portfolio management."
 ---
 
-C:\Projects\support-engineering-blog\src\assets\images\articles\project-online-retirement\hero.png
+import MilestoneTimeline from "../../components/content/MilestoneTimeline.astro";
+
+![Project Online retirement and what's next](../../assets/images/articles/project-online-retirement/hero.png)
 
 Microsoft's retirement of Project Online marks more than the end of a product—it reflects a broader shift in Microsoft's work management strategy. This paper examines what retirement means for enterprise customers, evaluates the available transition paths, and provides a decision framework for selecting the platform that best aligns with organizational requirements.
 
@@ -146,6 +147,8 @@ Microsoft's retirement of Project Online marks more than the end of a product—
 
 ## The Bigger Picture Behind Project Online's Retirement
 
+![Microsoft work management ecosystem](../../assets/images/articles/project-online-retirement/work-management-ecosystem.png)
+
 Microsoft has officially announced that Project Online will reach end of service on September 30, 2026. The retirement applies specifically to the Project Online service and does not affect Microsoft Project desktop applications, Project Server Subscription Edition, or Microsoft Planner. Existing Project Online environments will continue to operate until the retirement date, while Project Online-only subscriptions have no longer been available for new customers since October 1, 2025.
 
 For many organizations, however, the retirement announcement raises a more important question than the date itself:
@@ -155,6 +158,8 @@ For many organizations, however, the retirement announcement raises a more impor
 **The answer is more nuanced than simply moving to Planner Premium.**
 
 Microsoft's public guidance presents Planner Premium, Project Server Subscription Edition, and Dynamics 365 Project Operations as valid transition paths, each designed to address different business requirements. Planner Premium introduces modern work management capabilities—including Gantt charts, task dependencies, baselines, and portfolio management—but Microsoft has been equally clear that it is not, and has never been positioned as, a one-to-one replacement for Project Online.
+
+![Transition paths after Project Online retirement](../../assets/images/articles/project-online-retirement/transition-paths.png)
 
 This distinction is particularly important for enterprise organizations. Project Online has traditionally served as a Project Portfolio Management (PPM) platform with mature governance, resource management, and portfolio planning capabilities. Planner Premium, by contrast, focuses on collaborative project execution within the Microsoft 365 ecosystem. While there is overlap between the two products, their design goals and target scenarios are fundamentally different.
 
@@ -204,11 +209,29 @@ Another contributing factor is the retirement of legacy SharePoint workflow tech
 
 Enterprise administrators should be aware of the following milestones as they plan their transition strategy:
 
-| Date | Milestone | Impact |
-| --- | --- | --- |
-| October 1, 2025 | Project Online-only subscriptions are no longer available for new customers. | Existing customers remain fully supported. |
-| April 1, 2026 | Creation of new Project Web App (PWA) sites is blocked. Existing PWA sites that do not contain projects become inaccessible. | New Project Online deployments are effectively frozen. |
-| September 30, 2026 | Project Online reaches end of service. | The Project Online service is retired and will no longer be available. |
+<MilestoneTimeline
+    milestones={[
+        {
+            date: "October 1, 2025",
+            datetime: "2025-10-01",
+            title: "Project Online-only subscriptions are no longer available for new customers.",
+            impact: "Existing customers remain fully supported."
+        },
+        {
+            date: "April 1, 2026",
+            datetime: "2026-04-01",
+            title: "Creation of new Project Web App (PWA) sites is blocked.",
+            description: "Existing PWA sites that do not contain projects become inaccessible.",
+            impact: "New Project Online deployments are effectively frozen."
+        },
+        {
+            date: "September 30, 2026",
+            datetime: "2026-09-30",
+            title: "Project Online reaches end of service.",
+            impact: "The Project Online service is retired and will no longer be available."
+        }
+    ]}
+/>
 
 Until the retirement date, existing Project Online customers can continue using their current environments, including projects, integrations, permissions, and team member access, with Microsoft's standard product support. The announcement is therefore best viewed as a planned transition period rather than an immediate disruption, giving organizations sufficient time to evaluate alternative platforms and execute a migration strategy aligned with their business requirements.
 
@@ -222,7 +245,7 @@ This distinction is important because many of the features commonly associated w
 
 The following table summarizes the capabilities that are most relevant for enterprise customers evaluating a transition from Project Online.
 
-Table X. Comparison of Planner in Microsoft 365 (Basic) and Planner Premium capabilities.
+Table: Comparison of Planner in Microsoft 365 (Basic) and Planner Premium capabilities.
 
 | Enterprise capability | Planner in Microsoft 365 (Basic) | Planner Premium |
 | --- | --- | --- |
@@ -241,23 +264,13 @@ The comparison illustrates that Planner Basic and Planner Premium are complement
 
 It is equally important to distinguish between Planner Premium and Project Online. Although Planner Premium introduces many advanced planning capabilities, it should not be viewed as a feature-for-feature replacement for Project Online. Organizations that rely on mature Project Portfolio Management (PPM) functionality should evaluate Microsoft's published transition guidance carefully before selecting a migration path.
 
-### Licensing Consideration
-
-Enterprise customers evaluating long-term investments should also note Microsoft's licensing roadmap. Planner and Project Plan 5 entered End of Sale on May 1, 2026, meaning it is no longer available for new purchases. Consequently, this article focuses on the licensing options that represent Microsoft's forward-looking strategy: Planner in Microsoft 365, Planner Plan 1, and Planner and Project Plan 3, which together form the foundation of Microsoft's current Planner platform.
-
 ### Interpreting the Comparison
 
 The feature comparison highlights an important distinction that is often overlooked during migration discussions: Planner Basic and Planner Premium are designed for different levels of project maturity rather than different sizes of organizations.
 
 Teams that primarily coordinate day-to-day work, track deliverables, and collaborate within Microsoft 365 will typically find that Planner in Microsoft 365 (Basic) provides the functionality they need. Organizations that require structured scheduling, resource planning, portfolio visibility, or formal project governance will need the capabilities available through Planner Premium.
 
-| Enterprise Capability | Planner Basic | Planner Premium | Enterprise Considerations |
-| --- | --- | --- | --- |
-| Scheduling | Schedule View | Gantt, Dependencies | Required for formal project schedules and critical path analysis |
-| Portfolio | No | Yes | Necessary for centralized portfolio governance |
-| Dataverse | No | Yes | Enables enterprise reporting and Power Platform integration |
-| Compliance | Partial | Partial | Evaluate Purview support before migration |
-| Automation | Planner Connector | Dataverse APIs | Existing Power Automate flows may require redesign |
+![Planner Premium capability overview](../../assets/images/articles/project-online-retirement/planner-premium-capability.png)
 
 At the same time, enterprise customers should avoid assuming that Planner Premium is simply "Project Online under a new name." While Planner Premium introduces several advanced capabilities—including Gantt charts, dependencies, portfolio management, and workload balancing—it has been designed around modern collaborative work management rather than traditional Project Portfolio Management (PPM). Consequently, organizations with mature governance processes, extensive customizations, or complex portfolio reporting requirements should evaluate the available transition paths against their existing operating model instead of comparing feature lists alone.
 
@@ -328,6 +341,8 @@ Microsoft's Planner transition guidance also clarifies what customers should exp
 > **Planner Premium migration is primarily a modernization exercise, not a data migration project. The complexity lies less in moving projects and more in redesigning governance, reporting, automation, and business processes for a modern Microsoft 365 architecture.**
 
 ### Begin with an Environment Assessment
+
+![Enterprise migration journey from Project Online](../../assets/images/articles/project-online-retirement/migration-journey.png)
 
 Before selecting a migration destination, organizations should develop a comprehensive inventory of their existing Project Online environment. The objective is not simply to count projects, but to understand how Project Online supports business processes across the organization.
 
@@ -460,6 +475,8 @@ Enterprise implication: Organizations preparing for AI-enabled project managemen
 The retirement of Project Online should not be approached as a product migration exercise alone. It is an opportunity to reassess how projects are planned, governed, delivered, and integrated across the organization.
 
 Based on Microsoft's published guidance, industry research, and the capabilities discussed throughout this article, the following recommendations can help enterprise organizations develop a transition strategy that aligns with both current requirements and future business objectives.
+
+![Enterprise decision framework for Microsoft work management](../../assets/images/articles/project-online-retirement/decision-framework.png)
 
 ### 1. Assess Business Scenarios Before Selecting a Platform
 

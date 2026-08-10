@@ -1,0 +1,226 @@
+---
+interface Milestone {
+    date: string;
+    datetime: string;
+    title: string;
+    description?: string;
+    impact: string;
+}
+
+interface Props {
+    milestones: Milestone[];
+}
+
+const { milestones } = Astro.props;
+---
+
+<div class="milestone-timeline">
+
+    {
+        milestones.map((milestone) => (
+            <article class="milestone">
+
+                <div class="milestone__date">
+                    <time datetime={milestone.datetime}>
+                        {milestone.date}
+                    </time>
+                </div>
+
+                <div class="milestone__content">
+
+                    <h3 class="milestone__title">
+                        {milestone.title}
+                    </h3>
+
+                    {
+                        milestone.description && (
+                            <p class="milestone__description">
+                                {milestone.description}
+                            </p>
+                        )
+                    }
+
+                    <div class="milestone__impact">
+
+                        <p class="milestone__impact-label">
+                            Impact
+                        </p>
+
+                        <p class="milestone__impact-text">
+                            {milestone.impact}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </article>
+        ))
+    }
+
+</div>
+
+<style>
+    .milestone-timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        margin-block: var(--space-8);
+    }
+
+
+    .milestone {
+        display: grid;
+        grid-template-columns: 11rem minmax(0, 1fr);
+        column-gap: var(--space-6);
+    }
+
+
+    .milestone__date {
+        padding-top: var(--space-1);
+
+        color: var(--color-accent);
+
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+        line-height: var(--line-height-normal);
+    }
+
+
+    .milestone__content {
+        position: relative;
+
+        padding:
+            0
+            0
+            var(--space-7)
+            var(--space-6);
+
+        border-left: 2px solid var(--border-default);
+    }
+
+
+    .milestone:last-child .milestone__content {
+        padding-bottom: 0;
+        border-left-color: transparent;
+    }
+
+
+    .milestone__content::before {
+        content: "";
+
+        position: absolute;
+
+        top: 0;
+        left: -7px;
+
+        width: 12px;
+        height: 12px;
+
+        border: 2px solid var(--color-accent);
+        border-radius: var(--radius-round);
+
+        background: var(--surface-primary);
+
+        box-sizing: border-box;
+    }
+
+
+    .milestone__title {
+        margin: 0;
+
+        color: var(--text-primary);
+
+        font-size: var(--font-size-lg);
+        font-weight: var(--font-weight-semibold);
+        line-height: var(--line-height-tight);
+    }
+
+
+    .milestone__description {
+        margin:
+            var(--space-3)
+            0
+            0;
+
+        color: var(--text-secondary);
+
+        line-height: var(--line-height-normal);
+    }
+
+
+    .milestone__impact {
+        margin-top: var(--space-4);
+
+        padding:
+            var(--space-3)
+            var(--space-4);
+
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+
+        background: var(--surface-secondary);
+    }
+
+
+    .milestone__impact-label {
+        margin: 0 0 var(--space-1);
+
+        color: var(--color-accent);
+
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-bold);
+
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+
+    .milestone__impact-text {
+        margin: 0;
+
+        color: var(--text-secondary);
+
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-normal);
+    }
+
+
+    @media (max-width: 768px) {
+
+        .milestone {
+            grid-template-columns: 1fr;
+            row-gap: var(--space-2);
+        }
+
+
+        .milestone__date {
+            padding-left: var(--space-6);
+        }
+
+
+        .milestone__content {
+            padding-left: var(--space-6);
+        }
+
+    }
+
+
+    @media (max-width: 480px) {
+
+        .milestone-timeline {
+            margin-block: var(--space-6);
+        }
+
+
+        .milestone__content {
+            padding-bottom: var(--space-6);
+        }
+
+
+        .milestone__title {
+            font-size: var(--font-size-md);
+        }
+
+    }
+</style>
