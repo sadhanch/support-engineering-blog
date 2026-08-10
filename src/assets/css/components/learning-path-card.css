@@ -44,7 +44,7 @@
 
     justify-content: space-between;
 
-    color: var(--text-muted);
+    color: var(--text-secondary);
 
     font-size: var(--font-size-sm);
 
@@ -80,7 +80,7 @@
 
     font-size: var(--font-size-sm);
 
-    color: var(--text-muted);
+    color: var(--text-secondary);
 
 }
 

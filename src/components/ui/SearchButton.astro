@@ -1,24 +1,37 @@
 ---
 /* ==========================================================
    SEDS — Search Button
-   Purpose: Global search entry point used in the site header.
-   ========================================================== */
+   Purpose:
+   Global search entry point used in the site header.
+   ==========================================================
+*/
 
 import Button from "./Button.astro";
 
+
 interface Props {
+
     href?: string;
+
 }
 
+
 const {
+
     href = "/search"
+
 } = Astro.props;
+
 ---
 
 <Button
+
     href={href}
+
     variant="secondary"
+
     class="search-button"
+
 >
 
     <span>

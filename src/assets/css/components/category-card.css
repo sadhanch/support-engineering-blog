@@ -82,7 +82,7 @@
 
 .category-card__count {
 
-    color: var(--text-muted);
+    color: var(--text-secondary);
 
     font-weight: var(--font-weight-medium);
 

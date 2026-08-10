@@ -215,7 +215,7 @@ mark {
     background: var(--color-warning);
     color: var(--text-primary);
     padding: 0.1em 0.2em;
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-sm);
 }
 
 abbr[title] {

@@ -1,10 +1,14 @@
 ---
 /* ==========================================================
    SEDS — Button
-   Purpose: Reusable link/button with variants, sizes, and full-width support.
-   ========================================================== */
+   Purpose:
+   Reusable button/link primitive with variants, sizes,
+   full-width support, and optional custom classes.
+   ==========================================================
+*/
 
 interface Props {
+
     href?: string;
 
     variant?: "primary" | "secondary" | "outline" | "ghost";
@@ -16,7 +20,11 @@ interface Props {
     disabled?: boolean;
 
     type?: "button" | "submit" | "reset";
+
+    class?: string;
+
 }
+
 
 const {
 
@@ -30,27 +38,45 @@ const {
 
     disabled = false,
 
-    type = "button"
+    type = "button",
+
+    class: customClass
 
 } = Astro.props;
 
+
 const className = [
+
     "button",
+
     `button--${variant}`,
+
     `button--${size}`,
+
     fullWidth && "button--full",
+
+    customClass
+
 ]
-.filter(Boolean)
-.join(" ");
+
+    .filter(Boolean)
+
+    .join(" ");
+
 ---
 
 {
+
     href ? (
 
         <a
+
             href={href}
+
             class={className}
+
             aria-disabled={disabled}
+
         >
 
             <slot />
@@ -60,9 +86,13 @@ const className = [
     ) : (
 
         <button
+
             class={className}
+
             type={type}
+
             disabled={disabled}
+
         >
 
             <slot />
@@ -70,4 +100,5 @@ const className = [
         </button>
 
     )
+
 }

@@ -1,15 +1,9 @@
 /**
  * ==========================================================
  * SEDS — Search Controller
- * Purpose: Initializes Pagefind, renders results, highlights matches, and handles keyboard result navigation.
- * ==========================================================
- */
-
-/**
- * ==========================================================
- * SEDS — Search
- * ----------------------------------------------------------
- * Client-side search initialization.
+ * Purpose:
+ * Initializes Pagefind, renders results, highlights matches,
+ * and handles keyboard result navigation.
  * ==========================================================
  */
 

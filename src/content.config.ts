@@ -1,12 +1,19 @@
 /**
  * ==========================================================
  * SEDS — Content Collection Configuration
- * Purpose: Defines the article collection schema and Markdown loader.
+ * Purpose:
+ * Defines the article loader and validated frontmatter schema.
+ *
+ * Supported article formats:
+ * - Markdown (.md)
+ * - MDX (.mdx)
  * ==========================================================
  */
 
 import { defineCollection, z } from "astro:content";
+
 import { glob } from "astro/loaders";
+
 
 const articles = defineCollection({
 
@@ -26,11 +33,13 @@ const articles = defineCollection({
 
         excerpt: z.string(),
 
-        summary: z.array(z.string()).optional(),
+        summary:
+            z.array(z.string()).optional(),
 
         category: z.string(),
 
-        technology: z.array(z.string()),
+        technology:
+            z.array(z.string()),
 
         references: z.array(
 
@@ -46,21 +55,28 @@ const articles = defineCollection({
 
         ).default([]),
 
-        tags: z.array(z.string()),
+        tags:
+            z.array(z.string()),
 
-        publishDate: z.date(),
+        publishDate:
+            z.date(),
 
-        updatedDate: z.date().optional(),
+        updatedDate:
+            z.date().optional(),
 
-        featured: z.boolean().default(false),
+        featured:
+            z.boolean().default(false),
 
-        draft: z.boolean().default(false),
+        draft:
+            z.boolean().default(false),
 
-        author: z.string()
+        author:
+            z.string()
 
     })
 
 });
+
 
 export const collections = {
 

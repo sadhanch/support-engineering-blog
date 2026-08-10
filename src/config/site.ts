@@ -1,41 +1,39 @@
 /**
  * ==========================================================
  * SEDS — Site Configuration
- * Purpose: Central source for site identity, navigation,
- * footer links, social profiles, and SEO metadata.
+ * Purpose:
+ * Central source for site identity, navigation, footer links,
+ * and SEO metadata.
  * ==========================================================
  */
 
 export const site = {
 
-    title: "Support Engineering Blog",
+    title:
+        "Support Engineering Blog",
 
-    shortTitle: "SEB",
+    shortTitle:
+        "SEB",
 
     description:
         "Technical documentation, Microsoft 365 administration, and support engineering resources.",
 
-    url: "https://blog.sadhan.ch",
+    url:
+        "https://blog.sadhan.ch",
 
-    author: "Sadhan Chandra",
+    author:
+        "Sadhan Chandra",
 
-    language: "en",
+    language:
+        "en",
 
-    themeColor: "#0F172A",
+    themeColor:
+        "#0F172A",
 
     seo: {
 
-        defaultImage: "/og-cover.png"
-
-    },
-
-    social: {
-
-        github: "https://github.com/sadhanch/support-engineering-blog",
-
-        linkedin: "https://www.linkedin.com/in/sadhanhansda/",
-
-        x: "https://x.com/sadhan_hansda"
+        defaultImage:
+            "/og-cover.png"
 
     },
 
@@ -118,7 +116,7 @@ export const site = {
             {
                 label: "Terms",
                 href: "/terms"
-            },
+            }
 
         ]
 

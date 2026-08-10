@@ -1,13 +1,8 @@
 /**
  * ==========================================================
  * SEDS — Global Search Shortcuts
- * Purpose: Handles Ctrl+K and / shortcuts that focus or open the search page.
- * ==========================================================
- */
-
-/**
- * ==========================================================
- * SEDS — Global Search Shortcuts
+ * Purpose:
+ * Handles Ctrl+K and / shortcuts that focus or open search.
  * ==========================================================
  */
 
