@@ -3,11 +3,7 @@
    File: header.css
    Purpose: Global site header and utility controls.
    Version: 2.1.0
-
-   Current structure:
-   Logo → Primary navigation → Search → Theme toggle
-   ==========================================================
-*/
+   ========================================================== */
 
 
 /* ==========================================================
@@ -41,14 +37,16 @@
 
     gap:
         var(--space-6);
+
 }
 
 
 /* ==========================================================
-Logo
-========================================================== */
+   Logo
+   ========================================================== */
 
 .site-logo {
+
     position: relative;
 
     display: inline-flex;
@@ -56,38 +54,57 @@ Logo
     align-items: center;
 
     width: 320px;
+
     height: 59px;
 
     flex-shrink: 0;
 
     white-space: nowrap;
+
 }
 
 
 /* ==========================================================
-Logo Images
-========================================================== */
+   Logo Images
+   ========================================================== */
 
 .site-logo__image {
+
     position: absolute;
 
     inset: 0;
 
     width: 100%;
+
     height: 100%;
 
     object-fit: contain;
+
     object-position: left center;
 
     transition:
         opacity
         var(--transition-normal);
+
 }
 
 
 /* ==========================================================
-Default Theme — Light
-========================================================== */
+   Mobile Logo Text
+   Hidden by default.
+   Displayed only on mobile devices.
+   ========================================================== */
+
+.site-logo__mobile {
+
+    display: none;
+
+}
+
+
+/* ==========================================================
+   Default Theme — Light
+   ========================================================== */
 
 .site-logo__image--black {
 
@@ -105,8 +122,8 @@ Default Theme — Light
 
 
 /* ==========================================================
-Dark Theme
-========================================================== */
+   Dark Theme
+   ========================================================== */
 
 [data-theme="dark"] .site-logo__image--black {
 
@@ -122,8 +139,8 @@ Dark Theme
 
 
 /* ==========================================================
-Hover — Full Color Logo
-========================================================== */
+   Hover — Full Color Logo
+   ========================================================== */
 
 .site-logo:hover .site-logo__image--black,
 
@@ -141,8 +158,8 @@ Hover — Full Color Logo
 
 
 /* ==========================================================
-Keyboard Focus
-========================================================== */
+   Keyboard Focus
+   ========================================================== */
 
 .site-logo:focus-visible {
 
@@ -182,7 +199,6 @@ Keyboard Focus
 
 }
 
-
 .site-navigation a {
 
     position: relative;
@@ -198,7 +214,6 @@ Keyboard Focus
         var(--transition-fast);
 
 }
-
 
 .site-navigation a:hover,
 
@@ -243,7 +258,6 @@ Keyboard Focus
 
 }
 
-
 .site-navigation a:hover::after,
 
 .site-navigation a:focus-visible::after {
@@ -255,10 +269,9 @@ Keyboard Focus
 
 
 /* ==========================================================
-   Search Button
-   ----------------------------------------------------------
-   SearchButton.astro adds the .search-button class to the
-   reusable Button component.
+   Search
+   SearchButton.astro adds the .search-button class
+   to the reusable Button component.
    ========================================================== */
 
 .search-button {
@@ -301,7 +314,6 @@ Keyboard Focus
 
 }
 
-
 .search-button:hover {
 
     border-color:
@@ -317,7 +329,6 @@ Keyboard Focus
         var(--shadow-sm);
 
 }
-
 
 .search-button:active {
 
@@ -375,7 +386,6 @@ Keyboard Focus
 
 }
 
-
 .theme-toggle:hover {
 
     background:
@@ -385,7 +395,6 @@ Keyboard Focus
         var(--border-dark);
 
 }
-
 
 .theme-toggle:focus-visible {
 
@@ -398,7 +407,6 @@ Keyboard Focus
 
 }
 
-
 .theme-toggle__icon {
 
     font-size:
@@ -410,8 +418,8 @@ Keyboard Focus
 
 
 /* ==========================================================
-Responsive Navigation
-========================================================== */
+   Responsive Navigation
+   ========================================================== */
 
 @media (max-width: 768px) {
 
@@ -445,7 +453,8 @@ Responsive Navigation
 
         display: inline-block;
 
-        letter-spacing: -0.03em;
+        letter-spacing:
+            -0.03em;
 
     }
 
