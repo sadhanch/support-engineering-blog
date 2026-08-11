@@ -85,11 +85,9 @@ function loadGoogleAnalytics() {
         window.dataLayer || [];
 
 
-    function gtag(
-        ...args: unknown[]
-    ) {
+    function gtag() {
 
-        window.dataLayer.push(args);
+        window.dataLayer.push(arguments);
 
     }
 
