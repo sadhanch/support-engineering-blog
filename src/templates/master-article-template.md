@@ -5,6 +5,8 @@ description: "A concise description of what the reader will learn from this arti
 
 excerpt: "A short summary suitable for article listings and search results."
 
+socialImage: "/social/article-name.png"
+
 summary:
   - Key takeaway one.
   - Key takeaway two.
