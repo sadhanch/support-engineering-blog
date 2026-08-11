@@ -11,16 +11,31 @@ import SearchButton from "../ui/SearchButton.astro";
 <div class="header-container">
 
     <a
-        href="/"
-        class="site-logo"
-        aria-label={site.title}
+    href="/"
+    class="site-logo"
+    aria-label={site.title}
     >
 
-        <span class="site-logo__text">
+        <img
+            src="/logo/logo-black.svg"
+            alt=""
+            class="site-logo__image site-logo__image--black"
+            aria-hidden="true"
+        />
 
-            {site.shortTitle}
+        <img
+            src="/logo/logo-light.svg"
+            alt=""
+            class="site-logo__image site-logo__image--light"
+            aria-hidden="true"
+        />
 
-        </span>
+        <img
+            src="/logo/logo-color.svg"
+            alt=""
+            class="site-logo__image site-logo__image--color"
+            aria-hidden="true"
+        />
 
     </a>
 
