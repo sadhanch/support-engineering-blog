@@ -33,6 +33,9 @@ const articles = defineCollection({
 
         excerpt: z.string(),
 
+        socialImage:
+            z.string().optional(),
+
         summary:
             z.array(z.string()).optional(),
 
