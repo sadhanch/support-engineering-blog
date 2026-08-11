@@ -57,9 +57,9 @@ const {
 
     author = site.author,
 
-    robots = "index, follow"
+    robots = "index, follow",
 
-    socialImage
+    socialImage: socialImagePath
 
 } = Astro.props;
 
@@ -69,7 +69,7 @@ const canonicalUrl =
 
 
 const socialImage =
-    `${site.url}${socialImage ?? site.seo.defaultImage}`;
+    `${site.url}${socialImagePath ?? site.seo.defaultImage}`;
 
 
 /*
