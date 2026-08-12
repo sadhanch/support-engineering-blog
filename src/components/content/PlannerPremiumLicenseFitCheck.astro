@@ -1,0 +1,286 @@
+---
+import "../../assets/css/components/planner-premium-license-fit-check.css";
+---
+
+<section class="planner-premium-license-fit-check" aria-labelledby="pplfc-title">
+  <div class="pplfc__header">
+    <div>
+      <p class="pplfc__eyebrow">Licensing decision aid</p>
+      <h2 id="pplfc-title">Planner Premium License Fit Check</h2>
+      <p class="pplfc__intro">
+        Assess the responsibility this user has before deciding whether Premium access is appropriate.
+      </p>
+    </div>
+    <div class="pplfc__progress" aria-live="polite">
+      <span class="pplfc__progress-label">Step</span>
+      <span class="pplfc__progress-value" data-progress-value>1 of 3</span>
+    </div>
+  </div>
+
+  <div class="pplfc__progress-bar" aria-hidden="true"><span data-progress-bar></span></div>
+
+  <div class="pplfc__body">
+    <div class="pplfc__step" data-step="1">
+      <p class="pplfc__question">What does this user primarily need to do?</p>
+      <div class="pplfc__options">
+        <button type="button" class="pplfc__option" data-choice="manage">
+          <span class="pplfc__option-title">Manage the project</span>
+          <span class="pplfc__option-description">Build schedules, manage dependencies, milestones, workload, or other advanced project structure.</span>
+        </button>
+        <button type="button" class="pplfc__option" data-choice="lead">
+          <span class="pplfc__option-title">Manage a workstream or project area</span>
+          <span class="pplfc__option-description">Maintain part of the project structure, coordinate delivery, or manage advanced project information.</span>
+        </button>
+        <button type="button" class="pplfc__option" data-choice="contribute">
+          <span class="pplfc__option-title">Complete assigned work</span>
+          <span class="pplfc__option-description">Work on assigned tasks, update progress, add information, and complete deliverables.</span>
+        </button>
+        <button type="button" class="pplfc__option" data-choice="view">
+          <span class="pplfc__option-title">View status or consume reporting</span>
+          <span class="pplfc__option-description">Understand progress, milestones, risks, or portfolio information without managing the plan.</span>
+        </button>
+        <button type="button" class="pplfc__option" data-choice="govern">
+          <span class="pplfc__option-title">Govern or oversee projects</span>
+          <span class="pplfc__option-description">Apply project standards, oversee Premium work, or manage project governance and reporting.</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="pplfc__step" data-step="2" hidden>
+      <p class="pplfc__question">Which capabilities does this user actually need?</p>
+      <div class="pplfc__options">
+        <button type="button" class="pplfc__option" data-choice="advanced-project">
+          <span class="pplfc__option-title">Advanced project planning</span>
+          <span class="pplfc__option-description">Timeline, dependencies, milestones, critical path, People view, Goals, or custom fields.</span>
+        </button>
+        <button type="button" class="pplfc__option" data-choice="basic-work">
+          <span class="pplfc__option-title">Basic task participation</span>
+          <span class="pplfc__option-description">Assigned tasks, task updates, completion, attachments, and everyday collaboration.</span>
+        </button>
+        <button type="button" class="pplfc__option" data-choice="reporting">
+          <span class="pplfc__option-title">Visibility and reporting</span>
+          <span class="pplfc__option-description">Project or portfolio status, milestones, risks, dashboards, or curated stakeholder reporting.</span>
+        </button>
+        <button type="button" class="pplfc__option" data-choice="governance">
+          <span class="pplfc__option-title">Project governance</span>
+          <span class="pplfc__option-description">Standards, project oversight, Premium-plan administration, or governance responsibilities.</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="pplfc__step" data-step="3" hidden>
+      <p class="pplfc__question">How certain is the licensing requirement?</p>
+      <div class="pplfc__options">
+        <button type="button" class="pplfc__option" data-choice="clear">
+          <span class="pplfc__option-title">Clearly required</span>
+          <span class="pplfc__option-description">The user's current responsibility already depends on Premium capabilities.</span>
+        </button>
+        <button type="button" class="pplfc__option" data-choice="trial">
+          <span class="pplfc__option-title">Not yet proven</span>
+          <span class="pplfc__option-description">The user may need Premium, but the requirement should be validated against a real workload first.</span>
+        </button>
+        <button type="button" class="pplfc__option" data-choice="temporary">
+          <span class="pplfc__option-title">Temporary responsibility</span>
+          <span class="pplfc__option-description">The user needs advanced capabilities for a defined project or assignment and should be reviewed later.</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="pplfc__result" data-result hidden aria-live="polite">
+      <span class="pplfc__result-kicker" data-result-kicker>Assessment</span>
+      <div class="pplfc__result-grid">
+        <div>
+          <h3 class="pplfc__result-title" data-result-title tabindex="-1"></h3>
+          <p class="pplfc__result-text" data-result-text></p>
+        </div>
+        <div class="pplfc__result-panel">
+          <p class="pplfc__result-panel-title">Why?</p>
+          <ul class="pplfc__result-points" data-result-points></ul>
+        </div>
+      </div>
+      <p class="pplfc__result-note" data-result-note></p>
+      <button type="button" class="pplfc__reset" data-reset>Assess another user</button>
+    </div>
+  </div>
+
+  <div class="pplfc__footer" data-footer>
+    <button type="button" class="pplfc__back" data-back hidden>← Back</button>
+    <span class="pplfc__footer-spacer"></span>
+    <button type="button" class="pplfc__continue" data-continue disabled>Continue →</button>
+  </div>
+
+  <noscript>
+    <div class="pplfc__noscript"><strong>JavaScript is disabled.</strong> Use the role-based licensing framework and tables in this article for the same guidance.</div>
+  </noscript>
+</section>
+
+<script>
+  const root = document.querySelector(".planner-premium-license-fit-check");
+  if (root) {
+    const steps = [...root.querySelectorAll("[data-step]")];
+    const progressValue = root.querySelector("[data-progress-value]");
+    const progressBar = root.querySelector("[data-progress-bar]");
+    const continueButton = root.querySelector("[data-continue]");
+    const backButton = root.querySelector("[data-back]");
+    const footer = root.querySelector("[data-footer]");
+    const result = root.querySelector("[data-result]");
+    const resultKicker = root.querySelector("[data-result-kicker]");
+    const resultTitle = root.querySelector("[data-result-title]");
+    const resultText = root.querySelector("[data-result-text]");
+    const resultPoints = root.querySelector("[data-result-points]");
+    const resultNote = root.querySelector("[data-result-note]");
+    const resetButton = root.querySelector("[data-reset]");
+    let currentStep = 1;
+    let selected = {};
+
+    const assessments = {
+      premium: {
+        kicker: "Premium access likely required",
+        title: "This user has a Premium-level responsibility",
+        text: "The responsibility described requires advanced project-management capabilities. Evaluate the user's current subscription against the Premium capability they need.",
+        points: [
+          "Advanced project structure or management is part of the user's responsibility.",
+          "The user needs capabilities beyond basic task participation.",
+          "The subscription should be selected from the current Microsoft licensing model."
+        ],
+        note: "This is a responsibility-based assessment, not a substitute for Microsoft's current licensing terms."
+      },
+      basic: {
+        kicker: "Basic participation may be sufficient",
+        title: "The user appears to need task-level participation",
+        text: "The described work is primarily execution or task participation rather than management of the Premium project structure.",
+        points: [
+          "The user can focus on assigned work and task updates.",
+          "Premium project-management features are not central to the responsibility described.",
+          "Reassess the requirement if the user's role expands into project management."
+        ],
+        note: "Confirm the exact access available through the user's current Microsoft 365 or Office 365 subscription."
+      },
+      reporting: {
+        kicker: "Consider a reporting-first access model",
+        title: "Visibility may not require project-authoring access",
+        text: "The user's primary need is to consume project information rather than manage the project. Consider the organization's reporting architecture before assigning Premium access.",
+        points: [
+          "The user primarily needs status, milestones, risks, or portfolio information.",
+          "Power BI or another reporting layer may satisfy stakeholder visibility needs.",
+          "Direct project-authoring access should be based on an actual editing responsibility."
+        ],
+        note: "Reporting architecture and licensing requirements should be validated for the organization's environment."
+      },
+      governance: {
+        kicker: "Premium may be appropriate",
+        title: "The user's governance role may justify advanced access",
+        text: "The user oversees Premium work rather than simply participating in it. Validate the exact governance and project-management capabilities required before selecting the subscription.",
+        points: [
+          "Governance responsibilities may include advanced project oversight or Premium-plan management.",
+          "Not every PMO or administrator needs the same level of access.",
+          "Keep the decision tied to responsibility rather than job title."
+        ],
+        note: "Use organizational policy to define approval, review, and reclamation requirements."
+      },
+      review: {
+        kicker: "Validate before assigning permanently",
+        title: "Use a trial or controlled validation",
+        text: "The requirement may be legitimate, but it has not yet been demonstrated. Test the capability against a real workload before making a permanent licensing decision where your governance model allows it.",
+        points: [
+          "Identify the exact Premium capability being requested.",
+          "Test it against the real project responsibility.",
+          "Review whether the capability is actually needed after the trial or assignment."
+        ],
+        note: "Microsoft's current trial and licensing options should be checked before establishing the final assignment."
+      }
+    };
+
+    function showStep(stepNumber) {
+      currentStep = stepNumber;
+      steps.forEach((step) => { step.hidden = Number(step.dataset.step) !== currentStep; });
+      progressValue.textContent = `${currentStep} of 3`;
+      progressBar.style.width = `${(currentStep / 3) * 100}%`;
+      backButton.hidden = currentStep === 1;
+      continueButton.disabled = !selected[`step${currentStep}`];
+
+      root.querySelectorAll(".pplfc__option").forEach((option) => {
+        option.classList.remove("is-selected");
+        option.setAttribute("aria-pressed", "false");
+      });
+
+      const currentSelection = selected[`step${currentStep}`];
+      if (currentSelection) {
+        const active = root.querySelector(`[data-step="${currentStep}"] [data-choice="${currentSelection}"]`);
+        if (active) {
+          active.classList.add("is-selected");
+          active.setAttribute("aria-pressed", "true");
+        }
+      }
+    }
+
+    function getAssessment() {
+      const responsibility = selected.step1;
+      const capability = selected.step2;
+      const certainty = selected.step3;
+
+      if (certainty === "trial") return assessments.review;
+      if (responsibility === "contribute" && capability === "basic-work") return assessments.basic;
+      if (responsibility === "view" && capability === "reporting") return assessments.reporting;
+      if (responsibility === "govern") return assessments.governance;
+      if (capability === "advanced-project") return assessments.premium;
+      if (capability === "governance") return assessments.governance;
+      if (capability === "reporting") return assessments.reporting;
+      return certainty === "temporary" ? assessments.premium : assessments.review;
+    }
+
+    function showResult() {
+      const answer = getAssessment();
+      steps.forEach((step) => { step.hidden = true; });
+      footer.hidden = true;
+      progressValue.textContent = "Complete";
+      progressBar.style.width = "100%";
+      resultKicker.textContent = answer.kicker;
+      resultTitle.textContent = answer.title;
+      resultText.textContent = answer.text;
+      resultNote.textContent = answer.note;
+      resultPoints.replaceChildren();
+      answer.points.forEach((point) => {
+        const item = document.createElement("li");
+        item.textContent = point;
+        resultPoints.appendChild(item);
+      });
+      result.hidden = false;
+      resultTitle.focus({ preventScroll: true });
+    }
+
+    root.querySelectorAll(".pplfc__option").forEach((option) => {
+      option.setAttribute("aria-pressed", "false");
+      option.addEventListener("click", () => {
+        const step = Number(option.closest("[data-step]").dataset.step);
+        selected[`step${step}`] = option.dataset.choice;
+        root.querySelectorAll(`[data-step="${step}"] .pplfc__option`).forEach((item) => {
+          item.classList.remove("is-selected");
+          item.setAttribute("aria-pressed", "false");
+        });
+        option.classList.add("is-selected");
+        option.setAttribute("aria-pressed", "true");
+        continueButton.disabled = false;
+      });
+    });
+
+    continueButton.addEventListener("click", () => {
+      if (!selected[`step${currentStep}`]) return;
+      if (currentStep === 3) showResult();
+      else showStep(currentStep + 1);
+    });
+
+    backButton.addEventListener("click", () => {
+      if (currentStep > 1) showStep(currentStep - 1);
+    });
+
+    resetButton.addEventListener("click", () => {
+      selected = {};
+      result.hidden = true;
+      footer.hidden = false;
+      showStep(1);
+    });
+
+    showStep(1);
+  }
+</script>
