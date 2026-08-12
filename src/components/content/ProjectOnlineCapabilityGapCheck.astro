@@ -1,0 +1,706 @@
+---
+import "../../assets/css/components/project-online-capability-gap-check.css";
+---
+
+<section class="project-gap-check" aria-labelledby="project-gap-check-title">
+  <div class="project-gap-check__header">
+    <div>
+      <p class="project-gap-check__eyebrow">Interactive assessment</p>
+      <h2 id="project-gap-check-title">Project Online Capability Gap Check</h2>
+      <p class="project-gap-check__intro">
+        Assess the capabilities your workload actually depends on before choosing a migration destination.
+      </p>
+    </div>
+
+    <div class="project-gap-check__progress" aria-live="polite">
+      <span class="project-gap-check__progress-label">Step</span>
+      <span class="project-gap-check__progress-value" data-progress-value>1 of 4</span>
+    </div>
+  </div>
+
+  <div class="project-gap-check__progress-bar" aria-hidden="true">
+    <span data-progress-bar></span>
+  </div>
+
+  <div class="project-gap-check__body">
+    <div class="project-gap-check__step" data-step="1">
+      <p class="project-gap-check__question">What kind of workload are you assessing?</p>
+
+      <div class="project-gap-check__options" role="group" aria-label="Workload type">
+        <button type="button" class="project-gap-check__option" data-choice="departmental">
+          <span class="project-gap-check__option-title">Departmental or team project</span>
+          <span class="project-gap-check__option-description">
+            A contained initiative managed mainly by one team or function.
+          </span>
+        </button>
+
+        <button type="button" class="project-gap-check__option" data-choice="cross-functional">
+          <span class="project-gap-check__option-title">Cross-functional project</span>
+          <span class="project-gap-check__option-description">
+            Multiple teams or business units contribute to one project.
+          </span>
+        </button>
+
+        <button type="button" class="project-gap-check__option" data-choice="transformation">
+          <span class="project-gap-check__option-title">Large transformation project</span>
+          <span class="project-gap-check__option-description">
+            A high-visibility initiative with several workstreams, dependencies or governance requirements.
+          </span>
+        </button>
+
+        <button type="button" class="project-gap-check__option" data-choice="portfolio">
+          <span class="project-gap-check__option-title">Portfolio or PMO workload</span>
+          <span class="project-gap-check__option-description">
+            Multiple projects are being governed, prioritized, reported or compared.
+          </span>
+        </button>
+
+        <button type="button" class="project-gap-check__option" data-choice="resource-heavy">
+          <span class="project-gap-check__option-title">Resource-intensive delivery environment</span>
+          <span class="project-gap-check__option-description">
+            Shared people, capacity, utilization or resource allocation are central to delivery.
+          </span>
+        </button>
+
+        <button type="button" class="project-gap-check__option" data-choice="financial">
+          <span class="project-gap-check__option-title">Financially governed project workload</span>
+          <span class="project-gap-check__option-description">
+            Project costs, actuals, billing, revenue or ERP-linked processes are important to the workload.
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <div class="project-gap-check__step" data-step="2" hidden>
+      <p class="project-gap-check__question">Which project-execution capabilities does the workload depend on?</p>
+      <p class="project-gap-check__helper">
+        Select the capabilities that are genuinely important to the project. You do not need to select every capability available in Project Online.
+      </p>
+
+      <div class="project-gap-check__check-grid">
+        <label class="project-gap-check__check">
+          <input type="checkbox" data-capability="scheduling">
+          <span>Structured scheduling</span>
+        </label>
+        <label class="project-gap-check__check">
+          <input type="checkbox" data-capability="dependencies">
+          <span>Dependencies</span>
+        </label>
+        <label class="project-gap-check__check">
+          <input type="checkbox" data-capability="milestones">
+          <span>Milestones</span>
+        </label>
+        <label class="project-gap-check__check">
+          <input type="checkbox" data-capability="critical-path">
+          <span>Critical-path analysis</span>
+        </label>
+        <label class="project-gap-check__check">
+          <input type="checkbox" data-capability="workload">
+          <span>Project workload visibility</span>
+        </label>
+        <label class="project-gap-check__check">
+          <input type="checkbox" data-capability="custom-fields">
+          <span>Custom project information</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="project-gap-check__step" data-step="3" hidden>
+      <p class="project-gap-check__question">Which broader capabilities does the workload depend on?</p>
+      <p class="project-gap-check__helper">
+        These selections help identify where the workload may extend beyond individual project execution.
+      </p>
+
+      <div class="project-gap-check__group-grid">
+        <fieldset class="project-gap-check__group">
+          <legend>Resources</legend>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="resource-pools">
+            <span>Shared resource pools</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="capacity">
+            <span>Capacity planning</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="utilization">
+            <span>Utilization</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="timesheets">
+            <span>Timesheets</span>
+          </label>
+        </fieldset>
+
+        <fieldset class="project-gap-check__group">
+          <legend>Portfolio &amp; reporting</legend>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="portfolio-governance">
+            <span>Portfolio governance</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="cross-project-reporting">
+            <span>Cross-project reporting</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="cross-system-reporting">
+            <span>Cross-system reporting</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="executive-dashboards">
+            <span>Executive portfolio dashboards</span>
+          </label>
+        </fieldset>
+
+        <fieldset class="project-gap-check__group">
+          <legend>Financial &amp; operational</legend>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="project-financials">
+            <span>Project financials</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="billing-revenue">
+            <span>Billing or revenue processes</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="erp">
+            <span>ERP integration</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="investment">
+            <span>Investment management</span>
+          </label>
+        </fieldset>
+
+        <fieldset class="project-gap-check__group">
+          <legend>Technology &amp; integration</legend>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="power-automate">
+            <span>Power Automate workflows</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="power-bi">
+            <span>Power BI reporting</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="custom-apps">
+            <span>Custom applications</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-capability="apis">
+            <span>APIs or external integrations</span>
+          </label>
+        </fieldset>
+      </div>
+    </div>
+
+    <div class="project-gap-check__step" data-step="4" hidden>
+      <p class="project-gap-check__question">Does anything outside Project Online depend on this workload?</p>
+
+      <div class="project-gap-check__options project-gap-check__options--compact" role="group" aria-label="External dependencies">
+        <button type="button" class="project-gap-check__option" data-choice="dependencies-no">
+          <span class="project-gap-check__option-title">No</span>
+          <span class="project-gap-check__option-description">
+            The project is largely self-contained.
+          </span>
+        </button>
+
+        <button type="button" class="project-gap-check__option" data-choice="dependencies-yes">
+          <span class="project-gap-check__option-title">Yes</span>
+          <span class="project-gap-check__option-description">
+            Other systems, workflows, reports, applications or teams depend on this workload.
+          </span>
+        </button>
+      </div>
+
+      <div class="project-gap-check__dependency-panel" data-dependency-panel hidden>
+        <p class="project-gap-check__dependency-title">What depends on it?</p>
+        <div class="project-gap-check__check-grid">
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-dependency="power-bi">
+            <span>Power BI</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-dependency="power-automate">
+            <span>Power Automate</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-dependency="custom-apps">
+            <span>Custom applications</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-dependency="apis">
+            <span>APIs</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-dependency="erp">
+            <span>ERP / finance systems</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-dependency="m365">
+            <span>Other Microsoft 365 services</span>
+          </label>
+          <label class="project-gap-check__check">
+            <input type="checkbox" data-dependency="other">
+            <span>Other project-management systems</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-gap-check__result" data-result hidden aria-live="polite">
+      <span class="project-gap-check__result-kicker" data-result-kicker>Assessment</span>
+      <h3 class="project-gap-check__result-title" data-result-title tabindex="-1"></h3>
+      <p class="project-gap-check__result-text" data-result-text></p>
+
+      <div class="project-gap-check__profile">
+        <div class="project-gap-check__profile-item">
+          <span>Project execution</span>
+          <strong data-profile-project>Strong alignment</strong>
+        </div>
+        <div class="project-gap-check__profile-item">
+          <span>Enterprise capabilities</span>
+          <strong data-profile-enterprise>Review required</strong>
+        </div>
+        <div class="project-gap-check__profile-item">
+          <span>Integration / architecture</span>
+          <strong data-profile-integration>Review required</strong>
+        </div>
+      </div>
+
+      <div class="project-gap-check__reasoning">
+        <h4>Why this result?</h4>
+        <div data-reasoning></div>
+      </div>
+
+      <div class="project-gap-check__direction">
+        <span>Potential next direction</span>
+        <strong data-direction></strong>
+      </div>
+
+      <p class="project-gap-check__result-note">
+        This is an editorial decision aid, not a licensing calculator or formal architecture assessment.
+        Validate the current Microsoft capabilities, licensing, integrations, governance, and business requirements before migration.
+      </p>
+
+      <button type="button" class="project-gap-check__reset" data-reset>
+        Start a new assessment
+      </button>
+    </div>
+  </div>
+
+  <div class="project-gap-check__footer" data-footer>
+    <button type="button" class="project-gap-check__back" data-back hidden>
+      ← Back
+    </button>
+    <span class="project-gap-check__footer-spacer"></span>
+    <button type="button" class="project-gap-check__continue" data-continue disabled>
+      Continue →
+    </button>
+  </div>
+
+  <noscript>
+    <div class="project-gap-check__noscript">
+      <strong>JavaScript is disabled.</strong>
+      Use the Fit-Gap Assessment section in this article for the same methodology.
+    </div>
+  </noscript>
+</section>
+
+<script>
+  const root = document.querySelector(".project-gap-check");
+
+  if (root) {
+    const steps = [...root.querySelectorAll("[data-step]")];
+    const progressValue = root.querySelector("[data-progress-value]");
+    const progressBar = root.querySelector("[data-progress-bar]");
+    const continueButton = root.querySelector("[data-continue]");
+    const backButton = root.querySelector("[data-back]");
+    const footer = root.querySelector("[data-footer]");
+    const result = root.querySelector("[data-result]");
+    const resultKicker = root.querySelector("[data-result-kicker]");
+    const resultTitle = root.querySelector("[data-result-title]");
+    const resultText = root.querySelector("[data-result-text]");
+    const reasoning = root.querySelector("[data-reasoning]");
+    const direction = root.querySelector("[data-direction]");
+    const resetButton = root.querySelector("[data-reset]");
+    const dependencyPanel = root.querySelector("[data-dependency-panel]");
+    const projectProfile = root.querySelector("[data-profile-project]");
+    const enterpriseProfile = root.querySelector("[data-profile-enterprise]");
+    const integrationProfile = root.querySelector("[data-profile-integration]");
+
+    let currentStep = 1;
+    let selected = {
+      workload: null,
+      execution: new Set(),
+      enterprise: new Set(),
+      dependencies: new Set(),
+      externalDependencies: null
+    };
+
+    const enterpriseCapabilities = new Set([
+      "resource-pools",
+      "capacity",
+      "utilization",
+      "timesheets",
+      "portfolio-governance",
+      "cross-project-reporting",
+      "cross-system-reporting",
+      "executive-dashboards",
+      "project-financials",
+      "billing-revenue",
+      "erp",
+      "investment"
+    ]);
+
+    const highGapCapabilities = new Set([
+      "resource-pools",
+      "timesheets",
+      "project-financials",
+      "billing-revenue",
+      "erp",
+      "investment",
+      "portfolio-governance"
+    ]);
+
+    const integrationCapabilities = new Set([
+      "cross-system-reporting",
+      "power-automate",
+      "power-bi",
+      "custom-apps",
+      "apis"
+    ]);
+
+    function selectedStepValue(stepNumber) {
+      return stepNumber === 1 ? selected.workload : selected.externalDependencies;
+    }
+
+    function updateProgress() {
+      progressValue.textContent = `${currentStep} of 4`;
+      progressBar.style.width = `${(currentStep / 4) * 100}%`;
+      backButton.hidden = currentStep === 1;
+    }
+
+    function updateContinueState() {
+      let enabled = false;
+
+      if (currentStep === 1) {
+        enabled = Boolean(selected.workload);
+      } else if (currentStep === 2 || currentStep === 3) {
+        enabled = true;
+      } else if (currentStep === 4) {
+        enabled = Boolean(selected.externalDependencies);
+      }
+
+      continueButton.disabled = !enabled;
+    }
+
+    function restoreButtonStates() {
+      root.querySelectorAll(".project-gap-check__option").forEach((button) => {
+        button.classList.remove("is-selected");
+        button.setAttribute("aria-pressed", "false");
+      });
+
+      if (currentStep === 1 && selected.workload) {
+        const active = root.querySelector(`[data-step="1"] [data-choice="${selected.workload}"]`);
+        if (active) {
+          active.classList.add("is-selected");
+          active.setAttribute("aria-pressed", "true");
+        }
+      }
+
+      if (currentStep === 4 && selected.externalDependencies) {
+        const active = root.querySelector(`[data-step="4"] [data-choice="${selected.externalDependencies}"]`);
+        if (active) {
+          active.classList.add("is-selected");
+          active.setAttribute("aria-pressed", "true");
+        }
+      }
+    }
+
+    function showStep(stepNumber) {
+      currentStep = stepNumber;
+
+      steps.forEach((step) => {
+        step.hidden = Number(step.dataset.step) !== currentStep;
+      });
+
+      if (currentStep === 4) {
+        dependencyPanel.hidden = selected.externalDependencies !== "yes";
+      }
+
+      updateProgress();
+      restoreButtonStates();
+      updateContinueState();
+    }
+
+    function collectCapabilities() {
+      const all = new Set([...selected.execution, ...selected.enterprise]);
+
+      if (selected.externalDependencies === "yes") {
+        selected.dependencies.forEach((item) => all.add(item));
+      }
+
+      return all;
+    }
+
+    function buildAssessment() {
+      const capabilities = collectCapabilities();
+      const projectExecutionCount = selected.execution.size;
+      const enterpriseCount = [...capabilities].filter((item) => enterpriseCapabilities.has(item)).length;
+      const highGapCount = [...capabilities].filter((item) => highGapCapabilities.has(item)).length;
+      const integrationCount = [...capabilities].filter((item) => integrationCapabilities.has(item)).length;
+
+      const hasExternalArchitecture =
+        selected.externalDependencies === "yes" &&
+        selected.dependencies.size > 0;
+
+      let outcome = "premium";
+      let title = "Strong Planner Premium candidate";
+      let text =
+        "Your workload is primarily aligned with structured project execution. Planner Premium looks like a strong candidate for the project-execution layer, subject to validating scale, governance, and any dependencies outside the project.";
+      let projectState = "Strong alignment";
+      let enterpriseState = enterpriseCount ? "Some review required" : "Low requirement";
+      let integrationState = hasExternalArchitecture || integrationCount ? "Review required" : "Low dependency";
+      let direction = "Planner Premium";
+
+      if (highGapCount >= 2 || (highGapCount >= 1 && enterpriseCount >= 3)) {
+        outcome = "broader";
+        title = "Broader PPM assessment recommended";
+        text =
+          "Your workload extends beyond individual project execution. Planner Premium may still have a role in the project layer, but the overall workload should be evaluated against broader resource, portfolio, financial, or enterprise PPM capabilities.";
+        projectState = projectExecutionCount ? "Strong alignment" : "Limited evidence";
+        enterpriseState = "Broader review required";
+        integrationState = hasExternalArchitecture || integrationCount ? "Architecture review" : "Review required";
+        direction = "Broader PPM evaluation";
+      } else if (
+        enterpriseCount > 0 ||
+        hasExternalArchitecture ||
+        integrationCount > 0 ||
+        selected.workload === "portfolio" ||
+        selected.workload === "resource-heavy" ||
+        selected.workload === "financial"
+      ) {
+        outcome = "mixed";
+        title = "Planner Premium + architecture review";
+        text =
+          "Planner Premium may cover the project-execution layer, but your workload also depends on broader capabilities or external systems. Validate reporting, integrations, governance, and enterprise requirements before migration.";
+        projectState = projectExecutionCount ? "Strong alignment" : "Validate project fit";
+        enterpriseState = enterpriseCount ? "Review required" : "Low requirement";
+        integrationState = hasExternalArchitecture || integrationCount ? "Architecture review" : "Low dependency";
+        direction = "Planner Premium plus broader architecture";
+      }
+
+      return {
+        outcome,
+        title,
+        text,
+        projectState,
+        enterpriseState,
+        integrationState,
+        direction,
+        capabilities,
+        highGapCount,
+        integrationCount,
+        hasExternalArchitecture
+      };
+    }
+
+    function capabilityLabels(capabilities, filter) {
+      const labels = {
+        scheduling: "structured scheduling",
+        dependencies: "dependencies",
+        milestones: "milestones",
+        "critical-path": "critical-path analysis",
+        workload: "project workload visibility",
+        "custom-fields": "custom project information",
+        "resource-pools": "shared resource pools",
+        capacity: "capacity planning",
+        utilization: "utilization",
+        timesheets: "timesheets",
+        "portfolio-governance": "portfolio governance",
+        "cross-project-reporting": "cross-project reporting",
+        "cross-system-reporting": "cross-system reporting",
+        "executive-dashboards": "executive portfolio dashboards",
+        "project-financials": "project financials",
+        "billing-revenue": "billing or revenue processes",
+        erp: "ERP integration",
+        investment: "investment management",
+        "power-automate": "Power Automate workflows",
+        "power-bi": "Power BI reporting",
+        "custom-apps": "custom applications",
+        apis: "APIs or external integrations"
+      };
+
+      return [...capabilities]
+        .filter((item) => !filter || filter.has(item))
+        .map((item) => labels[item] || item);
+    }
+
+    function buildReasoning(assessment) {
+      const blocks = [];
+
+      const projectCaps = capabilityLabels(assessment.capabilities, new Set([
+        "scheduling",
+        "dependencies",
+        "milestones",
+        "critical-path",
+        "workload",
+        "custom-fields"
+      ]));
+
+      const enterpriseCaps = capabilityLabels(assessment.capabilities, enterpriseCapabilities);
+
+      const integrationCaps = capabilityLabels(assessment.capabilities, integrationCapabilities);
+
+      if (projectCaps.length) {
+        blocks.push(
+          `<p><strong>Project execution:</strong> ${projectCaps.slice(0, 5).join(", ")}${projectCaps.length > 5 ? ", and other project capabilities" : ""} align with the structured project-planning layer.</p>`
+        );
+      }
+
+      if (enterpriseCaps.length) {
+        blocks.push(
+          `<p><strong>Broader capabilities:</strong> ${enterpriseCaps.slice(0, 4).join(", ")}${enterpriseCaps.length > 4 ? ", and other enterprise requirements" : ""} should be assessed beyond the core project-execution model.</p>`
+        );
+      }
+
+      if (assessment.hasExternalArchitecture || integrationCaps.length) {
+        blocks.push(
+          `<p><strong>Architecture:</strong> ${integrationCaps.length ? integrationCaps.slice(0, 3).join(", ") : "external dependencies"} mean the migration should validate the systems and workflows around the project.</p>`
+        );
+      }
+
+      if (!blocks.length) {
+        blocks.push(
+          "<p>Your selections suggest a relatively self-contained workload. Validate the current project requirements and documented Planner boundaries before migration.</p>"
+        );
+      }
+
+      return blocks.join("");
+    }
+
+    function showResult() {
+      const assessment = buildAssessment();
+
+      steps.forEach((step) => {
+        step.hidden = true;
+      });
+
+      footer.hidden = true;
+      progressValue.textContent = "Complete";
+      progressBar.style.width = "100%";
+
+      result.classList.remove("is-premium", "is-mixed", "is-broader");
+      result.classList.add(
+        assessment.outcome === "premium"
+          ? "is-premium"
+          : assessment.outcome === "mixed"
+            ? "is-mixed"
+            : "is-broader"
+      );
+
+      resultKicker.textContent =
+        assessment.outcome === "premium"
+          ? "Assessment"
+          : assessment.outcome === "mixed"
+            ? "Assessment"
+            : "Assessment";
+
+      resultTitle.textContent = assessment.title;
+      resultText.textContent = assessment.text;
+      projectProfile.textContent = assessment.projectState;
+      enterpriseProfile.textContent = assessment.enterpriseState;
+      integrationProfile.textContent = assessment.integrationState;
+      direction.textContent = assessment.direction;
+      reasoning.innerHTML = buildReasoning(assessment);
+      result.hidden = false;
+
+      resultTitle.focus({ preventScroll: true });
+    }
+
+    root.querySelectorAll(".project-gap-check__option").forEach((button) => {
+      button.setAttribute("aria-pressed", "false");
+
+      button.addEventListener("click", () => {
+        const step = Number(button.closest("[data-step]").dataset.step);
+        const choice = button.dataset.choice;
+
+        if (step === 1) {
+          selected.workload = choice;
+        }
+
+        if (step === 4) {
+          selected.externalDependencies = choice === "dependencies-yes" ? "yes" : "no";
+          dependencyPanel.hidden = selected.externalDependencies !== "yes";
+        }
+
+        root
+          .querySelectorAll(`[data-step="${step}"] .project-gap-check__option`)
+          .forEach((item) => {
+            item.classList.remove("is-selected");
+            item.setAttribute("aria-pressed", "false");
+          });
+
+        button.classList.add("is-selected");
+        button.setAttribute("aria-pressed", "true");
+        updateContinueState();
+      });
+    });
+
+    root.querySelectorAll("[data-capability]").forEach((input) => {
+      input.addEventListener("change", () => {
+        const value = input.dataset.capability;
+        const target = input.closest("[data-step]").dataset.step;
+
+        if (target === "2") {
+          input.checked ? selected.execution.add(value) : selected.execution.delete(value);
+        } else {
+          input.checked ? selected.enterprise.add(value) : selected.enterprise.delete(value);
+        }
+      });
+    });
+
+    root.querySelectorAll("[data-dependency]").forEach((input) => {
+      input.addEventListener("change", () => {
+        const value = input.dataset.dependency;
+        input.checked ? selected.dependencies.add(value) : selected.dependencies.delete(value);
+      });
+    });
+
+    continueButton.addEventListener("click", () => {
+      if (currentStep === 4) {
+        showResult();
+        return;
+      }
+
+      showStep(currentStep + 1);
+    });
+
+    backButton.addEventListener("click", () => {
+      if (currentStep > 1) {
+        showStep(currentStep - 1);
+      }
+    });
+
+    resetButton.addEventListener("click", () => {
+      selected = {
+        workload: null,
+        execution: new Set(),
+        enterprise: new Set(),
+        dependencies: new Set(),
+        externalDependencies: null
+      };
+
+      root.querySelectorAll("input[type='checkbox']").forEach((input) => {
+        input.checked = false;
+      });
+
+      result.hidden = true;
+      footer.hidden = false;
+      showStep(1);
+    });
+
+    showStep(1);
+  }
+</script>

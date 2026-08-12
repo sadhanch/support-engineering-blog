@@ -1,0 +1,731 @@
+---
+title: "Planner Premium Isn't Project Online: A Capability Gap Analysis"
+
+description: "Understand where Planner Premium fits, where its capabilities stop, and how to assess Project Online workloads before migration."
+
+excerpt: "Planner Premium is strong for structured project execution, but it is not a universal replacement for Project Online. Learn how to identify capability gaps and choose the right migration path."
+
+socialImage: "/social/planner-premium-isnt-project-online.png"
+
+summary:
+  - "Understand the difference between structured project execution and enterprise project portfolio management."
+  - "Identify capability gaps around scale, resources, portfolios, reporting, financials, integrations, and governance."
+  - "Use a workload-based fit-gap assessment to determine the right destination after Project Online."
+
+category: "Microsoft 365"
+
+technology:
+  - Microsoft Planner
+  - Microsoft Project
+  - Power Platform
+
+tags:
+  - Microsoft Planner Premium
+  - Project Online
+  - Project Management
+  - Project Portfolio Management
+  - Microsoft 365 Administration
+  - PMO
+  - Migration
+  - Work Management
+
+publishDate: 2026-08-01
+updatedDate: 2026-08-01
+
+featured: false
+draft: false
+
+author: "Sadhan Chandra"
+
+references:
+  - title: "Microsoft Planner subscriptions"
+    url: "https://learn.microsoft.com/en-us/planner/licensing"
+    description: "Microsoft licensing guidance for Planner, including Basic and Premium plan access and Premium subscriptions."
+
+  - title: "Compare Microsoft Planner basic vs. premium plans"
+    url: "https://support.microsoft.com/en-us/Planner/compare-microsoft-planner-basic-vs-premium-plans"
+    description: "Current Microsoft comparison of Basic and Premium Planner capabilities, including Timeline, dependencies, milestones, critical path, People view, limits, and workflow considerations."
+
+  - title: "Advanced capabilities with premium plans in Planner"
+    url: "https://support.microsoft.com/en-us/Planner/teams/advanced-capabilities-with-premium-plans-in-planner"
+    description: "Microsoft documentation covering advanced Premium project-management capabilities such as dependencies, Timeline, critical path, milestones, goals, and workload views."
+
+  - title: "Manage multiple plans with portfolios in Microsoft Planner"
+    url: "https://support.microsoft.com/en-US/Planner/manage-multiple-plans-with-portfolios-in-microsoft-planner"
+    description: "Current documentation for Planner Portfolios, supported Premium plans, portfolio permissions, visibility, and current limitations."
+
+  - title: "Get started with Project Online"
+    url: "https://learn.microsoft.com/en-us/projectonline/get-started-with-project-online"
+    description: "Microsoft overview of Project Online capabilities and its retirement."
+
+  - title: "Microsoft Project Online service description"
+    url: "https://learn.microsoft.com/en-us/office365/servicedescriptions/project-online-service-description/microsoft-project-online-service-description"
+    description: "Microsoft service description for Project Online and its project and portfolio-management capabilities."
+
+  - title: "Project for the web service description"
+    url: "https://learn.microsoft.com/en-us/office365/servicedescriptions/project-online-service-description/project-web-service-description"
+    description: "Microsoft documentation describing the transition of Project for the web capabilities into the modern Planner experience."
+
+  - title: "Understand Planner premium trials and license assignments"
+    url: "https://learn.microsoft.com/en-us/planner/understand-planner-trial-and-license-assignments"
+    description: "Microsoft guidance for Planner trials and administrator-managed license assignments."
+
+---
+import ProjectOnlineCapabilityGapCheck from "../../components/content/ProjectOnlineCapabilityGapCheck.astro";
+import MilestoneTimeline from "../../components/content/MilestoneTimeline.astro";
+import ComparisonTable from "../../components/content/ComparisonTable.astro";
+
+# Planner Premium Isn't Project Online: A Capability Gap Analysis
+
+
+
+Project Online is scheduled to retire on **September 30, 2026**, which means organizations that still depend on it need to make decisions about their project-management environment.
+
+The obvious question is:
+
+> **What replaces Project Online?**
+
+With Microsoft's premium project-management capabilities now integrated into Planner, it is tempting to answer:
+
+> **Planner Premium.**
+
+Sometimes that will be the right answer.
+
+It is not a universal one.
+
+Planner Premium is a capable environment for structured project execution. It provides capabilities such as Timeline, dependencies, milestones, goals, People view, critical path, custom fields, and other project-management functions.
+
+Project Online, however, was often part of a broader project and portfolio-management operating model involving resource management, reporting, financial processes, integrations, and governance.
+
+That distinction changes the migration question.
+
+Instead of asking:
+
+> **"Can Planner Premium replace Project Online?"**
+
+ask:
+
+> **"Which capabilities of our current Project Online environment do we actually depend on, and where should each of them live going forward?"**
+
+That is the purpose of a capability-gap analysis.
+
+---
+
+## 1. Project Execution Is Not Enterprise PPM
+
+Project management is not one capability.
+
+A project team may need to:
+
+- define tasks
+- establish dependencies
+- build a schedule
+- manage milestones
+- understand workload
+- monitor delivery
+
+These are primarily **project-execution** requirements.
+
+Planner Premium is well aligned with them. Premium plans add structured planning capabilities such as Timeline, dependencies, milestones, critical path, goals, People view, task history, custom fields, and workload-oriented views.
+
+A PMO may need something broader:
+
+- portfolio prioritization
+- resource capacity
+- utilization
+- financial management
+- enterprise reporting
+- governance
+- investment decisions
+
+Those are **enterprise PPM** concerns.
+
+The difference can be summarized simply:
+
+**Project execution**
+
+> Tasks → Dependencies → Schedule → Milestones → Delivery
+
+**Enterprise PPM**
+
+> Projects → Portfolio → Resources → Financials → Governance → Strategy
+
+These layers overlap, but they are not interchangeable.
+
+Planner Premium can be a strong fit for project-execution scenarios where its documented capabilities and limits fit the workload, while specialized solutions may be more appropriate for advanced PPM, deep resource scheduling, timesheets, or project financials.
+
+That gives us the right lens for the rest of the article:
+
+> **What layer of the organization's project-management model are we actually trying to support?**
+
+![Comparison of Planner Premium's structured project execution capabilities with the broader enterprise project portfolio management functions of portfolio, resource, financial, reporting, governance, and strategy management.](../../assets/images/articles/planner-premium-isnt-project-online/01_project_execution_vs_enterprise_ppm.png)
+
+---
+
+## 2. What Planner Premium Does Well
+
+A capability-gap analysis should be fair to the product being evaluated.
+
+Planner Premium is not simply a task board with a few additional fields.
+
+Its value becomes clear when the questions change from:
+
+> "What needs to be done?"
+
+to:
+
+> **"How does the work fit together?"**
+
+Consider a project to launch an internal application:
+
+- Define requirements
+- Configure the solution
+- Test
+- Prepare training
+- Launch
+
+A Basic plan can represent those tasks.
+
+But testing may depend on configuration. Training may depend on the finalized solution. Launch may depend on several preceding activities.
+
+**Dependencies turn the list into a schedule.**
+
+Premium supports advanced dependencies and scheduling capabilities, allowing teams to represent those relationships and understand how changes can affect dependent work.
+
+Premium also changes how project status can be viewed.
+
+Instead of asking only:
+
+> "Which tasks are incomplete?"
+
+the project manager can ask:
+
+> **"Which unfinished work can affect delivery?"**
+
+Timeline, milestones, and critical-path capabilities help make that question more visible.
+
+The same applies to workload.
+
+People view and Assignments view can help project teams understand how work is distributed across participants.
+
+Together, these capabilities make Planner Premium a strong fit for **structured project execution**.
+
+But that strength has a boundary.
+
+---
+
+## 3. Where the Capability Gap Begins
+
+The important question is not whether Planner Premium has limitations.
+
+Every platform does.
+
+The question is whether those limits align with the workload.
+
+### Scale
+
+<ComparisonTable
+  caption="Selected Planner Premium project boundaries"
+  columns={[
+    { label: "Capability" },
+    { label: "Premium boundary", emphasis: true }
+  ]}
+  rows={[
+    {
+      label: "Tasks per project",
+      cells: ["3,000"]
+    },
+    {
+      label: "Resources per project",
+      cells: ["300"]
+    },
+    {
+      label: "Custom fields",
+      cells: ["10"]
+    },
+    {
+      label: "Goals",
+      cells: ["10"]
+    },
+    {
+      label: "Successor links",
+      cells: ["2,000"]
+    },
+    {
+      label: "Maximum project duration",
+      cells: ["3,650 days"]
+    }
+  ]}
+/>
+
+These numbers should be treated as **assessment points**, not automatic reasons to reject Planner.
+
+A 3,000-task project may be more than sufficient for one organization and a serious constraint for another.
+
+The point is to identify the boundary **before** migration.
+
+---
+
+## 4. Resource Management: Visibility Isn't the Same as Resource Management
+
+Planner Premium can help project managers understand workload distribution and effort. People view can highlight over- or under-allocation, while Assignments view can support resource requirements and financial estimates.
+
+That is useful project-level visibility.
+
+Mature resource management is different.
+
+A PMO may need to answer:
+
+- How much capacity does the organization actually have?
+- Which projects compete for the same specialists?
+- What is utilization across a resource pool?
+- How should scarce resources be prioritized?
+- Are timesheets required?
+- Can project effort be reconciled with forecasts?
+
+Planner Premium has documented project-level resource boundaries, including 300 resources per project and 20 resources assigned to a task.
+
+The important distinction is therefore:
+
+> **Can the project team see workload?**  
+> versus  
+> **Can the organization manage resource capacity?**
+
+Those are different problems.
+
+---
+
+## 5. Portfolio Management: A Portfolio View Isn't Enterprise PPM
+
+Planner Portfolios can provide broader visibility across supported Premium plans.
+
+But portfolio visibility is not the same thing as enterprise portfolio management.
+
+Current limitations include:
+
+- Basic plans aren't supported.
+- Azure DevOps projects aren't connected.
+- Project Online projects aren't connected.
+- Some portfolio fields are view-only.
+
+This becomes important in a mixed environment.
+
+Suppose:
+
+- business teams use Planner,
+- engineering uses Azure DevOps,
+- legacy projects remain in Project Online,
+- finance uses an ERP,
+- leadership expects one portfolio view.
+
+A Planner portfolio does not automatically turn those systems into a unified enterprise PPM environment.
+
+A PMO may still need:
+
+- investment prioritization
+- cross-project resource allocation
+- financial analysis
+- strategic alignment
+- governance
+- cross-system reporting
+
+> **A portfolio view tells you what is happening. Portfolio management determines what the organization should do about it.**
+
+---
+
+## 6. Reporting: The System-of-Record Question
+
+Reporting is another place where a migration can expose hidden gaps.
+
+"Can Planner report on projects?" is not the same question as:
+
+> **"Can leadership obtain one trusted view across all project work?"**
+
+Warning signs include:
+
+- work missing from portfolio views
+- manually maintained status fields
+- Power BI dashboards disagreeing with Planner
+- project teams still preparing manual status decks
+
+Planner can be part of a reporting architecture without necessarily becoming the entire reporting architecture.
+
+For organizations with multiple project systems, reporting must be designed alongside migration rather than after it.
+
+---
+
+## 7. Financial Management: Project Planning Meets Finance
+
+Project planning and project financial management are related but distinct.
+
+A project manager may care about:
+
+- tasks
+- dates
+- dependencies
+- workload
+- delivery
+
+Finance may need:
+
+- actual cost
+- forecasts
+- billing
+- revenue
+- cost allocation
+- ERP integration
+- revenue recognition
+
+Portfolios, baselines, costing-related capabilities, and Power BI can improve investment visibility. Deeper project financials, timesheets, revenue recognition, and ERP integration may require Dynamics 365 Project Operations or another PPM solution.
+
+The question isn't:
+
+> "Does Planner have financial information?"
+
+It is:
+
+> **"Is project financial management part of the operating model this platform needs to support?"**
+
+If it is, the migration assessment needs to go beyond project scheduling.
+
+---
+
+## 8. Integration and Governance: The Hidden Migration Problem
+
+A Project Online environment rarely consists of project plans alone.
+
+It may include:
+
+- Power Automate workflows
+- Power BI reports
+- custom applications
+- approvals
+- notifications
+- APIs
+- exports
+- downstream processes
+
+Premium is not simply Basic Planner with more fields. The underlying architecture changes, and existing applications and workflows may require modification when moving to Premium.
+
+That means a migration isn't complete when the project appears in the new system.
+
+The surrounding business process must still work.
+
+Before migration, administrators should identify:
+
+- Power Automate flows
+- reporting solutions
+- custom applications
+- integrations
+- exports
+- downstream processes
+- operational dashboards
+
+The same principle applies to governance.
+
+Risk areas include unmanaged plan creation, Microsoft 365 Group ownership, external sharing, inconsistent naming, unclear ownership, and uncertainty around the official plan of record.
+
+> **Replacing the application does not automatically replace the governance model.**
+
+---
+
+## 9. There Isn't One Migration Destination
+
+Once the capability gaps are visible, the temptation is to look for one destination.
+
+Instead, classify the workloads.
+
+<ComparisonTable
+  caption="Potential migration directions by workload requirement"
+  columns={[
+    { label: "Requirement" },
+    { label: "Potential direction", emphasis: true }
+  ]}
+  rows={[
+    {
+      label: "Straightforward task coordination",
+      cells: ["Planner Basic"]
+    },
+    {
+      label: "Structured project execution",
+      cells: ["Planner Premium"]
+    },
+    {
+      label: "Supported Premium-project portfolio visibility",
+      cells: ["Planner Portfolios"]
+    },
+    {
+      label: "Deeper enterprise resource management",
+      cells: ["Project Server / Project Operations / specialized PPM"]
+    },
+    {
+      label: "Timesheets and utilization",
+      cells: ["Evaluate broader PPM capability"]
+    },
+    {
+      label: "Project financial management",
+      cells: ["Project Operations / ERP-connected solution"]
+    },
+    {
+      label: "Desktop scheduling and .mpp workflows",
+      cells: ["Project desktop"]
+    },
+    {
+      label: "Mature enterprise PPM",
+      cells: ["Broader PPM evaluation"]
+    }
+  ]}
+/>
+
+These are not mutually exclusive destinations.
+
+An organization may legitimately use several of them.
+
+That means a successful retirement may look less like:
+
+**Project Online → Planner Premium**
+
+and more like:
+
+**Project Online → workload classification → multiple appropriate destinations**
+
+---
+
+## 10. The Fit-Gap Assessment
+
+![Evaluating areas while migrating to Planner Premium.](../../assets/images/articles/planner-premium-isnt-project-online/02_capability_gap_map.png)
+
+This is the part I would want a PMO or administrator to take away and actually use.
+
+### Step 1 — Inventory
+
+Identify:
+
+- Project Online sites
+- active projects
+- owners
+- users and roles
+- integrations
+- reporting
+- resource requirements
+- financial dependencies
+- retention requirements
+
+### Step 2 — Identify what each workload actually uses
+
+Don't document everything Project Online can do.
+
+Document what the workload **depends on**.
+
+For example:
+
+**Workload A**
+
+- scheduling ✓
+- dependencies ✓
+- critical path ✓
+- resource pools ✗
+- timesheets ✗
+- project financials ✗
+
+**Workload B**
+
+- scheduling ✓
+- resource pools ✓
+- timesheets ✓
+- financials ✓
+- portfolio governance ✓
+
+Those two workloads should not automatically receive the same migration treatment.
+
+### Step 3 — Identify the underlying business capability
+
+Ask what each feature is actually accomplishing.
+
+For example:
+
+**Critical path**
+
+→ "We need to understand how schedule changes affect delivery."
+
+**Resource pools**
+
+→ "We need to allocate shared specialists across projects."
+
+**Timesheets**
+
+→ "We need to reconcile project effort with operational or financial reporting."
+
+This turns a feature comparison into a business-capability assessment.
+
+### Step 4 — Classify the gap
+
+Use three simple categories:
+
+**Covered**
+
+Planner Premium can satisfy the requirement.
+
+**Partially covered**
+
+Planner can support part of the requirement, but additional architecture, process, or another service is required.
+
+**Not a fit**
+
+The workload depends on capabilities that belong elsewhere.
+
+### Step 5 — Validate the operating model
+
+Ask:
+
+- Who owns the project?
+- Who creates it?
+- Which system is authoritative?
+- How is reporting produced?
+- What happens when the project closes?
+- How is access governed?
+- What must be retained?
+
+### Step 6 — Validate the dependencies
+
+Identify:
+
+- Power Automate
+- Power BI
+- custom applications
+- APIs
+- approvals
+- notifications
+- downstream systems
+
+A project can migrate successfully while the surrounding process quietly fails.
+
+### Step 7 — Select the destination
+
+Only now should the organization choose the platform.
+
+That decision should be based on the **capability gap**, not the product name.
+
+### Step 8 — Pilot
+
+Test representative workloads before scaling.
+
+A useful pilot should determine whether the proposed destination actually supports:
+
+- project scheduling
+- dependencies
+- reporting
+- resource needs
+- integrations
+- governance
+- user responsibilities
+
+The objective isn't to prove that Planner Premium works.
+
+It's to discover **where it works and where it doesn't**.
+
+<ProjectOnlineCapabilityGapCheck />
+
+## 11. Decision Framework
+
+![Enterprise decision framework for choosing between Planner, Planner Premium, Project Server Subscription Edition, and Dynamics 365 Project Operations based on business need, project complexity, resource and financial requirements, governance, integration, adoption, and total cost of ownership.](../../assets/images/articles/project-online-retirement/decision-framework.png)
+
+The objective isn't to find one replacement product.
+
+It is to determine the appropriate destination for each workload.
+
+A useful decision sequence is:
+
+<MilestoneTimeline
+  milestones={[
+    {
+      date: "Step 01",
+      datetime: "step-01",
+      title: "What are we managing?",
+      description: "Identify the type of Project Online workload being assessed.",
+      impact: "Establishes the workload context before evaluating products or licenses."
+    },
+    {
+      date: "Step 02",
+      datetime: "step-02",
+      title: "What capabilities are required?",
+      description: "Identify the capabilities the workload actually depends on.",
+      impact: "Separates essential business capabilities from familiar product features."
+    },
+    {
+      date: "Step 03",
+      datetime: "step-03",
+      title: "Does Planner Premium satisfy them?",
+      description: "Compare the required capabilities with Planner Premium's supported project-execution model.",
+      impact: "Shows where Planner Premium is a strong fit and where additional architecture may be needed."
+    },
+    {
+      date: "Step 04",
+      datetime: "step-04",
+      title: "What capability is missing?",
+      description: "Identify the specific capability that creates the gap.",
+      impact: "Turns a product comparison into a focused capability assessment."
+    },
+    {
+      date: "Step 05",
+      datetime: "step-05",
+      title: "Which platform addresses that gap?",
+      description: "Select the destination that best matches the workload's requirements.",
+      impact: "Supports a workload-based migration decision rather than a one-size-fits-all replacement."
+    }
+  ]}
+/>
+
+That is a much stronger migration strategy than treating Project Online retirement as a simple product replacement.
+
+---
+
+## 12. Don't Let the Retirement Date Become the Strategy
+
+Project Online's **September 30, 2026** retirement creates urgency, but urgency shouldn't determine the architecture.
+
+A rushed migration can simply move the complexity somewhere else:
+
+- spreadsheets replace resource management
+- manual reports replace portfolio reporting
+- broken workflows replace automated processes
+- disconnected financial processes replace integrated ones
+- shadow tools appear around the new platform
+
+The better outcome is:
+
+> **We understood what Project Online was doing for us, preserved the capabilities that mattered, redesigned what needed to change, and gave each workload an appropriate home.**
+
+---
+
+# Conclusion — Don't Replace a Product. Replace the Capability.
+
+Project Online's retirement creates a deadline.
+
+It does not create a single destination.
+
+Planner Premium has become a capable environment for structured project execution. For many teams, it can provide the scheduling, dependencies, milestones, workload, and project-management capabilities they need within the broader Microsoft 365 environment.
+
+For other organizations, the project plan is only one part of a larger operating model involving resources, portfolios, financial processes, reporting, integrations, and governance.
+
+Those requirements cannot be evaluated through a feature list alone.
+
+The responsible approach is to **inventory the workload, identify the capabilities that matter, map the gaps, validate dependencies, and test the proposed destination before scaling it**.
+
+Sometimes that destination will be Planner Premium.
+
+Sometimes it will be another Microsoft solution.
+
+Sometimes it may be a specialized platform.
+
+And sometimes an inactive workload only needs to be retained rather than recreated elsewhere.
+
+That isn't migration failure.
+
+It is successful workload classification.
+
+> **Project Online is retiring. Your project-management requirements are not.**
+
+The goal should not be to replace Project Online with another product as quickly as possible.
+
+**The goal should be to preserve the capabilities the business depends on, modernize the ones that need to change, and give every workload the environment in which it can be managed effectively.**
