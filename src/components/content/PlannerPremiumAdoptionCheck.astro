@@ -1,0 +1,712 @@
+---
+/*
+ * PlannerPremiumAdoptionCheck.astro
+ *
+ * Purpose:
+ * Helps readers identify the current stage of their Planner Premium
+ * adoption journey and provides a practical next action.
+ *
+ * Self-contained Astro component.
+ * No external CSS or JavaScript dependency.
+ */
+---
+
+<section
+  class="ppac"
+  data-ppac
+  aria-labelledby="ppac-title"
+>
+  <div class="ppac__header">
+    <div class="ppac__header-copy">
+      <p class="ppac__eyebrow">Adoption stage check</p>
+
+      <h3 id="ppac-title">
+        Where are you in your Planner Premium adoption journey?
+      </h3>
+
+      <p class="ppac__intro">
+        Choose the stage that best describes your organization today. The
+        result highlights the next practical step in the adoption model:
+        Assess → Pilot → Govern → Scale.
+      </p>
+    </div>
+
+    <span class="ppac__badge" data-badge aria-live="polite">
+      Choose a stage
+    </span>
+  </div>
+
+  <fieldset class="ppac__choices">
+    <legend class="ppac__legend">
+      Select your current adoption stage
+    </legend>
+
+    <label class="ppac__choice" data-choice="assess">
+      <input
+        type="radio"
+        name="planner-adoption-stage"
+        value="assess"
+      />
+
+      <span class="ppac__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="ppac__choice-body">
+        <span class="ppac__choice-title">
+          Assess
+        </span>
+
+        <span class="ppac__choice-description">
+          We are still understanding our workloads, roles, licensing,
+          integrations, reporting needs, and pain points.
+        </span>
+
+        <span class="ppac__choice-tags">
+          <span>Understand current state</span>
+          <span>Identify use cases</span>
+          <span>Map dependencies</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="ppac__choice" data-choice="pilot">
+      <input
+        type="radio"
+        name="planner-adoption-stage"
+        value="pilot"
+      />
+
+      <span class="ppac__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="ppac__choice-body">
+        <span class="ppac__choice-title">
+          Pilot
+        </span>
+
+        <span class="ppac__choice-description">
+          We are testing Premium with representative teams and want evidence
+          about what improves and what still needs work.
+        </span>
+
+        <span class="ppac__choice-tags">
+          <span>Select representative teams</span>
+          <span>Define success measures</span>
+          <span>Collect feedback</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="ppac__choice" data-choice="govern">
+      <input
+        type="radio"
+        name="planner-adoption-stage"
+        value="govern"
+      />
+
+      <span class="ppac__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="ppac__choice-body">
+        <span class="ppac__choice-title">
+          Govern
+        </span>
+
+        <span class="ppac__choice-description">
+          We have learned from the pilot and are defining the standards,
+          ownership, templates, lifecycle, and support model.
+        </span>
+
+        <span class="ppac__choice-tags">
+          <span>Define standards</span>
+          <span>Set ownership</span>
+          <span>Build the operating model</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="ppac__choice" data-choice="scale">
+      <input
+        type="radio"
+        name="planner-adoption-stage"
+        value="scale"
+      />
+
+      <span class="ppac__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="ppac__choice-body">
+        <span class="ppac__choice-title">
+          Scale
+        </span>
+
+        <span class="ppac__choice-description">
+          We have an established model and are expanding adoption while
+          refining training, governance, support, and measurement.
+        </span>
+
+        <span class="ppac__choice-tags">
+          <span>Expand adoption</span>
+          <span>Measure outcomes</span>
+          <span>Continuously improve</span>
+        </span>
+      </span>
+    </label>
+  </fieldset>
+
+  <div
+    class="ppac__result"
+    data-result
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="ppac__result-head">
+      <span class="ppac__result-kicker">Assessment</span>
+
+      <span class="ppac__result-level" data-level>
+        Waiting for selection
+      </span>
+    </div>
+
+    <h4 data-title>
+      Start by identifying your current stage.
+    </h4>
+
+    <p data-description>
+      The goal is not to move through the stages as quickly as possible. It is
+      to establish a working model before expanding it.
+    </p>
+
+    <div class="ppac__result-grid">
+      <div class="ppac__result-card">
+        <span class="ppac__result-label">Focus now</span>
+        <strong data-focus>
+          Choose a stage above
+        </strong>
+      </div>
+
+      <div class="ppac__result-card">
+        <span class="ppac__result-label">Next step</span>
+        <span data-next>
+          Select the stage that best describes your current adoption model.
+        </span>
+      </div>
+
+      <div class="ppac__result-card">
+        <span class="ppac__result-label">Avoid</span>
+        <span data-avoid>
+          Scaling before the operating model is understood and tested.
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ppac__principle">
+    <span class="ppac__principle-mark" aria-hidden="true">→</span>
+
+    <p>
+      <strong>Assess → Pilot → Govern → Scale.</strong>
+      Adoption works best when each stage produces the evidence, standards,
+      and support needed for the next one.
+    </p>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector("[data-ppac]");
+
+  if (root) {
+    const choices = Array.from(
+      root.querySelectorAll('input[name="planner-adoption-stage"]')
+    );
+
+    const badge = root.querySelector("[data-badge]");
+    const level = root.querySelector("[data-level]");
+    const title = root.querySelector("[data-title]");
+    const description = root.querySelector("[data-description]");
+    const focus = root.querySelector("[data-focus]");
+    const next = root.querySelector("[data-next]");
+    const avoid = root.querySelector("[data-avoid]");
+
+    const results = {
+      assess: {
+        badge: "Assess",
+        level: "Understand first",
+        title: "You are still defining where Premium should create value.",
+        description:
+          "This is the right stage to understand the current environment before making a broad adoption decision.",
+        focus:
+          "Workloads, roles, licensing, integrations, reporting, and pain points",
+        next:
+          "Inventory the current state and identify the workloads and roles that are good candidates for Premium.",
+        avoid:
+          "Assigning licenses broadly before the use case and operating model are clear."
+      },
+
+      pilot: {
+        badge: "Pilot",
+        level: "Test and measure",
+        title: "You are testing whether Premium works in real projects.",
+        description:
+          "The pilot should produce evidence about improvements, friction, and the practices worth standardizing.",
+        focus:
+          "Representative teams, clear objectives, feedback, and measurable outcomes",
+        next:
+          "Run the pilot, compare the results with your objectives, and capture the lessons that should shape the operating model.",
+        avoid:
+          "Treating a small successful pilot as proof that the organization is ready to scale unchanged."
+      },
+
+      govern: {
+        badge: "Govern",
+        level: "Standardize",
+        title: "You are turning pilot lessons into a repeatable operating model.",
+        description:
+          "This is where the organization defines the standards and ownership that make consistent adoption possible.",
+        focus:
+          "Project structure, ownership, templates, lifecycle, support, and governance",
+        next:
+          "Document the working standards and make them easy for project teams to follow.",
+        avoid:
+          "Creating governance so detailed that teams spend more effort following the process than managing the project."
+      },
+
+      scale: {
+        badge: "Scale",
+        level: "Expand and improve",
+        title: "You have an operating model and are expanding it.",
+        description:
+          "Scaling should extend a tested approach while continuously measuring whether it remains useful.",
+        focus:
+          "Licensing, onboarding, training, support, governance, reporting, and adoption metrics",
+        next:
+          "Expand selectively, monitor behavior and outcomes, and refine the model as the organization learns.",
+        avoid:
+          "Treating license assignment or rollout volume as the primary measure of adoption success."
+      }
+    };
+
+    const update = (value) => {
+      const result = results[value];
+
+      if (!result) return;
+
+      root.dataset.state = value;
+
+      badge.textContent = result.badge;
+      level.textContent = result.level;
+      title.textContent = result.title;
+      description.textContent = result.description;
+      focus.textContent = result.focus;
+      next.textContent = result.next;
+      avoid.textContent = result.avoid;
+    };
+
+    choices.forEach((choice) => {
+      choice.addEventListener("change", (event) => {
+        const input = event.currentTarget;
+
+        if (input instanceof HTMLInputElement && input.checked) {
+          update(input.value);
+        }
+      });
+    });
+  }
+</script>
+
+<style>
+  .ppac {
+    --ppac-surface: var(--surface-primary, #ffffff);
+    --ppac-surface-soft: var(--surface-secondary, #f8fafc);
+    --ppac-text: var(--text-primary, #0f172a);
+    --ppac-text-secondary: var(--text-secondary, #475569);
+    --ppac-text-tertiary: var(--text-tertiary, #64748b);
+    --ppac-border: var(--border-default, #dbe3ec);
+    --ppac-border-soft: var(--border-subtle, #e7edf4);
+    --ppac-accent: var(--color-accent, #4ea1e0);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--ppac-text);
+    background: var(--ppac-surface);
+    border: 1px solid var(--ppac-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .ppac__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .ppac__header-copy {
+    min-width: 0;
+  }
+
+  .ppac__eyebrow {
+    margin: 0 0 var(--space-1, 0.25rem);
+    color: var(--ppac-accent);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ppac h3,
+  .ppac h4,
+  .ppac p {
+    margin-top: 0;
+  }
+
+  .ppac h3 {
+    margin-bottom: var(--space-2, 0.5rem);
+    color: var(--ppac-text);
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: var(--line-height-tight, 1.2);
+  }
+
+  .ppac__intro {
+    max-width: 70ch;
+    margin-bottom: 0;
+    color: var(--ppac-text-secondary);
+    line-height: var(--line-height-normal, 1.6);
+  }
+
+  .ppac__badge {
+    flex: 0 0 auto;
+    padding: 0.45rem 0.75rem;
+    color: var(--ppac-text-secondary);
+    background: var(--ppac-surface-soft);
+    border: 1px solid var(--ppac-border);
+    border-radius: var(--radius-round, 999px);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .ppac[data-state="assess"] {
+    --ppac-state: #6d3bb8;
+    --ppac-state-soft: color-mix(
+      in srgb,
+      #6d3bb8 8%,
+      var(--ppac-surface)
+    );
+  }
+
+  .ppac[data-state="pilot"] {
+    --ppac-state: #2563eb;
+    --ppac-state-soft: color-mix(
+      in srgb,
+      #2563eb 8%,
+      var(--ppac-surface)
+    );
+  }
+
+  .ppac[data-state="govern"] {
+    --ppac-state: #0f8a8a;
+    --ppac-state-soft: color-mix(
+      in srgb,
+      #0f8a8a 8%,
+      var(--ppac-surface)
+    );
+  }
+
+  .ppac[data-state="scale"] {
+    --ppac-state: #15803d;
+    --ppac-state-soft: color-mix(
+      in srgb,
+      #15803d 8%,
+      var(--ppac-surface)
+    );
+  }
+
+  .ppac[data-state] .ppac__badge {
+    color: var(--ppac-state);
+    background: var(--ppac-state-soft);
+    border-color: color-mix(
+      in srgb,
+      var(--ppac-state) 30%,
+      var(--ppac-border)
+    );
+  }
+
+  .ppac__choices {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .ppac__legend {
+    width: 100%;
+    margin-bottom: var(--space-3, 0.75rem);
+    color: var(--ppac-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-semibold, 600);
+  }
+
+  .ppac__choice {
+    position: relative;
+    display: block;
+    height: 100%;
+    padding: 0.95rem;
+    background: var(--ppac-surface-soft);
+    border: 1px solid var(--ppac-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .ppac__choice:hover {
+    transform: translateY(-1px);
+    border-color: var(--ppac-accent);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .ppac__choice:has(input:focus-visible) {
+    outline: 2px solid var(--ppac-accent);
+    outline-offset: 2px;
+  }
+
+  .ppac__choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .ppac__choice:has(input:checked) {
+    border-color: var(--ppac-state, var(--ppac-accent));
+    background: var(--ppac-state-soft, var(--ppac-surface-soft));
+    box-shadow:
+      inset 0 0 0 1px var(--ppac-state, var(--ppac-accent)),
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .ppac__choice-marker {
+    display: grid;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-bottom: 0.7rem;
+    border: 2px solid var(--ppac-text-tertiary);
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .ppac__choice-marker span {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .ppac__choice:has(input:checked) .ppac__choice-marker {
+    border-color: var(--ppac-state, var(--ppac-accent));
+  }
+
+  .ppac__choice:has(input:checked) .ppac__choice-marker span {
+    background: var(--ppac-state, var(--ppac-accent));
+  }
+
+  .ppac__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .ppac__choice-title {
+    color: var(--ppac-text);
+    font-size: var(--font-size-md, 1rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: var(--line-height-tight, 1.3);
+  }
+
+  .ppac__choice-description {
+    color: var(--ppac-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: var(--line-height-normal, 1.5);
+  }
+
+  .ppac__choice-tags {
+    display: grid;
+    gap: 0.2rem;
+    margin-top: 0.45rem;
+    color: var(--ppac-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1.45;
+  }
+
+  .ppac__choice-tags span::before {
+    content: "•";
+    margin-right: 0.4rem;
+    color: var(--ppac-state, var(--ppac-accent));
+    font-weight: 700;
+  }
+
+  .ppac__result {
+    margin-top: var(--space-6, 1.5rem);
+    padding: 1.2rem;
+    background: var(--ppac-surface-soft);
+    border: 1px solid var(--ppac-border);
+    border-left: 4px solid var(--ppac-state, var(--ppac-accent));
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .ppac__result-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .ppac__result-kicker {
+    color: var(--ppac-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .ppac__result-level {
+    color: var(--ppac-state, var(--ppac-accent));
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-semibold, 600);
+  }
+
+  .ppac__result h4 {
+    margin-bottom: 0.45rem;
+    color: var(--ppac-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: var(--line-height-tight, 1.3);
+  }
+
+  .ppac__result > p {
+    max-width: 72ch;
+    margin-bottom: 0;
+    color: var(--ppac-text-secondary);
+    line-height: var(--line-height-normal, 1.6);
+  }
+
+  .ppac__result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin-top: var(--space-4, 1rem);
+  }
+
+  .ppac__result-card {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+    padding: 0.85rem 0.9rem;
+    background: var(--ppac-surface);
+    border: 1px solid var(--ppac-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .ppac__result-label {
+    color: var(--ppac-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .ppac__result-card strong,
+  .ppac__result-card span:last-child {
+    color: var(--ppac-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .ppac__result-card strong {
+    color: var(--ppac-text);
+  }
+
+  .ppac__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-top: var(--space-4, 1rem);
+    padding: 0.9rem 1rem;
+    background: var(--ppac-surface);
+    border: 1px solid var(--ppac-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .ppac__principle-mark {
+    flex: 0 0 auto;
+    color: var(--ppac-accent);
+    font-size: 1.15rem;
+    font-weight: var(--font-weight-bold, 700);
+    line-height: 1.4;
+  }
+
+  .ppac__principle p {
+    margin: 0;
+    color: var(--ppac-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 1050px) {
+    .ppac__choices {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 900px) {
+    .ppac__result-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ppac {
+      padding: 1rem;
+    }
+
+    .ppac__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .ppac__badge {
+      justify-self: start;
+    }
+
+    .ppac__choices {
+      grid-template-columns: 1fr;
+    }
+
+    .ppac__result-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ppac__choice {
+      transition: none;
+    }
+  }
+</style>
