@@ -1,0 +1,577 @@
+---
+/* ==========================================================
+   Support Engineering Blog
+   Component : Planner Premium Integration Dependency Check
+   Purpose   : Lightweight migration-complexity screening tool
+   Theme     : SEDS-compatible, including [data-theme="dark"]
+   ========================================================== */
+---
+
+<section
+    class="ppidc"
+    data-ppidc
+    aria-labelledby="ppidc-title"
+>
+    <div class="ppidc__header">
+        <div>
+            <p class="ppidc__eyebrow">Migration readiness</p>
+
+            <h3 id="ppidc-title">
+                Integration Dependency Check
+            </h3>
+
+            <p class="ppidc__intro">
+                What does this Planner Premium workload depend on?
+                Select everything that applies.
+            </p>
+        </div>
+
+        <span
+            class="ppidc__status"
+            data-status-badge
+            aria-live="polite"
+        >
+            Start assessment
+        </span>
+    </div>
+
+    <fieldset class="ppidc__options">
+        <legend class="ppidc__legend">
+            Select the dependencies around this workload
+        </legend>
+
+        <label class="ppidc__option">
+            <input
+                type="checkbox"
+                value="power-automate"
+                data-weight="1"
+            />
+            <span class="ppidc__option-copy">
+                <strong>Power Automate</strong>
+                <small>Flows, approvals, notifications, or synchronization</small>
+            </span>
+        </label>
+
+        <label class="ppidc__option">
+            <input
+                type="checkbox"
+                value="power-bi"
+                data-weight="1"
+            />
+            <span class="ppidc__option-copy">
+                <strong>Power BI</strong>
+                <small>Reports, datasets, dashboards, or refresh processes</small>
+            </span>
+        </label>
+
+        <label class="ppidc__option">
+            <input
+                type="checkbox"
+                value="custom-applications"
+                data-weight="2"
+            />
+            <span class="ppidc__option-copy">
+                <strong>Custom applications</strong>
+                <small>Internal portals, intake apps, or business applications</small>
+            </span>
+        </label>
+
+        <label class="ppidc__option">
+            <input
+                type="checkbox"
+                value="apis-connectors"
+                data-weight="2"
+            />
+            <span class="ppidc__option-copy">
+                <strong>APIs / custom connectors</strong>
+                <small>Programmatic access, middleware, or custom integration paths</small>
+            </span>
+        </label>
+
+        <label class="ppidc__option">
+            <input
+                type="checkbox"
+                value="microsoft-365-groups"
+                data-weight="1"
+            />
+            <span class="ppidc__option-copy">
+                <strong>Microsoft 365 Groups</strong>
+                <small>Membership, collaboration, ownership, or lifecycle dependencies</small>
+            </span>
+        </label>
+
+        <label class="ppidc__option">
+            <input
+                type="checkbox"
+                value="external-systems"
+                data-weight="2"
+            />
+            <span class="ppidc__option-copy">
+                <strong>External systems</strong>
+                <small>ERP, business platforms, warehouses, or other downstream systems</small>
+            </span>
+        </label>
+
+        <label class="ppidc__option">
+            <input
+                type="checkbox"
+                value="compliance-retention"
+                data-weight="2"
+            />
+            <span class="ppidc__option-copy">
+                <strong>Compliance / retention</strong>
+                <small>Records, legal, audit, regulatory, or retention requirements</small>
+            </span>
+        </label>
+    </fieldset>
+
+    <div
+        class="ppidc__result"
+        data-result
+        aria-live="polite"
+        aria-atomic="true"
+    >
+        <div class="ppidc__result-icon" data-result-icon aria-hidden="true">
+            ✓
+        </div>
+
+        <div class="ppidc__result-content">
+            <p class="ppidc__result-label" data-result-label>
+                Start assessment
+            </p>
+
+            <h4 data-result-title>
+                Select the dependencies around this workload
+            </h4>
+
+            <p data-result-description>
+                This check is a screening aid, not a migration approval.
+                Use the result to decide how much architectural investigation
+                your workload needs.
+            </p>
+
+            <div class="ppidc__next-step" data-next-step hidden>
+                <strong>Recommended next step</strong>
+                <span data-next-step-text></span>
+            </div>
+        </div>
+    </div>
+
+    <p class="ppidc__note">
+        This assessment does not determine whether a workload can be migrated.
+        It helps identify the level of dependency review that should happen first.
+    </p>
+</section>
+
+<script>
+    const root = document.querySelector("[data-ppidc]");
+
+    if (root) {
+        const checkboxes = Array.from(
+            root.querySelectorAll('input[type="checkbox"]')
+        );
+
+        const statusBadge = root.querySelector("[data-status-badge]");
+        const result = root.querySelector("[data-result]");
+        const resultIcon = root.querySelector("[data-result-icon]");
+        const resultLabel = root.querySelector("[data-result-label]");
+        const resultTitle = root.querySelector("[data-result-title]");
+        const resultDescription = root.querySelector("[data-result-description]");
+        const nextStep = root.querySelector("[data-next-step]");
+        const nextStepText = root.querySelector("[data-next-step-text]");
+
+        const updateAssessment = () => {
+            const selected = checkboxes.filter((checkbox) => checkbox.checked);
+
+            if (selected.length === 0) {
+                root.dataset.level = "idle";
+
+                statusBadge.textContent = "Start assessment";
+                resultIcon.textContent = "✓";
+                resultLabel.textContent = "Start assessment";
+                resultTitle.textContent =
+                    "Select the dependencies around this workload";
+                resultDescription.textContent =
+                    "This check is a screening aid, not a migration approval. " +
+                    "Use the result to decide how much architectural investigation " +
+                    "your workload needs.";
+
+                nextStep.hidden = true;
+                return;
+            }
+
+            const score = selected.reduce(
+                (total, checkbox) =>
+                    total + Number(checkbox.dataset.weight || 0),
+                0
+            );
+
+            const selectedValues = new Set(
+                selected.map((checkbox) => checkbox.value)
+            );
+
+            const hasCompliance =
+                selectedValues.has("compliance-retention");
+
+            const hasArchitectureCombination =
+                selectedValues.has("custom-applications") &&
+                selectedValues.has("apis-connectors") &&
+                selectedValues.has("external-systems");
+
+            let level = "low";
+
+            if (hasArchitectureCombination || score >= 6) {
+                level = "architecture";
+            } else if (hasCompliance || score >= 3) {
+                level = "review";
+            }
+
+            const messages = {
+                low: {
+                    badge: "Low integration complexity",
+                    icon: "✓",
+                    label: "Initial assessment",
+                    title: "Standard migration validation should generally be sufficient.",
+                    description:
+                        "Your selected workload has relatively few external dependencies. " +
+                        "Confirm the identified connections, ownership, and normal migration tests.",
+                    next:
+                        "Document the dependencies and validate them during migration testing."
+                },
+
+                review: {
+                    badge: "Integration review recommended",
+                    icon: "!",
+                    label: "Initial assessment",
+                    title: "Build an integration inventory before migration.",
+                    description:
+                        "Multiple dependencies are present. Validate affected workflows, " +
+                        "reports, access paths, ownership, and lifecycle requirements before cutover.",
+                    next:
+                        "Complete the integration inventory and assign an owner to each dependency."
+                },
+
+                architecture: {
+                    badge: "Architecture assessment recommended",
+                    icon: "!",
+                    label: "Initial assessment",
+                    title: "Treat this as an architecture and business-process assessment.",
+                    description:
+                        "The workload has significant application, API, external-system, or " +
+                        "integration dependencies. A project-plan move alone is not enough to validate the workload.",
+                    next:
+                        "Map the end-to-end business process, dependencies, ownership, and acceptance tests before migration."
+                }
+            };
+
+            const message = messages[level];
+
+            root.dataset.level = level;
+            statusBadge.textContent = message.badge;
+            resultIcon.textContent = message.icon;
+            resultLabel.textContent = message.label;
+            resultTitle.textContent = message.title;
+            resultDescription.textContent = message.description;
+            nextStepText.textContent = message.next;
+            nextStep.hidden = false;
+        };
+
+        checkboxes.forEach((checkbox) => {
+            checkbox.addEventListener("change", updateAssessment);
+        });
+
+        updateAssessment();
+    }
+</script>
+
+<style>
+    .ppidc {
+        --ppidc-surface: var(--surface-secondary, #f8fafc);
+        --ppidc-surface-raised: var(--surface-primary, #ffffff);
+        --ppidc-border: var(--border-default, #dbe3ec);
+        --ppidc-border-subtle: var(--border-light, #e7edf4);
+        --ppidc-text: var(--text-primary, #0f172a);
+        --ppidc-text-secondary: var(--text-secondary, #475569);
+        --ppidc-text-tertiary: var(--text-tertiary, #64748b);
+        --ppidc-accent: var(--color-accent, #4ea1e0);
+        --ppidc-success: var(--color-success, #15803d);
+        --ppidc-warning: var(--color-warning, #b45309);
+        --ppidc-danger: var(--color-danger, #dc2626);
+
+        width: 100%;
+        margin-block: var(--space-10, 2.5rem);
+        padding: clamp(1.25rem, 3vw, 2rem);
+        color: var(--ppidc-text);
+        background: var(--ppidc-surface-raised);
+        border: 1px solid var(--ppidc-border);
+        border-radius: var(--radius-lg, 0.875rem);
+        box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+    }
+
+    .ppidc__header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .ppidc__eyebrow {
+        margin: 0 0 0.35rem;
+        color: var(--ppidc-accent);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        line-height: 1.4;
+        text-transform: uppercase;
+    }
+
+    .ppidc h3,
+    .ppidc h4,
+    .ppidc p {
+        margin-top: 0;
+    }
+
+    .ppidc h3 {
+        margin-bottom: 0.5rem;
+        color: var(--ppidc-text);
+        font-size: clamp(1.25rem, 2vw, 1.5rem);
+        line-height: 1.25;
+    }
+
+    .ppidc__intro {
+        max-width: 62ch;
+        margin-bottom: 0;
+        color: var(--ppidc-text-secondary);
+        line-height: 1.65;
+    }
+
+    .ppidc__status {
+        flex: 0 0 auto;
+        max-width: 14rem;
+        padding: 0.45rem 0.7rem;
+        color: var(--ppidc-text-secondary);
+        background: var(--ppidc-surface);
+        border: 1px solid var(--ppidc-border);
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        line-height: 1.3;
+        text-align: center;
+    }
+
+    .ppidc[data-level="low"] .ppidc__status {
+        color: var(--ppidc-success);
+        border-color: color-mix(in srgb, var(--ppidc-success) 35%, transparent);
+        background: color-mix(in srgb, var(--ppidc-success) 8%, var(--ppidc-surface-raised));
+    }
+
+    .ppidc[data-level="review"] .ppidc__status {
+        color: var(--ppidc-warning);
+        border-color: color-mix(in srgb, var(--ppidc-warning) 35%, transparent);
+        background: color-mix(in srgb, var(--ppidc-warning) 8%, var(--ppidc-surface-raised));
+    }
+
+    .ppidc[data-level="architecture"] .ppidc__status {
+        color: var(--ppidc-danger);
+        border-color: color-mix(in srgb, var(--ppidc-danger) 35%, transparent);
+        background: color-mix(in srgb, var(--ppidc-danger) 8%, var(--ppidc-surface-raised));
+    }
+
+    .ppidc__options {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    .ppidc__legend {
+        width: 100%;
+        margin-bottom: 0.75rem;
+        color: var(--ppidc-text);
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    .ppidc__option {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.8rem;
+        min-width: 0;
+        padding: 0.95rem 1rem;
+        color: var(--ppidc-text);
+        background: var(--ppidc-surface);
+        border: 1px solid var(--ppidc-border-subtle);
+        border-radius: var(--radius-md, 0.65rem);
+        cursor: pointer;
+        transition:
+            border-color var(--transition-fast, 150ms ease-in-out),
+            background-color var(--transition-fast, 150ms ease-in-out),
+            box-shadow var(--transition-fast, 150ms ease-in-out);
+    }
+
+    .ppidc__option:hover {
+        border-color: var(--ppidc-accent);
+    }
+
+    .ppidc__option:has(input:focus-visible) {
+        outline: 2px solid var(--ppidc-accent);
+        outline-offset: 2px;
+    }
+
+    .ppidc__option:has(input:checked) {
+        border-color: color-mix(in srgb, var(--ppidc-accent) 60%, var(--ppidc-border));
+        background: color-mix(in srgb, var(--ppidc-accent) 7%, var(--ppidc-surface));
+        box-shadow: inset 3px 0 0 var(--ppidc-accent);
+    }
+
+    .ppidc__option input {
+        flex: 0 0 auto;
+        width: 1.05rem;
+        height: 1.05rem;
+        margin: 0.15rem 0 0;
+        accent-color: var(--ppidc-accent);
+    }
+
+    .ppidc__option-copy {
+        display: grid;
+        gap: 0.2rem;
+        min-width: 0;
+    }
+
+    .ppidc__option-copy strong {
+        color: var(--ppidc-text);
+        font-size: 0.95rem;
+        line-height: 1.35;
+    }
+
+    .ppidc__option-copy small {
+        color: var(--ppidc-text-tertiary);
+        font-size: 0.82rem;
+        line-height: 1.45;
+    }
+
+    .ppidc__result {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 1rem;
+        margin-top: 1.5rem;
+        padding: 1.15rem;
+        background: var(--ppidc-surface);
+        border: 1px solid var(--ppidc-border);
+        border-left: 4px solid var(--ppidc-accent);
+        border-radius: var(--radius-md, 0.65rem);
+    }
+
+    .ppidc[data-level="low"] .ppidc__result {
+        border-left-color: var(--ppidc-success);
+    }
+
+    .ppidc[data-level="review"] .ppidc__result {
+        border-left-color: var(--ppidc-warning);
+    }
+
+    .ppidc[data-level="architecture"] .ppidc__result {
+        border-left-color: var(--ppidc-danger);
+    }
+
+    .ppidc__result-icon {
+        display: grid;
+        place-items: center;
+        width: 2rem;
+        height: 2rem;
+        color: var(--ppidc-accent);
+        background: color-mix(in srgb, var(--ppidc-accent) 10%, var(--ppidc-surface-raised));
+        border-radius: 50%;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .ppidc[data-level="low"] .ppidc__result-icon {
+        color: var(--ppidc-success);
+        background: color-mix(in srgb, var(--ppidc-success) 10%, var(--ppidc-surface-raised));
+    }
+
+    .ppidc[data-level="review"] .ppidc__result-icon,
+    .ppidc[data-level="architecture"] .ppidc__result-icon {
+        color: var(--ppidc-warning);
+        background: color-mix(in srgb, var(--ppidc-warning) 10%, var(--ppidc-surface-raised));
+    }
+
+    .ppidc[data-level="architecture"] .ppidc__result-icon {
+        color: var(--ppidc-danger);
+        background: color-mix(in srgb, var(--ppidc-danger) 10%, var(--ppidc-surface-raised));
+    }
+
+    .ppidc__result-label {
+        margin-bottom: 0.25rem;
+        color: var(--ppidc-text-tertiary);
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        line-height: 1.4;
+        text-transform: uppercase;
+    }
+
+    .ppidc__result h4 {
+        margin-bottom: 0.45rem;
+        color: var(--ppidc-text);
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+
+    .ppidc__result-content > p:not(.ppidc__result-label) {
+        margin-bottom: 0;
+        color: var(--ppidc-text-secondary);
+        line-height: 1.6;
+    }
+
+    .ppidc__next-step {
+        display: grid;
+        gap: 0.2rem;
+        margin-top: 0.9rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid var(--ppidc-border);
+    }
+
+    .ppidc__next-step strong {
+        color: var(--ppidc-text);
+        font-size: 0.82rem;
+    }
+
+    .ppidc__next-step span {
+        color: var(--ppidc-text-secondary);
+        font-size: 0.86rem;
+        line-height: 1.5;
+    }
+
+    .ppidc__note {
+        margin: 0.9rem 0 0;
+        color: var(--ppidc-text-tertiary);
+        font-size: 0.78rem;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+        .ppidc__header {
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .ppidc__status {
+            justify-self: start;
+        }
+
+        .ppidc__options {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ppidc__option {
+            transition: none;
+        }
+    }
+</style>
