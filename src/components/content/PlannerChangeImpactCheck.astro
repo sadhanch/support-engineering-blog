@@ -1,0 +1,791 @@
+---
+/*
+ * PlannerChangeImpactCheck.astro
+ *
+ * Purpose:
+ * Helps administrators assess the likely impact of a Planner change
+ * before deciding what action, if any, is required.
+ *
+ * Self-contained Astro component.
+ * No external CSS or JavaScript required.
+ */
+---
+
+<section
+  class="pcic"
+  data-pcic
+  aria-labelledby="pcic-title"
+>
+  <div class="pcic__header">
+    <div class="pcic__header-copy">
+      <p class="pcic__eyebrow">Change-impact check</p>
+
+      <h3 id="pcic-title">
+        What kind of Planner change are you reviewing?
+      </h3>
+
+      <p class="pcic__intro">
+        Select the change type that best matches the announcement. The result
+        highlights the areas an administrator should review before deciding
+        whether action is required.
+      </p>
+    </div>
+
+    <span class="pcic__badge" data-badge aria-live="polite">
+      Choose a change type
+    </span>
+  </div>
+
+  <fieldset class="pcic__choices">
+    <legend class="pcic__legend">
+      Select the closest change type
+    </legend>
+
+    <label class="pcic__choice" data-choice="feature">
+      <input
+        type="radio"
+        name="planner-change-type"
+        value="feature"
+      />
+
+      <span class="pcic__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="pcic__choice-body">
+        <span class="pcic__choice-title">
+          Feature change
+        </span>
+
+        <span class="pcic__choice-description">
+          A new capability or user-facing feature is being introduced.
+        </span>
+
+        <span class="pcic__choice-tags">
+          <span>User experience</span>
+          <span>Training</span>
+          <span>Documentation</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="pcic__choice" data-choice="capability">
+      <input
+        type="radio"
+        name="planner-change-type"
+        value="capability"
+      />
+
+      <span class="pcic__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="pcic__choice-body">
+        <span class="pcic__choice-title">
+          Capability change
+        </span>
+
+        <span class="pcic__choice-description">
+          Existing Planner behavior, limits, or functionality is changing.
+        </span>
+
+        <span class="pcic__choice-tags">
+          <span>Current workflows</span>
+          <span>User behavior</span>
+          <span>Standards</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="pcic__choice" data-choice="licensing">
+      <input
+        type="radio"
+        name="planner-change-type"
+        value="licensing"
+      />
+
+      <span class="pcic__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="pcic__choice-body">
+        <span class="pcic__choice-title">
+          Licensing change
+        </span>
+
+        <span class="pcic__choice-description">
+          Plan eligibility, entitlement, or access requirements are changing.
+        </span>
+
+        <span class="pcic__choice-tags">
+          <span>Affected users</span>
+          <span>Plans and licenses</span>
+          <span>Cost / entitlement</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="pcic__choice" data-choice="integration">
+      <input
+        type="radio"
+        name="planner-change-type"
+        value="integration"
+      />
+
+      <span class="pcic__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="pcic__choice-body">
+        <span class="pcic__choice-title">
+          Integration change
+        </span>
+
+        <span class="pcic__choice-description">
+          A change may affect workflows, applications, connectors, or reporting
+          around Planner.
+        </span>
+
+        <span class="pcic__choice-tags">
+          <span>Power Automate</span>
+          <span>Applications</span>
+          <span>Testing</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="pcic__choice" data-choice="architecture">
+      <input
+        type="radio"
+        name="planner-change-type"
+        value="architecture"
+      />
+
+      <span class="pcic__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="pcic__choice-body">
+        <span class="pcic__choice-title">
+          Architecture change
+        </span>
+
+        <span class="pcic__choice-description">
+          The underlying data, service, platform, or integration architecture
+          is changing.
+        </span>
+
+        <span class="pcic__choice-tags">
+          <span>Data model</span>
+          <span>Security</span>
+          <span>Architecture review</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="pcic__choice" data-choice="transition">
+      <input
+        type="radio"
+        name="planner-change-type"
+        value="transition"
+      />
+
+      <span class="pcic__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="pcic__choice-body">
+        <span class="pcic__choice-title">
+          Product transition
+        </span>
+
+        <span class="pcic__choice-description">
+          An existing experience is being renamed, consolidated, retired, or
+          replaced.
+        </span>
+
+        <span class="pcic__choice-tags">
+          <span>Workload impact</span>
+          <span>Migration</span>
+          <span>Communication</span>
+        </span>
+      </span>
+    </label>
+  </fieldset>
+
+  <div
+    class="pcic__result"
+    data-result
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="pcic__result-head">
+      <span class="pcic__result-kicker">Assessment</span>
+
+      <span class="pcic__result-level" data-level>
+        Waiting for selection
+      </span>
+    </div>
+
+    <h4 data-title>
+      Start by identifying what actually changed.
+    </h4>
+
+    <p data-description>
+      The change type determines which parts of the environment deserve a
+      closer look.
+    </p>
+
+    <div class="pcic__result-grid">
+      <div class="pcic__result-card">
+        <span class="pcic__result-label">Review first</span>
+        <strong data-focus>
+          Choose a change type
+        </strong>
+      </div>
+
+      <div class="pcic__result-card">
+        <span class="pcic__result-label">Questions to ask</span>
+        <span data-questions>
+          Identify the users, workloads, dependencies, and documentation that
+          may be affected.
+        </span>
+      </div>
+
+      <div class="pcic__result-card">
+        <span class="pcic__result-label">Typical outcome</span>
+        <span data-outcome>
+          Decide whether to update, communicate, test, redesign, or take no
+          action.
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="pcic__principle">
+    <span class="pcic__principle-mark" aria-hidden="true">→</span>
+
+    <p>
+      <strong>Detect → Assess → Decide.</strong>
+      Not every Planner change requires action. The goal is to make the right
+      decision for your environment.
+    </p>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector("[data-pcic]");
+
+  if (root) {
+    const choices = Array.from(
+      root.querySelectorAll('input[name="planner-change-type"]')
+    );
+
+    const badge = root.querySelector("[data-badge]");
+    const level = root.querySelector("[data-level]");
+    const title = root.querySelector("[data-title]");
+    const description = root.querySelector("[data-description]");
+    const focus = root.querySelector("[data-focus]");
+    const questions = root.querySelector("[data-questions]");
+    const outcome = root.querySelector("[data-outcome]");
+
+    const results = {
+      feature: {
+        badge: "Feature change",
+        level: "User-facing review",
+        title: "Start with the people who will use the new capability.",
+        description:
+          "A feature change is usually centered on user experience, enablement, and documentation.",
+        focus:
+          "Affected users and the business process the new capability supports",
+        questions:
+          "Who benefits? Who needs training? Does existing guidance or the standard way of working need to change?",
+        outcome:
+          "Communicate, update training or documentation, and decide whether a pilot is useful."
+      },
+
+      capability: {
+        badge: "Capability change",
+        level: "Behavior review",
+        title: "Check whether existing work is affected by the behavior change.",
+        description:
+          "A change to an existing capability can be more disruptive than a new feature because users may already depend on the old behavior.",
+        focus:
+          "Current workflows, project standards, and user expectations",
+        questions:
+          "Does an existing process work differently? Do project templates or governance standards need updating?",
+        outcome:
+          "Update the operating model, guidance, or training where the changed behavior matters."
+      },
+
+      licensing: {
+        badge: "Licensing change",
+        level: "Entitlement review",
+        title: "Map the change to users, plans, and required capabilities.",
+        description:
+          "Licensing changes can affect both access and the way an organization assigns capabilities to different roles.",
+        focus:
+          "Affected users, plans, entitlements, and cost",
+        questions:
+          "Who loses or gains access? Which workloads depend on the entitlement? Does the licensing model need to change?",
+        outcome:
+          "Adjust licensing, communicate the impact, and update internal entitlement guidance."
+      },
+
+      integration: {
+        badge: "Integration change",
+        level: "Technical review",
+        title: "Trace the change through the systems connected to Planner.",
+        description:
+          "Integration changes deserve deeper validation because the impact may not be visible in the Planner interface.",
+        focus:
+          "Flows, applications, connectors, reporting, and downstream processes",
+        questions:
+          "Which integrations depend on the changed behavior? What needs to be tested? Who owns the dependency?",
+        outcome:
+          "Test affected integrations and redesign or update them where required."
+      },
+
+      architecture: {
+        badge: "Architecture change",
+        level: "High-impact review",
+        title: "Treat the change as an architecture decision.",
+        description:
+          "A data or service architecture change can affect integrations, security, governance, and operational ownership.",
+        focus:
+          "Data model, security, integrations, environments, and governance",
+        questions:
+          "Did the underlying service or data model change? Which applications and controls depend on it?",
+        outcome:
+          "Perform an architecture impact assessment before changing production processes."
+      },
+
+      transition: {
+        badge: "Product transition",
+        level: "Migration review",
+        title: "Determine which workloads and users need a transition plan.",
+        description:
+          "Renames, consolidations, retirements, and replacements can affect more than the product interface.",
+        focus:
+          "Workloads, dependencies, migration, communication, and documentation",
+        questions:
+          "Which existing experiences are affected? What must move, change, or be retired? What needs to be communicated?",
+        outcome:
+          "Create a transition plan, update documentation, and validate critical workloads before cutover."
+      }
+    };
+
+    const update = (value) => {
+      const result = results[value];
+
+      if (!result) return;
+
+      root.dataset.state = value;
+
+      badge.textContent = result.badge;
+      level.textContent = result.level;
+      title.textContent = result.title;
+      description.textContent = result.description;
+      focus.textContent = result.focus;
+      questions.textContent = result.questions;
+      outcome.textContent = result.outcome;
+    };
+
+    choices.forEach((choice) => {
+      choice.addEventListener("change", (event) => {
+        const input = event.currentTarget;
+
+        if (input instanceof HTMLInputElement && input.checked) {
+          update(input.value);
+        }
+      });
+    });
+  }
+</script>
+
+<style>
+  .pcic {
+    --pcic-surface: var(--surface-primary, #ffffff);
+    --pcic-surface-soft: var(--surface-secondary, #f8fafc);
+    --pcic-text: var(--text-primary, #0f172a);
+    --pcic-text-secondary: var(--text-secondary, #475569);
+    --pcic-text-tertiary: var(--text-tertiary, #64748b);
+    --pcic-border: var(--border-default, #dbe3ec);
+    --pcic-border-soft: var(--border-subtle, #e7edf4);
+    --pcic-accent: var(--color-accent, #4ea1e0);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--pcic-text);
+    background: var(--pcic-surface);
+    border: 1px solid var(--pcic-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .pcic__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .pcic__header-copy {
+    min-width: 0;
+  }
+
+  .pcic__eyebrow {
+    margin: 0 0 var(--space-1, 0.25rem);
+    color: var(--pcic-accent);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .pcic h3,
+  .pcic h4,
+  .pcic p {
+    margin-top: 0;
+  }
+
+  .pcic h3 {
+    margin-bottom: var(--space-2, 0.5rem);
+    color: var(--pcic-text);
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: var(--line-height-tight, 1.2);
+  }
+
+  .pcic__intro {
+    max-width: 70ch;
+    margin-bottom: 0;
+    color: var(--pcic-text-secondary);
+    line-height: var(--line-height-normal, 1.6);
+  }
+
+  .pcic__badge {
+    flex: 0 0 auto;
+    padding: 0.45rem 0.75rem;
+    color: var(--pcic-text-secondary);
+    background: var(--pcic-surface-soft);
+    border: 1px solid var(--pcic-border);
+    border-radius: var(--radius-round, 999px);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .pcic[data-state="feature"] {
+    --pcic-state: #2563eb;
+    --pcic-state-soft: color-mix(in srgb, #2563eb 8%, var(--pcic-surface));
+  }
+
+  .pcic[data-state="capability"] {
+    --pcic-state: #0f8a8a;
+    --pcic-state-soft: color-mix(in srgb, #0f8a8a 8%, var(--pcic-surface));
+  }
+
+  .pcic[data-state="licensing"] {
+    --pcic-state: #b45309;
+    --pcic-state-soft: color-mix(in srgb, #b45309 8%, var(--pcic-surface));
+  }
+
+  .pcic[data-state="integration"] {
+    --pcic-state: #6d3bb8;
+    --pcic-state-soft: color-mix(in srgb, #6d3bb8 8%, var(--pcic-surface));
+  }
+
+  .pcic[data-state="architecture"] {
+    --pcic-state: #0f766e;
+    --pcic-state-soft: color-mix(in srgb, #0f766e 8%, var(--pcic-surface));
+  }
+
+  .pcic[data-state="transition"] {
+    --pcic-state: #c2410c;
+    --pcic-state-soft: color-mix(in srgb, #c2410c 8%, var(--pcic-surface));
+  }
+
+  .pcic[data-state] .pcic__badge {
+    color: var(--pcic-state);
+    background: var(--pcic-state-soft);
+    border-color: color-mix(
+      in srgb,
+      var(--pcic-state) 30%,
+      var(--pcic-border)
+    );
+  }
+
+  .pcic__choices {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .pcic__legend {
+    width: 100%;
+    margin-bottom: var(--space-3, 0.75rem);
+    color: var(--pcic-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-semibold, 600);
+  }
+
+  .pcic__choice {
+    position: relative;
+    display: block;
+    height: 100%;
+    padding: 0.95rem;
+    background: var(--pcic-surface-soft);
+    border: 1px solid var(--pcic-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .pcic__choice:hover {
+    transform: translateY(-1px);
+    border-color: var(--pcic-accent);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .pcic__choice:has(input:focus-visible) {
+    outline: 2px solid var(--pcic-accent);
+    outline-offset: 2px;
+  }
+
+  .pcic__choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .pcic__choice:has(input:checked) {
+    border-color: var(--pcic-state, var(--pcic-accent));
+    background: var(--pcic-state-soft, var(--pcic-surface-soft));
+    box-shadow:
+      inset 0 0 0 1px var(--pcic-state, var(--pcic-accent)),
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .pcic__choice-marker {
+    display: grid;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-bottom: 0.7rem;
+    border: 2px solid var(--pcic-text-tertiary);
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .pcic__choice-marker span {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .pcic__choice:has(input:checked) .pcic__choice-marker {
+    border-color: var(--pcic-state, var(--pcic-accent));
+  }
+
+  .pcic__choice:has(input:checked) .pcic__choice-marker span {
+    background: var(--pcic-state, var(--pcic-accent));
+  }
+
+  .pcic__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .pcic__choice-title {
+    color: var(--pcic-text);
+    font-size: var(--font-size-md, 1rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: var(--line-height-tight, 1.3);
+  }
+
+  .pcic__choice-description {
+    color: var(--pcic-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: var(--line-height-normal, 1.5);
+  }
+
+  .pcic__choice-tags {
+    display: grid;
+    gap: 0.2rem;
+    margin-top: 0.45rem;
+    color: var(--pcic-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1.45;
+  }
+
+  .pcic__choice-tags span::before {
+    content: "•";
+    margin-right: 0.4rem;
+    color: var(--pcic-state, var(--pcic-accent));
+    font-weight: 700;
+  }
+
+  .pcic__result {
+    margin-top: var(--space-6, 1.5rem);
+    padding: 1.2rem;
+    background: var(--pcic-surface-soft);
+    border: 1px solid var(--pcic-border);
+    border-left: 4px solid var(--pcic-state, var(--pcic-accent));
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .pcic__result-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .pcic__result-kicker {
+    color: var(--pcic-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .pcic__result-level {
+    color: var(--pcic-state, var(--pcic-accent));
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-semibold, 600);
+  }
+
+  .pcic__result h4 {
+    margin-bottom: 0.45rem;
+    color: var(--pcic-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: var(--line-height-tight, 1.3);
+  }
+
+  .pcic__result > p {
+    max-width: 72ch;
+    margin-bottom: 0;
+    color: var(--pcic-text-secondary);
+    line-height: var(--line-height-normal, 1.6);
+  }
+
+  .pcic__result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin-top: var(--space-4, 1rem);
+  }
+
+  .pcic__result-card {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+    padding: 0.85rem 0.9rem;
+    background: var(--pcic-surface);
+    border: 1px solid var(--pcic-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .pcic__result-label {
+    color: var(--pcic-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .pcic__result-card strong,
+  .pcic__result-card span:last-child {
+    color: var(--pcic-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .pcic__result-card strong {
+    color: var(--pcic-text);
+  }
+
+  .pcic__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-top: var(--space-4, 1rem);
+    padding: 0.9rem 1rem;
+    background: var(--pcic-surface);
+    border: 1px solid var(--pcic-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .pcic__principle-mark {
+    flex: 0 0 auto;
+    color: var(--pcic-accent);
+    font-size: 1.15rem;
+    font-weight: var(--font-weight-bold, 700);
+    line-height: 1.4;
+  }
+
+  .pcic__principle p {
+    margin: 0;
+    color: var(--pcic-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 1050px) {
+    .pcic__choices {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 900px) {
+    .pcic__result-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .pcic {
+      padding: 1rem;
+    }
+
+    .pcic__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .pcic__badge {
+      justify-self: start;
+    }
+
+    .pcic__choices {
+      grid-template-columns: 1fr;
+    }
+
+    .pcic__result-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pcic__choice {
+      transition: none;
+    }
+  }
+</style>
