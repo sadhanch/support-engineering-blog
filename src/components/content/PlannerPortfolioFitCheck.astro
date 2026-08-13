@@ -1,0 +1,592 @@
+---
+/*
+ * PlannerPortfolioFitCheck.astro
+ * Self-contained interactive component for Article 5.
+ * No external CSS file required.
+ */
+---
+
+<section
+  class="ppfc"
+  data-ppfc
+  aria-labelledby="ppfc-title"
+>
+  <div class="ppfc__header">
+    <div class="ppfc__header-copy">
+      <p class="ppfc__eyebrow">Portfolio fit check</p>
+      <h3 id="ppfc-title">Which portfolio layer do you need?</h3>
+      <p class="ppfc__intro">
+        Select the requirement that best matches the problem your PMO is trying to solve.
+      </p>
+    </div>
+
+    <span class="ppfc__badge" data-badge aria-live="polite">
+      Choose one
+    </span>
+  </div>
+
+  <fieldset class="ppfc__choices">
+    <legend class="ppfc__legend">Select the closest fit</legend>
+
+    <label class="ppfc__choice" data-choice="planner">
+      <input
+        type="radio"
+        name="planner-portfolio-fit"
+        value="planner"
+      />
+      <span class="ppfc__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="ppfc__choice-body">
+        <span class="ppfc__choice-title">Planner Portfolio</span>
+        <span class="ppfc__choice-subtitle">
+          Operational visibility across supported Premium projects.
+        </span>
+
+        <span class="ppfc__choice-list">
+          <span>Project status and progress</span>
+          <span>Milestone oversight</span>
+          <span>Lightweight PMO review</span>
+          <span>Stakeholder visibility</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="ppfc__choice" data-choice="powerbi">
+      <input
+        type="radio"
+        name="planner-portfolio-fit"
+        value="powerbi"
+      />
+      <span class="ppfc__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="ppfc__choice-body">
+        <span class="ppfc__choice-title">Planner Portfolio + Power BI</span>
+        <span class="ppfc__choice-subtitle">
+          Broader reporting and analysis across multiple sources.
+        </span>
+
+        <span class="ppfc__choice-list">
+          <span>Executive dashboards</span>
+          <span>Custom metrics and historical analysis</span>
+          <span>Cross-system reporting</span>
+          <span>Multiple project-management platforms</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="ppfc__choice" data-choice="broader">
+      <input
+        type="radio"
+        name="planner-portfolio-fit"
+        value="broader"
+      />
+      <span class="ppfc__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="ppfc__choice-body">
+        <span class="ppfc__choice-title">Broader Portfolio Architecture</span>
+        <span class="ppfc__choice-subtitle">
+          Enterprise portfolio decisions extend beyond reporting.
+        </span>
+
+        <span class="ppfc__choice-list">
+          <span>Strategic investment decisions</span>
+          <span>Enterprise resource capacity</span>
+          <span>Financial portfolio management</span>
+          <span>Scenario planning and broader governance</span>
+        </span>
+      </span>
+    </label>
+  </fieldset>
+
+  <div
+    class="ppfc__result"
+    data-result
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="ppfc__result-topline">
+      <span class="ppfc__result-kicker" data-result-kicker>
+        Assessment
+      </span>
+      <span class="ppfc__result-level" data-result-level>
+        Waiting for selection
+      </span>
+    </div>
+
+    <h4 data-result-title>
+      Start with the question you need the portfolio to answer.
+    </h4>
+
+    <p data-result-description>
+      This is a fit check, not an architecture approval. Use the result to guide
+      the next level of investigation.
+    </p>
+
+    <div class="ppfc__result-grid">
+      <div class="ppfc__result-card">
+        <span class="ppfc__result-card-label">Best fit</span>
+        <strong data-best-fit>Choose an option above</strong>
+      </div>
+
+      <div class="ppfc__result-card">
+        <span class="ppfc__result-card-label">Why</span>
+        <span data-result-why>
+          Your selection will show the level of portfolio capability implied by the requirement.
+        </span>
+      </div>
+
+      <div class="ppfc__result-card">
+        <span class="ppfc__result-card-label">Next step</span>
+        <span data-result-next>
+          Define the scope, ownership, reporting, and decision requirements before adding technology.
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <p class="ppfc__note">
+    Planner Portfolios, Power BI, and broader portfolio solutions can coexist.
+    The goal is to match each layer to the question it needs to answer.
+  </p>
+</section>
+
+<script>
+  const root = document.querySelector("[data-ppfc]");
+
+  if (root) {
+    const choices = Array.from(
+      root.querySelectorAll('input[name="planner-portfolio-fit"]')
+    );
+
+    const badge = root.querySelector("[data-badge]");
+    const resultLevel = root.querySelector("[data-result-level]");
+    const resultTitle = root.querySelector("[data-result-title]");
+    const resultDescription = root.querySelector("[data-result-description]");
+    const bestFit = root.querySelector("[data-best-fit]");
+    const resultWhy = root.querySelector("[data-result-why]");
+    const resultNext = root.querySelector("[data-result-next]");
+
+    const data = {
+      planner: {
+        badge: "Portfolio visibility",
+        level: "Level 1",
+        title: "Planner Portfolio is likely the right starting point.",
+        description:
+          "Your requirement is primarily to see and review supported Premium projects in one operational view.",
+        bestFit: "Planner Portfolio",
+        why:
+          "The problem is project visibility: status, progress, milestones, ownership, and lightweight PMO oversight.",
+        next:
+          "Define which Premium projects belong in the Portfolio, who owns them, and how often the information is reviewed."
+      },
+      powerbi: {
+        badge: "Broader reporting",
+        level: "Level 2",
+        title: "Consider Planner Portfolio plus Power BI.",
+        description:
+          "Your reporting requirement extends beyond the Portfolio's operational view and needs broader analysis or multiple data sources.",
+        bestFit: "Planner Portfolio + Power BI",
+        why:
+          "The problem includes executive reporting, custom metrics, historical analysis, or cross-system visibility.",
+        next:
+          "Define the systems of execution, the reporting model, authoritative fields, refresh expectations, and report ownership."
+      },
+      broader: {
+        badge: "Enterprise portfolio",
+        level: "Level 3",
+        title: "Evaluate a broader portfolio architecture.",
+        description:
+          "Your requirement includes strategic, financial, resource, scenario, or governance decisions that extend beyond portfolio reporting.",
+        bestFit: "Broader Portfolio Architecture",
+        why:
+          "The problem is no longer only visibility. It involves enterprise decisions about investment, capacity, priorities, or value.",
+        next:
+          "Map the decision model and the systems required for strategy, resources, finance, governance, and reporting."
+      }
+    };
+
+    const update = (value) => {
+      const selected = data[value];
+
+      if (!selected) return;
+
+      root.dataset.level = value;
+      badge.textContent = selected.badge;
+      resultLevel.textContent = selected.level;
+      resultTitle.textContent = selected.title;
+      resultDescription.textContent = selected.description;
+      bestFit.textContent = selected.bestFit;
+      resultWhy.textContent = selected.why;
+      resultNext.textContent = selected.next;
+    };
+
+    choices.forEach((choice) => {
+      choice.addEventListener("change", (event) => {
+        const target = event.currentTarget;
+
+        if (target instanceof HTMLInputElement && target.checked) {
+          update(target.value);
+        }
+      });
+    });
+  }
+</script>
+
+<style>
+  .ppfc {
+    --ppfc-surface: var(--surface-primary, #ffffff);
+    --ppfc-surface-soft: var(--surface-secondary, #f8fafc);
+    --ppfc-surface-muted: var(--surface-tertiary, #f1f5f9);
+    --ppfc-text: var(--text-primary, #0f172a);
+    --ppfc-text-secondary: var(--text-secondary, #475569);
+    --ppfc-text-tertiary: var(--text-tertiary, #64748b);
+    --ppfc-border: var(--border-default, #dbe3ec);
+    --ppfc-border-soft: var(--border-subtle, #e7edf4);
+    --ppfc-accent: var(--color-accent, #4ea1e0);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--ppfc-text);
+    background: var(--ppfc-surface);
+    border: 1px solid var(--ppfc-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .ppfc__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .ppfc__eyebrow {
+    margin: 0 0 var(--space-1, 0.25rem);
+    color: var(--ppfc-accent);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ppfc h3,
+  .ppfc h4,
+  .ppfc p {
+    margin-top: 0;
+  }
+
+  .ppfc h3 {
+    margin-bottom: var(--space-2, 0.5rem);
+    color: var(--ppfc-text);
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: var(--line-height-tight, 1.2);
+  }
+
+  .ppfc__intro {
+    max-width: 64ch;
+    margin-bottom: 0;
+    color: var(--ppfc-text-secondary);
+    line-height: var(--line-height-normal, 1.6);
+  }
+
+  .ppfc__badge {
+    flex: 0 0 auto;
+    padding: 0.45rem 0.75rem;
+    color: var(--ppfc-text-secondary);
+    background: var(--ppfc-surface-soft);
+    border: 1px solid var(--ppfc-border);
+    border-radius: var(--radius-round, 999px);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .ppfc[data-level="planner"] {
+    --ppfc-level: var(--color-success, #15803d);
+    --ppfc-level-soft: color-mix(
+      in srgb,
+      var(--color-success, #15803d) 8%,
+      var(--ppfc-surface)
+    );
+  }
+
+  .ppfc[data-level="powerbi"] {
+    --ppfc-level: #b77900;
+    --ppfc-level-soft: color-mix(
+      in srgb,
+      #b77900 8%,
+      var(--ppfc-surface)
+    );
+  }
+
+  .ppfc[data-level="broader"] {
+    --ppfc-level: #5b33a6;
+    --ppfc-level-soft: color-mix(
+      in srgb,
+      #5b33a6 8%,
+      var(--ppfc-surface)
+    );
+  }
+
+  .ppfc[data-level] .ppfc__badge {
+    color: var(--ppfc-level);
+    background: var(--ppfc-level-soft);
+    border-color: color-mix(
+      in srgb,
+      var(--ppfc-level) 30%,
+      var(--ppfc-border)
+    );
+  }
+
+  .ppfc__choices {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4, 1rem);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .ppfc__legend {
+    width: 100%;
+    margin-bottom: var(--space-3, 0.75rem);
+    color: var(--ppfc-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-semibold, 600);
+  }
+
+  .ppfc__choice {
+    position: relative;
+    display: block;
+    height: 100%;
+    padding: 1rem;
+    background: var(--ppfc-surface-soft);
+    border: 1px solid var(--ppfc-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .ppfc__choice:hover {
+    transform: translateY(-1px);
+    border-color: var(--ppfc-accent);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .ppfc__choice:has(input:focus-visible) {
+    outline: 2px solid var(--ppfc-accent);
+    outline-offset: 2px;
+  }
+
+  .ppfc__choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .ppfc__choice:has(input:checked) {
+    border-color: var(--ppfc-level, var(--ppfc-accent));
+    background: var(--ppfc-level-soft, var(--ppfc-surface-soft));
+    box-shadow:
+      inset 0 0 0 1px var(--ppfc-level, var(--ppfc-accent)),
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .ppfc__choice-marker {
+    display: grid;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-bottom: 0.8rem;
+    border: 2px solid var(--ppfc-text-tertiary);
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .ppfc__choice-marker span {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .ppfc__choice:has(input:checked) .ppfc__choice-marker {
+    border-color: var(--ppfc-level, var(--ppfc-accent));
+  }
+
+  .ppfc__choice:has(input:checked) .ppfc__choice-marker span {
+    background: var(--ppfc-level, var(--ppfc-accent));
+  }
+
+  .ppfc__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .ppfc__choice-title {
+    color: var(--ppfc-text);
+    font-size: var(--font-size-md, 1rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: var(--line-height-tight, 1.3);
+  }
+
+  .ppfc__choice-subtitle {
+    color: var(--ppfc-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: var(--line-height-normal, 1.5);
+  }
+
+  .ppfc__choice-list {
+    display: grid;
+    gap: 0.25rem;
+    margin-top: 0.55rem;
+    color: var(--ppfc-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1.45;
+  }
+
+  .ppfc__choice-list span::before {
+    content: "•";
+    margin-right: 0.45rem;
+    color: var(--ppfc-level, var(--ppfc-accent));
+    font-weight: 700;
+  }
+
+  .ppfc__result {
+    margin-top: var(--space-6, 1.5rem);
+    padding: 1.2rem;
+    background: var(--ppfc-surface-soft);
+    border: 1px solid var(--ppfc-border);
+    border-left: 4px solid var(--ppfc-level, var(--ppfc-accent));
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .ppfc__result-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .ppfc__result-kicker {
+    color: var(--ppfc-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .ppfc__result-level {
+    color: var(--ppfc-level, var(--ppfc-accent));
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-semibold, 600);
+  }
+
+  .ppfc__result h4 {
+    margin-bottom: 0.45rem;
+    color: var(--ppfc-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: var(--line-height-tight, 1.3);
+  }
+
+  .ppfc__result > p {
+    max-width: 72ch;
+    margin-bottom: 0;
+    color: var(--ppfc-text-secondary);
+    line-height: var(--line-height-normal, 1.6);
+  }
+
+  .ppfc__result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin-top: var(--space-4, 1rem);
+  }
+
+  .ppfc__result-card {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+    padding: 0.85rem 0.9rem;
+    background: var(--ppfc-surface);
+    border: 1px solid var(--ppfc-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .ppfc__result-card-label {
+    color: var(--ppfc-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .ppfc__result-card strong,
+  .ppfc__result-card > span:last-child {
+    color: var(--ppfc-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .ppfc__result-card strong {
+    color: var(--ppfc-text);
+  }
+
+  .ppfc__note {
+    margin: var(--space-4, 1rem) 0 0;
+    color: var(--ppfc-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .ppfc__choices,
+    .ppfc__result-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ppfc {
+      padding: 1rem;
+    }
+
+    .ppfc__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .ppfc__badge {
+      justify-self: start;
+    }
+
+    .ppfc__result-topline {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ppfc__choice {
+      transition: none;
+    }
+  }
+</style>
