@@ -1,0 +1,653 @@
+---
+/*
+ * PlannerIntegrationArchitectureCheck.astro
+ *
+ * Self-contained article component.
+ * Helps administrators classify an existing Planner integration before
+ * moving a workload from Basic Planner to Premium.
+ *
+ * No external CSS or JavaScript required.
+ */
+---
+
+<section
+  class="piac"
+  data-piac
+  aria-labelledby="piac-title"
+>
+  <div class="piac__header">
+    <div class="piac__header-copy">
+      <p class="piac__eyebrow">Integration architecture check</p>
+
+      <h3 id="piac-title">
+        What does your existing Planner integration depend on?
+      </h3>
+
+      <p class="piac__intro">
+        Select the scenario closest to your environment. The result highlights
+        what should be reviewed before moving the workload to Planner Premium.
+      </p>
+    </div>
+
+    <span class="piac__badge" data-badge aria-live="polite">
+      Choose a scenario
+    </span>
+  </div>
+
+  <fieldset class="piac__choices">
+    <legend class="piac__legend">
+      Select the closest scenario
+    </legend>
+
+    <label class="piac__choice" data-choice="connector">
+      <input
+        type="radio"
+        name="planner-integration-scenario"
+        value="connector"
+      />
+
+      <span class="piac__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="piac__choice-body">
+        <span class="piac__choice-title">
+          Power Automate uses the Planner connector
+        </span>
+
+        <span class="piac__choice-description">
+          Your workflow creates, updates, reads, or reacts to Planner task
+          data through the standard Planner connector.
+        </span>
+
+        <span class="piac__choice-tags">
+          <span>Connector dependency</span>
+          <span>Basic-plan workflow</span>
+          <span>Review before Premium</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="piac__choice" data-choice="application">
+      <input
+        type="radio"
+        name="planner-integration-scenario"
+        value="application"
+      />
+
+      <span class="piac__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="piac__choice-body">
+        <span class="piac__choice-title">
+          A custom application interacts with Planner
+        </span>
+
+        <span class="piac__choice-description">
+          A portal, intake application, script, or custom integration reads
+          or changes Planner information.
+        </span>
+
+        <span class="piac__choice-tags">
+          <span>Application dependency</span>
+          <span>API / data assumptions</span>
+          <span>Architecture review</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="piac__choice" data-choice="multiple">
+      <input
+        type="radio"
+        name="planner-integration-scenario"
+        value="multiple"
+      />
+
+      <span class="piac__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="piac__choice-body">
+        <span class="piac__choice-title">
+          Multiple integrations depend on the workload
+        </span>
+
+        <span class="piac__choice-description">
+          The project is connected to automation, applications, reporting,
+          or downstream systems owned by different teams.
+        </span>
+
+        <span class="piac__choice-tags">
+          <span>Integration inventory</span>
+          <span>Dataverse environment</span>
+          <span>End-to-end testing</span>
+        </span>
+      </span>
+    </label>
+  </fieldset>
+
+  <div
+    class="piac__result"
+    data-result
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="piac__result-head">
+      <span class="piac__result-kicker">Assessment</span>
+      <span class="piac__result-level" data-level>
+        Waiting for selection
+      </span>
+    </div>
+
+    <h4 data-title>
+      Start with the dependency, not the migration method.
+    </h4>
+
+    <p data-description>
+      The correct Premium migration path depends on what your existing
+      integration actually does.
+    </p>
+
+    <div class="piac__result-grid">
+      <div class="piac__result-card">
+        <span class="piac__result-label">Primary concern</span>
+        <strong data-concern>
+          Choose an option above
+        </strong>
+      </div>
+
+      <div class="piac__result-card">
+        <span class="piac__result-label">Review</span>
+        <span data-review>
+          Identify the data, connector, application, and ownership dependencies
+          before changing the plan architecture.
+        </span>
+      </div>
+
+      <div class="piac__result-card">
+        <span class="piac__result-label">Next step</span>
+        <span data-next>
+          Inventory the dependency and define the business operation that must
+          continue working after the move to Premium.
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="piac__principle">
+    <span class="piac__principle-mark" aria-hidden="true">→</span>
+
+    <p>
+      <strong>Inventory → Map → Redesign where required → Test → Validate.</strong>
+      Moving a plan to Premium is complete only when the integrations around
+      that workload still perform their intended business operations.
+    </p>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector("[data-piac]");
+
+  if (root) {
+    const choices = Array.from(
+      root.querySelectorAll('input[name="planner-integration-scenario"]')
+    );
+
+    const badge = root.querySelector("[data-badge]");
+    const level = root.querySelector("[data-level]");
+    const title = root.querySelector("[data-title]");
+    const description = root.querySelector("[data-description]");
+    const concern = root.querySelector("[data-concern]");
+    const review = root.querySelector("[data-review]");
+    const next = root.querySelector("[data-next]");
+
+    const results = {
+      connector: {
+        badge: "Connector dependency",
+        level: "High priority",
+        title:
+          "Review the Planner connector dependency before moving the workload.",
+        description:
+          "The standard Planner connector is designed for Basic plans, so a Premium migration requires an explicit integration review.",
+        concern:
+          "Basic-plan connector dependency",
+        review:
+          "Identify every flow using the Planner connector, the operations it performs, and the data it expects from the plan.",
+        next:
+          "Map each business operation to a supported Premium integration path, then test the complete workflow."
+      },
+
+      application: {
+        badge: "Application dependency",
+        level: "Architecture review",
+        title:
+          "Review the application's data and API assumptions before migration.",
+        description:
+          "A custom application can depend on plan identifiers, fields, APIs, authentication, or update behavior that changes with the Premium architecture.",
+        concern:
+          "Application and API assumptions",
+        review:
+          "Document what the application reads, creates, updates, or triggers and identify the Premium data and integration surface required for each operation.",
+        next:
+          "Redesign affected operations where necessary and validate the application end to end against the Premium workload."
+      },
+
+      multiple: {
+        badge: "Multiple dependencies",
+        level: "Full inventory",
+        title:
+          "Treat the workload as an integration architecture, not a single flow.",
+        description:
+          "Multiple owners and downstream systems increase the risk of discovering a broken dependency after the workload has already moved.",
+        concern:
+          "End-to-end integration exposure",
+        review:
+          "Inventory automation, applications, data dependencies, Dataverse environment, security, testing, and ownership across the entire workload.",
+        next:
+          "Assign owners, map dependencies, define test cases, then validate the business process across every connected system."
+      }
+    };
+
+    const update = (value) => {
+      const result = results[value];
+
+      if (!result) return;
+
+      root.dataset.state = value;
+
+      badge.textContent = result.badge;
+      level.textContent = result.level;
+      title.textContent = result.title;
+      description.textContent = result.description;
+      concern.textContent = result.concern;
+      review.textContent = result.review;
+      next.textContent = result.next;
+    };
+
+    choices.forEach((choice) => {
+      choice.addEventListener("change", (event) => {
+        const input = event.currentTarget;
+
+        if (input instanceof HTMLInputElement && input.checked) {
+          update(input.value);
+        }
+      });
+    });
+  }
+</script>
+
+<style>
+  .piac {
+    --piac-surface: var(--surface-primary, #ffffff);
+    --piac-surface-soft: var(--surface-secondary, #f8fafc);
+    --piac-text: var(--text-primary, #0f172a);
+    --piac-text-secondary: var(--text-secondary, #475569);
+    --piac-text-tertiary: var(--text-tertiary, #64748b);
+    --piac-border: var(--border-default, #dbe3ec);
+    --piac-border-soft: var(--border-subtle, #e7edf4);
+    --piac-accent: var(--color-accent, #4ea1e0);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--piac-text);
+    background: var(--piac-surface);
+    border: 1px solid var(--piac-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .piac__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .piac__eyebrow {
+    margin: 0 0 var(--space-1, 0.25rem);
+    color: var(--piac-accent);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .piac h3,
+  .piac h4,
+  .piac p {
+    margin-top: 0;
+  }
+
+  .piac h3 {
+    margin-bottom: var(--space-2, 0.5rem);
+    color: var(--piac-text);
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: var(--line-height-tight, 1.2);
+  }
+
+  .piac__intro {
+    max-width: 70ch;
+    margin-bottom: 0;
+    color: var(--piac-text-secondary);
+    line-height: var(--line-height-normal, 1.6);
+  }
+
+  .piac__badge {
+    flex: 0 0 auto;
+    padding: 0.45rem 0.75rem;
+    color: var(--piac-text-secondary);
+    background: var(--piac-surface-soft);
+    border: 1px solid var(--piac-border);
+    border-radius: var(--radius-round, 999px);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .piac[data-state="connector"] {
+    --piac-state: var(--color-warning, #b45309);
+    --piac-state-soft: color-mix(
+      in srgb,
+      var(--color-warning, #b45309) 8%,
+      var(--piac-surface)
+    );
+  }
+
+  .piac[data-state="application"] {
+    --piac-state: #5b33a6;
+    --piac-state-soft: color-mix(
+      in srgb,
+      #5b33a6 8%,
+      var(--piac-surface)
+    );
+  }
+
+  .piac[data-state="multiple"] {
+    --piac-state: var(--color-accent, #2563eb);
+    --piac-state-soft: color-mix(
+      in srgb,
+      var(--color-accent, #2563eb) 8%,
+      var(--piac-surface)
+    );
+  }
+
+  .piac[data-state] .piac__badge {
+    color: var(--piac-state);
+    background: var(--piac-state-soft);
+    border-color: color-mix(
+      in srgb,
+      var(--piac-state) 30%,
+      var(--piac-border)
+    );
+  }
+
+  .piac__choices {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4, 1rem);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .piac__legend {
+    width: 100%;
+    margin-bottom: var(--space-3, 0.75rem);
+    color: var(--piac-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-semibold, 600);
+  }
+
+  .piac__choice {
+    position: relative;
+    display: block;
+    height: 100%;
+    padding: 1rem;
+    background: var(--piac-surface-soft);
+    border: 1px solid var(--piac-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .piac__choice:hover {
+    transform: translateY(-1px);
+    border-color: var(--piac-accent);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .piac__choice:has(input:focus-visible) {
+    outline: 2px solid var(--piac-accent);
+    outline-offset: 2px;
+  }
+
+  .piac__choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .piac__choice:has(input:checked) {
+    border-color: var(--piac-state, var(--piac-accent));
+    background: var(--piac-state-soft, var(--piac-surface-soft));
+    box-shadow:
+      inset 0 0 0 1px var(--piac-state, var(--piac-accent)),
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .piac__choice-marker {
+    display: grid;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-bottom: 0.8rem;
+    border: 2px solid var(--piac-text-tertiary);
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .piac__choice-marker span {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .piac__choice:has(input:checked) .piac__choice-marker {
+    border-color: var(--piac-state, var(--piac-accent));
+  }
+
+  .piac__choice:has(input:checked) .piac__choice-marker span {
+    background: var(--piac-state, var(--piac-accent));
+  }
+
+  .piac__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .piac__choice-title {
+    color: var(--piac-text);
+    font-size: var(--font-size-md, 1rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: var(--line-height-tight, 1.3);
+  }
+
+  .piac__choice-description {
+    color: var(--piac-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: var(--line-height-normal, 1.5);
+  }
+
+  .piac__choice-tags {
+    display: grid;
+    gap: 0.25rem;
+    margin-top: 0.55rem;
+    color: var(--piac-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1.45;
+  }
+
+  .piac__choice-tags span::before {
+    content: "•";
+    margin-right: 0.45rem;
+    color: var(--piac-state, var(--piac-accent));
+    font-weight: 700;
+  }
+
+  .piac__result {
+    margin-top: var(--space-6, 1.5rem);
+    padding: 1.2rem;
+    background: var(--piac-surface-soft);
+    border: 1px solid var(--piac-border);
+    border-left: 4px solid var(--piac-state, var(--piac-accent));
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .piac__result-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .piac__result-kicker {
+    color: var(--piac-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .piac__result-level {
+    color: var(--piac-state, var(--piac-accent));
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-semibold, 600);
+  }
+
+  .piac__result h4 {
+    margin-bottom: 0.45rem;
+    color: var(--piac-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: var(--line-height-tight, 1.3);
+  }
+
+  .piac__result > p {
+    max-width: 72ch;
+    margin-bottom: 0;
+    color: var(--piac-text-secondary);
+    line-height: var(--line-height-normal, 1.6);
+  }
+
+  .piac__result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin-top: var(--space-4, 1rem);
+  }
+
+  .piac__result-card {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+    padding: 0.85rem 0.9rem;
+    background: var(--piac-surface);
+    border: 1px solid var(--piac-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .piac__result-label {
+    color: var(--piac-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .piac__result-card strong,
+  .piac__result-card span:last-child {
+    color: var(--piac-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .piac__result-card strong {
+    color: var(--piac-text);
+  }
+
+  .piac__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-top: var(--space-4, 1rem);
+    padding: 0.9rem 1rem;
+    background: var(--piac-surface);
+    border: 1px solid var(--piac-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .piac__principle-mark {
+    flex: 0 0 auto;
+    color: var(--piac-accent);
+    font-size: 1.15rem;
+    font-weight: var(--font-weight-bold, 700);
+    line-height: 1.4;
+  }
+
+  .piac__principle p {
+    margin: 0;
+    color: var(--piac-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 900px) {
+    .piac__choices,
+    .piac__result-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .piac {
+      padding: 1rem;
+    }
+
+    .piac__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .piac__badge {
+      justify-self: start;
+    }
+
+    .piac__result-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .piac__principle {
+      align-items: flex-start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .piac__choice {
+      transition: none;
+    }
+  }
+</style>
