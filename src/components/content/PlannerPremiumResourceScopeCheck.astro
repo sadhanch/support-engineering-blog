@@ -1,0 +1,620 @@
+---
+/*
+ * PlannerPremiumResourceScopeCheck.astro
+ *
+ * Purpose:
+ * Helps readers distinguish between:
+ * 1. Project-level resource visibility in Planner Premium
+ * 2. Cross-project analytical visibility through a reporting layer such as Power BI
+ *
+ * Self-contained Astro component.
+ * No external CSS or JavaScript dependency.
+ */
+---
+
+<section
+  class="prsc"
+  data-prsc
+  aria-labelledby="prsc-title"
+>
+  <div class="prsc__header">
+    <div class="prsc__header-copy">
+      <p class="prsc__eyebrow">Resource scope check</p>
+
+      <h3 id="prsc-title">
+        What resource view do you actually need?
+      </h3>
+
+      <p class="prsc__intro">
+        Select the question your team needs to answer. The result shows
+        whether Planner Premium's native project-level views are sufficient
+        or whether a separate reporting layer may be useful.
+      </p>
+    </div>
+
+    <span class="prsc__badge" data-badge aria-live="polite">
+      Choose a requirement
+    </span>
+  </div>
+
+  <fieldset class="prsc__choices">
+    <legend class="prsc__legend">Choose the closest requirement</legend>
+
+    <label class="prsc__choice" data-choice="project">
+      <input
+        type="radio"
+        name="planner-resource-scope"
+        value="project"
+      />
+
+      <span class="prsc__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="prsc__choice-body">
+        <span class="prsc__choice-title">
+          Manage workload within one Premium project
+        </span>
+
+        <span class="prsc__choice-description">
+          I need to understand who is doing what, how work is distributed,
+          and how much effort is assigned within a project.
+        </span>
+
+        <span class="prsc__choice-examples">
+          <span>People view</span>
+          <span>Assignments view</span>
+          <span>Project-level workload</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="prsc__choice" data-choice="cross-project">
+      <input
+        type="radio"
+        name="planner-resource-scope"
+        value="cross-project"
+      />
+
+      <span class="prsc__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="prsc__choice-body">
+        <span class="prsc__choice-title">
+          Analyze one person's workload across projects
+        </span>
+
+        <span class="prsc__choice-description">
+          I need to see a person's assignments across multiple Premium projects
+          and understand the combined workload.
+        </span>
+
+        <span class="prsc__choice-examples">
+          <span>Cross-project analysis</span>
+          <span>Person-level workload</span>
+          <span>Combined planned work</span>
+        </span>
+      </span>
+    </label>
+
+    <label class="prsc__choice" data-choice="both">
+      <input
+        type="radio"
+        name="planner-resource-scope"
+        value="both"
+      />
+
+      <span class="prsc__choice-marker" aria-hidden="true">
+        <span></span>
+      </span>
+
+      <span class="prsc__choice-body">
+        <span class="prsc__choice-title">
+          Manage in Planner and analyze across projects
+        </span>
+
+        <span class="prsc__choice-description">
+          I need project teams to manage assignments in Planner and managers
+          to consume a consolidated, read-only analytical view.
+        </span>
+
+        <span class="prsc__choice-examples">
+          <span>Planner for changes</span>
+          <span>Power BI for analysis</span>
+          <span>Separate manage / analyze layers</span>
+        </span>
+      </span>
+    </label>
+  </fieldset>
+
+  <div
+    class="prsc__result"
+    data-result
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="prsc__result-head">
+      <span class="prsc__result-kicker">Assessment</span>
+
+      <span class="prsc__result-level" data-level>
+        Waiting for selection
+      </span>
+    </div>
+
+    <h4 data-title>
+      Start with the resource question you need to answer.
+    </h4>
+
+    <p data-description>
+      This is a capability check, not an architecture approval.
+    </p>
+
+    <div class="prsc__result-grid">
+      <div class="prsc__result-card">
+        <span class="prsc__result-label">Best fit</span>
+        <strong data-fit>Choose an option above</strong>
+      </div>
+
+      <div class="prsc__result-card">
+        <span class="prsc__result-label">What it means</span>
+        <span data-meaning>
+          The result will explain where Planner Premium's native resource
+          experience applies.
+        </span>
+      </div>
+
+      <div class="prsc__result-card">
+        <span class="prsc__result-label">Next step</span>
+        <span data-next>
+          Define whether the requirement is project-level management,
+          cross-project analysis, or both.
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <p class="prsc__note">
+    Power BI can provide a consolidated analytical view when broader
+    cross-project visibility is required. Planner remains the place where
+    project assignments are managed.
+  </p>
+</section>
+
+<script>
+  const root = document.querySelector("[data-prsc]");
+
+  if (root) {
+    const choices = Array.from(
+      root.querySelectorAll('input[name="planner-resource-scope"]')
+    );
+
+    const badge = root.querySelector("[data-badge]");
+    const level = root.querySelector("[data-level]");
+    const title = root.querySelector("[data-title]");
+    const description = root.querySelector("[data-description]");
+    const fit = root.querySelector("[data-fit]");
+    const meaning = root.querySelector("[data-meaning]");
+    const next = root.querySelector("[data-next]");
+
+    const results = {
+      project: {
+        badge: "Planner Premium",
+        level: "Project-level",
+        title: "Planner Premium's native resource views may be sufficient.",
+        description:
+          "Your requirement stays inside a single Premium project.",
+        fit: "People view + Assignments view",
+        meaning:
+          "Use Planner Premium to understand workload distribution and assigned effort within the project.",
+        next:
+          "Use the project views to review workload, rebalance assignments, and manage the work."
+      },
+
+      "cross-project": {
+        badge: "Cross-project gap",
+        level: "Needs another view",
+        title: "Planner Premium does not provide this as a native cross-project view.",
+        description:
+          "Your requirement is person-centric and spans multiple Premium projects.",
+        fit: "A separate reporting layer",
+        meaning:
+          "A reporting layer such as Power BI can combine project data into a consolidated, read-only analytical view.",
+        next:
+          "Define the required data model and reporting scope, then keep assignment changes in Planner."
+      },
+
+      both: {
+        badge: "Two-layer model",
+        level: "Manage + analyze",
+        title: "Use Planner for management and a reporting layer for broader analysis.",
+        description:
+          "Your process needs project-level changes and cross-project visibility.",
+        fit: "Planner Premium + Power BI",
+        meaning:
+          "Planner remains the system where project work is managed, while Power BI provides consolidated cross-project analysis.",
+        next:
+          "Separate the management workflow from the analytical workflow and define ownership for each layer."
+      }
+    };
+
+    const update = (value) => {
+      const result = results[value];
+
+      if (!result) return;
+
+      root.dataset.state = value;
+
+      badge.textContent = result.badge;
+      level.textContent = result.level;
+      title.textContent = result.title;
+      description.textContent = result.description;
+      fit.textContent = result.fit;
+      meaning.textContent = result.meaning;
+      next.textContent = result.next;
+    };
+
+    choices.forEach((choice) => {
+      choice.addEventListener("change", (event) => {
+        const input = event.currentTarget;
+
+        if (input instanceof HTMLInputElement && input.checked) {
+          update(input.value);
+        }
+      });
+    });
+  }
+</script>
+
+<style>
+  .prsc {
+    --prsc-surface: var(--surface-primary, #ffffff);
+    --prsc-surface-soft: var(--surface-secondary, #f8fafc);
+    --prsc-text: var(--text-primary, #0f172a);
+    --prsc-text-secondary: var(--text-secondary, #475569);
+    --prsc-text-tertiary: var(--text-tertiary, #64748b);
+    --prsc-border: var(--border-default, #dbe3ec);
+    --prsc-border-soft: var(--border-subtle, #e7edf4);
+    --prsc-accent: var(--color-accent, #4ea1e0);
+    --prsc-success: var(--color-success, #15803d);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--prsc-text);
+    background: var(--prsc-surface);
+    border: 1px solid var(--prsc-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .prsc__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .prsc__eyebrow {
+    margin: 0 0 var(--space-1, 0.25rem);
+    color: var(--prsc-accent);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .prsc h3,
+  .prsc h4,
+  .prsc p {
+    margin-top: 0;
+  }
+
+  .prsc h3 {
+    margin-bottom: var(--space-2, 0.5rem);
+    color: var(--prsc-text);
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: var(--line-height-tight, 1.2);
+  }
+
+  .prsc__intro {
+    max-width: 68ch;
+    margin-bottom: 0;
+    color: var(--prsc-text-secondary);
+    line-height: var(--line-height-normal, 1.6);
+  }
+
+  .prsc__badge {
+    flex: 0 0 auto;
+    padding: 0.45rem 0.75rem;
+    color: var(--prsc-text-secondary);
+    background: var(--prsc-surface-soft);
+    border: 1px solid var(--prsc-border);
+    border-radius: var(--radius-round, 999px);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .prsc[data-state="project"] {
+    --prsc-state: var(--prsc-success);
+    --prsc-state-soft: color-mix(
+      in srgb,
+      var(--prsc-success) 8%,
+      var(--prsc-surface)
+    );
+  }
+
+  .prsc[data-state="cross-project"] {
+    --prsc-state: var(--color-warning, #b45309);
+    --prsc-state-soft: color-mix(
+      in srgb,
+      var(--color-warning, #b45309) 8%,
+      var(--prsc-surface)
+    );
+  }
+
+  .prsc[data-state="both"] {
+    --prsc-state: #5b33a6;
+    --prsc-state-soft: color-mix(
+      in srgb,
+      #5b33a6 8%,
+      var(--prsc-surface)
+    );
+  }
+
+  .prsc[data-state] .prsc__badge {
+    color: var(--prsc-state);
+    background: var(--prsc-state-soft);
+    border-color: color-mix(
+      in srgb,
+      var(--prsc-state) 30%,
+      var(--prsc-border)
+    );
+  }
+
+  .prsc__choices {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4, 1rem);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .prsc__legend {
+    width: 100%;
+    margin-bottom: var(--space-3, 0.75rem);
+    color: var(--prsc-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-semibold, 600);
+  }
+
+  .prsc__choice {
+    position: relative;
+    display: block;
+    height: 100%;
+    padding: 1rem;
+    background: var(--prsc-surface-soft);
+    border: 1px solid var(--prsc-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .prsc__choice:hover {
+    transform: translateY(-1px);
+    border-color: var(--prsc-accent);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .prsc__choice:has(input:focus-visible) {
+    outline: 2px solid var(--prsc-accent);
+    outline-offset: 2px;
+  }
+
+  .prsc__choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .prsc__choice:has(input:checked) {
+    border-color: var(--prsc-state, var(--prsc-accent));
+    background: var(--prsc-state-soft, var(--prsc-surface-soft));
+    box-shadow:
+      inset 0 0 0 1px var(--prsc-state, var(--prsc-accent)),
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .prsc__choice-marker {
+    display: grid;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-bottom: 0.8rem;
+    border: 2px solid var(--prsc-text-tertiary);
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .prsc__choice-marker span {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .prsc__choice:has(input:checked) .prsc__choice-marker {
+    border-color: var(--prsc-state, var(--prsc-accent));
+  }
+
+  .prsc__choice:has(input:checked) .prsc__choice-marker span {
+    background: var(--prsc-state, var(--prsc-accent));
+  }
+
+  .prsc__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .prsc__choice-title {
+    color: var(--prsc-text);
+    font-size: var(--font-size-md, 1rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: var(--line-height-tight, 1.3);
+  }
+
+  .prsc__choice-description {
+    color: var(--prsc-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: var(--line-height-normal, 1.5);
+  }
+
+  .prsc__choice-examples {
+    display: grid;
+    gap: 0.25rem;
+    margin-top: 0.55rem;
+    color: var(--prsc-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1.45;
+  }
+
+  .prsc__choice-examples span::before {
+    content: "•";
+    margin-right: 0.45rem;
+    color: var(--prsc-state, var(--prsc-accent));
+    font-weight: 700;
+  }
+
+  .prsc__result {
+    margin-top: var(--space-6, 1.5rem);
+    padding: 1.2rem;
+    background: var(--prsc-surface-soft);
+    border: 1px solid var(--prsc-border);
+    border-left: 4px solid var(--prsc-state, var(--prsc-accent));
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .prsc__result-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .prsc__result-kicker {
+    color: var(--prsc-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .prsc__result-level {
+    color: var(--prsc-state, var(--prsc-accent));
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-semibold, 600);
+  }
+
+  .prsc__result h4 {
+    margin-bottom: 0.45rem;
+    color: var(--prsc-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: var(--line-height-tight, 1.3);
+  }
+
+  .prsc__result > p {
+    max-width: 72ch;
+    margin-bottom: 0;
+    color: var(--prsc-text-secondary);
+    line-height: var(--line-height-normal, 1.6);
+  }
+
+  .prsc__result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin-top: var(--space-4, 1rem);
+  }
+
+  .prsc__result-card {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+    padding: 0.85rem 0.9rem;
+    background: var(--prsc-surface);
+    border: 1px solid var(--prsc-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .prsc__result-label {
+    color: var(--prsc-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-bold, 700);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .prsc__result-card strong,
+  .prsc__result-card span:last-child {
+    color: var(--prsc-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .prsc__result-card strong {
+    color: var(--prsc-text);
+  }
+
+  .prsc__note {
+    margin: var(--space-4, 1rem) 0 0;
+    color: var(--prsc-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .prsc__choices,
+    .prsc__result-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .prsc {
+      padding: 1rem;
+    }
+
+    .prsc__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .prsc__badge {
+      justify-self: start;
+    }
+
+    .prsc__result-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .prsc__choice {
+      transition: none;
+    }
+  }
+</style>
