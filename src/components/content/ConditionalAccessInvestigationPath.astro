@@ -1,0 +1,736 @@
+---
+/*
+ * ConditionalAccessInvestigationPath.astro
+ *
+ * Purpose:
+ * Turns the article's troubleshooting methodology into a reusable,
+ * step-by-step incident investigation path.
+ *
+ * The component is intentionally evidence-first:
+ * it helps administrators work through the investigation without
+ * jumping directly to policy changes.
+ *
+ * Self-contained Astro component.
+ */
+---
+
+<section
+  class="caip"
+  data-caip
+  aria-labelledby="caip-title"
+>
+  <div class="caip__header">
+    <div>
+      <p class="caip__eyebrow">Investigation path</p>
+
+      <h3 id="caip-title">
+        Work the incident from evidence to remediation
+      </h3>
+
+      <p class="caip__intro">
+        Move through each checkpoint in order. The objective is to identify the
+        unmet requirement, apply the narrowest useful fix, and then verify the
+        result.
+      </p>
+    </div>
+
+    <span class="caip__progress" data-progress aria-live="polite">
+      Step 1 of 7
+    </span>
+  </div>
+
+  <div class="caip__steps" role="list" aria-label="Conditional Access investigation steps">
+    <button
+      class="caip__step is-active"
+      type="button"
+      data-step="1"
+      aria-current="step"
+      aria-label="Step 1: Capture the symptom"
+    >
+      <span class="caip__step-number">1</span>
+      <span class="caip__step-label">Capture</span>
+    </button>
+
+    <span class="caip__connector" aria-hidden="true"></span>
+
+    <button
+      class="caip__step"
+      type="button"
+      data-step="2"
+      aria-label="Step 2: Find the exact sign-in"
+    >
+      <span class="caip__step-number">2</span>
+      <span class="caip__step-label">Find</span>
+    </button>
+
+    <span class="caip__connector" aria-hidden="true"></span>
+
+    <button
+      class="caip__step"
+      type="button"
+      data-step="3"
+      aria-label="Step 3: Review authentication and device details"
+    >
+      <span class="caip__step-number">3</span>
+      <span class="caip__step-label">Review</span>
+    </button>
+
+    <span class="caip__connector" aria-hidden="true"></span>
+
+    <button
+      class="caip__step"
+      type="button"
+      data-step="4"
+      aria-label="Step 4: Review Conditional Access"
+    >
+      <span class="caip__step-number">4</span>
+      <span class="caip__step-label">Evaluate</span>
+    </button>
+
+    <span class="caip__connector" aria-hidden="true"></span>
+
+    <button
+      class="caip__step"
+      type="button"
+      data-step="5"
+      aria-label="Step 5: Identify the unmet requirement"
+    >
+      <span class="caip__step-number">5</span>
+      <span class="caip__step-label">Identify</span>
+    </button>
+
+    <span class="caip__connector" aria-hidden="true"></span>
+
+    <button
+      class="caip__step"
+      type="button"
+      data-step="6"
+      aria-label="Step 6: Apply the narrowest remediation"
+    >
+      <span class="caip__step-number">6</span>
+      <span class="caip__step-label">Remediate</span>
+    </button>
+
+    <span class="caip__connector" aria-hidden="true"></span>
+
+    <button
+      class="caip__step"
+      type="button"
+      data-step="7"
+      aria-label="Step 7: Retest and document the result"
+    >
+      <span class="caip__step-number">7</span>
+      <span class="caip__step-label">Verify</span>
+    </button>
+  </div>
+
+  <div class="caip__panel" data-panel aria-live="polite" aria-atomic="true">
+    <div class="caip__panel-top">
+      <div>
+        <p class="caip__panel-eyebrow" data-kicker>Step 1</p>
+        <h4 data-title>Capture the symptom</h4>
+      </div>
+
+      <span class="caip__panel-status" data-status>
+        Start here
+      </span>
+    </div>
+
+    <p class="caip__panel-description" data-description>
+      Record what the user is actually experiencing before looking for a
+      configuration change.
+    </p>
+
+    <div class="caip__detail-grid">
+      <div class="caip__detail">
+        <span class="caip__detail-label">Ask</span>
+        <strong data-ask>
+          What exactly is failing?
+        </strong>
+      </div>
+
+      <div class="caip__detail">
+        <span class="caip__detail-label">Capture</span>
+        <strong data-capture>
+          User, application, resource, time, client, and visible error.
+        </strong>
+      </div>
+
+      <div class="caip__detail">
+        <span class="caip__detail-label">Avoid</span>
+        <strong data-avoid>
+          Changing Conditional Access before the failed sign-in is identified.
+        </strong>
+      </div>
+    </div>
+
+    <div class="caip__action">
+      <span class="caip__action-icon" aria-hidden="true">→</span>
+      <p>
+        <strong>Next:</strong>
+        <span data-next>Find the exact sign-in event.</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="caip__footer">
+    <div class="caip__principle">
+      <span class="caip__principle-mark" aria-hidden="true">✓</span>
+      <p>
+        <strong>Evidence before change.</strong>
+        Every step should narrow the investigation before the next configuration
+        decision is made.
+      </p>
+    </div>
+
+    <div class="caip__controls">
+      <button type="button" class="caip__control" data-prev disabled>
+        Previous
+      </button>
+      <button type="button" class="caip__control caip__control--primary" data-next-button>
+        Next
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector("[data-caip]");
+
+  if (root) {
+    const stepButtons = Array.from(root.querySelectorAll("[data-step]"));
+    const progress = root.querySelector("[data-progress]");
+    const kicker = root.querySelector("[data-kicker]");
+    const title = root.querySelector("[data-title]");
+    const status = root.querySelector("[data-status]");
+    const description = root.querySelector("[data-description]");
+    const ask = root.querySelector("[data-ask]");
+    const capture = root.querySelector("[data-capture]");
+    const avoid = root.querySelector("[data-avoid]");
+    const nextText = root.querySelector("[data-next]");
+    const previousButton = root.querySelector("[data-prev]");
+    const nextButton = root.querySelector("[data-next-button]");
+
+    const steps = {
+      1: {
+        title: "Capture the symptom",
+        status: "Start here",
+        description:
+          "Record what the user is actually experiencing before looking for a configuration change.",
+        ask: "What exactly is failing?",
+        capture:
+          "User, application, resource, time, client, and visible error.",
+        avoid:
+          "Changing Conditional Access before the failed sign-in is identified.",
+        next: "Find the exact sign-in event."
+      },
+
+      2: {
+        title: "Find the exact sign-in",
+        status: "Locate the evidence",
+        description:
+          "Use the available incident details to locate the sign-in event that corresponds to the reported failure.",
+        ask: "Which event matches the user's failed attempt?",
+        capture:
+          "Timestamp, user, application, resource, status, and correlation information.",
+        avoid:
+          "Troubleshooting a different sign-in than the one that produced the symptom.",
+        next: "Review authentication and device details."
+      },
+
+      3: {
+        title: "Review authentication and device details",
+        status: "Inspect the context",
+        description:
+          "Establish how the request was authenticated and what Microsoft Entra saw about the device and network.",
+        ask: "What identity, client, device, and authentication signals are present?",
+        capture:
+          "Authentication details, client, device state, location, and relevant risk information.",
+        avoid:
+          "Assuming the user's description of the device or location matches the evaluated values.",
+        next: "Review the Conditional Access evaluation."
+      },
+
+      4: {
+        title: "Review Conditional Access",
+        status: "Map the policies",
+        description:
+          "Determine which policies applied and what grant or session controls they introduced.",
+        ask: "Which policies applied to this sign-in?",
+        capture:
+          "Applied policies, conditions, grant controls, session controls, and policy results.",
+        avoid:
+          "Treating one successful policy result as proof that the overall sign-in should succeed.",
+        next: "Identify the requirement that was not satisfied."
+      },
+
+      5: {
+        title: "Identify the unmet requirement",
+        status: "Find the root cause",
+        description:
+          "Classify the failure as a device, network, authentication, grant, session, policy-scope, or client/application issue.",
+        ask: "Which requirement did the user or session fail to satisfy?",
+        capture:
+          "The specific unmet condition and the evidence that proves it.",
+        avoid:
+          "Making a broad policy change when one specific requirement explains the failure.",
+        next: "Apply the narrowest remediation."
+      },
+
+      6: {
+        title: "Apply the narrowest remediation",
+        status: "Change with intent",
+        description:
+          "Fix the condition that caused the failure while preserving the security intent of the policy.",
+        ask: "What is the smallest change that resolves the actual problem?",
+        capture:
+          "Changed setting, affected scope, owner, and expected security outcome.",
+        avoid:
+          "Disabling broad protections, creating unnecessary exclusions, or removing requirements without evidence.",
+        next: "Retest the same business operation."
+      },
+
+      7: {
+        title: "Retest and document the result",
+        status: "Verify and close",
+        description:
+          "Repeat the affected operation, verify the outcome, and record what caused the incident and how it was resolved.",
+        ask: "Did the same scenario now behave as expected?",
+        capture:
+          "New sign-in evidence, result, remediation, and any follow-up documentation.",
+        avoid:
+          "Closing the incident because the configuration changed without verifying the user's actual outcome.",
+        next: "Document the result and close the investigation."
+      }
+    };
+
+    let currentStep = 1;
+
+    const update = (stepNumber) => {
+      const step = steps[stepNumber];
+
+      if (!step) return;
+
+      currentStep = stepNumber;
+
+      stepButtons.forEach((button) => {
+        const isActive = Number(button.dataset.step) === stepNumber;
+
+        button.classList.toggle("is-active", isActive);
+        button.classList.toggle(
+          "is-complete",
+          Number(button.dataset.step) < stepNumber
+        );
+
+        if (isActive) {
+          button.setAttribute("aria-current", "step");
+        } else {
+          button.removeAttribute("aria-current");
+        }
+      });
+
+      progress.textContent = `Step ${stepNumber} of 7`;
+      kicker.textContent = `Step ${stepNumber}`;
+      title.textContent = step.title;
+      status.textContent = step.status;
+      description.textContent = step.description;
+      ask.textContent = step.ask;
+      capture.textContent = step.capture;
+      avoid.textContent = step.avoid;
+      nextText.textContent = step.next;
+
+      previousButton.disabled = stepNumber === 1;
+      nextButton.disabled = stepNumber === 7;
+      nextButton.textContent = stepNumber === 7 ? "Complete" : "Next";
+
+      root.dataset.state = `step-${stepNumber}`;
+    };
+
+    stepButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const stepNumber = Number(button.dataset.step);
+        update(stepNumber);
+      });
+    });
+
+    previousButton.addEventListener("click", () => {
+      if (currentStep > 1) {
+        update(currentStep - 1);
+      }
+    });
+
+    nextButton.addEventListener("click", () => {
+      if (currentStep < 7) {
+        update(currentStep + 1);
+      }
+    });
+
+    update(1);
+  }
+</script>
+
+<style>
+  .caip {
+    --caip-surface: var(--surface-primary, #ffffff);
+    --caip-surface-soft: var(--surface-secondary, #f8fafc);
+    --caip-text: var(--text-primary, #0f172a);
+    --caip-text-secondary: var(--text-secondary, #475569);
+    --caip-text-tertiary: var(--text-tertiary, #64748b);
+    --caip-border: var(--border-default, #dbe3ec);
+    --caip-border-soft: var(--border-subtle, #e7edf4);
+    --caip-accent: var(--color-accent, #4ea1e0);
+    --caip-state: var(--caip-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--caip-text);
+    background: var(--caip-surface);
+    border: 1px solid var(--caip-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .caip[data-state="step-1"] { --caip-state: #2563eb; }
+  .caip[data-state="step-2"] { --caip-state: #0f766e; }
+  .caip[data-state="step-3"] { --caip-state: #15803d; }
+  .caip[data-state="step-4"] { --caip-state: #6d3bb8; }
+  .caip[data-state="step-5"] { --caip-state: #c2410c; }
+  .caip[data-state="step-6"] { --caip-state: #b45309; }
+  .caip[data-state="step-7"] { --caip-state: #0f8a8a; }
+
+  .caip__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .caip__eyebrow,
+  .caip__panel-eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--caip-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .caip h3,
+  .caip h4,
+  .caip p {
+    margin-top: 0;
+  }
+
+  .caip h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .caip__intro {
+    max-width: 70ch;
+    margin-bottom: 0;
+    color: var(--caip-text-secondary);
+    line-height: 1.6;
+  }
+
+  .caip__progress {
+    flex: 0 0 auto;
+    padding: 0.45rem 0.75rem;
+    color: var(--caip-state);
+    background: color-mix(in srgb, var(--caip-state) 8%, var(--caip-surface));
+    border: 1px solid color-mix(in srgb, var(--caip-state) 30%, var(--caip-border));
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+  }
+
+  .caip__steps {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .caip__step {
+    display: grid;
+    flex: 0 0 auto;
+    justify-items: center;
+    gap: 0.4rem;
+    min-width: 4.3rem;
+    padding: 0.15rem 0.2rem;
+    color: var(--caip-text-tertiary);
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .caip__step:focus-visible {
+    outline: 2px solid var(--caip-accent);
+    outline-offset: 3px;
+  }
+
+  .caip__step-number {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--caip-border);
+    border-radius: 50%;
+    background: var(--caip-surface-soft);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .caip__step-label {
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .caip__step.is-active .caip__step-number {
+    color: #ffffff;
+    background: var(--caip-state);
+    border-color: var(--caip-state);
+    transform: scale(1.05);
+  }
+
+  .caip__step.is-active .caip__step-label,
+  .caip__step.is-complete .caip__step-label {
+    color: var(--caip-text);
+  }
+
+  .caip__step.is-complete .caip__step-number {
+    color: var(--caip-state);
+    border-color: var(--caip-state);
+    background: color-mix(in srgb, var(--caip-state) 8%, var(--caip-surface));
+  }
+
+  .caip__connector {
+    flex: 1 1 auto;
+    height: 1px;
+    margin: 0 0.25rem 1.4rem;
+    background: var(--caip-border);
+  }
+
+  .caip__panel {
+    padding: 1.2rem;
+    background: var(--caip-surface-soft);
+    border: 1px solid var(--caip-border);
+    border-left: 4px solid var(--caip-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .caip__panel-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .caip__panel h4 {
+    margin-bottom: 0;
+    color: var(--caip-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .caip__panel-status {
+    color: var(--caip-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .caip__panel-description {
+    max-width: 72ch;
+    margin: 0.65rem 0 0;
+    color: var(--caip-text-secondary);
+    line-height: 1.6;
+  }
+
+  .caip__detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin-top: var(--space-4, 1rem);
+  }
+
+  .caip__detail {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: var(--caip-surface);
+    border: 1px solid var(--caip-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .caip__detail-label {
+    color: var(--caip-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .caip__detail strong {
+    color: var(--caip-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .caip__action {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    margin-top: var(--space-4, 1rem);
+    padding-top: var(--space-4, 1rem);
+    border-top: 1px solid var(--caip-border-soft);
+  }
+
+  .caip__action-icon {
+    flex: 0 0 auto;
+    color: var(--caip-state);
+    font-weight: 700;
+  }
+
+  .caip__action p {
+    margin: 0;
+    color: var(--caip-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .caip__footer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4, 1rem);
+    margin-top: var(--space-4, 1rem);
+  }
+
+  .caip__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    min-width: 0;
+    padding: 0.85rem 0.95rem;
+    background: var(--caip-surface);
+    border: 1px solid var(--caip-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .caip__principle-mark {
+    flex: 0 0 auto;
+    color: var(--caip-state);
+    font-weight: 800;
+  }
+
+  .caip__principle p {
+    margin: 0;
+    color: var(--caip-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .caip__controls {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 0.5rem;
+  }
+
+  .caip__control {
+    min-width: 5.5rem;
+    padding: 0.6rem 0.85rem;
+    color: var(--caip-text-secondary);
+    background: var(--caip-surface);
+    border: 1px solid var(--caip-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .caip__control:hover:not(:disabled) {
+    border-color: var(--caip-accent);
+  }
+
+  .caip__control:focus-visible {
+    outline: 2px solid var(--caip-accent);
+    outline-offset: 2px;
+  }
+
+  .caip__control:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .caip__control--primary {
+    color: #ffffff;
+    background: var(--caip-state);
+    border-color: var(--caip-state);
+  }
+
+  .caip__control--primary:hover:not(:disabled) {
+    filter: brightness(0.96);
+  }
+
+  @media (max-width: 960px) {
+    .caip__steps {
+      overflow-x: auto;
+      padding-bottom: 0.25rem;
+    }
+
+    .caip__step {
+      min-width: 4.6rem;
+    }
+
+    .caip__connector {
+      min-width: 1.3rem;
+    }
+
+    .caip__detail-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .caip {
+      padding: 1rem;
+    }
+
+    .caip__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .caip__progress {
+      justify-self: start;
+    }
+
+    .caip__footer {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .caip__controls {
+      justify-content: flex-end;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .caip__step-number {
+      transition: none;
+    }
+  }
+</style>
