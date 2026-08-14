@@ -1,0 +1,840 @@
+---
+/*
+ * ConditionalAccessPolicyResults.astro
+ *
+ * Purpose:
+ * Clarifies the difference between Conditional Access policy-level
+ * results and the overall sign-in outcome.
+ *
+ * Design:
+ * - Uses the existing SEDS design tokens.
+ * - No internal light/dark theme definitions.
+ * - No hard-coded dark-mode values.
+ * - Self-contained Astro component.
+ * - Keyboard accessible.
+ * - Supports reduced-motion preferences.
+ */
+
+interface Result {
+  key: string;
+  label: string;
+  shortLabel: string;
+  description: string;
+  interpretation: string;
+  question: string;
+}
+
+const results: Result[] = [
+  {
+    key: "success",
+    label: "Success",
+    shortLabel: "Requirement satisfied",
+    description:
+      "The policy applied to the sign-in and its evaluated requirements were satisfied.",
+    interpretation:
+      "This describes the result of this policy. It does not, by itself, prove that the overall sign-in was allowed.",
+    question:
+      "What did this policy require, and was that requirement satisfied?"
+  },
+  {
+    key: "failure",
+    label: "Failure",
+    shortLabel: "Requirement not satisfied",
+    description:
+      "The policy applied to the sign-in, but one or more evaluated requirements were not satisfied.",
+    interpretation:
+      "This identifies an unsatisfied requirement introduced by the policy. Other applicable policies may also contribute to the overall result.",
+    question:
+      "Which requirement introduced by this policy was not satisfied?"
+  },
+  {
+    key: "not-applied",
+    label: "Not applied",
+    shortLabel: "Policy did not match",
+    description:
+      "The policy did not match the sign-in context and therefore was not part of that policy evaluation.",
+    interpretation:
+      "Not applied is not a policy failure. The policy should not be treated as the reason the request was blocked.",
+    question:
+      "Which assignment or condition prevented this policy from applying?"
+  }
+];
+---
+
+<section
+  class="capr"
+  data-capr
+  aria-labelledby="capr-title"
+>
+  <div class="capr__header">
+    <div class="capr__header-copy">
+      <p class="capr__eyebrow">
+        Policy result
+      </p>
+
+      <h3 id="capr-title">
+        What does the Conditional Access result actually mean?
+      </h3>
+
+      <p class="capr__intro">
+        Select a policy result to understand what it tells you—and what it
+        does not tell you—about the overall sign-in.
+      </p>
+    </div>
+
+    <span
+      class="capr__badge"
+      data-badge
+      aria-live="polite"
+    >
+      Choose a result
+    </span>
+  </div>
+
+  <fieldset class="capr__choices">
+    <legend class="capr__legend">
+      Select the policy result
+    </legend>
+
+    {
+      results.map((result, index) => (
+        <label class="capr__choice">
+          <input
+            type="radio"
+            name="conditional-access-policy-result"
+            value={result.key}
+            checked={index === 0}
+          />
+
+          <span
+            class="capr__marker"
+            aria-hidden="true"
+          >
+            <span></span>
+          </span>
+
+          <span class="capr__choice-body">
+            <strong>{result.label}</strong>
+            <span>{result.description}</span>
+            <small>{result.shortLabel}</small>
+          </span>
+        </label>
+      ))
+    }
+  </fieldset>
+
+  <div
+    class="capr__result"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="capr__result-head">
+      <div>
+        <span class="capr__result-kicker">
+          Interpret the result
+        </span>
+
+        <h4 data-title>
+          Success
+        </h4>
+      </div>
+
+      <span
+        class="capr__result-level"
+        data-level
+      >
+        Requirement satisfied
+      </span>
+    </div>
+
+    <p
+      class="capr__result-description"
+      data-description
+    >
+      The policy applied to the sign-in and its evaluated requirements
+      were satisfied.
+    </p>
+
+    <div class="capr__grid">
+      <div class="capr__card">
+        <span class="capr__card-label">
+          What it tells you
+        </span>
+
+        <strong data-interpretation>
+          This describes the result of this policy.
+        </strong>
+      </div>
+
+      <div class="capr__card">
+        <span class="capr__card-label">
+          Ask next
+        </span>
+
+        <strong data-question>
+          What did this policy require, and was that requirement satisfied?
+        </strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="capr__principle">
+    <span
+      class="capr__principle-mark"
+      aria-hidden="true"
+    >
+      →
+    </span>
+
+    <p>
+      <strong>Policy result ≠ overall sign-in result.</strong>
+      Interpret every applicable policy together before deciding why access
+      was allowed, restricted, or blocked.
+    </p>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector("[data-capr]");
+
+  if (root) {
+    const badge = root.querySelector("[data-badge]");
+    const title = root.querySelector("[data-title]");
+    const level = root.querySelector("[data-level]");
+    const description =
+      root.querySelector("[data-description]");
+    const interpretation =
+      root.querySelector("[data-interpretation]");
+    const question =
+      root.querySelector("[data-question]");
+
+    const results = {
+      success: {
+        badge: "SUCCESS · Satisfied",
+        level: "Requirement satisfied",
+        title: "This policy's requirements were satisfied.",
+        description:
+          "The policy applied to the sign-in and its evaluated requirements were satisfied.",
+        interpretation:
+          "This describes the result of this policy. It does not, by itself, prove that the overall sign-in was allowed.",
+        question:
+          "What did this policy require, and was that requirement satisfied?"
+      },
+
+      failure: {
+        badge: "FAILURE · Not satisfied",
+        level: "Requirement not satisfied",
+        title:
+          "This policy applied, but a requirement was not satisfied.",
+        description:
+          "The policy applied to the sign-in, but one or more evaluated requirements were not satisfied.",
+        interpretation:
+          "This identifies an unsatisfied requirement introduced by the policy. Other applicable policies may also contribute to the overall result.",
+        question:
+          "Which requirement introduced by this policy was not satisfied?"
+      },
+
+      "not-applied": {
+        badge: "NOT APPLIED · No match",
+        level: "Policy did not match",
+        title:
+          "This policy was not part of the sign-in evaluation.",
+        description:
+          "The policy did not match the sign-in context and therefore was not part of that policy evaluation.",
+        interpretation:
+          "Not applied is not a policy failure. The policy should not be treated as the reason the request was blocked.",
+        question:
+          "Which assignment or condition prevented this policy from applying?"
+      }
+    };
+
+    root
+      .querySelectorAll(
+        'input[name="conditional-access-policy-result"]'
+      )
+      .forEach((input) => {
+        input.addEventListener("change", (event) => {
+          const value = event.currentTarget.value;
+          const result = results[value];
+
+          if (!result) return;
+
+          root.dataset.state = value;
+
+          if (badge) {
+            badge.textContent = result.badge;
+          }
+
+          if (level) {
+            level.textContent = result.level;
+          }
+
+          if (title) {
+            title.textContent = result.title;
+          }
+
+          if (description) {
+            description.textContent =
+              result.description;
+          }
+
+          if (interpretation) {
+            interpretation.textContent =
+              result.interpretation;
+          }
+
+          if (question) {
+            question.textContent =
+              result.question;
+          }
+        });
+      });
+  }
+</script>
+
+<style>
+  .capr {
+    --capr-surface: var(
+      --surface-primary,
+      #ffffff
+    );
+
+    --capr-surface-soft: var(
+      --surface-secondary,
+      #f8fafc
+    );
+
+    --capr-text: var(
+      --text-primary,
+      #0f172a
+    );
+
+    --capr-text-secondary: var(
+      --text-secondary,
+      #475569
+    );
+
+    --capr-text-tertiary: var(
+      --text-tertiary,
+      #64748b
+    );
+
+    --capr-border: var(
+      --border-default,
+      #dbe3ec
+    );
+
+    --capr-border-soft: var(
+      --border-subtle,
+      #e7edf4
+    );
+
+    --capr-accent: var(
+      --color-accent,
+      #4ea1e0
+    );
+
+    --capr-state: var(
+      --capr-accent
+    );
+
+    width: 100%;
+    margin-block: var(
+      --space-10,
+      2.5rem
+    );
+
+    padding: clamp(
+      1.25rem,
+      3vw,
+      2rem
+    );
+
+    color: var(--capr-text);
+    background: var(--capr-surface);
+
+    border: 1px solid var(--capr-border);
+    border-radius: var(
+      --radius-lg,
+      0.875rem
+    );
+
+    box-shadow: var(
+      --shadow-sm,
+      0 1px 2px rgb(15 23 42 / 0.06)
+    );
+  }
+
+  .capr[data-state="success"] {
+    --capr-state: var(--color-success, #16803c);
+  }
+
+  .capr[data-state="failure"] {
+    --capr-state: var(--color-danger, #dc2626);
+  }
+
+  .capr[data-state="not-applied"] {
+    --capr-state: var(--color-warning, #c2410c);
+  }
+
+  .capr__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .capr__header-copy {
+    min-width: 0;
+  }
+
+  .capr__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--capr-state);
+    font-size: var(
+      --font-size-xs,
+      0.75rem
+    );
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .capr h3,
+  .capr h4,
+  .capr p {
+    margin-top: 0;
+  }
+
+  .capr h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(
+      1.3rem,
+      2vw,
+      1.6rem
+    );
+    line-height: 1.2;
+  }
+
+  .capr__intro {
+    max-width: 70ch;
+    margin-bottom: 0;
+    color: var(--capr-text-secondary);
+    line-height: 1.6;
+  }
+
+  .capr__badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+
+    padding: 0.45rem 0.75rem;
+
+    color: var(--capr-state);
+
+    background: color-mix(
+      in srgb,
+      var(--capr-state) 8%,
+      var(--capr-surface)
+    );
+
+    border: 1px solid color-mix(
+      in srgb,
+      var(--capr-state) 30%,
+      var(--capr-border)
+    );
+
+    border-radius: 999px;
+
+    font-size: var(
+      --font-size-xs,
+      0.75rem
+    );
+
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .capr__choices {
+    display: grid;
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+
+    gap: var(--space-3, 0.75rem);
+
+    margin: 0;
+    padding: 0;
+
+    border: 0;
+  }
+
+  .capr__legend {
+    width: 100%;
+    margin-bottom: 0.75rem;
+
+    color: var(--capr-text);
+
+    font-size: var(
+      --font-size-sm,
+      0.875rem
+    );
+
+    font-weight: 600;
+  }
+
+  .capr__choice {
+    position: relative;
+    display: block;
+    height: 100%;
+
+    padding: 0.95rem;
+
+    color: var(--capr-text);
+
+    background: var(--capr-surface-soft);
+
+    border: 1px solid var(--capr-border);
+
+    border-radius: var(
+      --radius-md,
+      0.65rem
+    );
+
+    cursor: pointer;
+
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .capr__choice:hover {
+    transform: translateY(-1px);
+
+    border-color: var(--capr-accent);
+
+    box-shadow: var(
+      --shadow-sm,
+      0 1px 2px rgb(15 23 42 / 0.06)
+    );
+  }
+
+  .capr__choice:has(
+    input:focus-visible
+  ) {
+    outline: 2px solid var(--capr-accent);
+    outline-offset: 2px;
+  }
+
+  .capr__choice input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .capr__choice:has(
+    input:checked
+  ) {
+    border-color: var(--capr-state);
+
+    background: color-mix(
+      in srgb,
+      var(--capr-state) 8%,
+      var(--capr-surface)
+    );
+
+    box-shadow:
+      inset 0 0 0 1px var(--capr-state),
+      var(
+        --shadow-sm,
+        0 1px 2px rgb(15 23 42 / 0.06)
+      );
+  }
+
+  .capr__marker {
+    display: grid;
+
+    width: 1.15rem;
+    height: 1.15rem;
+
+    margin-bottom: 0.7rem;
+
+    place-items: center;
+
+    border: 2px solid var(--capr-text-tertiary);
+
+    border-radius: 50%;
+  }
+
+  .capr__marker span {
+    width: 0.48rem;
+    height: 0.48rem;
+
+    border-radius: 50%;
+  }
+
+  .capr__choice:has(
+    input:checked
+  )
+  .capr__marker {
+    border-color: var(--capr-state);
+  }
+
+  .capr__choice:has(
+    input:checked
+  )
+  .capr__marker span {
+    background: var(--capr-state);
+  }
+
+  .capr__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .capr__choice-body strong {
+    color: var(--capr-text);
+    line-height: 1.3;
+  }
+
+  .capr__choice-body > span {
+    color: var(--capr-text-secondary);
+
+    font-size: var(
+      --font-size-sm,
+      0.875rem
+    );
+
+    line-height: 1.5;
+  }
+
+  .capr__choice-body small {
+    color: var(--capr-text-tertiary);
+
+    font-size: var(
+      --font-size-xs,
+      0.75rem
+    );
+
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .capr__result {
+    margin-top: var(--space-6, 1.5rem);
+
+    padding: 1.2rem;
+
+    background: var(--capr-surface-soft);
+
+    border: 1px solid var(--capr-border);
+
+    border-left: 4px solid var(--capr-state);
+
+    border-radius:
+      0
+      var(--radius-md, 0.65rem)
+      var(--radius-md, 0.65rem)
+      0;
+  }
+
+  .capr__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .capr__result-kicker {
+    display: block;
+
+    margin-bottom: 0.25rem;
+
+    color: var(--capr-text-tertiary);
+
+    font-size: var(
+      --font-size-xs,
+      0.75rem
+    );
+
+    font-weight: 700;
+
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .capr__result h4 {
+    margin-bottom: 0;
+
+    color: var(--capr-text);
+
+    font-size: var(
+      --font-size-lg,
+      1.1rem
+    );
+
+    line-height: 1.3;
+  }
+
+  .capr__result-level {
+    flex: 0 0 auto;
+
+    color: var(--capr-state);
+
+    font-size: var(
+      --font-size-sm,
+      0.875rem
+    );
+
+    font-weight: 600;
+  }
+
+  .capr__result-description {
+    max-width: 72ch;
+
+    margin: 0.65rem 0 0;
+
+    color: var(--capr-text-secondary);
+
+    line-height: 1.6;
+  }
+
+  .capr__grid {
+    display: grid;
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+
+    gap: var(--space-3, 0.75rem);
+
+    margin-top: 1rem;
+  }
+
+  .capr__card {
+    display: grid;
+    gap: 0.35rem;
+
+    padding: 0.9rem;
+
+    background: var(--capr-surface);
+
+    border: 1px solid var(--capr-border-soft);
+
+    border-radius: var(
+      --radius-sm,
+      0.5rem
+    );
+  }
+
+  .capr__card-label {
+    color: var(--capr-text-tertiary);
+
+    font-size: var(
+      --font-size-xs,
+      0.75rem
+    );
+
+    font-weight: 700;
+
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .capr__card strong {
+    color: var(--capr-text-secondary);
+
+    font-size: var(
+      --font-size-sm,
+      0.875rem
+    );
+
+    line-height: 1.55;
+  }
+
+  .capr__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+
+    background: var(--capr-surface);
+
+    border: 1px solid var(--capr-border-soft);
+
+    border-radius: var(
+      --radius-md,
+      0.65rem
+    );
+  }
+
+  .capr__principle-mark {
+    flex: 0 0 auto;
+
+    color: var(--capr-accent);
+
+    font-weight: 800;
+  }
+
+  .capr__principle p {
+    margin: 0;
+
+    color: var(--capr-text-secondary);
+
+    font-size: var(
+      --font-size-sm,
+      0.875rem
+    );
+
+    line-height: 1.55;
+  }
+
+  @media (max-width: 800px) {
+    .capr__choices {
+      grid-template-columns: 1fr;
+    }
+
+    .capr__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .capr {
+      padding: 1rem;
+    }
+
+    .capr__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .capr__badge {
+      justify-self: start;
+    }
+
+    .capr__result-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .capr__choice {
+      transition: none;
+    }
+  }
+</style>
