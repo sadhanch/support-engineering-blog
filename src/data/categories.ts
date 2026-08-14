@@ -91,6 +91,21 @@ export const categories: Category[] = [
 
         order: 4
 
+    },
+
+    {
+    
+        title: "Microsoft Entra",
+
+        description:
+            "Identity, authentication, Conditional Access, sign-in troubleshooting and security.",
+
+        slug: "microsoft-entra",
+
+        featured: true,
+
+        order: 5
+    
     }
 
 ];
