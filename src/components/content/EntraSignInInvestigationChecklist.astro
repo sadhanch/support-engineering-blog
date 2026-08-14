@@ -1,0 +1,625 @@
+---
+/*
+ * EntraSignInInvestigationChecklist.astro
+ *
+ * Purpose:
+ * Turns the sign-in investigation checklist into a guided, evidence-first
+ * workflow administrators and SOC analysts can use while reviewing an event.
+ *
+ * Self-contained Astro component.
+ */
+---
+
+<section
+  class="esic"
+  data-esic
+  aria-labelledby="esic-title"
+>
+  <div class="esic__header">
+    <div>
+      <p class="esic__eyebrow">Investigation checklist</p>
+
+      <h3 id="esic-title">
+        Walk through the sign-in event
+      </h3>
+
+      <p class="esic__intro">
+        Use the checklist to make sure the important evidence is captured before
+        you decide what happened or escalate the incident.
+      </p>
+    </div>
+
+    <span class="esic__progress" data-progress aria-live="polite">
+      1 of 12
+    </span>
+  </div>
+
+  <div class="esic__track" aria-hidden="true">
+    <div class="esic__track-fill" data-track-fill></div>
+  </div>
+
+  <div class="esic__panel" data-panel aria-live="polite" aria-atomic="true">
+    <div class="esic__panel-head">
+      <div>
+        <span class="esic__step-label" data-step-label>
+          Step 1
+        </span>
+
+        <h4 data-question>
+          Who attempted the sign-in?
+        </h4>
+      </div>
+
+      <span class="esic__category" data-category>
+        WHO · Identity
+      </span>
+    </div>
+
+    <p class="esic__guidance" data-guidance>
+      Establish which identity initiated the event before interpreting the
+      remaining fields.
+    </p>
+
+    <div class="esic__evidence">
+      <div class="esic__evidence-card">
+        <span>Check</span>
+        <strong data-check>
+          User, account type, or workload identity
+        </strong>
+      </div>
+
+      <div class="esic__evidence-card">
+        <span>Capture</span>
+        <strong data-capture>
+          Identity details and event timestamp
+        </strong>
+      </div>
+
+      <div class="esic__evidence-card">
+        <span>Why it matters</span>
+        <strong data-why>
+          Confirms who or what initiated the access request.
+        </strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="esic__status">
+    <button
+      type="button"
+      class="esic__toggle"
+      data-toggle
+      aria-pressed="false"
+    >
+      Mark this step complete
+    </button>
+
+    <span class="esic__completion" data-completion>
+      0 of 12 completed
+    </span>
+  </div>
+
+  <div class="esic__controls">
+    <button
+      type="button"
+      class="esic__control"
+      data-prev
+      disabled
+    >
+      Previous
+    </button>
+
+    <button
+      type="button"
+      class="esic__control esic__control--primary"
+      data-next
+    >
+      Next
+    </button>
+  </div>
+
+  <div class="esic__principle">
+    <span aria-hidden="true">✓</span>
+
+    <p>
+      <strong>Capture before conclusion.</strong>
+      A sign-in event becomes useful when the fields are read together rather
+      than interpreted one at a time.
+    </p>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector("[data-esic]");
+
+  if (root) {
+    const progress = root.querySelector("[data-progress]");
+    const trackFill = root.querySelector("[data-track-fill]");
+    const stepLabel = root.querySelector("[data-step-label]");
+    const question = root.querySelector("[data-question]");
+    const category = root.querySelector("[data-category]");
+    const guidance = root.querySelector("[data-guidance]");
+    const check = root.querySelector("[data-check]");
+    const capture = root.querySelector("[data-capture]");
+    const why = root.querySelector("[data-why]");
+    const toggle = root.querySelector("[data-toggle]");
+    const completion = root.querySelector("[data-completion]");
+    const previousButton = root.querySelector("[data-prev]");
+    const nextButton = root.querySelector("[data-next]");
+
+    const steps = [
+      {
+        category: "WHO · Identity",
+        question: "Who attempted the sign-in?",
+        guidance:
+          "Establish which identity initiated the event before interpreting the remaining fields.",
+        check: "User, account type, or workload identity",
+        capture: "Identity details and event timestamp",
+        why: "Confirms who or what initiated the access request."
+      },
+      {
+        category: "WHAT · Target",
+        question: "What were they trying to access?",
+        guidance:
+          "Identify the application and resource involved in the request.",
+        check: "Application, Application ID, Resource, Resource ID",
+        capture: "Target application, resource, and tenant context",
+        why: "Shows what the identity was actually trying to access."
+      },
+      {
+        category: "HOW · Client",
+        question: "Which client was used?",
+        guidance:
+          "Determine which client category initiated the request and whether it matches expectations.",
+        check: "Client app",
+        capture: "Client category and any legacy authentication signal",
+        why: "Helps distinguish modern client activity from legacy paths."
+      },
+      {
+        category: "HOW · Protocol",
+        question: "Which authentication protocol was used?",
+        guidance:
+          "Inspect the authentication protocol or grant type to understand the authentication path.",
+        check: "Authentication protocol",
+        capture: "Protocol or grant type used by the request",
+        why: "Separates normal modern flows from unexpected or legacy authentication paths."
+      },
+      {
+        category: "RESULT · Outcome",
+        question: "What was the Status and Error code?",
+        guidance:
+          "Start with the outcome, then use the error information to narrow the investigation.",
+        check: "Status, Error code, Failure reason, Additional details",
+        capture: "Exact result and error information",
+        why: "Provides the first strong clue about why the request succeeded or failed."
+      },
+      {
+        category: "HOW · Authentication",
+        question: "What happened in Authentication details?",
+        guidance:
+          "Review the authentication sequence instead of assuming that a requirement being present means it was satisfied.",
+        check: "Authentication requirement and Authentication details",
+        capture: "Methods attempted, methods satisfied, and failure reasons",
+        why: "Shows what actually happened during authentication."
+      },
+      {
+        category: "WHERE · Device",
+        question: "What device was evaluated?",
+        guidance:
+          "Use the device information to understand the device state visible to Microsoft Entra.",
+        check: "Device ID, compliance, managed state, trust type, OS, browser",
+        capture: "Device identity and relevant state",
+        why: "Helps explain device-based access requirements and anomalies."
+      },
+      {
+        category: "WHERE · Location",
+        question: "What location or IP was evaluated?",
+        guidance:
+          "Check the network context Microsoft Entra actually saw, especially when VPNs or proxies are involved.",
+        check: "IP address, location, named network context",
+        capture: "Evaluated IP and geographic context",
+        why: "Helps explain network-based policy decisions and unusual access patterns."
+      },
+      {
+        category: "WHY · Conditional Access",
+        question: "Which Conditional Access policies applied?",
+        guidance:
+          "Identify the policies that influenced this sign-in and the requirements they introduced.",
+        check: "Applied policies, results, conditions, grant and session controls",
+        capture: "Policy results and the unmet requirement, if any",
+        why: "Connects the sign-in evidence to the access-control decision."
+      },
+      {
+        category: "WHY · Risk",
+        question: "Was the sign-in considered risky?",
+        guidance:
+          "Review available sign-in risk signals and states when the incident has a security dimension.",
+        check: "Risk level, risk state, risk detail, risk events",
+        capture: "Applicable risk indicators and state",
+        why: "Helps prioritize suspicious activity and explain risk-based controls."
+      },
+      {
+        category: "CORRELATE",
+        question: "What Correlation ID and Request ID are available?",
+        guidance:
+          "Capture event identifiers before closing or escalating the investigation.",
+        check: "Correlation ID, Request ID, timestamp",
+        capture: "Identifiers needed to find related events or support escalation",
+        why: "Provides a way to connect the event to related requests and evidence."
+      },
+      {
+        category: "CORRELATE · Next",
+        question: "What related events should be correlated?",
+        guidance:
+          "Look for supporting events that confirm, explain, or expand the original sign-in.",
+        check: "Nearby events, related identities, resources, clients, and timestamps",
+        capture: "Supporting events and investigation notes",
+        why: "Turns a single log record into a wider evidence chain."
+      }
+    ];
+
+    const completed = new Set();
+    let current = 0;
+
+    const render = () => {
+      const step = steps[current];
+      const total = steps.length;
+      const completedCount = completed.size;
+
+      stepLabel.textContent = `Step ${current + 1}`;
+      question.textContent = step.question;
+      category.textContent = step.category;
+      guidance.textContent = step.guidance;
+      check.textContent = step.check;
+      capture.textContent = step.capture;
+      why.textContent = step.why;
+
+      progress.textContent = `${current + 1} of ${total}`;
+      completion.textContent = `${completedCount} of ${total} completed`;
+
+      const isComplete = completed.has(current);
+
+      toggle.textContent = isComplete
+        ? "Mark this step incomplete"
+        : "Mark this step complete";
+
+      toggle.setAttribute("aria-pressed", String(isComplete));
+      root.dataset.completed = isComplete ? "true" : "false";
+
+      const percentage = (current / (total - 1)) * 100;
+      trackFill.style.width = `${percentage}%`;
+
+      previousButton.disabled = current === 0;
+      nextButton.disabled = current === total - 1;
+      nextButton.textContent =
+        current === total - 1 ? "Complete" : "Next";
+    };
+
+    toggle.addEventListener("click", () => {
+      if (completed.has(current)) {
+        completed.delete(current);
+      } else {
+        completed.add(current);
+      }
+
+      render();
+    });
+
+    previousButton.addEventListener("click", () => {
+      if (current > 0) {
+        current -= 1;
+        render();
+      }
+    });
+
+    nextButton.addEventListener("click", () => {
+      if (current < steps.length - 1) {
+        current += 1;
+        render();
+      }
+    });
+
+    render();
+  }
+</script>
+
+<style>
+  .esic {
+    --esic-surface: var(--surface-primary, #ffffff);
+    --esic-surface-soft: var(--surface-secondary, #f8fafc);
+    --esic-text: var(--text-primary, #0f172a);
+    --esic-text-secondary: var(--text-secondary, #475569);
+    --esic-text-tertiary: var(--text-tertiary, #64748b);
+    --esic-border: var(--border-default, #dbe3ec);
+    --esic-border-soft: var(--border-subtle, #e7edf4);
+    --esic-accent: var(--color-accent, #4ea1e0);
+    --esic-state: var(--esic-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--esic-text);
+    background: var(--esic-surface);
+    border: 1px solid var(--esic-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .esic__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--esic-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .esic h3,
+  .esic h4,
+  .esic p {
+    margin-top: 0;
+  }
+
+  .esic__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-5, 1.25rem);
+  }
+
+  .esic h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .esic__intro {
+    max-width: 70ch;
+    margin-bottom: 0;
+    color: var(--esic-text-secondary);
+    line-height: 1.6;
+  }
+
+  .esic__progress {
+    flex: 0 0 auto;
+    padding: 0.45rem 0.75rem;
+    color: var(--esic-state);
+    background: color-mix(in srgb, var(--esic-state) 8%, var(--esic-surface));
+    border: 1px solid color-mix(in srgb, var(--esic-state) 30%, var(--esic-border));
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+  }
+
+  .esic__track {
+    width: 100%;
+    height: 0.35rem;
+    margin-bottom: var(--space-6, 1.5rem);
+    overflow: hidden;
+    background: var(--esic-border-soft);
+    border-radius: 999px;
+  }
+
+  .esic__track-fill {
+    width: 0;
+    height: 100%;
+    background: var(--esic-state);
+    border-radius: inherit;
+    transition: width 180ms ease;
+  }
+
+  .esic__panel {
+    padding: 1.2rem;
+    background: var(--esic-surface-soft);
+    border: 1px solid var(--esic-border);
+    border-left: 4px solid var(--esic-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .esic__panel-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .esic__step-label {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--esic-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .esic h4 {
+    margin-bottom: 0;
+    color: var(--esic-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .esic__category {
+    flex: 0 0 auto;
+    color: var(--esic-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .esic__guidance {
+    max-width: 72ch;
+    margin: 0.65rem 0 0;
+    color: var(--esic-text-secondary);
+    line-height: 1.6;
+  }
+
+  .esic__evidence {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin-top: var(--space-4, 1rem);
+  }
+
+  .esic__evidence-card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: var(--esic-surface);
+    border: 1px solid var(--esic-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .esic__evidence-card span {
+    color: var(--esic-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .esic__evidence-card strong {
+    color: var(--esic-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .esic__status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .esic__toggle {
+    padding: 0.55rem 0.8rem;
+    color: var(--esic-state);
+    background: color-mix(in srgb, var(--esic-state) 8%, var(--esic-surface));
+    border: 1px solid color-mix(in srgb, var(--esic-state) 30%, var(--esic-border));
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .esic__toggle:hover {
+    border-color: var(--esic-state);
+  }
+
+  .esic__toggle:focus-visible,
+  .esic__control:focus-visible {
+    outline: 2px solid var(--esic-accent);
+    outline-offset: 2px;
+  }
+
+  .esic__completion {
+    color: var(--esic-text-tertiary);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .esic[data-completed="true"] .esic__toggle {
+    color: #ffffff;
+    background: var(--esic-state);
+    border-color: var(--esic-state);
+  }
+
+  .esic__controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .esic__control {
+    min-width: 5.5rem;
+    padding: 0.6rem 0.85rem;
+    color: var(--esic-text-secondary);
+    background: var(--esic-surface);
+    border: 1px solid var(--esic-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .esic__control:hover:not(:disabled) {
+    border-color: var(--esic-accent);
+  }
+
+  .esic__control:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .esic__control--primary {
+    color: #ffffff;
+    background: var(--esic-state);
+    border-color: var(--esic-state);
+  }
+
+  .esic__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--esic-surface);
+    border: 1px solid var(--esic-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .esic__principle > span {
+    flex: 0 0 auto;
+    color: var(--esic-state);
+    font-weight: 800;
+  }
+
+  .esic__principle p {
+    margin: 0;
+    color: var(--esic-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 800px) {
+    .esic__evidence {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .esic {
+      padding: 1rem;
+    }
+
+    .esic__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .esic__progress {
+      justify-self: start;
+    }
+
+    .esic__panel-head {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .esic__status {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .esic__track-fill {
+      transition: none;
+    }
+  }
+</style>
