@@ -1,0 +1,947 @@
+---
+/*
+ * ArticleImageLightbox.astro
+ *
+ * Purpose:
+ * Presents information-dense article images at normal article width while
+ * allowing readers to open the image in an accessible, viewport-sized
+ * lightbox for closer inspection.
+ *
+ * Design:
+ * - Uses the existing SEDS theme tokens.
+ * - No internal light/dark theme definitions.
+ * - No hard-coded dark-mode styling.
+ * - Accessible native <dialog> modal.
+ * - Supports Escape, backdrop click, zoom in/out, reset and close.
+ * - Keeps the original image alt text.
+ * - Zoom uses a real scrollable stage so the entire enlarged image remains
+ *   reachable instead of being visually clipped by the viewport.
+ * - No branding or watermark is added.
+ */
+
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  width?: number | string;
+  height?: number | string;
+  loading?: "eager" | "lazy";
+  className?: string;
+}
+
+const {
+  src,
+  alt,
+  caption,
+  width,
+  height,
+  loading = "lazy",
+  className = ""
+} = Astro.props;
+
+const dialogId = `ailb-${Astro.id}`;
+---
+
+<figure
+  class:list={[
+    "ailb",
+    className
+  ]}
+  data-ailb
+>
+  <button
+    type="button"
+    class="ailb__trigger"
+    data-open
+    aria-label={`Open image: ${alt}`}
+    aria-controls={dialogId}
+    aria-haspopup="dialog"
+  >
+    <img
+      src={src}
+      alt={alt}
+      loading={loading}
+      width={width}
+      height={height}
+      class="ailb__image"
+    />
+
+    <span
+      class="ailb__hint"
+      aria-hidden="true"
+    >
+      View larger
+    </span>
+  </button>
+
+  {caption && (
+    <figcaption class="ailb__caption">
+      {caption}
+    </figcaption>
+  )}
+
+  <dialog
+    id={dialogId}
+    class="ailb__dialog"
+    data-dialog
+    aria-label={`Expanded image: ${alt}`}
+  >
+    <div class="ailb__modal">
+      <header class="ailb__toolbar">
+        <span class="ailb__toolbar-title">
+          Image detail
+        </span>
+
+        <div class="ailb__controls">
+          <button
+            type="button"
+            class="ailb__control"
+            data-zoom-out
+            aria-label="Zoom out"
+          >
+            −
+          </button>
+
+          <span
+            class="ailb__zoom"
+            data-zoom-label
+            aria-live="polite"
+          >
+            100%
+          </span>
+
+          <button
+            type="button"
+            class="ailb__control"
+            data-zoom-in
+            aria-label="Zoom in"
+          >
+            +
+          </button>
+
+          <button
+            type="button"
+            class="ailb__control ailb__control--reset"
+            data-reset
+            aria-label="Reset image zoom"
+          >
+            Reset
+          </button>
+
+          <button
+            type="button"
+            class="ailb__control ailb__control--close"
+            data-close
+            aria-label="Close image"
+          >
+            ✕
+          </button>
+        </div>
+      </header>
+
+      <div
+        class="ailb__viewport"
+        data-viewport
+      >
+        <div
+          class="ailb__stage"
+          data-stage
+        >
+          <img
+            src={src}
+            alt={alt}
+            class="ailb__expanded"
+            data-expanded
+            draggable="false"
+          />
+        </div>
+      </div>
+
+      {caption && (
+        <p class="ailb__modal-caption">
+          {caption}
+        </p>
+      )}
+    </div>
+  </dialog>
+</figure>
+
+<script>
+  document
+    .querySelectorAll("[data-ailb]")
+    .forEach((root) => {
+      const dialog =
+        root.querySelector("[data-dialog]");
+
+      const openButton =
+        root.querySelector("[data-open]");
+
+      const closeButton =
+        root.querySelector("[data-close]");
+
+      const viewport =
+        root.querySelector("[data-viewport]");
+
+      const stage =
+        root.querySelector("[data-stage]");
+
+      const expandedImage =
+        root.querySelector("[data-expanded]");
+
+      const zoomIn =
+        root.querySelector("[data-zoom-in]");
+
+      const zoomOut =
+        root.querySelector("[data-zoom-out]");
+
+      const resetButton =
+        root.querySelector("[data-reset]");
+
+      const zoomLabel =
+        root.querySelector("[data-zoom-label]");
+
+      if (
+        !(dialog instanceof HTMLDialogElement) ||
+        !(openButton instanceof HTMLButtonElement) ||
+        !(closeButton instanceof HTMLButtonElement) ||
+        !(viewport instanceof HTMLElement) ||
+        !(stage instanceof HTMLElement) ||
+        !(expandedImage instanceof HTMLImageElement)
+      ) {
+        return;
+      }
+
+      const MIN_ZOOM = 1;
+      const MAX_ZOOM = 3;
+      const STEP = 0.25;
+      const PADDING = 32;
+
+      let zoom = 1;
+      let baseScale = 1;
+
+      const updateControls = () => {
+        if (zoomLabel) {
+          zoomLabel.textContent =
+            `${Math.round(zoom * 100)}%`;
+        }
+
+        if (
+          zoomOut instanceof HTMLButtonElement
+        ) {
+          zoomOut.disabled =
+            zoom <= MIN_ZOOM;
+        }
+
+        if (
+          zoomIn instanceof HTMLButtonElement
+        ) {
+          zoomIn.disabled =
+            zoom >= MAX_ZOOM;
+        }
+      };
+
+      const updateStage = () => {
+        if (
+          !expandedImage.naturalWidth ||
+          !expandedImage.naturalHeight
+        ) {
+          return;
+        }
+
+        const viewportWidth =
+          Math.max(
+            viewport.clientWidth - PADDING,
+            1
+          );
+
+        const viewportHeight =
+          Math.max(
+            viewport.clientHeight - PADDING,
+            1
+          );
+
+        const widthScale =
+          viewportWidth /
+          expandedImage.naturalWidth;
+
+        const heightScale =
+          viewportHeight /
+          expandedImage.naturalHeight;
+
+        baseScale = Math.min(
+          widthScale,
+          heightScale,
+          1
+        );
+
+        const scale =
+          baseScale * zoom;
+
+        stage.style.width =
+          `${expandedImage.naturalWidth * scale}px`;
+
+        stage.style.height =
+          `${expandedImage.naturalHeight * scale}px`;
+
+        expandedImage.style.width = "100%";
+        expandedImage.style.height = "100%";
+
+        updateControls();
+      };
+
+      const resetZoom = () => {
+        zoom = 1;
+
+        viewport.scrollTo({
+          left: 0,
+          top: 0,
+          behavior: "auto"
+        });
+
+        updateStage();
+      };
+
+      const openDialog = () => {
+        dialog.showModal();
+
+        const prepare = () => {
+          resetZoom();
+          closeButton.focus();
+        };
+
+        if (expandedImage.complete) {
+          requestAnimationFrame(prepare);
+        } else {
+          expandedImage.addEventListener(
+            "load",
+            prepare,
+            { once: true }
+          );
+        }
+
+        document.documentElement.classList.add(
+          "ailb-document-locked"
+        );
+      };
+
+      const closeDialog = () => {
+        if (dialog.open) {
+          dialog.close();
+        }
+
+        document.documentElement.classList.remove(
+          "ailb-document-locked"
+        );
+
+        openButton.focus();
+      };
+
+      openButton.addEventListener(
+        "click",
+        openDialog
+      );
+
+      closeButton.addEventListener(
+        "click",
+        closeDialog
+      );
+
+      zoomIn?.addEventListener(
+        "click",
+        () => {
+          zoom = Math.min(
+            MAX_ZOOM,
+            zoom + STEP
+          );
+
+          updateStage();
+        }
+      );
+
+      zoomOut?.addEventListener(
+        "click",
+        () => {
+          zoom = Math.max(
+            MIN_ZOOM,
+            zoom - STEP
+          );
+
+          updateStage();
+        }
+      );
+
+      resetButton?.addEventListener(
+        "click",
+        resetZoom
+      );
+
+      dialog.addEventListener(
+        "click",
+        (event) => {
+          if (
+            event.target === dialog
+          ) {
+            closeDialog();
+          }
+        }
+      );
+
+      dialog.addEventListener(
+        "close",
+        () => {
+          document.documentElement.classList.remove(
+            "ailb-document-locked"
+          );
+        }
+      );
+
+      dialog.addEventListener(
+        "keydown",
+        (event) => {
+          if (
+            event.key === "Escape"
+          ) {
+            closeDialog();
+            return;
+          }
+
+          if (
+            event.key === "+" ||
+            event.key === "="
+          ) {
+            event.preventDefault();
+
+            zoom = Math.min(
+              MAX_ZOOM,
+              zoom + STEP
+            );
+
+            updateStage();
+          }
+
+          if (
+            event.key === "-"
+          ) {
+            event.preventDefault();
+
+            zoom = Math.max(
+              MIN_ZOOM,
+              zoom - STEP
+            );
+
+            updateStage();
+          }
+
+          if (
+            event.key === "0"
+          ) {
+            event.preventDefault();
+            resetZoom();
+          }
+        }
+      );
+
+      viewport.addEventListener(
+        "wheel",
+        (event) => {
+          if (
+            !event.ctrlKey &&
+            !event.metaKey
+          ) {
+            return;
+          }
+
+          event.preventDefault();
+
+          if (event.deltaY < 0) {
+            zoom = Math.min(
+              MAX_ZOOM,
+              zoom + STEP
+            );
+          } else {
+            zoom = Math.max(
+              MIN_ZOOM,
+              zoom - STEP
+            );
+          }
+
+          updateStage();
+        },
+        { passive: false }
+      );
+
+      window.addEventListener(
+        "resize",
+        () => {
+          if (dialog.open) {
+            updateStage();
+          }
+        }
+      );
+
+      if (expandedImage.complete) {
+        updateStage();
+      }
+    });
+</script>
+
+<style>
+  .ailb {
+    --ailb-surface: var(
+      --surface-primary,
+      #ffffff
+    );
+
+    --ailb-surface-soft: var(
+      --surface-secondary,
+      #f8fafc
+    );
+
+    --ailb-text: var(
+      --text-primary,
+      #0f172a
+    );
+
+    --ailb-text-secondary: var(
+      --text-secondary,
+      #475569
+    );
+
+    --ailb-border: var(
+      --border-default,
+      #dbe3ec
+    );
+
+    --ailb-accent: var(
+      --color-accent,
+      #4ea1e0
+    );
+
+    width: 100%;
+    margin-block: var(
+      --space-8,
+      2rem
+    );
+  }
+
+  .ailb__trigger {
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+
+    padding: 0;
+
+    background: transparent;
+
+    border: 0;
+
+    cursor: zoom-in;
+
+    text-align: left;
+  }
+
+  .ailb__image {
+    display: block;
+
+    width: 100%;
+
+    height: auto;
+
+    border: 1px solid var(--ailb-border);
+
+    border-radius: var(
+      --radius-md,
+      0.65rem
+    );
+
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .ailb__trigger:hover
+  .ailb__image,
+  .ailb__trigger:focus-visible
+  .ailb__image {
+    border-color: var(--ailb-accent);
+
+    box-shadow:
+      0 0 0 2px
+      color-mix(
+        in srgb,
+        var(--ailb-accent) 16%,
+        transparent
+      );
+  }
+
+  .ailb__trigger:focus-visible {
+    outline: 2px solid var(--ailb-accent);
+    outline-offset: 4px;
+
+    border-radius: var(
+      --radius-md,
+      0.65rem
+    );
+  }
+
+  .ailb__hint {
+    position: absolute;
+
+    right: 0.75rem;
+    bottom: 0.75rem;
+
+    padding:
+      0.35rem
+      0.55rem;
+
+    color: var(--ailb-text-secondary);
+
+    background: var(--ailb-surface);
+
+    border: 1px solid var(--ailb-border);
+
+    border-radius: 999px;
+
+    font-size: var(
+      --font-size-xs,
+      0.75rem
+    );
+
+    font-weight: 600;
+
+    opacity: 0;
+
+    transition: opacity 160ms ease;
+  }
+
+  .ailb__trigger:hover
+  .ailb__hint,
+  .ailb__trigger:focus-visible
+  .ailb__hint {
+    opacity: 1;
+  }
+
+  .ailb__caption {
+    margin-top: 0.65rem;
+
+    color: var(--ailb-text-secondary);
+
+    font-size: var(
+      --font-size-sm,
+      0.875rem
+    );
+
+    line-height: 1.55;
+
+    text-align: center;
+  }
+
+  .ailb__dialog {
+    width: min(
+      96vw,
+      1400px
+    );
+
+    height: min(
+      94vh,
+      1000px
+    );
+
+    margin: auto;
+
+    padding: 0;
+
+    color: var(--ailb-text);
+
+    background: var(--ailb-surface);
+
+    border: 1px solid var(--ailb-border);
+
+    border-radius: var(
+      --radius-lg,
+      0.875rem
+    );
+
+    overflow: hidden;
+  }
+
+  .ailb__dialog::backdrop {
+    background: color-mix(
+      in srgb,
+      var(--surface-overlay, #0f172a) 78%,
+      transparent
+    );
+
+    backdrop-filter: blur(3px);
+  }
+
+  .ailb__modal {
+    display: grid;
+
+    grid-template-rows:
+      auto
+      minmax(0, 1fr)
+      auto;
+
+    width: 100%;
+    height: 100%;
+  }
+
+  .ailb__toolbar {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 1rem;
+
+    padding:
+      0.7rem
+      0.85rem;
+
+    background: var(--ailb-surface);
+
+    border-bottom: 1px solid var(--ailb-border);
+  }
+
+  .ailb__toolbar-title {
+    color: var(--ailb-text-secondary);
+
+    font-size: var(
+      --font-size-sm,
+      0.875rem
+    );
+
+    font-weight: 600;
+  }
+
+  .ailb__controls {
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.35rem;
+  }
+
+  .ailb__control {
+    min-width: 2.1rem;
+    min-height: 2.1rem;
+
+    padding:
+      0.35rem
+      0.55rem;
+
+    color: var(--ailb-text);
+
+    background: var(--ailb-surface-soft);
+
+    border: 1px solid var(--ailb-border);
+
+    border-radius: var(
+      --radius-sm,
+      0.5rem
+    );
+
+    font: inherit;
+
+    font-size: var(
+      --font-size-sm,
+      0.875rem
+    );
+
+    font-weight: 600;
+
+    cursor: pointer;
+  }
+
+  .ailb__control:hover:not(:disabled),
+  .ailb__control:focus-visible {
+    color: var(--ailb-accent);
+
+    border-color: var(--ailb-accent);
+  }
+
+  .ailb__control:focus-visible {
+    outline: 2px solid var(--ailb-accent);
+
+    outline-offset: 2px;
+  }
+
+  .ailb__control:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.45;
+  }
+
+  .ailb__control--close {
+    color: var(--ailb-text-secondary);
+  }
+
+  .ailb__zoom {
+    min-width: 3.4rem;
+
+    color: var(--ailb-text-secondary);
+
+    font-size: var(
+      --font-size-xs,
+      0.75rem
+    );
+
+    font-variant-numeric: tabular-nums;
+
+    text-align: center;
+  }
+
+  .ailb__viewport {
+    position: relative;
+
+    min-width: 0;
+    min-height: 0;
+
+    padding: 1rem;
+
+    background: var(--ailb-surface-soft);
+
+    overflow: auto;
+
+    overscroll-behavior: contain;
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+      var(--ailb-text-secondary)
+      var(--ailb-surface-soft);
+  }
+
+  .ailb__viewport::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .ailb__viewport::-webkit-scrollbar-track {
+    background: var(--ailb-surface-soft);
+  }
+
+  .ailb__viewport::-webkit-scrollbar-thumb {
+    background: var(--ailb-border);
+
+    border:
+      2px solid
+      var(--ailb-surface-soft);
+
+    border-radius: 999px;
+  }
+
+  .ailb__viewport::-webkit-scrollbar-thumb:hover {
+    background: var(--ailb-text-tertiary, #64748b);
+  }
+
+  .ailb__stage {
+    display: block;
+
+    position: relative;
+
+    margin: 0 auto;
+
+    flex: 0 0 auto;
+  }
+
+  .ailb__expanded {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    max-width: none;
+    max-height: none;
+
+    object-fit: fill;
+
+    user-select: none;
+
+    -webkit-user-drag: none;
+  }
+
+  .ailb__modal-caption {
+    margin: 0;
+
+    padding:
+      0.75rem
+      1rem;
+
+    color: var(--ailb-text-secondary);
+
+    background: var(--ailb-surface);
+
+    border-top: 1px solid var(--ailb-border);
+
+    font-size: var(
+      --font-size-sm,
+      0.875rem
+    );
+
+    line-height: 1.5;
+
+    text-align: center;
+  }
+
+  :global(.ailb-document-locked) {
+    overflow: hidden;
+  }
+
+  @media (max-width: 640px) {
+    .ailb__hint {
+      opacity: 1;
+    }
+
+    .ailb__dialog {
+      width: 100vw;
+      height: 100dvh;
+
+      max-width: none;
+      max-height: none;
+
+      border: 0;
+      border-radius: 0;
+    }
+
+    .ailb__toolbar {
+      padding:
+        0.6rem
+        0.65rem;
+    }
+
+    .ailb__toolbar-title {
+      font-size: var(
+        --font-size-xs,
+        0.75rem
+      );
+    }
+
+    .ailb__controls {
+      gap: 0.25rem;
+    }
+
+    .ailb__control {
+      min-width: 1.9rem;
+      min-height: 1.9rem;
+
+      padding:
+        0.3rem
+        0.45rem;
+    }
+
+    .ailb__viewport {
+      padding: 0.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ailb__image,
+    .ailb__hint {
+      transition: none;
+    }
+  }
+</style>

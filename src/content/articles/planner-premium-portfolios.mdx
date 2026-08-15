@@ -57,6 +57,11 @@ references:
 
 ---
 import PlannerPortfolioFitCheck from "../../components/content/PlannerPortfolioFitCheck.astro";
+import ArticleImageLightbox from "../../components/article/widgets/ArticleImageLightbox.astro";
+import plannerPremiumPortfolioScope from "../../assets/images/articles/planner-premium-portfolios/planner-premium-portfolio-scope.png";
+import portfolioVisibilityToStrategy from "../../assets/images/articles/planner-premium-portfolios/portfolio-visibility-to-strategy.png";
+import enterprisePortfolioReportingArchitecture from "../../assets/images/articles/planner-premium-portfolios/enterprise-portfolio-reporting-architecture.png";
+
 
 A portfolio can mean very different things depending on who is using it.
 
@@ -143,7 +148,10 @@ An organization should not assume:
 
 The workload still needs to be assessed, and the resulting reporting requirement may extend beyond the Planner Portfolio itself.
 
-![Planner Premium Portfolio Scope showing supported Premium projects feeding a consolidated portfolio view, while Planner Basic, Azure DevOps, Project Online, and other PPM systems remain outside the current portfolio model.](../../assets/images/articles/planner-premium-portfolios/planner-premium-portfolio-scope.png)
+<ArticleImageLightbox
+  src={plannerPremiumPortfolioScope.src}
+  alt="Planner Premium Portfolio Scope showing supported Premium projects feeding a consolidated portfolio view, while Planner Basic, Azure DevOps, Project Online, and other PPM systems remain outside the current portfolio model."
+/>
 
 ## Portfolio Visibility vs. Portfolio Governance
 
@@ -190,7 +198,10 @@ That is not a weakness.
 
 It is simply the right way to define their role.
 
-![Three-layer portfolio maturity model showing progression from project execution and portfolio visibility to portfolio governance and strategic portfolio management.](../../assets/images/articles/planner-premium-portfolios/portfolio-visibility-to-strategy.png)
+<ArticleImageLightbox
+  src={portfolioVisibilityToStrategy.src}
+  alt="Three-layer portfolio maturity model showing progression from project execution and portfolio visibility to portfolio governance and strategic portfolio management."
+/>
 
 ## What PMOs Can Realistically Use Portfolios For
 
@@ -353,7 +364,10 @@ The organization does not need one application to perform every function.
 
 It needs clear responsibilities between the layers.
 
-![Enterprise portfolio architecture showing Planner Premium, Azure DevOps, Project Online, ERP, and other execution systems feeding a portfolio reporting layer before information reaches PMO, leadership, and other decision-makers.](../../assets/images/articles/planner-premium-portfolios/enterprise-portfolio-reporting-architecture.png)
+<ArticleImageLightbox
+  src={enterprisePortfolioReportingArchitecture.src}
+  alt="Enterprise portfolio architecture showing Planner Premium, Azure DevOps, Project Online, ERP, and other execution systems feeding a portfolio reporting layer before information reaches PMO, leadership, and other decision-makers."
+/>
 
 ## Portfolio Governance: Questions the PMO Should Answer
 

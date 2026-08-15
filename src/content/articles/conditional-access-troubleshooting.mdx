@@ -61,6 +61,12 @@ references:
 import ComparisonTable from "../../components/content/ComparisonTable.astro";
 import ConditionalAccessTroubleshootingCheck from "../../components/content/ConditionalAccessTroubleshootingCheck.astro";
 import ConditionalAccessInvestigationPath from "../../components/content/ConditionalAccessInvestigationPath.astro";
+import ArticleImageLightbox from "../../components/article/widgets/ArticleImageLightbox.astro";
+import conditionalAccessTroubleshootingMethod from "../../assets/images/articles/conditional-access-troubleshooting/conditional-access-troubleshooting-method.png";
+import conditionalAccessPolicyEvaluation from "../../assets/images/articles/conditional-access-troubleshooting/conditional-access-policy-evaluation.png";
+import conditionalAccessRootCauseMap from "../../assets/images/articles/conditional-access-troubleshooting/conditional-access-root-cause-map.png";
+import conditionalAccessInvestigationTools from "../../assets/images/articles/conditional-access-troubleshooting/conditional-access-investigation-tools.png";
+
 
 A user reports:
 
@@ -92,7 +98,10 @@ Remediation
 
 > **Don't start by asking, "Which policy should I change?" Start by asking, "What did Microsoft Entra evaluate in this exact sign-in?"**
 
-![Conditional Access troubleshooting methodology showing the sequence Symptom, Evidence, Policy, Evaluation, Root Cause, and Remediation.](../../assets/images/articles/conditional-access-troubleshooting/conditional-access-troubleshooting-method.png)
+<ArticleImageLightbox
+  src={conditionalAccessTroubleshootingMethod.src}
+  alt="Conditional Access troubleshooting methodology showing the sequence Symptom, Evidence, Policy, Evaluation, Root Cause, and Remediation."
+/>
 
 ---
 
@@ -188,7 +197,10 @@ You need to determine:
 
 > **Which policies applied, and which requirement remained unsatisfied?**
 
-![Conditional Access policy evaluation showing multiple policies applying to one sign-in, with one failed requirement causing an overall Access Denied result.](../../assets/images/articles/conditional-access-troubleshooting/conditional-access-policy-evaluation.png)
+<ArticleImageLightbox
+  src={conditionalAccessPolicyEvaluation.src}
+  alt="Conditional Access policy evaluation showing multiple policies applying to one sign-in, with one failed requirement causing an overall Access Denied result."
+/>
 
 ---
 
@@ -238,7 +250,10 @@ Once you know which policies applied, classify the unmet requirement.
   ]}
 />
 
-![Conditional Access root-cause map showing device, network and location, authentication strength and context, grant controls, session controls, and client or application requirements as the main areas to investigate when a sign-in is blocked or an action is restricted.](../../assets/images/articles/conditional-access-troubleshooting/conditional-access-root-cause-map.png)
+<ArticleImageLightbox
+  src={conditionalAccessRootCauseMap.src}
+  alt="Conditional Access root-cause map showing device, network and location, authentication strength and context, grant controls, session controls, and client or application requirements as the main areas to investigate when a sign-in is blocked or an action is restricted."
+/>
 
 <ConditionalAccessTroubleshootingCheck />
 
@@ -466,7 +481,10 @@ What actually happened?
 
 None of these replaces the actual sign-in event during a production incident.
 
-![Conditional Access investigation tools comparison showing Report-only for policy testing, What If for policy-scope simulation, and Sign-in Logs and Diagnostics for investigating what actually happened.](../../assets/images/articles/conditional-access-troubleshooting/conditional-access-investigation-tools.png)
+<ArticleImageLightbox
+  src={conditionalAccessInvestigationTools.src}
+  alt="Conditional Access investigation tools comparison showing Report-only for policy testing, What If for policy-scope simulation, and Sign-in Logs and Diagnostics for investigating what actually happened."
+/>
 
 ---
 

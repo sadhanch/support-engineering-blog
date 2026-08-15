@@ -47,6 +47,10 @@ references:
 import ComparisonTable from "../../components/content/ComparisonTable.astro";
 import ConditionalAccessEvaluationModel from "../../components/content/ConditionalAccessEvaluationModel.astro";
 import ConditionalAccessPolicyResults from "../../components/content/ConditionalAccessPolicyResults.astro";
+import ArticleImageLightbox from "../../components/article/widgets/ArticleImageLightbox.astro";
+import conditionalAccessPolicyEvaluationModel from "../../assets/images/articles/conditional-access-policy-evaluation/conditional-access-policy-evaluation-model.png";
+import conditionalAccessMultiplePolicyEvaluation from "../../assets/images/articles/conditional-access-policy-evaluation/conditional-access-multiple-policy-evaluation.png";
+import conditionalAccessEvaluationVsOutcome from "../../assets/images/articles/conditional-access-policy-evaluation/conditional-access-evaluation-vs-outcome.png";
 
 Conditional Access is often described with a simple formula:
 
@@ -80,7 +84,10 @@ That leads to the central idea of this article:
 
 > **Don't ask which Conditional Access policy "won." Ask which policies applied and which requirements remained unsatisfied.**
 
-![Diagram showing the Microsoft Entra Conditional Access policy evaluation model from sign-in context and policy assignments through conditions, applicable policies, grant, block and session controls to the final access outcome.](../../assets/images/articles/conditional-access-policy-evaluation/conditional-access-policy-evaluation-model.png)
+<ArticleImageLightbox
+  src={conditionalAccessPolicyEvaluationModel.src}
+  alt="Diagram showing the Microsoft Entra Conditional Access policy evaluation model from sign-in context and policy assignments through conditions, applicable policies, grant, block and session controls to the final access outcome."
+/>
 
 ---
 
@@ -216,7 +223,10 @@ This is the misconception worth emphasizing:
 
 > **Conditional Access is not about finding the one policy responsible for the decision. It is about understanding the collection of applicable policies.**
 
-![Diagram showing one Microsoft Entra sign-in evaluated against multiple Conditional Access policies, where MFA succeeds, a compliant-device requirement fails, and the combined evaluation results in access being denied.](../../assets/images/articles/conditional-access-policy-evaluation/conditional-access-multiple-policy-evaluation.png)
+<ArticleImageLightbox
+  src={conditionalAccessMultiplePolicyEvaluation.src}
+  alt="Diagram showing one Microsoft Entra sign-in evaluated against multiple Conditional Access policies, where MFA succeeds, a compliant-device requirement fails, and the combined evaluation results in access being denied."
+/>
 
 ---
 
@@ -359,7 +369,10 @@ Session control
 Restricted experience
 ```
 
-![Diagram distinguishing Conditional Access policy evaluation from session controls, showing that access can be granted while session controls can still restrict the user's experience.](../../assets/images/articles/conditional-access-policy-evaluation/conditional-access-evaluation-vs-outcome.png)
+<ArticleImageLightbox
+  src={conditionalAccessEvaluationVsOutcome.src}
+  alt="Diagram distinguishing Conditional Access policy evaluation from session controls, showing that access can be granted while session controls can still restrict the user's experience."
+/>
 
 ---
 

@@ -1,10 +1,9 @@
 ---
 /* ==========================================================
    SEDS — Article Sidebar
-   Purpose: Reader's Toolkit container combining article information and navigation.
+   Purpose: Reader's Toolkit container focused on navigation.
    ========================================================== */
 
-import ArticleInformation from "./widgets/ArticleInformation.astro";
 import NavigationPanel from "./NavigationPanel.astro";
 
 interface Heading {
@@ -19,23 +18,11 @@ interface Heading {
 
 interface Props {
 
-    category: string;
-
-    readingTime: string;
-
-    updated: string;
-
     headings?: Heading[];
 
 }
 
 const {
-
-    category,
-
-    readingTime,
-
-    updated,
 
     headings = []
 
@@ -43,16 +30,6 @@ const {
 ---
 
 <aside class="article-sidebar">
-
-    <ArticleInformation
-
-        category={category}
-
-        readingTime={readingTime}
-
-        updated={updated}
-
-    />
 
     <NavigationPanel
 

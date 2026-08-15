@@ -49,6 +49,10 @@ references:
 ---
 import ComparisonTable from "../../components/content/ComparisonTable.astro";
 import PlannerPremiumAdoptionCheck from "../../components/content/PlannerPremiumAdoptionCheck.astro";
+import ArticleImageLightbox from "../../components/article/widgets/ArticleImageLightbox.astro";
+import plannerPremiumRoleBasedAdoption from "../../assets/images/articles/planner-premium-adoption/planner-premium-role-based-adoption.png";
+import plannerPremiumAdoptionModel from "../../assets/images/articles/planner-premium-adoption/planner-premium-adoption-model.png";
+
 
 Assigning a Premium license is easy.
 
@@ -144,7 +148,10 @@ The important question for each role is:
 
 That question is more useful than teaching every user every Premium feature.
 
-![Planner Premium role-based adoption model showing different responsibilities and focus areas for project managers, contributors, stakeholders, PMOs, and administrators.](../../assets/images/articles/planner-premium-adoption/planner-premium-role-based-adoption.png)
+<ArticleImageLightbox
+  src={plannerPremiumRoleBasedAdoption.src}
+  alt="Planner Premium role-based adoption model showing different responsibilities and focus areas for project managers, contributors, stakeholders, PMOs, and administrators."
+/>
 
 ---
 
@@ -317,7 +324,10 @@ Expand adoption only after the operating model has been tested, refining licensi
 
 This sequence keeps scaling grounded in evidence instead of assumptions.
 
-![Planner Premium adoption model showing the four stages Assess, Pilot, Govern, and Scale as a progression from understanding the current environment to expanding a tested operating model.](../../assets/images/articles/planner-premium-adoption/planner-premium-adoption-model.png)
+<ArticleImageLightbox
+  src={plannerPremiumAdoptionModel.src}
+  alt="Planner Premium adoption model showing the four stages Assess, Pilot, Govern, and Scale as a progression from understanding the current environment to expanding a tested operating model."
+/>
 
 ---
 

@@ -53,6 +53,11 @@ references:
 import ComparisonTable from "../../components/content/ComparisonTable.astro";
 import EntraSignInFieldExplorer from "../../components/content/EntraSignInFieldExplorer.astro";
 import EntraSignInInvestigationChecklist from "../../components/content/EntraSignInInvestigationChecklist.astro";
+import ArticleImageLightbox from "../../components/article/widgets/ArticleImageLightbox.astro";
+import entraSignInEventAnatomy from "../../assets/images/articles/entra-sign-in-logs/entra-sign-in-event-anatomy.png";
+import entraSignInInvestigationFields from "../../assets/images/articles/entra-sign-in-logs/entra-sign-in-investigation-fields.png";
+import entraSignInFieldsReferenceMap from "../../assets/images/articles/entra-sign-in-logs/entra-sign-in-fields-reference-map.png";
+
 
 When an administrator opens a Microsoft Entra sign-in log, the first question is usually:
 
@@ -89,7 +94,10 @@ The goal of this guide is not to explain every field Microsoft can expose.
 
 It is to explain the fields that are most useful when you need to understand **what actually happened**.
 
-![Microsoft Entra sign-in event anatomy showing identity, authentication, device and location, application and resource, Conditional Access and risk, outcome, and correlation identifiers.](../../assets/images/articles/entra-sign-in-logs/entra-sign-in-event-anatomy.png)
+<ArticleImageLightbox
+  src={entraSignInEventAnatomy.src}
+  alt="Microsoft Entra sign-in event anatomy showing identity, authentication, device and location, application and resource, Conditional Access and risk, outcome, and correlation identifiers."
+/>
 
 ---
 
@@ -663,7 +671,10 @@ The strongest investigations correlate:
 
 The goal is to reconstruct the access decision from the available evidence.
 
-![Microsoft Entra sign-in investigation example showing Status, Authentication Details, Device Information, Conditional Access, and Location combining to identify an unmet device compliance requirement.](../../assets/images/articles/entra-sign-in-logs/entra-sign-in-investigation-fields.png)
+<ArticleImageLightbox
+  src={entraSignInInvestigationFields.src}
+  alt="Microsoft Entra sign-in investigation example showing Status, Authentication Details, Device Information, Conditional Access, and Location combining to identify an unmet device compliance requirement."
+/>
 
 ---
 
@@ -815,7 +826,10 @@ This is enough to turn the sign-in event into a structured investigation without
   ]}
 />
 
-![Microsoft Entra sign-in log fields reference map grouping identity, authentication, device and location context, resource, access decision, outcome, and correlation fields.](../../assets/images/articles/entra-sign-in-logs/entra-sign-in-fields-reference-map.png)
+<ArticleImageLightbox
+  src={entraSignInFieldsReferenceMap.src}
+  alt="Microsoft Entra sign-in log fields reference map grouping identity, authentication, device and location context, resource, access decision, outcome, and correlation fields."
+/>
 
 ---
 

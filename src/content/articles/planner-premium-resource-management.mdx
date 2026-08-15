@@ -50,6 +50,10 @@ references:
 ---
 import PlannerPremiumResourceScopeCheck from "../../components/content/PlannerPremiumResourceScopeCheck.astro";
 import ComparisonTable from "../../components/content/ComparisonTable.astro";
+import ArticleImageLightbox from "../../components/article/widgets/ArticleImageLightbox.astro";
+import plannerPremiumResourceVisibility from "../../assets/images/articles/planner-premium-resource-management/planner-premium-resource-visibility.png";
+import plannerPremiumCrossProjectBoundary from "../../assets/images/articles/planner-premium-resource-management/planner-premium-cross-project-boundary.png";
+
 
 Planner Premium includes capabilities that help project managers understand how work is distributed among the people working on a project.
 
@@ -89,7 +93,10 @@ Together, these views help answer:
 
 That is useful project-level resource management.
 
-![Planner Premium resource visibility within a single Premium project, showing People view for workload distribution and Assignments view for task-level effort and assignment details.](../../assets/images/articles/planner-premium-resource-management/planner-premium-resource-visibility.png)
+<ArticleImageLightbox
+  src={plannerPremiumResourceVisibility.src}
+  alt="Planner Premium resource visibility within a single Premium project, showing People view for workload distribution and Assignments view for task-level effort and assignment details."
+/>
 
 ---
 
@@ -231,7 +238,10 @@ But Power BI is not the place where the underlying Planner assignments are manag
 
 > **Power BI can show the combined picture; Planner remains where the project work is managed.**
 
-![Planner Premium project data flowing through Dataverse into Power BI for a consolidated, read-only cross-project resource analysis, while project assignments remain managed in Planner.](../../assets/images/articles/planner-premium-resource-management/planner-premium-cross-project-boundary.png)
+<ArticleImageLightbox
+  src={plannerPremiumCrossProjectBoundary.src}
+  alt="Planner Premium project data flowing through Dataverse into Power BI for a consolidated, read-only cross-project resource analysis, while project assignments remain managed in Planner."
+/>
 
 ---
 

@@ -65,6 +65,9 @@ references:
 ---
 import PlannerPremiumLicenseFitCheck from "../../components/content/PlannerPremiumLicenseFitCheck.astro";
 import ComparisonTable from "../../components/content/ComparisonTable.astro";
+import ArticleImageLightbox from "../../components/article/widgets/ArticleImageLightbox.astro";
+import onePremiumProjectDifferentLicensingNeeds from "../../assets/images/articles/planner-premium-licensing/01_one_premium_project_different_licensing_needs.png";
+import plannerLicensingLayers from "../../assets/images/articles/planner-premium-licensing/02_planner_licensing_layers.png";
 
 When an organization introduces Planner Premium, one of the first questions is:
 
@@ -245,7 +248,10 @@ But administering Premium licenses does not, by itself, mean an administrator ne
 
 Again, the user's actual responsibilities determine the capability requirement.
 
-![A single Planner Premium project connecting five roles—Project Manager, Project Lead, Contributor, Stakeholder, and PMO Representative—showing that each role can have different responsibilities and licensing requirements.](../../assets/images/articles/planner-premium-licensing/01_one_premium_project_different_licensing_needs.png)
+<ArticleImageLightbox
+  src={onePremiumProjectDifferentLicensingNeeds.src}
+  alt="A single Planner Premium project connecting five roles—Project Manager, Project Lead, Contributor, Stakeholder, and PMO Representative—showing that each role can have different responsibilities and licensing requirements."
+/>
 
 ## 3. The Same Project Can Have Different Licensing Needs
 
@@ -637,8 +643,10 @@ Reclaim
 
 <PlannerPremiumLicenseFitCheck />
 
-
-![Three-layer Planner licensing model showing how plan type, user subscription, and available capabilities combine to determine what a user can access and manage.](../../assets/images/articles/planner-premium-licensing/02_planner_licensing_layers.png)
+<ArticleImageLightbox
+  src={plannerLicensingLayers.src}
+  alt="Three-layer Planner licensing model showing how plan type, user subscription, and available capabilities combine to determine what a user can access and manage."
+/>
 
 This is the difference between **license assignment** and **licensing governance**.
 

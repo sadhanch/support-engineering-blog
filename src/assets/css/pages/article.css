@@ -70,6 +70,40 @@
 
 }
 
+.article-header-metadata {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: baseline;
+
+    gap: var(--space-5) var(--space-8);
+
+    margin-top: var(--space-6);
+
+}
+
+.article-header-metadata .metadata-item {
+
+    display: flex;
+
+    flex-direction: row;
+
+    align-items: baseline;
+
+    gap: var(--space-2);
+
+}
+
+.article-header-metadata .metadata-value {
+
+    color: var(--text-primary);
+
+    font-weight: var(--font-weight-medium);
+
+}
+
 
 /* ==========================================================
    Article Layout
@@ -102,6 +136,68 @@
 
     align-self: start;
 
+    max-height: calc(100vh - 7rem);
+
+    min-height: 0;
+
+}
+
+.article-sidebar--desktop .article-sidebar,
+.article-sidebar--desktop .panel {
+
+    min-height: 0;
+
+}
+
+.article-sidebar--desktop .panel {
+
+    display: flex;
+
+    flex-direction: column;
+
+    max-height: calc(100vh - 7rem);
+
+}
+
+.article-sidebar--desktop .panel__content {
+
+    display: flex;
+
+    flex: 1 1 auto;
+
+    flex-direction: column;
+
+    min-height: 0;
+
+    overflow: hidden;
+
+}
+
+.article-sidebar--desktop .navigation-scroll {
+
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    overflow-y: auto;
+
+    padding-right: var(--space-2);
+
+    padding-bottom: var(--space-4);
+
+    scrollbar-width: thin;
+    
+    scrollbar-color:
+
+        var(--text-tertiary)
+        var(--surface-secondary);
+
+}
+
+.article-sidebar--desktop .reading-progress {
+
+    flex: 0 0 auto;
+
 }
 
 
@@ -110,6 +206,7 @@
    ----------------------------------------------------------
    Hidden by default.
    Displayed only at the mobile breakpoint.
+   The mobile toolkit remains part of normal document flow.
    ========================================================== */
 
 .article-sidebar--mobile {
@@ -158,4 +255,68 @@
 
     }
 
+    .article-sidebar--mobile .panel {
+
+        max-height: none;
+
+    }
+
+    .article-sidebar--mobile .panel__content {
+
+        overflow: visible;
+
+    }
+
+    .article-sidebar--mobile .navigation-scroll {
+
+        max-height: none;
+
+        overflow: visible;
+
+        padding-right: 0;
+
+        padding-bottom: 0;
+
+    }
+
+}
+
+@media (max-width: 640px) {
+
+    .article-header-metadata {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: var(--space-3);
+
+    }
+
+}
+
+/* Navigation scrollbar */
+
+/* Chromium / Edge / Safari */
+.article-navigation-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.article-navigation-scroll::-webkit-scrollbar-track {
+    background: var(--surface-secondary);
+    border-radius: 999px;
+}
+
+.article-navigation-scroll::-webkit-scrollbar-thumb {
+    background: var(--text-tertiary);
+    border-radius: 999px;
+    border: 2px solid var(--surface-secondary);
+}
+
+.article-navigation-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent);
+}
+
+.article-navigation-scroll::-webkit-scrollbar-button {
+    display: none;
 }

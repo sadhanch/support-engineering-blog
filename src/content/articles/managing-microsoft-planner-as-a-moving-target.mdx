@@ -55,6 +55,9 @@ references:
 ---
 import ComparisonTable from "../../components/content/ComparisonTable.astro";
 import PlannerChangeImpactCheck from "../../components/content/PlannerChangeImpactCheck.astro";
+import ArticleImageLightbox from "../../components/article/widgets/ArticleImageLightbox.astro";
+import plannerAdministrationRecord from "../../assets/images/articles/planner-administration/planner-administration-record.png";
+import plannerAdministratorChangeLoop from "../../assets/images/articles/planner-administration/planner-administrator-change-loop.png";
 
 Administrating Planner is different from deploying a traditional application.
 
@@ -137,7 +140,10 @@ This becomes the organization's reference point when Microsoft changes something
 
 It also prevents old training material or internal guidance from quietly becoming the source of confusion.
 
-![Planner administration record showing approved use cases, plan and licensing model, known limitations, integration inventory, governance standards, recent and upcoming changes, ownership, and review information.](../../assets/images/articles/planner-administration/planner-administration-record.png)
+<ArticleImageLightbox
+  src={plannerAdministrationRecord.src}
+  alt="Planner administration record showing approved use cases, plan and licensing model, known limitations, integration inventory, governance standards, recent and upcoming changes, ownership, and review information."
+/>
 
 ---
 
@@ -314,7 +320,10 @@ Sometimes the correct outcome is:
 
 That is still a valid administrative decision.
 
-![Planner administration change loop showing Monitor, Assess, Decide, Update, Communicate, and Review Again as a continuous cycle, with change signals feeding the review and governance, training, documentation, adoption, or no-action decisions as outcomes.](../../assets/images/articles/planner-administration/planner-administrator-change-loop.png)
+<ArticleImageLightbox
+  src={plannerAdministratorChangeLoop.src}
+  alt="Planner administration change loop showing Monitor, Assess, Decide, Update, Communicate, and Review Again as a continuous cycle, with change signals feeding the review and governance, training, documentation, adoption, or no-action decisions as outcomes."
+/>
 
 ---
 

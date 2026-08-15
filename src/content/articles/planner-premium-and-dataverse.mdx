@@ -62,6 +62,10 @@ references:
 import PlannerPremiumIntegrationDependencyCheck from "../../components/content/PlannerPremiumIntegrationDependencyCheck.astro";
 import MilestoneTimeline from "../../components/content/MilestoneTimeline.astro";
 import ComparisonTable from "../../components/content/ComparisonTable.astro";
+import ArticleImageLightbox from "../../components/article/widgets/ArticleImageLightbox.astro";
+import plannerPremiumDataverseReferenceArchitecture from "../../assets/images/articles/planner-premium-and-dataverse/01_planner_premium_dataverse_reference_architecture.png";
+import plannerPremiumIntegrationSurface from "../../assets/images/articles/planner-premium-and-dataverse/02_planner_premium_integration_surface.png";
+import plannerPremiumDataLifecycle from "../../assets/images/articles/planner-premium-and-dataverse/03_planner_premium_data_lifecycle.png";
 
 When a project manager opens Planner Premium, the experience can look familiar.
 
@@ -126,7 +130,10 @@ They represent different service models.
 
 For administrators, that means existing reports, workflows, applications, and integrations should be treated as dependencies to validate rather than assumed to migrate unchanged.
 
-![Reference architecture showing Planner Premium using Dataverse as its project data platform, with Power Automate, Power BI, Power Apps, APIs, and enterprise systems connected around the project workload.](../../assets/images/articles/planner-premium-and-dataverse/01_planner_premium_dataverse_reference_architecture.png)
+<ArticleImageLightbox
+  src={plannerPremiumDataverseReferenceArchitecture.src}
+  alt="Reference architecture showing Planner Premium using Dataverse as its project data platform, with Power Automate, Power BI, Power Apps, APIs, and enterprise systems connected around the project workload."
+/>
 
 ## Where Planner Premium Data Lives
 
@@ -255,7 +262,10 @@ That validation should cover:
 - ownership
 - cross-system dependencies
 
-![Planner Premium at the center of an integration surface connected to Power Automate automation, Power BI reporting, custom applications and APIs, and Microsoft 365 collaboration and data services.](../../assets/images/articles/planner-premium-and-dataverse/02_planner_premium_integration_surface.png)
+<ArticleImageLightbox
+  src={plannerPremiumIntegrationSurface.src}
+  alt="Planner Premium at the center of an integration surface connected to Power Automate automation, Power BI reporting, custom applications and APIs, and Microsoft 365 collaboration and data services."
+/>
 
 The deeper Power BI implementation belongs in a dedicated reporting article.
 
@@ -368,7 +378,10 @@ A key distinction is:
 
 For regulated or sensitive workloads, Legal, Compliance, Records, and Security may need to approve the control model before migration.
 
-![Planner Premium project data lifecycle from creation and Dataverse storage through use, integration, reporting, project closure, and final retention, archival, or deletion.](../../assets/images/articles/planner-premium-and-dataverse/03_planner_premium_data_lifecycle.png)
+<ArticleImageLightbox
+  src={plannerPremiumDataLifecycle.src}
+  alt="Planner Premium project data lifecycle from creation and Dataverse storage through use, integration, reporting, project closure, and final retention, archival, or deletion."
+/>
 
 ## Security, Governance, and Support Ownership
 

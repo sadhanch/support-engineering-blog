@@ -74,6 +74,11 @@ references:
 import ProjectOnlineCapabilityGapCheck from "../../components/content/ProjectOnlineCapabilityGapCheck.astro";
 import MilestoneTimeline from "../../components/content/MilestoneTimeline.astro";
 import ComparisonTable from "../../components/content/ComparisonTable.astro";
+import ArticleImageLightbox from "../../components/article/widgets/ArticleImageLightbox.astro";
+import projectExecutionVsEnterprisePpm from "../../assets/images/articles/planner-premium-isnt-project-online/01_project_execution_vs_enterprise_ppm.png";
+import capabilityGapMap from "../../assets/images/articles/planner-premium-isnt-project-online/02_capability_gap_map.png";
+import decisionFramework from "../../assets/images/articles/project-online-retirement/decision-framework.png";
+
 
 Project Online is scheduled to retire on **September 30, 2026**, which means organizations that still depend on it need to make decisions about their project-management environment.
 
@@ -154,7 +159,10 @@ That gives us the right lens for the rest of the article:
 
 > **What layer of the organization's project-management model are we actually trying to support?**
 
-![Comparison of Planner Premium's structured project execution capabilities with the broader enterprise project portfolio management functions of portfolio, resource, financial, reporting, governance, and strategy management.](../../assets/images/articles/planner-premium-isnt-project-online/01_project_execution_vs_enterprise_ppm.png)
+<ArticleImageLightbox
+  src={projectExecutionVsEnterprisePpm.src}
+  alt="Comparison of Planner Premium's structured project execution capabilities with the broader enterprise project portfolio management functions of portfolio, resource, financial, reporting, governance, and strategy management."
+/>
 
 ---
 
@@ -489,7 +497,10 @@ and more like:
 
 ## 10. The Fit-Gap Assessment
 
-![Evaluating areas while migrating to Planner Premium.](../../assets/images/articles/planner-premium-isnt-project-online/02_capability_gap_map.png)
+<ArticleImageLightbox
+  src={capabilityGapMap.src}
+  alt="Evaluating areas while migrating to Planner Premium."
+/>
 
 This is the part I would want a PMO or administrator to take away and actually use.
 
@@ -624,7 +635,10 @@ It's to discover **where it works and where it doesn't**.
 
 ## 11. Decision Framework
 
-![Enterprise decision framework for choosing between Planner, Planner Premium, Project Server Subscription Edition, and Dynamics 365 Project Operations based on business need, project complexity, resource and financial requirements, governance, integration, adoption, and total cost of ownership.](../../assets/images/articles/project-online-retirement/decision-framework.png)
+<ArticleImageLightbox
+  src={decisionFramework.src}
+  alt="Enterprise decision framework for choosing between Planner, Planner Premium, Project Server Subscription Edition, and Dynamics 365 Project Operations based on business need, project complexity, resource and financial requirements, governance, integration, adoption, and total cost of ownership."
+/>
 
 The objective isn't to find one replacement product.
 

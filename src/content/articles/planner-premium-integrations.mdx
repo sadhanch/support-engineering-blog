@@ -51,6 +51,11 @@ references:
 ---
 import PlannerIntegrationArchitectureCheck from "../../components/content/PlannerIntegrationArchitectureCheck.astro";
 import ComparisonTable from "../../components/content/ComparisonTable.astro";
+import ArticleImageLightbox from "../../components/article/widgets/ArticleImageLightbox.astro";
+import plannerBasicVsPremiumArchitecture from "../../assets/images/articles/planner-premium-integrations/planner-basic-vs-premium-architecture.png";
+import plannerPremiumDataverseEcosystem from "../../assets/images/articles/planner-premium-integrations/planner-premium-dataverse-ecosystem.png";
+import plannerPowerAutomateConnectorBoundary from "../../assets/images/articles/planner-premium-integrations/planner-power-automate-connector-boundary.png";
+
 
 You build a workflow in Power Automate that creates or updates Planner tasks.
 
@@ -108,7 +113,10 @@ The important takeaway is:
 
 The different project architecture creates a different integration surface.
 
-![Comparison of Basic Planner and Premium Planner architectures, showing Basic plans managed through the Planner service and Premium projects backed by Dataverse with structured project data, security, and broader platform integration.](../../assets/images/articles/planner-premium-integrations/planner-basic-vs-premium-architecture.png)
+<ArticleImageLightbox
+  src={plannerBasicVsPremiumArchitecture.src}
+  alt="Comparison of Basic Planner and Premium Planner architectures, showing Basic plans managed through the Planner service and Premium projects backed by Dataverse with structured project data, security, and broader platform integration."
+/>
 
 ## 2. What Is Microsoft Dataverse?
 
@@ -140,7 +148,10 @@ It is to understand why Microsoft uses it:
 
 Microsoft's architecture documentation identifies Dataverse as the data platform for Premium project data and describes Power Platform services such as Power Apps, Power Automate, and Power BI as part of the surrounding ecosystem.
 
-![Planner Premium Dataverse ecosystem showing Premium project data centered in Dataverse and connected to Power Automate, Power Apps, Power BI, Microsoft services, security, relationships, and APIs.](../../assets/images/articles/planner-premium-integrations/planner-premium-dataverse-ecosystem.png)
+<ArticleImageLightbox
+  src={plannerPremiumDataverseEcosystem.src}
+  alt="Planner Premium Dataverse ecosystem showing Premium project data centered in Dataverse and connected to Power Automate, Power Apps, Power BI, Microsoft services, security, relationships, and APIs."
+/>
 
 ## 3. Why the Native Planner Connector Supports Basic Plans Only
 
@@ -178,7 +189,10 @@ The connector's supported integration surface is designed for Basic plans, while
 
 Microsoft also notes that applications and workflows built to interact with Basic plans require modification to work with Premium plans.
 
-![Planner Power Automate connector boundary showing the native Planner connector supporting Basic plans while Premium projects use a Dataverse-backed architecture and require a different integration approach.](../../assets/images/articles/planner-premium-integrations/planner-power-automate-connector-boundary.png)
+<ArticleImageLightbox
+  src={plannerPowerAutomateConnectorBoundary.src}
+  alt="Planner Power Automate connector boundary showing the native Planner connector supporting Basic plans while Premium projects use a Dataverse-backed architecture and require a different integration approach."
+/>
 
 ## 4. What Changes When a Basic Plan Becomes Premium?
 
