@@ -1,0 +1,728 @@
+---
+/*
+ * SignInFieldEvidenceMapper.astro
+ *
+ * Purpose:
+ * Helps administrators move from an investigation question to the
+ * sign-in-log fields that provide useful evidence and the next question
+ * to investigate.
+ *
+ * This component complements EntraSignInFieldExplorer.astro:
+ * - Field Explorer answers: "Which fields should I inspect?"
+ * - Evidence Mapper answers: "What can that evidence tell me, and what
+ *   should I investigate next?"
+ *
+ * Self-contained Astro component.
+ */
+---
+
+<section
+  class="sfem"
+  data-sfem
+  aria-labelledby="sfem-title"
+>
+  <div class="sfem__header">
+    <div class="sfem__header-copy">
+      <p class="sfem__eyebrow">Evidence mapper</p>
+
+      <h3 id="sfem-title">
+        From sign-in field to investigation step
+      </h3>
+
+      <p class="sfem__intro">
+        Select the question you are investigating. The mapper shows the
+        fields to review, what the evidence can tell you, and the question
+        to investigate next.
+      </p>
+    </div>
+
+    <span class="sfem__badge" data-badge aria-live="polite">
+      Choose a question
+    </span>
+  </div>
+
+  <fieldset class="sfem__choices">
+    <legend class="sfem__legend">
+      What are you trying to determine?
+    </legend>
+
+    <label class="sfem__choice">
+      <input
+        type="radio"
+        name="signin-evidence-question"
+        value="failure"
+      />
+      <span class="sfem__marker" aria-hidden="true"><span></span></span>
+
+      <span class="sfem__choice-body">
+        <strong>Did the sign-in fail?</strong>
+        <span>
+          Establish the outcome and identify the first diagnostic clue.
+        </span>
+        <small>RESULT · Status + Error</small>
+      </span>
+    </label>
+
+    <label class="sfem__choice">
+      <input
+        type="radio"
+        name="signin-evidence-question"
+        value="authentication"
+      />
+      <span class="sfem__marker" aria-hidden="true"><span></span></span>
+
+      <span class="sfem__choice-body">
+        <strong>How was the user authenticated?</strong>
+        <span>
+          Determine which authentication requirement and methods were involved.
+        </span>
+        <small>HOW · Authentication</small>
+      </span>
+    </label>
+
+    <label class="sfem__choice">
+      <input
+        type="radio"
+        name="signin-evidence-question"
+        value="context"
+      />
+      <span class="sfem__marker" aria-hidden="true"><span></span></span>
+
+      <span class="sfem__choice-body">
+        <strong>What device and location were involved?</strong>
+        <span>
+          Establish the device and network context associated with the request.
+        </span>
+        <small>WHERE · Device + Location</small>
+      </span>
+    </label>
+
+    <label class="sfem__choice">
+      <input
+        type="radio"
+        name="signin-evidence-question"
+        value="target"
+      />
+      <span class="sfem__marker" aria-hidden="true"><span></span></span>
+
+      <span class="sfem__choice-body">
+        <strong>What was being accessed?</strong>
+        <span>
+          Separate the application involved in the request from the resource being accessed.
+        </span>
+        <small>WHAT · Application + Resource</small>
+      </span>
+    </label>
+
+    <label class="sfem__choice">
+      <input
+        type="radio"
+        name="signin-evidence-question"
+        value="policy"
+      />
+      <span class="sfem__marker" aria-hidden="true"><span></span></span>
+
+      <span class="sfem__choice-body">
+        <strong>Why did policy intervene?</strong>
+        <span>
+          Determine which Conditional Access requirements were introduced and whether they were satisfied.
+        </span>
+        <small>WHY · Conditional Access</small>
+      </span>
+    </label>
+
+    <label class="sfem__choice">
+      <input
+        type="radio"
+        name="signin-evidence-question"
+        value="risk"
+      />
+      <span class="sfem__marker" aria-hidden="true"><span></span></span>
+
+      <span class="sfem__choice-body">
+        <strong>Was the request risky?</strong>
+        <span>
+          Review risk signals that may explain additional policy requirements or investigation priority.
+        </span>
+        <small>RISK · Sign-in Risk</small>
+      </span>
+    </label>
+
+    <label class="sfem__choice">
+      <input
+        type="radio"
+        name="signin-evidence-question"
+        value="correlate"
+      />
+      <span class="sfem__marker" aria-hidden="true"><span></span></span>
+
+      <span class="sfem__choice-body">
+        <strong>How do I correlate this event?</strong>
+        <span>
+          Connect the event with related requests and activity.
+        </span>
+        <small>CORRELATE · Correlation ID + Request ID</small>
+      </span>
+    </label>
+  </fieldset>
+
+  <div
+    class="sfem__result"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="sfem__result-head">
+      <div>
+        <span class="sfem__result-kicker">Investigation path</span>
+        <h4 data-title>Select a question above.</h4>
+      </div>
+
+      <span class="sfem__result-level" data-level>
+        Waiting for selection
+      </span>
+    </div>
+
+    <div class="sfem__evidence-chain" aria-label="Evidence flow">
+      <div class="sfem__evidence-step">
+        <span class="sfem__step-number">01</span>
+        <span class="sfem__step-label">Fields to inspect</span>
+        <strong data-fields>
+          Choose an investigation question
+        </strong>
+      </div>
+
+      <span class="sfem__arrow" aria-hidden="true">→</span>
+
+      <div class="sfem__evidence-step">
+        <span class="sfem__step-number">02</span>
+        <span class="sfem__step-label">Evidence can tell you</span>
+        <strong data-evidence>
+          Select a question to identify the useful evidence.
+        </strong>
+      </div>
+
+      <span class="sfem__arrow" aria-hidden="true">→</span>
+
+      <div class="sfem__evidence-step">
+        <span class="sfem__step-number">03</span>
+        <span class="sfem__step-label">Investigate next</span>
+        <strong data-next>
+          Select a question to see the next step.
+        </strong>
+      </div>
+    </div>
+
+    <p class="sfem__caution" data-caution>
+      Do not draw a conclusion from a single field when the investigation depends on multiple signals.
+    </p>
+  </div>
+
+  <div class="sfem__principle">
+    <span class="sfem__principle-mark" aria-hidden="true">→</span>
+
+    <p>
+      <strong>Evidence should lead to the next question.</strong>
+      Use the relevant fields to establish what happened, then use that
+      evidence to decide where the investigation should go next.
+    </p>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector("[data-sfem]");
+
+  if (root) {
+    const badge = root.querySelector("[data-badge]");
+    const title = root.querySelector("[data-title]");
+    const level = root.querySelector("[data-level]");
+    const fields = root.querySelector("[data-fields]");
+    const evidence = root.querySelector("[data-evidence]");
+    const next = root.querySelector("[data-next]");
+    const caution = root.querySelector("[data-caution]");
+
+    const results = {
+      failure: {
+        badge: "RESULT · Outcome",
+        level: "Confirm the result",
+        title: "Establish whether the request actually failed.",
+        fields:
+          "Status, Error code, Failure reason, Additional details",
+        evidence:
+          "Whether the request succeeded or failed and the first available explanation for the result.",
+        next:
+          "Use the error and event context to determine whether authentication, policy, device, application, or another condition requires investigation.",
+        caution:
+          "An error code narrows the investigation; it does not necessarily identify the root cause."
+      },
+
+      authentication: {
+        badge: "HOW · Authentication",
+        level: "Trace authentication",
+        title: "Understand what authentication actually occurred.",
+        fields:
+          "Authentication requirement, Authentication details, Authentication protocol, Client app",
+        evidence:
+          "Which client and protocol were involved, what requirement applied, and which authentication methods or steps were recorded.",
+        next:
+          "Compare the observed authentication path with the requirement and then inspect Conditional Access if the access decision is unexpected.",
+        caution:
+          "Do not treat 'MFA required' as proof that a particular MFA method was successfully completed."
+      },
+
+      context: {
+        badge: "WHERE · Context",
+        level: "Check the surroundings",
+        title: "Establish the device and network context.",
+        fields:
+          "Device information, IP address, Location, Browser, Operating system, Compliance, Managed state, Trust type",
+        evidence:
+          "What device and network context accompanied the request and whether those signals match the expected access conditions.",
+        next:
+          "Compare the observed context with device, location, and Conditional Access requirements.",
+        caution:
+          "A blank device field or unfamiliar location is a signal to investigate, not a complete diagnosis."
+      },
+
+      target: {
+        badge: "WHAT · Target",
+        level: "Identify the target",
+        title: "Separate the application from the resource.",
+        fields:
+          "Application, Application ID, Resource, Resource ID, Resource Tenant, Resource Service Principal",
+        evidence:
+          "Which application initiated or participated in the flow and which resource was being accessed.",
+        next:
+          "Determine whether the problem is specific to the application, resource, service dependency, or access policy.",
+        caution:
+          "The visible application and the underlying resource are not always the same."
+      },
+
+      policy: {
+        badge: "WHY · Conditional Access",
+        level: "Explain policy intervention",
+        title: "Find the requirement that influenced the access decision.",
+        fields:
+          "Conditional Access, Policy Result, Failure Reason, Requirement, Grant Controls, Report-only Result",
+        evidence:
+          "Which policies applied, which requirements were introduced, and which policy result or requirement explains the observed outcome.",
+        next:
+          "Trace the unmet requirement into device, authentication strength, grant control, Authentication Context, session, or other relevant evidence.",
+        caution:
+          "One policy showing Success does not prove that the overall sign-in succeeded."
+      },
+
+      risk: {
+        badge: "RISK · Security context",
+        level: "Evaluate risk signals",
+        title: "Determine whether risk contributed to the decision.",
+        fields:
+          "Sign-in risk, Aggregated risk, Risk state, Risk detail, Risk event types",
+        evidence:
+          "Risk signals that may explain why a risk-based policy introduced an additional requirement or why the event deserves further investigation.",
+        next:
+          "Compare the risk signals with Conditional Access policy requirements and the rest of the sign-in context.",
+        caution:
+          "Risk is one part of the evidence trail and should be interpreted with identity, device, location, and policy context."
+      },
+
+      correlate: {
+        badge: "CORRELATE · Connect",
+        level: "Link related activity",
+        title: "Connect this event with related requests.",
+        fields:
+          "Correlation ID, Request ID, Session ID, Date / Time (UTC)",
+        evidence:
+          "Identifiers that can help locate related activity or provide useful context during escalation.",
+        next:
+          "Search related events using the identifiers and compare their timing, identity, application, resource, and outcome.",
+        caution:
+          "Retain correlation information when escalating an authentication or access issue."
+      }
+    };
+
+    root
+      .querySelectorAll('input[name="signin-evidence-question"]')
+      .forEach((input) => {
+        input.addEventListener("change", (event) => {
+          const value = event.currentTarget.value;
+          const result = results[value];
+
+          if (!result) return;
+
+          root.dataset.state = value;
+          badge.textContent = result.badge;
+          level.textContent = result.level;
+          title.textContent = result.title;
+          fields.textContent = result.fields;
+          evidence.textContent = result.evidence;
+          next.textContent = result.next;
+          caution.textContent = result.caution;
+        });
+      });
+  }
+</script>
+
+<style>
+  .sfem {
+    --sfem-surface: var(--surface-primary, #ffffff);
+    --sfem-surface-soft: var(--surface-secondary, #f8fafc);
+    --sfem-text: var(--text-primary, #0f172a);
+    --sfem-text-secondary: var(--text-secondary, #475569);
+    --sfem-text-tertiary: var(--text-tertiary, #64748b);
+    --sfem-border: var(--border-default, #dbe3ec);
+    --sfem-border-soft: var(--border-subtle, #e7edf4);
+    --sfem-accent: var(--color-accent, #4ea1e0);
+    --sfem-state: var(--sfem-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--sfem-text);
+    background: var(--sfem-surface);
+    border: 1px solid var(--sfem-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .sfem[data-state="failure"] { --sfem-state: var(--color-error, #dc2626); }
+  .sfem[data-state="authentication"] { --sfem-state: var(--color-accent, #4ea1e0); }
+  .sfem[data-state="context"] { --sfem-state: var(--color-success, #15803d); }
+  .sfem[data-state="target"] { --sfem-state: #0f8a8a; }
+  .sfem[data-state="policy"] { --sfem-state: #c2410c; }
+  .sfem[data-state="risk"] { --sfem-state: #7c3aed; }
+  .sfem[data-state="correlate"] { --sfem-state: #2563eb; }
+
+  .sfem__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .sfem__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--sfem-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .sfem h3,
+  .sfem h4,
+  .sfem p {
+    margin-top: 0;
+  }
+
+  .sfem h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .sfem__intro {
+    max-width: 70ch;
+    margin-bottom: 0;
+    color: var(--sfem-text-secondary);
+    line-height: 1.6;
+  }
+
+  .sfem__badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 0.45rem 0.75rem;
+    color: var(--sfem-state);
+    background: color-mix(
+      in srgb,
+      var(--sfem-state) 8%,
+      var(--sfem-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--sfem-state) 30%,
+      var(--sfem-border)
+    );
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .sfem__choices {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .sfem__legend {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    color: var(--sfem-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .sfem__choice {
+    position: relative;
+    display: block;
+    height: 100%;
+    padding: 0.95rem;
+    background: var(--sfem-surface-soft);
+    border: 1px solid var(--sfem-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .sfem__choice:hover {
+    transform: translateY(-1px);
+    border-color: var(--sfem-accent);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .sfem__choice:has(input:focus-visible) {
+    outline: 2px solid var(--sfem-accent);
+    outline-offset: 2px;
+  }
+
+  .sfem__choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .sfem__choice:has(input:checked) {
+    border-color: var(--sfem-state);
+    background: color-mix(
+      in srgb,
+      var(--sfem-state) 8%,
+      var(--sfem-surface)
+    );
+    box-shadow:
+      inset 0 0 0 1px var(--sfem-state),
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .sfem__marker {
+    display: grid;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-bottom: 0.7rem;
+    border: 2px solid var(--sfem-text-tertiary);
+    border-radius: 50%;
+  }
+
+  .sfem__marker span {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+  }
+
+  .sfem__choice:has(input:checked) .sfem__marker {
+    border-color: var(--sfem-state);
+  }
+
+  .sfem__choice:has(input:checked) .sfem__marker span {
+    background: var(--sfem-state);
+  }
+
+  .sfem__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .sfem__choice-body strong {
+    color: var(--sfem-text);
+    line-height: 1.3;
+  }
+
+  .sfem__choice-body > span {
+    color: var(--sfem-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .sfem__choice-body small {
+    color: var(--sfem-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .sfem__result {
+    margin-top: var(--space-6, 1.5rem);
+    padding: 1.2rem;
+    background: var(--sfem-surface-soft);
+    border: 1px solid var(--sfem-border);
+    border-left: 4px solid var(--sfem-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .sfem__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .sfem__result-kicker {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--sfem-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .sfem__result h4 {
+    margin-bottom: 0;
+    color: var(--sfem-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .sfem__result-level {
+    flex: 0 0 auto;
+    color: var(--sfem-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .sfem__evidence-chain {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: 0.7rem;
+    margin-top: 1rem;
+  }
+
+  .sfem__evidence-step {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+    min-width: 0;
+    padding: 0.95rem;
+    background: var(--sfem-surface);
+    border: 1px solid var(--sfem-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .sfem__step-number {
+    color: var(--sfem-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 800;
+    letter-spacing: 0.05em;
+  }
+
+  .sfem__step-label {
+    color: var(--sfem-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .sfem__evidence-step strong {
+    color: var(--sfem-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .sfem__arrow {
+    align-self: center;
+    color: var(--sfem-state);
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .sfem__caution {
+    margin: 1rem 0 0;
+    padding: 0.8rem 0.9rem;
+    color: var(--sfem-text-secondary);
+    background: var(--sfem-surface);
+    border: 1px solid var(--sfem-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .sfem__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--sfem-surface);
+    border: 1px solid var(--sfem-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .sfem__principle-mark {
+    flex: 0 0 auto;
+    color: var(--sfem-accent);
+    font-weight: 800;
+  }
+
+  .sfem__principle p {
+    margin: 0;
+    color: var(--sfem-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 900px) {
+    .sfem__evidence-chain {
+      grid-template-columns: 1fr;
+    }
+
+    .sfem__arrow {
+      justify-self: center;
+      transform: rotate(90deg);
+    }
+  }
+
+  @media (max-width: 800px) {
+    .sfem__choices {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .sfem {
+      padding: 1rem;
+    }
+
+    .sfem__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .sfem__badge {
+      justify-self: start;
+    }
+
+    .sfem__result-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sfem__choice {
+      transition: none;
+    }
+  }
+</style>

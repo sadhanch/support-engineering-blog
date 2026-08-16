@@ -1,0 +1,713 @@
+---
+/*
+ * ConditionalAccessDecisionPath.astro
+ *
+ * Purpose:
+ * Helps administrators investigate the specific requirement that may remain
+ * unsatisfied after MFA succeeds but access is still denied.
+ *
+ * The component follows the article's evidence-first model:
+ * MFA success → identify what else applied → find the unmet requirement →
+ * investigate the relevant evidence.
+ *
+ * Self-contained Astro component.
+ */
+---
+
+<section
+  class="cadp"
+  data-cadp
+  aria-labelledby="cadp-title"
+>
+  <div class="cadp__header">
+    <div class="cadp__header-copy">
+      <p class="cadp__eyebrow">Troubleshooting path</p>
+
+      <h3 id="cadp-title">
+        MFA succeeded. What should you investigate next?
+      </h3>
+
+      <p class="cadp__intro">
+        Start with the sign-in evidence and select the requirement that may
+        explain why access was still denied.
+      </p>
+    </div>
+
+    <span class="cadp__badge" data-badge aria-live="polite">
+      Start with the evidence
+    </span>
+  </div>
+
+  <div class="cadp__starting-point">
+    <span class="cadp__step-number">01</span>
+
+    <div>
+      <strong>MFA completed successfully</strong>
+      <p>
+        Treat this as one satisfied requirement, not as proof that the overall
+        access decision succeeded.
+      </p>
+    </div>
+  </div>
+
+  <div class="cadp__connector" aria-hidden="true"></div>
+
+  <fieldset class="cadp__choices">
+    <legend class="cadp__legend">
+      What else should you investigate?
+    </legend>
+
+    <label class="cadp__choice">
+      <input
+        type="radio"
+        name="conditional-access-path"
+        value="device"
+      />
+      <span class="cadp__marker" aria-hidden="true">01</span>
+
+      <span class="cadp__choice-body">
+        <strong>Device requirement</strong>
+        <span>
+          Check whether device compliance, management, registration, or join
+          state prevented the request from satisfying the policy.
+        </span>
+        <small>DEVICE · Compliance + Join State</small>
+      </span>
+    </label>
+
+    <label class="cadp__choice">
+      <input
+        type="radio"
+        name="conditional-access-path"
+        value="strength"
+      />
+      <span class="cadp__marker" aria-hidden="true">02</span>
+
+      <span class="cadp__choice-body">
+        <strong>Authentication strength</strong>
+        <span>
+          Determine whether the authentication method that completed MFA also
+          satisfied the strength required by policy.
+        </span>
+        <small>AUTHENTICATION · Method + Strength</small>
+      </span>
+    </label>
+
+    <label class="cadp__choice">
+      <input
+        type="radio"
+        name="conditional-access-path"
+        value="grant"
+      />
+      <span class="cadp__marker" aria-hidden="true">03</span>
+
+      <span class="cadp__choice-body">
+        <strong>Another grant control</strong>
+        <span>
+          Look for additional requirements such as an approved client, app
+          protection, hybrid join, or other combined controls.
+        </span>
+        <small>GRANT CONTROLS · Multiple Requirements</small>
+      </span>
+    </label>
+
+    <label class="cadp__choice">
+      <input
+        type="radio"
+        name="conditional-access-path"
+        value="context"
+      />
+      <span class="cadp__marker" aria-hidden="true">04</span>
+
+      <span class="cadp__choice-body">
+        <strong>Authentication Context</strong>
+        <span>
+          Check whether a sensitive action or resource introduced an
+          additional step-up requirement.
+        </span>
+        <small>CONTEXT · Step-up Requirement</small>
+      </span>
+    </label>
+
+    <label class="cadp__choice">
+      <input
+        type="radio"
+        name="conditional-access-path"
+        value="session"
+      />
+      <span class="cadp__marker" aria-hidden="true">05</span>
+
+      <span class="cadp__choice-body">
+        <strong>Session restriction</strong>
+        <span>
+          First establish whether access was actually denied or whether a
+          session control produced a restricted experience after access.
+        </span>
+        <small>SESSION · Granted + Restricted</small>
+      </span>
+    </label>
+  </fieldset>
+
+  <div
+    class="cadp__result"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="cadp__result-head">
+      <div>
+        <span class="cadp__result-kicker">Investigation focus</span>
+        <h4 data-title>Select an investigation area.</h4>
+      </div>
+
+      <span class="cadp__result-level" data-level>
+        Waiting for selection
+      </span>
+    </div>
+
+    <p class="cadp__result-description" data-description>
+      The next step depends on which requirement may have remained unsatisfied.
+    </p>
+
+    <div class="cadp__grid">
+      <div class="cadp__card">
+        <span class="cadp__card-label">Review</span>
+        <strong data-review>
+          Select an investigation area
+        </strong>
+      </div>
+
+      <div class="cadp__card">
+        <span class="cadp__card-label">Look for</span>
+        <strong data-look>
+          Start with the exact sign-in event and its Conditional Access results.
+        </strong>
+      </div>
+
+      <div class="cadp__card">
+        <span class="cadp__card-label">Avoid</span>
+        <strong data-avoid>
+          Do not change MFA simply because MFA succeeded.
+        </strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="cadp__principle">
+    <span class="cadp__principle-mark" aria-hidden="true">→</span>
+
+    <p>
+      <strong>Find the unmet requirement first.</strong>
+      MFA success is evidence that one requirement was satisfied. Continue
+      through the sign-in evidence until you can identify what prevented the
+      complete access decision from succeeding.
+    </p>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector("[data-cadp]");
+
+  if (root) {
+    const badge = root.querySelector("[data-badge]");
+    const title = root.querySelector("[data-title]");
+    const level = root.querySelector("[data-level]");
+    const description = root.querySelector("[data-description]");
+    const review = root.querySelector("[data-review]");
+    const look = root.querySelector("[data-look]");
+    const avoid = root.querySelector("[data-avoid]");
+
+    const results = {
+      device: {
+        badge: "DEVICE · Compliance",
+        level: "Check device evidence",
+        title: "Determine whether a device requirement failed.",
+        description:
+          "MFA can succeed while a separate device requirement remains unsatisfied.",
+        review:
+          "Device info, compliance state, managed state, registration, join state",
+        look:
+          "A Conditional Access policy requiring a compliant or appropriately joined device, and the device state recorded in the sign-in.",
+        avoid:
+          "Do not remove the MFA requirement when the evidence points to device compliance."
+      },
+
+      strength: {
+        badge: "AUTHENTICATION · Strength",
+        level: "Compare method with policy",
+        title: "Determine whether the MFA method met the required authentication strength.",
+        description:
+          "Completing MFA does not necessarily mean that the authentication method satisfied a stronger policy requirement.",
+        review:
+          "Authentication details, authentication requirement, authentication method, authentication strength",
+        look:
+          "A policy requiring a specific strength such as phishing-resistant MFA and whether the recorded method satisfies it.",
+        avoid:
+          "Do not treat 'MFA completed' as proof that every authentication-strength requirement was satisfied."
+      },
+
+      grant: {
+        badge: "GRANT CONTROLS · Requirements",
+        level: "Check additional controls",
+        title: "Find the other grant control that may have failed.",
+        description:
+          "MFA may be only one of several requirements that must be satisfied.",
+        review:
+          "Conditional Access results, grant controls, device requirements, approved client, app protection",
+        look:
+          "Multiple applicable requirements where one control succeeded but another remained unsatisfied.",
+        avoid:
+          "Do not assume one successful control compensates for another failed control."
+      },
+
+      context: {
+        badge: "CONTEXT · Step-up",
+        level: "Check sensitive actions",
+        title: "Determine whether Authentication Context introduced another requirement.",
+        description:
+          "A user may authenticate normally and encounter an additional requirement only when accessing a protected resource or performing a sensitive action.",
+        review:
+          "Application behavior, Authentication Context, targeted Conditional Access policy, resulting requirement",
+        look:
+          "Whether the expected context was requested and whether a policy introduced the required step-up control.",
+        avoid:
+          "Do not diagnose a sensitive-action failure as a general MFA failure without checking the context."
+      },
+
+      session: {
+        badge: "SESSION · Restricted",
+        level: "Separate denial from restriction",
+        title: "Establish whether access was actually denied.",
+        description:
+          "Some Conditional Access controls affect the session after access has been granted rather than denying the initial sign-in.",
+        review:
+          "Sign-in outcome, session controls, user experience after authentication",
+        look:
+          "Evidence that the request was granted but the resulting session was restricted or required additional authentication.",
+        avoid:
+          "Do not remove an authentication policy when the observed behavior is caused by an intentional session control."
+      }
+    };
+
+    root
+      .querySelectorAll('input[name="conditional-access-path"]')
+      .forEach((input) => {
+        input.addEventListener("change", (event) => {
+          const value = event.currentTarget.value;
+          const result = results[value];
+
+          if (!result) return;
+
+          root.dataset.state = value;
+          badge.textContent = result.badge;
+          level.textContent = result.level;
+          title.textContent = result.title;
+          description.textContent = result.description;
+          review.textContent = result.review;
+          look.textContent = result.look;
+          avoid.textContent = result.avoid;
+        });
+      });
+  }
+</script>
+
+<style>
+  .cadp {
+    --cadp-surface: var(--surface-primary, #ffffff);
+    --cadp-surface-soft: var(--surface-secondary, #f8fafc);
+    --cadp-text: var(--text-primary, #0f172a);
+    --cadp-text-secondary: var(--text-secondary, #475569);
+    --cadp-text-tertiary: var(--text-tertiary, #64748b);
+    --cadp-border: var(--border-default, #dbe3ec);
+    --cadp-border-soft: var(--border-subtle, #e7edf4);
+    --cadp-accent: var(--color-accent, #4ea1e0);
+    --cadp-state: var(--cadp-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--cadp-text);
+    background: var(--cadp-surface);
+    border: 1px solid var(--cadp-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .cadp[data-state="device"] {
+    --cadp-state: var(--color-success, #15803d);
+  }
+
+  .cadp[data-state="strength"] {
+    --cadp-state: var(--color-purple, #6d3bb8);
+  }
+
+  .cadp[data-state="grant"] {
+    --cadp-state: var(--color-warning, #c2410c);
+  }
+
+  .cadp[data-state="context"] {
+    --cadp-state: var(--color-info, #0f8a8a);
+  }
+
+  .cadp[data-state="session"] {
+    --cadp-state: var(--color-danger, #dc2626);
+  }
+
+  .cadp__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .cadp__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--cadp-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .cadp h3,
+  .cadp h4,
+  .cadp p {
+    margin-top: 0;
+  }
+
+  .cadp h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .cadp__intro {
+    max-width: 70ch;
+    margin-bottom: 0;
+    color: var(--cadp-text-secondary);
+    line-height: 1.6;
+  }
+
+  .cadp__badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 0.45rem 0.75rem;
+    color: var(--cadp-state);
+    background: color-mix(
+      in srgb,
+      var(--cadp-state) 8%,
+      var(--cadp-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--cadp-state) 30%,
+      var(--cadp-border)
+    );
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .cadp__starting-point {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 0.9rem;
+    padding: 1rem;
+    background: var(--cadp-surface-soft);
+    border: 1px solid var(--cadp-border);
+    border-left: 4px solid var(--cadp-accent);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .cadp__step-number {
+    display: grid;
+    place-items: center;
+    min-width: 2.2rem;
+    height: 2.2rem;
+    padding-inline: 0.35rem;
+    color: var(--cadp-accent);
+    background: color-mix(
+      in srgb,
+      var(--cadp-accent) 8%,
+      var(--cadp-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--cadp-accent) 30%,
+      var(--cadp-border)
+    );
+    border-radius: 50%;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 800;
+  }
+
+  .cadp__starting-point strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--cadp-text);
+  }
+
+  .cadp__starting-point p {
+    margin: 0;
+    color: var(--cadp-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .cadp__connector {
+    width: 1px;
+    height: 1.25rem;
+    margin-inline: 2rem;
+    background: var(--cadp-border);
+  }
+
+  .cadp__choices {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .cadp__legend {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    color: var(--cadp-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .cadp__choice {
+    position: relative;
+    display: block;
+    height: 100%;
+    padding: 0.95rem;
+    background: var(--cadp-surface-soft);
+    border: 1px solid var(--cadp-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .cadp__choice:hover {
+    transform: translateY(-1px);
+    border-color: var(--cadp-accent);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .cadp__choice:has(input:focus-visible) {
+    outline: 2px solid var(--cadp-accent);
+    outline-offset: 2px;
+  }
+
+  .cadp__choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .cadp__choice:has(input:checked) {
+    border-color: var(--cadp-state);
+    background: color-mix(
+      in srgb,
+      var(--cadp-state) 8%,
+      var(--cadp-surface)
+    );
+    box-shadow:
+      inset 0 0 0 1px var(--cadp-state),
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .cadp__marker {
+    display: grid;
+    place-items: center;
+    width: 1.65rem;
+    height: 1.65rem;
+    margin-bottom: 0.7rem;
+    color: var(--cadp-text-tertiary);
+    background: var(--cadp-surface);
+    border: 1px solid var(--cadp-border);
+    border-radius: 50%;
+    font-size: var(--font-size-xs, 0.7rem);
+    font-weight: 800;
+  }
+
+  .cadp__choice:has(input:checked) .cadp__marker {
+    color: var(--cadp-state);
+    border-color: var(--cadp-state);
+  }
+
+  .cadp__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .cadp__choice-body strong {
+    color: var(--cadp-text);
+    line-height: 1.3;
+  }
+
+  .cadp__choice-body > span {
+    color: var(--cadp-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .cadp__choice-body small {
+    color: var(--cadp-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .cadp__result {
+    margin-top: var(--space-6, 1.5rem);
+    padding: 1.2rem;
+    background: var(--cadp-surface-soft);
+    border: 1px solid var(--cadp-border);
+    border-left: 4px solid var(--cadp-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .cadp__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .cadp__result-kicker {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--cadp-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .cadp__result h4 {
+    margin-bottom: 0;
+    color: var(--cadp-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .cadp__result-level {
+    flex: 0 0 auto;
+    color: var(--cadp-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .cadp__result-description {
+    max-width: 72ch;
+    margin: 0.65rem 0 0;
+    color: var(--cadp-text-secondary);
+    line-height: 1.6;
+  }
+
+  .cadp__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin-top: 1rem;
+  }
+
+  .cadp__card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: var(--cadp-surface);
+    border: 1px solid var(--cadp-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .cadp__card-label {
+    color: var(--cadp-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .cadp__card strong {
+    color: var(--cadp-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .cadp__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--cadp-surface);
+    border: 1px solid var(--cadp-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .cadp__principle-mark {
+    flex: 0 0 auto;
+    color: var(--cadp-accent);
+    font-weight: 800;
+  }
+
+  .cadp__principle p {
+    margin: 0;
+    color: var(--cadp-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 800px) {
+    .cadp__choices {
+      grid-template-columns: 1fr;
+    }
+
+    .cadp__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .cadp {
+      padding: 1rem;
+    }
+
+    .cadp__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .cadp__badge {
+      justify-self: start;
+    }
+
+    .cadp__result-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .cadp__connector {
+      margin-inline: 1.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cadp__choice {
+      transition: none;
+    }
+  }
+</style>

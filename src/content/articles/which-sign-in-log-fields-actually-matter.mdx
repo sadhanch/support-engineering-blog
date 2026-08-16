@@ -1,0 +1,589 @@
+---
+title: "Which Microsoft Entra Sign-In Log Fields Actually Matter?"
+
+description: "A practical field-selection guide for Microsoft Entra sign-in logs, showing administrators which fields to inspect for common investigation questions."
+
+excerpt: "You do not need every sign-in log field for every investigation. Start with the question, choose the fields that can answer it, and follow the evidence."
+
+socialImage: "/social/which-sign-in-log-fields-actually-matter.png"
+
+summary:
+  - Learn which Microsoft Entra sign-in fields to inspect for common investigation questions.
+  - Understand how Status, Authentication, Device, Location, Application, Conditional Access, Risk, and correlation fields work together.
+  - Use an evidence-first approach instead of reading the entire sign-in event field by field.
+  - Turn sign-in log fields into a repeatable troubleshooting workflow.
+
+category: "Microsoft Entra"
+
+technology:
+  - Microsoft Entra ID
+  - Sign-in Logs
+  - Conditional Access
+
+tags:
+  - Microsoft Entra
+  - Sign-in Logs
+  - Identity Troubleshooting
+  - Conditional Access
+  - Authentication
+  - Microsoft 365 Security
+  - Security Operations
+
+publishDate: 2026-08-13
+updatedDate: 2026-08-13
+
+featured: false
+draft: false
+author: "Sadhan Chandra"
+
+references:
+  - title: "Microsoft Entra sign-in logs"
+    url: "https://learn.microsoft.com/en-us/entra/identity/monitoring-health/concept-sign-ins"
+    description: "Microsoft documentation describing Microsoft Entra sign-in log types and the information available for investigation."
+
+  - title: "How to troubleshoot Microsoft Entra sign-in errors"
+    url: "https://learn.microsoft.com/en-us/entra/identity/monitoring-health/howto-troubleshoot-sign-in-errors"
+    description: "Microsoft guidance for investigating failed sign-ins by using event details and related diagnostics."
+
+---
+
+import ComparisonTable from "../../components/content/ComparisonTable.astro";
+import EntraSignInFieldExplorer from "../../components/content/EntraSignInFieldExplorer.astro";
+import SignInFieldEvidenceMapper from "../../components/content/SignInFieldEvidenceMapper.astro";
+import ArticleImageLightbox from "../../components/article/widgets/ArticleImageLightbox.astro";
+import entraSignInFieldSelectionMap from "../../assets/images/articles/entra-sign-in-log-fields/entra-sign-in-field-selection-map.png";
+import entraSignInFieldsEvidenceChain from "../../assets/images/articles/entra-sign-in-log-fields/entra-sign-in-fields-evidence-chain.png";
+
+When you open a Microsoft Entra sign-in event, the challenge is rarely finding information.
+
+The challenge is knowing **which information matters to the problem you are investigating**.
+
+A sign-in event can contain identity, authentication, client, device, location, application, resource, Conditional Access, risk, and correlation information. But you rarely need every field for every investigation.
+
+The better approach is simple:
+
+> **Start with the question. Then choose the fields that can answer it.**
+
+---
+
+## 1. Start With the Investigation Question
+
+Think of a sign-in investigation as:
+
+```text
+Question
+   ↓
+Relevant fields
+   ↓
+Evidence
+   ↓
+Next question
+```
+
+For example:
+
+```text
+Did the sign-in fail?
+        ↓
+Status + Error code
+```
+
+Or:
+
+```text
+Why did Conditional Access block it?
+        ↓
+Conditional Access
+        ↓
+Applicable policies
+        ↓
+Policy result
+        ↓
+Unmet requirement
+```
+
+The goal is not to memorize the entire sign-in schema.
+
+It is to know **which fields are useful for the question in front of you**.
+
+<EntraSignInFieldExplorer />
+
+---
+
+## 2. Did the Sign-In Fail?
+
+### Start with
+
+**Status**
+
+Then inspect:
+
+- Error code
+- Failure reason
+- Additional details
+
+A useful investigation path is:
+
+```text
+Status
+  ↓
+Error code
+  ↓
+Failure reason
+  ↓
+Additional details
+```
+
+Status tells you the outcome, but the outcome alone does not explain the cause. A failure can involve Conditional Access, authentication, credentials, device conditions, sessions, applications, or user actions.
+
+> **Treat Status as the starting point, not the diagnosis.**
+
+---
+
+## 3. What Does the Error Code Tell Me?
+
+### Start with
+
+**Error code**
+
+Error codes can narrow the investigation.
+
+<ComparisonTable
+  caption="Common Microsoft Entra sign-in error codes"
+  columns={[
+    { label: "Error code" },
+    { label: "Typical interpretation" }
+  ]}
+  rows={[
+    {
+      label: "`50058`",
+      cells: ["Incomplete sign-in or session issue"]
+    },
+    {
+      label: "`500121`",
+      cells: ["MFA prompt was not completed"]
+    },
+    {
+      label: "`50126`",
+      cells: ["Invalid username or password"]
+    },
+    {
+      label: "`50053`",
+      cells: ["Account lockout or malicious-IP-related blocking"]
+    },
+    {
+      label: "`53003`",
+      cells: ["Blocked by Conditional Access"]
+    },
+    {
+      label: "`53000`–`53004`",
+      cells: ["Device, application, Conditional Access, or risk-related outcomes"]
+    }
+  ]}
+/>
+
+These codes provide useful clues, but they should be interpreted with the rest of the event rather than treated as a complete diagnosis.
+
+For example:
+
+```text
+53003
+  ↓
+Conditional Access
+  ↓
+Inspect applied policies
+```
+
+---
+
+## 4. How Did the Request Arrive?
+
+Two fields are particularly useful here.
+
+### Client app
+
+Identifies the client category involved in the sign-in.
+
+This can help distinguish modern client activity from legacy authentication paths such as Exchange ActiveSync, IMAP, MAPI, SMTP, and POP.
+
+### Authentication protocol
+
+Provides more information about the authentication flow itself.
+
+Depending on the scenario, this can include protocols and flows such as OAuth 2.0, SAML, WS-Federation, device code, client credentials, refresh token grant, Kerberos, PRT grant, seamless SSO, and on-behalf-of flows.
+
+Use them together when the question is:
+
+> **"What kind of request was this, and how did it authenticate?"**
+
+---
+
+## 5. What Authentication Actually Happened?
+
+### Start with
+
+**Authentication requirement**  
+**Authentication details**
+
+Authentication requirement describes the requirement associated with the sign-in, while Authentication details provides evidence about the methods and steps that actually occurred.
+
+For example:
+
+```text
+Password
+   ↓
+Success
+
+MFA
+   ↓
+User declined
+   ↓
+Sign-in fails
+```
+
+or:
+
+```text
+Password
+   ↓
+Success
+
+MFA
+   ↓
+Satisfied by token
+   ↓
+Conditional Access
+   ↓
+Access granted
+```
+
+The important question is:
+
+> **"What authentication method was actually used, and what happened at each step?"**
+
+---
+
+## 6. What Device and Location Were Evaluated?
+
+### Start with
+
+**Device information**  
+**Location**
+
+Device information can include:
+
+- Browser
+- Operating system
+- Device ID
+- Device display name
+- Compliance state
+- Managed state
+- Trust type
+
+These fields are particularly important when a Conditional Access policy requires a device condition.
+
+Location can provide:
+
+- IP address
+- City
+- State
+- Country or region
+- Geographic information
+
+But network information has limitations. VPNs and proxies can affect the network identity Microsoft Entra evaluates.
+
+> **IP geolocation is a signal, not proof of physical location.**
+
+---
+
+<ArticleImageLightbox
+  src={entraSignInFieldSelectionMap.src}
+  alt="Microsoft Entra sign-in log field selection map showing investigation questions mapped to identity, authentication, device and location, application and resource, Conditional Access and risk, outcome, and correlation fields."
+/>
+
+---
+
+## 7. What Was the User Trying to Access?
+
+### Start with
+
+**Application**  
+**Resource**
+
+These are related but are not necessarily the same thing.
+
+Sign-in information can include the application, application ID, resource, resource ID, resource tenant, and resource service principal.
+
+A useful model is:
+
+```text
+Application
+      ↓
+Authentication
+      ↓
+Resource
+      ↓
+Access decision
+```
+
+This distinction becomes valuable when an application appears to work normally but a particular service or resource does not.
+
+---
+
+## 8. Why Did Conditional Access Intervene?
+
+### Start with
+
+**Conditional Access**
+
+Then investigate:
+
+- Which policies applied?
+- Which policies did not apply?
+- Which requirements were satisfied?
+- Which requirements failed?
+- Was the result enforced or Report-only?
+
+The investigation path is:
+
+```text
+Sign-in event
+      ↓
+Conditional Access
+      ↓
+Applicable policies
+      ↓
+Policy result
+      ↓
+Unmet requirement
+```
+
+One important point:
+
+> **A policy showing Success does not necessarily mean the overall sign-in succeeded.**
+
+Another applicable policy can still introduce a requirement or block access.
+
+---
+
+## 9. Was the Sign-In Risky?
+
+### Start with
+
+**Risk**
+
+Useful risk information can include:
+
+- Sign-in risk
+- Aggregated risk
+- Risk state
+- Risk detail
+- Risk event types
+
+Signals can include password spray, anonymous IPs, unfamiliar sign-in properties, anomalous tokens, and impossible or atypical travel.
+
+For administrators, risk can help explain why a risk-based Conditional Access policy introduced an additional requirement.
+
+For security teams, it can help prioritize investigations.
+
+---
+
+## 10. How Do I Correlate the Event?
+
+### Start with
+
+**Correlation ID**  
+**Request ID**
+
+They serve different purposes.
+
+**Correlation ID** helps connect related activity around the broader sign-in session.
+
+**Request ID** is useful for correlating a more specific request or token context.
+
+A simple model is:
+
+```text
+Correlation ID
+      ↓
+Broader sign-in session
+
+Request ID
+      ↓
+Specific request / token context
+```
+
+When escalating a difficult authentication issue, retain both when available.
+
+---
+
+## 11. Read the Fields Together
+
+Individual fields rarely provide the complete answer.
+
+Consider:
+
+```text
+Status
+Failure
+    ↓
+Error code
+53003
+    ↓
+Conditional Access
+Policy blocked
+    ↓
+Device
+Non-compliant
+    ↓
+Authentication details
+MFA succeeded
+    ↓
+Resource
+SharePoint
+```
+
+The conclusion is much more useful than simply saying:
+
+> "Conditional Access blocked the user."
+
+The evidence shows that **MFA succeeded, but the device requirement was not satisfied**.
+
+This is the real value of sign-in logs: connecting individual fields to reconstruct the access decision.
+
+<ArticleImageLightbox
+  src={entraSignInFieldsEvidenceChain.src}
+  alt="Microsoft Entra sign-in log evidence chain showing how outcome, Conditional Access policy, policy requirements, device and location context, authentication and risk signals, and the final access decision build on one another."
+/>
+
+---
+
+<SignInFieldEvidenceMapper />
+
+---
+
+## 12. The Quick Field-Selection Guide
+
+When you are investigating an event, start here:
+
+<ComparisonTable
+  caption="Investigation questions and the sign-in log fields to inspect first"
+  columns={[
+    { label: "Investigation question" },
+    { label: "Start with these fields" }
+  ]}
+  rows={[
+    {
+      label: "Did the sign-in fail?",
+      cells: ["Status, Error code"]
+    },
+    {
+      label: "How was the user authenticated?",
+      cells: ["Authentication requirement, Authentication details, Authentication protocol"]
+    },
+    {
+      label: "What client was used?",
+      cells: ["Client app"]
+    },
+    {
+      label: "What device was involved?",
+      cells: ["Device information"]
+    },
+    {
+      label: "Where did the request come from?",
+      cells: ["Location, IP address"]
+    },
+    {
+      label: "What was being accessed?",
+      cells: ["Application, Resource"]
+    },
+    {
+      label: "Why did policy intervene?",
+      cells: ["Conditional Access"]
+    },
+    {
+      label: "Was the request risky?",
+      cells: ["Risk"]
+    },
+    {
+      label: "How do I correlate events?",
+      cells: ["Correlation ID, Request ID"]
+    }
+  ]}
+/>
+
+This gives administrators a practical starting point without requiring them to memorize the entire schema.
+
+---
+
+## 13. A Practical Investigation Sequence
+
+When you do not know where to begin, use this sequence:
+
+```text
+What happened?
+    ↓
+Status + Error
+
+How did it happen?
+    ↓
+Client + Protocol + Authentication
+
+What surrounded the request?
+    ↓
+Device + Location
+
+What was being accessed?
+    ↓
+Application + Resource
+
+Why was the decision made?
+    ↓
+Conditional Access + Risk
+
+How do I connect related events?
+    ↓
+Correlation ID + Request ID
+```
+
+This is a **selection strategy**, not a requirement to inspect every field.
+
+---
+
+## Conclusion — Ask the Question First
+
+A Microsoft Entra sign-in event can contain a large amount of information.
+
+An effective investigation does not begin by reading everything.
+
+It begins with a question.
+
+> **What am I trying to determine?**
+
+Then select the fields that can provide the evidence.
+
+```text
+Question
+   ↓
+Field
+   ↓
+Evidence
+   ↓
+Next question
+```
+
+If you need to know whether the request failed, start with **Status and Error code**.
+
+If you need to understand authentication, start with **Authentication requirement and Authentication details**.
+
+If Conditional Access is involved, inspect **applicable policies and their requirements**.
+
+If the question is about the surrounding context, look at **Device and Location**.
+
+If you need to understand the target, inspect **Application and Resource**.
+
+And when the investigation needs to extend beyond the individual event, retain the **Correlation ID and Request ID**.
+
+> **Don't ask, "Which fields are available?" Ask, "Which fields can answer my question?"**
+
+That is the difference between reading a sign-in log and **investigating one**.

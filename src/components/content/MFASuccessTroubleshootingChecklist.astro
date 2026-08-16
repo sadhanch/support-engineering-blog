@@ -1,0 +1,704 @@
+---
+/*
+ * MFASuccessTroubleshootingChecklist.astro
+ *
+ * Purpose:
+ * Provides a practical evidence-first checklist for administrators
+ * troubleshooting cases where MFA succeeds but access is still denied.
+ *
+ * The checklist follows the article's investigation order:
+ * Authentication → Authentication Strength → Conditional Access →
+ * Grant Controls → Context → Session → Remediation.
+ *
+ * Self-contained Astro component.
+ */
+---
+
+<section
+  class="mstc"
+  data-mstc
+  aria-labelledby="mstc-title"
+>
+  <div class="mstc__header">
+    <div class="mstc__header-copy">
+      <p class="mstc__eyebrow">Administrator checklist</p>
+
+      <h3 id="mstc-title">
+        MFA succeeded. Work through the evidence.
+      </h3>
+
+      <p class="mstc__intro">
+        Use this checklist to identify the requirement that remained
+        unsatisfied before changing a Conditional Access policy.
+      </p>
+    </div>
+
+    <div class="mstc__progress" aria-live="polite">
+      <strong data-progress>0 / 18</strong>
+      <span>checks complete</span>
+    </div>
+  </div>
+
+  <div
+    class="mstc__progress-bar"
+    role="progressbar"
+    aria-label="Troubleshooting checklist progress"
+    aria-valuemin="0"
+    aria-valuemax="18"
+    aria-valuenow="0"
+    data-progressbar
+  >
+    <span data-progress-fill></span>
+  </div>
+
+  <div class="mstc__groups">
+    <fieldset class="mstc__group">
+      <legend>
+        <span class="mstc__group-number">01</span>
+        Authentication
+      </legend>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Did primary authentication succeed?</strong>
+          <small>Confirm the sign-in reached the expected authentication state.</small>
+        </span>
+      </label>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Did MFA complete?</strong>
+          <small>Verify the actual authentication result rather than relying only on the user's report.</small>
+        </span>
+      </label>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Which authentication method was used?</strong>
+          <small>Review Authentication details before deciding what the MFA result means.</small>
+        </span>
+      </label>
+    </fieldset>
+
+    <fieldset class="mstc__group">
+      <legend>
+        <span class="mstc__group-number">02</span>
+        Authentication strength
+      </legend>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Did the policy require a specific authentication strength?</strong>
+          <small>Check whether the policy requires a stronger method than ordinary MFA.</small>
+        </span>
+      </label>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Did the actual method satisfy that strength?</strong>
+          <small>Compare the recorded authentication method with the policy requirement.</small>
+        </span>
+      </label>
+    </fieldset>
+
+    <fieldset class="mstc__group">
+      <legend>
+        <span class="mstc__group-number">03</span>
+        Conditional Access
+      </legend>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Which policies applied?</strong>
+          <small>Separate applicable policies from policies that were not applied.</small>
+        </span>
+      </label>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Which policy failed?</strong>
+          <small>Find the policy that introduced the requirement the request did not satisfy.</small>
+        </span>
+      </label>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Have you reviewed the exact sign-in event?</strong>
+          <small>Use the event as the evidence source instead of diagnosing from the error message alone.</small>
+        </span>
+      </label>
+    </fieldset>
+
+    <fieldset class="mstc__group">
+      <legend>
+        <span class="mstc__group-number">04</span>
+        Grant controls
+      </legend>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Was MFA only one requirement?</strong>
+          <small>Look for other controls that must also be satisfied.</small>
+        </span>
+      </label>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Was a compliant or hybrid-joined device required?</strong>
+          <small>Check Device info and the relevant Conditional Access requirement.</small>
+        </span>
+      </label>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Was an approved client or app protection required?</strong>
+          <small>Confirm whether the client or application met the policy requirement.</small>
+        </span>
+      </label>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Were multiple grant controls combined?</strong>
+          <small>One successful control does not compensate for another unmet control.</small>
+        </span>
+      </label>
+    </fieldset>
+
+    <fieldset class="mstc__group">
+      <legend>
+        <span class="mstc__group-number">05</span>
+        Authentication Context
+      </legend>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Was Authentication Context involved?</strong>
+          <small>Check whether a sensitive resource or action introduced another requirement.</small>
+        </span>
+      </label>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Was step-up authentication triggered?</strong>
+          <small>Determine whether the additional context requirement was satisfied.</small>
+        </span>
+      </label>
+    </fieldset>
+
+    <fieldset class="mstc__group">
+      <legend>
+        <span class="mstc__group-number">06</span>
+        Session
+      </legend>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Was access actually denied?</strong>
+          <small>Separate an access-denied result from a session that was granted with restrictions.</small>
+        </span>
+      </label>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Was access granted with a restricted session?</strong>
+          <small>Check whether session controls explain the user's experience after authentication.</small>
+        </span>
+      </label>
+    </fieldset>
+
+    <fieldset class="mstc__group">
+      <legend>
+        <span class="mstc__group-number">07</span>
+        Remediation
+      </legend>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Can the failed requirement be fixed directly?</strong>
+          <small>Target the root cause instead of weakening an unrelated control.</small>
+        </span>
+      </label>
+
+      <label class="mstc__item">
+        <input type="checkbox" data-check />
+        <span class="mstc__checkbox" aria-hidden="true"></span>
+        <span class="mstc__item-body">
+          <strong>Can the proposed change be validated with Report-only or What If?</strong>
+          <small>Validate the intended evaluation before changing production enforcement.</small>
+        </span>
+      </label>
+    </fieldset>
+  </div>
+
+  <div class="mstc__result" data-result aria-live="polite">
+    <div>
+      <span class="mstc__result-kicker">Investigation status</span>
+      <h4 data-result-title>Start with the exact sign-in event.</h4>
+      <p data-result-description>
+        Complete the checks that apply to the incident. The objective is to
+        identify the unmet requirement before changing policy.
+      </p>
+    </div>
+
+    <span class="mstc__result-state" data-result-state>
+      Evidence first
+    </span>
+  </div>
+
+  <div class="mstc__actions">
+    <button type="button" class="mstc__reset" data-reset>
+      Reset checklist
+    </button>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector("[data-mstc]");
+
+  if (root) {
+    const checks = Array.from(root.querySelectorAll("[data-check]"));
+    const progress = root.querySelector("[data-progress]");
+    const progressBar = root.querySelector("[data-progressbar]");
+    const progressFill = root.querySelector("[data-progress-fill]");
+    const resultTitle = root.querySelector("[data-result-title]");
+    const resultDescription = root.querySelector("[data-result-description]");
+    const resultState = root.querySelector("[data-result-state]");
+    const reset = root.querySelector("[data-reset]");
+
+    const update = () => {
+      const completed = checks.filter((check) => check.checked).length;
+      const total = checks.length;
+      const percentage = total ? Math.round((completed / total) * 100) : 0;
+
+      progress.textContent = `${completed} / ${total}`;
+      progressBar.setAttribute("aria-valuenow", String(completed));
+      progressFill.style.width = `${percentage}%`;
+
+      if (completed === 0) {
+        resultTitle.textContent = "Start with the exact sign-in event.";
+        resultDescription.textContent =
+          "Complete the checks that apply to the incident. The objective is to identify the unmet requirement before changing policy.";
+        resultState.textContent = "Evidence first";
+        root.dataset.state = "start";
+      } else if (completed < total) {
+        resultTitle.textContent = "Keep tracing the evidence.";
+        resultDescription.textContent =
+          "MFA success is only one part of the investigation. Continue until the failed requirement and its cause are clear.";
+        resultState.textContent = `${percentage}% reviewed`;
+        root.dataset.state = "progress";
+      } else {
+        resultTitle.textContent = "Investigation path completed.";
+        resultDescription.textContent =
+          "You have worked through the evidence areas. The next step should target the requirement that actually failed rather than changing MFA by default.";
+        resultState.textContent = "Ready to remediate";
+        root.dataset.state = "complete";
+      }
+    };
+
+    checks.forEach((check) => {
+      check.addEventListener("change", update);
+    });
+
+    reset.addEventListener("click", () => {
+      checks.forEach((check) => {
+        check.checked = false;
+      });
+
+      update();
+    });
+
+    update();
+  }
+</script>
+
+<style>
+  .mstc {
+    --mstc-surface: var(--surface-primary, #ffffff);
+    --mstc-surface-soft: var(--surface-secondary, #f8fafc);
+    --mstc-text: var(--text-primary, #0f172a);
+    --mstc-text-secondary: var(--text-secondary, #475569);
+    --mstc-text-tertiary: var(--text-tertiary, #64748b);
+    --mstc-border: var(--border-default, #dbe3ec);
+    --mstc-border-soft: var(--border-subtle, #e7edf4);
+    --mstc-accent: var(--color-accent, #4ea1e0);
+    --mstc-success: var(--color-success, #15803d);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--mstc-text);
+    background: var(--mstc-surface);
+    border: 1px solid var(--mstc-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .mstc__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: 1rem;
+  }
+
+  .mstc__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--mstc-accent);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .mstc h3,
+  .mstc h4,
+  .mstc p {
+    margin-top: 0;
+  }
+
+  .mstc h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .mstc__intro {
+    max-width: 70ch;
+    margin-bottom: 0;
+    color: var(--mstc-text-secondary);
+    line-height: 1.6;
+  }
+
+  .mstc__progress {
+    display: grid;
+    flex: 0 0 auto;
+    min-width: 5rem;
+    justify-items: end;
+    gap: 0.1rem;
+  }
+
+  .mstc__progress strong {
+    color: var(--mstc-accent);
+    font-size: var(--font-size-lg, 1.1rem);
+  }
+
+  .mstc__progress span {
+    color: var(--mstc-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+  }
+
+  .mstc__progress-bar {
+    width: 100%;
+    height: 0.35rem;
+    margin-bottom: var(--space-6, 1.5rem);
+    overflow: hidden;
+    background: var(--mstc-surface-soft);
+    border-radius: 999px;
+  }
+
+  .mstc__progress-bar span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--mstc-accent);
+    border-radius: inherit;
+    transition: width 180ms ease;
+  }
+
+  .mstc__groups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4, 1rem);
+  }
+
+  .mstc__group {
+    min-width: 0;
+    margin: 0;
+    padding: 1rem;
+    border: 1px solid var(--mstc-border);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .mstc__group legend {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: 100%;
+    padding: 0;
+    color: var(--mstc-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+  }
+
+  .mstc__group-number {
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    color: var(--mstc-accent);
+    background: color-mix(
+      in srgb,
+      var(--mstc-accent) 8%,
+      var(--mstc-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--mstc-accent) 30%,
+      var(--mstc-border)
+    );
+    border-radius: 50%;
+    font-size: var(--font-size-xs, 0.7rem);
+    font-weight: 800;
+  }
+
+  .mstc__item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 0.7rem;
+    margin-top: 0.8rem;
+    padding: 0.75rem;
+    background: var(--mstc-surface-soft);
+    border: 1px solid var(--mstc-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .mstc__item:hover {
+    border-color: var(--mstc-accent);
+  }
+
+  .mstc__item:has(input:focus-visible) {
+    outline: 2px solid var(--mstc-accent);
+    outline-offset: 2px;
+  }
+
+  .mstc__item:has(input:checked) {
+    background: color-mix(
+      in srgb,
+      var(--mstc-success) 7%,
+      var(--mstc-surface)
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--mstc-success) 35%,
+      var(--mstc-border)
+    );
+  }
+
+  .mstc__item input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .mstc__checkbox {
+    position: relative;
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-top: 0.1rem;
+    background: var(--mstc-surface);
+    border: 1.5px solid var(--mstc-text-tertiary);
+    border-radius: 0.3rem;
+  }
+
+  .mstc__checkbox::after {
+    width: 0.32rem;
+    height: 0.58rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    color: var(--mstc-success);
+    content: "";
+    opacity: 0;
+    transform: rotate(45deg) translate(-1px, -1px);
+  }
+
+  .mstc__item:has(input:checked) .mstc__checkbox {
+    border-color: var(--mstc-success);
+  }
+
+  .mstc__item:has(input:checked) .mstc__checkbox::after {
+    opacity: 1;
+  }
+
+  .mstc__item-body {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .mstc__item-body strong {
+    color: var(--mstc-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.4;
+  }
+
+  .mstc__item-body small {
+    color: var(--mstc-text-secondary);
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1.5;
+  }
+
+  .mstc__result {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: var(--space-6, 1.5rem);
+    padding: 1rem 1.2rem;
+    background: var(--mstc-surface-soft);
+    border: 1px solid var(--mstc-border);
+    border-left: 4px solid var(--mstc-accent);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .mstc__result-kicker {
+    display: block;
+    margin-bottom: 0.2rem;
+    color: var(--mstc-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .mstc__result h4 {
+    margin-bottom: 0.25rem;
+    color: var(--mstc-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .mstc__result p {
+    max-width: 70ch;
+    margin-bottom: 0;
+    color: var(--mstc-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .mstc__result-state {
+    flex: 0 0 auto;
+    padding: 0.4rem 0.65rem;
+    color: var(--mstc-accent);
+    background: color-mix(
+      in srgb,
+      var(--mstc-accent) 8%,
+      var(--mstc-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--mstc-accent) 30%,
+      var(--mstc-border)
+    );
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .mstc__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.85rem;
+  }
+
+  .mstc__reset {
+    padding: 0.45rem 0.7rem;
+    color: var(--mstc-text-secondary);
+    background: var(--mstc-surface);
+    border: 1px solid var(--mstc-border);
+    border-radius: var(--radius-sm, 0.5rem);
+    font: inherit;
+    font-size: var(--font-size-xs, 0.75rem);
+    cursor: pointer;
+  }
+
+  .mstc__reset:hover {
+    color: var(--mstc-text);
+    border-color: var(--mstc-accent);
+  }
+
+  .mstc__reset:focus-visible {
+    outline: 2px solid var(--mstc-accent);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 800px) {
+    .mstc__groups {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .mstc {
+      padding: 1rem;
+    }
+
+    .mstc__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .mstc__progress {
+      justify-items: start;
+    }
+
+    .mstc__result {
+      flex-direction: column;
+    }
+
+    .mstc__result-state {
+      white-space: normal;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mstc__progress-bar span,
+    .mstc__item {
+      transition: none;
+    }
+  }
+</style>
