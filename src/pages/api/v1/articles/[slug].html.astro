@@ -1,0 +1,186 @@
+---
+/**
+ * ==========================================================
+ * SEB — Mobile Article Content Document
+ * ----------------------------------------------------------
+ * GET /api/v1/articles/{slug}.html
+ *
+ * Purpose:
+ * Provides a clean, stable HTML representation of an article
+ * for native clients such as the Android application.
+ * ==========================================================
+ */
+
+import { render } from "astro:content";
+
+import {
+    getAllArticles,
+    getArticleBySlug
+} from "../../../../lib/articles";
+
+import { site } from "../../../../config/site";
+
+
+export async function getStaticPaths() {
+
+    const articles =
+        await getAllArticles();
+
+    return articles.map(
+        (article) => ({
+            params: {
+                slug: article.id
+            }
+        })
+    );
+}
+
+
+const { slug } =
+    Astro.params;
+
+
+if (!slug) {
+
+    throw new Error(
+        "Article slug is required."
+    );
+
+}
+
+
+const article =
+    await getArticleBySlug(slug);
+
+
+if (!article) {
+
+    throw new Error(
+        "Article not found."
+    );
+
+}
+
+
+const {
+    Content
+} = await render(article);
+
+
+const canonicalUrl =
+    `${site.url}/articles/${article.id}/`;
+---
+
+<!doctype html>
+
+<html
+    lang={site.language}
+>
+
+<head>
+
+    <meta
+        charset="utf-8"
+    />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    />
+
+    <meta
+        name="robots"
+        content="noindex, nofollow"
+    />
+
+    <link
+        rel="canonical"
+        href={canonicalUrl}
+    />
+
+    <title>
+        {article.data.title}
+    </title>
+
+</head>
+
+<body>
+
+<article
+    id="seb-mobile-article"
+    data-schema-version="1"
+    data-article-id={article.id}
+    data-canonical-url={canonicalUrl}
+>
+
+    <header>
+
+        <h1>
+            {article.data.title}
+        </h1>
+
+        <p>
+            {article.data.excerpt}
+        </p>
+
+    </header>
+
+
+    <section
+        data-seb-summary
+        aria-label="Quick Summary"
+    >
+
+        {
+            article.data.summary?.length
+                ? (
+                    <>
+                        <h2>
+                            Quick Summary
+                        </h2>
+
+                        <ul>
+
+                            {
+                                article.data.summary.map(
+                                    (item) => (
+                                        <li>
+                                            {item}
+                                        </li>
+                                    )
+                                )
+                            }
+
+                        </ul>
+                    </>
+                )
+                : null
+        }
+
+    </section>
+
+
+    <section
+        data-seb-content
+    >
+
+        <Content />
+
+    </section>
+
+
+    <footer>
+
+        <p>
+            Published by
+            {" "}
+            {article.data.author}
+        </p>
+
+    </footer>
+
+</article>
+
+</body>
+
+</html>
