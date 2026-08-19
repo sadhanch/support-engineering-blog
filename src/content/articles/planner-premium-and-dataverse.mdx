@@ -102,26 +102,34 @@ It is:
 
 A useful mental model is:
 
-```text
-Project Online
-     │
-     ▼
-SharePoint Online / Office 365
-     │
-     ├── Reporting
-     ├── Workflows
-     └── Integrations
+```mermaid
+flowchart TD
 
+    A["Project Online"]
+    B["SharePoint Online / Microsoft 365"]
 
-Planner Premium
-     │
-     ▼
-Dataverse
-     │
-     ├── Power Automate
-     ├── Power BI
-     ├── Power Apps
-     └── APIs / integrations
+    B1["Reporting"]
+    B2["Workflows"]
+    B3["Integrations"]
+
+    C["Planner Premium"]
+    D["Dataverse"]
+
+    D1["Power Automate"]
+    D2["Power BI"]
+    D3["Power Apps"]
+    D4["APIs / Integrations"]
+
+    A --> B
+    B --> B1
+    B --> B2
+    B --> B3
+
+    C --> D
+    D --> D1
+    D --> D2
+    D --> D3
+    D --> D4
 ```
 
 The important point is not that one architecture is inherently better.
@@ -201,15 +209,7 @@ It is:
 
 A simple workflow might look like:
 
-```text
-Project activity
-      ↓
-Power Automate
-      ↓
-Approval / Notification
-      ↓
-Downstream action
-```
+**Project activity → Power Automate → Approval / Notification → Downstream action**
 
 After migration, the business process must still work.
 
@@ -642,25 +642,32 @@ into:
 
 The architecture we've discussed can now be summarized:
 
-```text
-                         MICROSOFT 365
-                               │
-                          Planner Premium
-                               │
-                               ▼
-                           Dataverse
-                               │
-             ┌─────────────────┼─────────────────┐
-             │                 │                 │
-             ▼                 ▼                 ▼
-       Power Automate       Power BI         Power Apps
-             │                 │                 │
-             └─────────────────┼─────────────────┘
-                               │
-                       APIs / Integrations
-                               │
-                               ▼
-                       Enterprise systems
+```mermaid
+flowchart TD
+
+    A["Microsoft 365"]
+    B["Planner Premium"]
+    C["Dataverse"]
+
+    D["Power Automate"]
+    E["Power BI"]
+    F["Power Apps"]
+
+    G["APIs / Integrations"]
+    H["Enterprise systems"]
+
+    A --> B
+    B --> C
+
+    C --> D
+    C --> E
+    C --> F
+
+    D --> G
+    E --> G
+    F --> G
+
+    G --> H
 ```
 
 This is a **reference architecture**, not a requirement that every organization implement every component.

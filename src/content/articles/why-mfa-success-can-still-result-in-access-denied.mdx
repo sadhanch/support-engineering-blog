@@ -87,18 +87,21 @@ It is:
 
 Consider a simple evaluation:
 
-```text
-User signs in
-     ↓
-Authentication
-     ↓
-MFA completed
-     ↓
-Conditional Access evaluation
-     ↓
-Other requirements
-     ↓
-Access decision
+```mermaid
+flowchart TD
+
+    A["User signs in"]
+    B["Authentication"]
+    C["MFA completed"]
+    D["Conditional Access evaluation"]
+    E["Other requirements"]
+    F["Access decision"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
 ```
 
 MFA is one part of the authentication and access process.
@@ -107,18 +110,16 @@ It does not override another requirement that the user has failed to satisfy.
 
 For example:
 
-```text
-MFA
- ↓
-Satisfied
+```mermaid
+flowchart TD
 
-Compliant device
- ↓
-Not satisfied
+    A["MFA"] --> B["Satisfied"]
+    C["Compliant device"] --> D["Not satisfied"]
 
-Overall access
- ↓
-Denied
+    B --> E["Overall access"]
+    D --> E
+
+    E --> F["Denied"]
 ```
 
 The user can therefore truthfully say:
@@ -139,19 +140,11 @@ Consider two applicable policies.
 
 ### Policy A
 
-```text
-Require MFA
-     ↓
-Success
-```
+Require MFA → Success
 
 ### Policy B
 
-```text
-Require compliant device
-     ↓
-Failure
-```
+Require compliant device → Failure
 
 The user completes MFA.
 
@@ -159,18 +152,17 @@ The device is not compliant.
 
 The resulting decision is:
 
-```text
-MFA requirement
-     ↓
-Satisfied
+```mermaid
+flowchart TD
 
-Device requirement
-     ↓
-Not satisfied
+    A["MFA requirement"] --> B["Satisfied"]
 
-Access
-     ↓
-Denied
+    C["Device requirement"] --> D["Not satisfied"]
+
+    B --> E["Access"]
+    D --> E
+
+    E --> F["Denied"]
 ```
 
 The correct conclusion is:
@@ -179,9 +171,7 @@ The correct conclusion is:
 
 Do not see:
 
-```text
-Policy A → Success
-```
+**Policy A → Success**
 
 and conclude:
 
@@ -205,15 +195,11 @@ This is another major source of confusion.
 
 An administrator may see:
 
-```text
-MFA completed
-```
+**MFA completed**
 
 and assume:
 
-```text
-Required authentication method satisfied
-```
+**Required authentication method satisfied**
 
 Those are not necessarily equivalent.
 
@@ -225,30 +211,19 @@ Conditional Access can require a particular **authentication strength**, includi
 
 For example, a policy may require:
 
-```text
-Authentication strength
-→ Phishing-resistant MFA
-```
+**Authentication strength → Phishing-resistant MFA**
 
 The user completes an Authenticator push:
 
-```text
-MFA
-→ Completed
-```
+**MFA → Completed**
 
 But the method does not satisfy the required strength:
 
-```text
-Required strength
-→ Not satisfied
-```
+**Required strength → Not satisfied**
 
 The resulting outcome can still be:
 
-```text
-Access denied
-```
+**Access denied**
 
 The important distinction is:
 
@@ -282,13 +257,7 @@ Multiple controls can be combined.
 
 For example:
 
-```text
-MFA
- AND
-Compliant device
- AND
-Approved client
-```
+MFA **AND** Compliant device **AND** Approved client
 
 A user can satisfy the first requirement and still fail the complete policy requirement.
 
@@ -321,18 +290,21 @@ Authentication Context allows Conditional Access requirements to be applied to s
 
 The flow can therefore become:
 
-```text
-Application access
-       ↓
-Normal authentication
-       ↓
-Sensitive action requested
-       ↓
-Authentication Context
-       ↓
-Additional requirement
-       ↓
-Step-up authentication
+```mermaid
+flowchart TD
+
+    A["Application access"]
+    B["Normal authentication"]
+    C["Sensitive action requested"]
+    D["Authentication Context"]
+    E["Additional requirement"]
+    F["Step-up authentication"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
 ```
 
 The investigation should determine:
@@ -368,18 +340,21 @@ Useful filters include:
 
 Then work through the evidence:
 
-```text
-Basic info
-    ↓
-Authentication details
-    ↓
-Conditional Access
-    ↓
-Device info
-    ↓
-Location
-    ↓
-Report-only
+```mermaid
+flowchart TD
+
+    A["Basic info"]
+    B["Authentication details"]
+    C["Conditional Access"]
+    D["Device info"]
+    E["Location"]
+    F["Report-only"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
 ```
 
 The error message tells you what the user experienced.
@@ -406,15 +381,13 @@ A `Failure` result means the policy applied but one or more evaluated requiremen
 
 For example:
 
-```text
-Policy A
-Require MFA
-→ Success
+**Policy A**
 
-Policy B
-Require compliant device
-→ Failure
-```
+Require MFA → Success
+
+**Policy B**
+
+Require compliant device → Failure
 
 The correct diagnosis is not:
 
@@ -494,42 +467,63 @@ Consider a user accessing SharePoint.
 
 The sign-in shows:
 
-```text
-Authentication
-MFA → Success
+```mermaid
+flowchart TD
 
-Device
-Compliant → No
+    A["Authentication"]
+    A1["MFA"]
+    A2["Success"]
 
-Conditional Access
+    B["Device"]
+    B1["Compliant"]
+    B2["No"]
 
-Policy A
-Require MFA
-→ Success
+    C["Conditional Access"]
 
-Policy B
-Require compliant device
-→ Failure
+    C1["Policy A — Require MFA"]
+    C2["Success"]
+
+    C3["Policy B — Require compliant device"]
+    C4["Failure"]
+
+    D["Overall evaluation"]
+    E["Access denied"]
+
+    A --> A1 --> A2
+    B --> B1 --> B2
+
+    C --> C1 --> C2
+    C --> C3 --> C4
+
+    A2 --> D
+    B2 --> D
+    C2 --> D
+    C4 --> D
+
+    D --> E
 ```
 
 The evaluation can be reconstructed as:
 
-```text
-User
- ↓
-SharePoint
- ↓
-Policy A applies
- ↓
-MFA satisfied
- ↓
-Policy B applies
- ↓
-Compliant-device requirement
- ↓
-Device = non-compliant
- ↓
-Access denied
+```mermaid
+flowchart TD
+
+    A["User"]
+    B["SharePoint"]
+    C["Policy A applies"]
+    D["MFA satisfied"]
+    E["Policy B applies"]
+    F["Compliant-device requirement"]
+    G["Device = non-compliant"]
+    H["Access denied"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
 ```
 
 ### Root cause
@@ -550,27 +544,36 @@ Now consider a privileged application.
 
 The policy requires:
 
-```text
-Authentication strength
-→ Phishing-resistant MFA
-```
+**Authentication strength → Phishing-resistant MFA**
 
 The user authenticates using a method that successfully completes MFA but does not satisfy that strength.
 
 The evidence may therefore look like:
 
-```text
-MFA
-→ Success
+```mermaid
+flowchart TD
 
-Required authentication strength
-→ Phishing-resistant
+    A["MFA"]
+    A1["Success"]
 
-Authentication method
-→ Does not satisfy requirement
+    B["Required authentication strength"]
+    B1["Phishing-resistant"]
 
-Overall
-→ Access denied
+    C["Authentication method"]
+    C1["Does not satisfy requirement"]
+
+    D["Overall evaluation"]
+    E["Access denied"]
+
+    A --> A1
+    B --> B1
+    B1 --> C
+    C --> C1
+
+    A1 --> D
+    C1 --> D
+
+    D --> E
 ```
 
 The user is not wrong when they say:
@@ -597,15 +600,7 @@ or:
 
 The conceptual flow is:
 
-```text
-Authentication
-      ↓
-Access granted
-      ↓
-Session control
-      ↓
-Restricted experience
-```
+**Authentication → Access granted → Session control → Restricted experience**
 
 This is a different troubleshooting path from a failed grant control.
 
@@ -637,37 +632,19 @@ This is the operational lesson worth remembering.
 
 If the evidence says:
 
-```text
-MFA
-→ Success
-
-Device compliance
-→ Failure
-```
+**MFA → Success | Device compliance → Failure**
 
 do not remove the MFA requirement.
 
 If it says:
 
-```text
-MFA
-→ Success
-
-Authentication strength
-→ Failure
-```
+**MFA → Success | Authentication strength → Failure**
 
 do not automatically weaken the authentication requirement.
 
 If it says:
 
-```text
-Authentication
-→ Success
-
-Session control
-→ Restriction
-```
+**Authentication → Success | Session control → Restriction**
 
 do not remove the authentication policy simply because the user reports a problem.
 
@@ -685,24 +662,27 @@ When someone reports:
 
 use this sequence:
 
-```text
-MFA succeeded
-      ↓
-Find the exact sign-in
-      ↓
-Review Authentication details
-      ↓
-Review Conditional Access
-      ↓
-Identify applicable policies
-      ↓
-Find the failed requirement
-      ↓
-Determine why it failed
-      ↓
-Apply targeted remediation
-      ↓
-Verify the result
+```mermaid
+flowchart TD
+
+    A["MFA succeeded"]
+    B["Find the exact sign-in"]
+    C["Review Authentication details"]
+    D["Review Conditional Access"]
+    E["Identify applicable policies"]
+    F["Find the failed requirement"]
+    G["Determine why it failed"]
+    H["Apply targeted remediation"]
+    I["Verify the result"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    H --> I
 ```
 
 The most important step is the middle one:
@@ -775,18 +755,21 @@ A user can successfully complete MFA and still be denied because another Conditi
 
 The troubleshooting model is therefore simple:
 
-```text
-MFA succeeded
-      ↓
-What else applied?
-      ↓
-What did each policy require?
-      ↓
-Which requirement failed?
-      ↓
-Why did it fail?
-      ↓
-Fix that requirement
+```mermaid
+flowchart TD
+
+    A["MFA succeeded"]
+    B["What else applied?"]
+    C["What did each policy require?"]
+    D["Which requirement failed?"]
+    E["Why did it fail?"]
+    F["Fix that requirement"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
 ```
 
 The goal is not to make Conditional Access less restrictive.

@@ -71,19 +71,12 @@ A sign-in event is better understood as the record of an access decision:
 flowchart TD
 
     A["WHO — Identity"]
-
     B["HOW — Client + Protocol + Authentication"]
-
     C["WHERE — Device + Location"]
-
     D["WHAT — Application + Resource"]
-
     E["WHY — Conditional Access + Risk"]
-
     F["RESULT — Status + Error"]
-
     G["CORRELATE — Correlation ID + Request ID"]
-
 
     A --> B
     B --> C
@@ -121,26 +114,28 @@ For a user issue, begin by finding the exact event using information such as:
 
 Then work through the event in this order:
 
-```text
-Basic info
-   ↓
-Status / Error
-   ↓
-Client / Protocol
-   ↓
-Device / Location
-   ↓
-Resource
-   ↓
-Conditional Access
-   ↓
-Risk
-   ↓
-Authentication details
-   ↓
-Correlation / Request IDs
-```
+```mermaid
+flowchart TD
 
+    A["Basic Info"]
+    B["Status / Error"]
+    C["Client / Protocol"]
+    D["Device / Location"]
+    E["Resource"]
+    F["Conditional Access"]
+    G["Risk"]
+    H["Authentication details"]
+    I["Correlation / Request IDs"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    H --> I
+```
 You do not need to inspect every field on every investigation.
 
 Start with the fields that answer the question you are trying to solve.
@@ -167,27 +162,11 @@ Establish:
 
 For a security investigation, compare the identity with the rest of the event:
 
-```text
-Expected identity
-      +
-Expected resource
-      +
-Expected device
-      +
-Expected location
-```
+**Expected identity + Expected resource + Expected device + Expected location**
 
 versus:
 
-```text
-Expected identity
-      +
-Unexpected client
-      +
-Unfamiliar location
-      +
-Elevated risk
-```
+**Expected identity + Unexpected client + Unfamiliar location + Elevated risk**
 
 The identity becomes useful when it is read together with the rest of the event.
 
@@ -199,14 +178,17 @@ The identity becomes useful when it is read together with the rest of the event.
 
 Use it to locate failed events, then move into the details:
 
-```text
-Status
-  ↓
-Error code
-  ↓
-Failure reason
-  ↓
-Additional details
+```mermaid
+flowchart TD
+
+    A["Status"]
+    B["Error code"]
+    C["Failure reason"]
+    D["Additional details"]
+
+    A --> B
+    B --> C
+    C --> D
 ```
 
 A failure can represent many different conditions, including:
@@ -265,22 +247,28 @@ Error codes provide a stronger clue about what happened.
 
 For example:
 
-```text
-AADSTS53003
-     ↓
-Conditional Access
-     ↓
-Inspect applied policies
+```mermaid
+flowchart TD
+
+    A["AADSTS53003"]
+    B["Conditional Access"]
+    C["Inspect applied policies"]
+
+    A --> B
+    B --> C
 ```
 
 Or:
 
-```text
-AADSTS50126
-     ↓
-Credential issue
-     ↓
-Investigate authentication
+```mermaid
+flowchart TD
+
+    A["AADSTS50126"]
+    B["Credential issue"]
+    C["Investigate authentication"]
+
+    A --> B
+    B --> C
 ```
 
 But do not diagnose the incident from the error code alone.
@@ -308,13 +296,7 @@ For security operations, Client app can therefore act as a useful hunting signal
 
 For example:
 
-```text
-Successful sign-in
-       +
-Legacy client
-       +
-Unexpected account
-```
+**Successful sign-in + Legacy client + Unexpected account**
 
 deserves attention.
 
@@ -363,13 +345,7 @@ A previously satisfied claim or another authentication signal can affect how the
 
 Use:
 
-```text
-Authentication requirement
-        +
-Authentication details
-        +
-Conditional Access
-```
+**Authentication requirement + Authentication details + Conditional Access**
 
 to understand the actual authentication path.
 
@@ -401,33 +377,15 @@ It can also show why a step failed, such as:
 
 For example:
 
-```text
-Password
-   ↓
-Success
+**Password → Success**
 
-MFA
-   ↓
-User declined
-   ↓
-Sign-in fails
-```
+**MFA → User declined → Sign-in fails**
 
 compared with:
 
-```text
-Password
-   ↓
-Success
+**Password → Success**
 
-MFA
-   ↓
-Satisfied by token
-   ↓
-Conditional Access
-   ↓
-Access granted
-```
+**MFA → Satisfied by token → Conditional Access → Access granted**
 
 The important question is not simply:
 
@@ -455,14 +413,7 @@ Device information can include:
 
 For Conditional Access, a device requirement can often be traced directly through this information:
 
-```text
-Policy
-Require compliant device
-       ↓
-Device information
-       ↓
-Non-compliant
-```
+**Policy: Require compliant device → Device information → Non-compliant**
 
 For security operations, the same fields can highlight unfamiliar devices, unmanaged access, unexpected operating systems, or changes in normal access patterns.
 
@@ -509,15 +460,7 @@ That distinction is useful when an application appears to work normally but one 
 
 A simple model is:
 
-```text
-Application
-     ↓
-Authentication
-     ↓
-Resource
-     ↓
-Conditional Access / access decision
-```
+**Application → Authentication → Resource → Conditional Access / access decision**
 
 So:
 
@@ -539,17 +482,7 @@ Look for:
 
 The investigation becomes:
 
-```text
-Sign-in event
-     ↓
-Conditional Access
-     ↓
-Applicable policies
-     ↓
-Policy result
-     ↓
-Unmet requirement
-```
+**Sign-in event → Conditional Access → Applicable policies → Policy result → Unmet requirement**
 
 A policy showing `Success` does not necessarily mean the overall sign-in succeeded. Another applicable policy can still introduce a requirement or block access.
 
@@ -620,15 +553,9 @@ Use the **Request ID** when you need to correlate a more specific request or tok
 
 A practical model is:
 
-```text
-Correlation ID
-      ↓
-Broader sign-in session
+**Correlation ID → Broader sign-in session**
 
-Request ID
-      ↓
-Specific request / token context
-```
+**Request ID → Specific request / token context**
 
 When escalating a difficult authentication issue, retain both when available.
 
@@ -640,24 +567,24 @@ The real value of sign-in logs comes from the relationships between fields.
 
 Consider:
 
-```text
-Status
-Failure
-   ↓
-Error code
-53003
-   ↓
-Conditional Access
-Policy blocked
-   ↓
-Device
-Non-compliant
-   ↓
-Authentication details
-MFA succeeded
-   ↓
-Resource
-SharePoint
+```mermaid
+flowchart TD
+
+    A["Sign-in result"] --> A1["Failure"]
+
+    B["Error code"] --> B1["53003"]
+    C["Conditional Access"] --> C1["Policy blocked"]
+    D["Device"] --> D1["Non-compliant"]
+    E["Authentication"] --> E1["MFA succeeded"]
+    F["Resource"] --> F1["SharePoint"]
+
+    A1 --> G["Why did the sign-in fail?"]
+
+    B1 --> G
+    C1 --> G
+    D1 --> G
+    E1 --> G
+    F1 --> G
 ```
 
 Now the event tells a story:
@@ -747,33 +674,19 @@ It is to identify **patterns that deserve investigation**.
 
 When investigating an event, work through:
 
-```text
-□ Who attempted the sign-in?
-
-□ What were they trying to access?
-
-□ Which client was used?
-
-□ Which authentication protocol was used?
-
-□ What was the Status and Error code?
-
-□ What happened in Authentication details?
-
-□ What device was evaluated?
-
-□ What location / IP was evaluated?
-
-□ Which Conditional Access policies applied?
-
-□ Did any policy introduce an unmet requirement?
-
-□ Was the sign-in considered risky?
-
-□ What Correlation ID and Request ID are available?
-
-□ What related events should be correlated?
-```
+* [ ] Who attempted the sign-in?
+* [ ] What were they trying to access?
+* [ ] Which client was used?
+* [ ] Which authentication protocol was used?
+* [ ] What was the Status and Error code?
+* [ ] What happened in Authentication details?
+* [ ] What device was evaluated?
+* [ ] What location / IP was evaluated?
+* [ ] Which Conditional Access policies applied?
+* [ ] Did any policy introduce an unmet requirement?
+* [ ] Was the sign-in considered risky?
+* [ ] What Correlation ID and Request ID are available?
+* [ ] What related events should be correlated?
 
 This is enough to turn the sign-in event into a structured investigation without requiring administrators to memorize the entire schema.
 
@@ -848,21 +761,7 @@ It is a record of an access decision.
 
 Read it in context:
 
-```text
-WHO
-   ↓
-HOW
-   ↓
-WHERE
-   ↓
-WHAT
-   ↓
-WHY
-   ↓
-RESULT
-   ↓
-CORRELATE
-```
+**WHO → HOW → WHERE → WHAT → WHY → RESULT → CORRELATE**
 
 Status tells you the outcome.
 

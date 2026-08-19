@@ -62,17 +62,9 @@ It becomes less useful when trying to understand what happens during a real sign
 
 Consider this:
 
-```text
-Policy A
-Require MFA
-    ↓
-Success
+**Policy A: Require MFA → Success**
 
-Policy B
-Require compliant device
-    ↓
-Failure
-```
+**Policy B: Require compliant device → Failure**
 
 The user completed MFA successfully, yet access was still denied.
 
@@ -95,42 +87,33 @@ That leads to the central idea of this article:
 
 It is tempting to think of Conditional Access like a firewall:
 
-```text
-Policy 1
-   ↓
-Policy 2
-   ↓
-Policy 3
-   ↓
-Allow / Deny
-```
+**Policy 1 → Policy 2 → Policy 3 → Allow / Deny**
 
 That mental model is misleading.
 
 A better model is:
 
-```text
-                    Sign-in
-                       │
-                       ▼
-                 Sign-in context
-                       │
-                       ▼
-               Policy assignments
-                       │
-                       ▼
-                  Conditions
-                       │
-                       ▼
-               Applicable policies
-                       │
-             ┌─────────┴─────────┐
-             ▼                   ▼
-        Grant / Block        Session controls
-             │                   │
-             └─────────┬─────────┘
-                       ▼
-                 Access outcome
+```mermaid
+flowchart TD
+
+    A["Sign-in"]
+    B["Sign-in context"]
+    C["Policy assignments"]
+    D["Conditions"]
+    E["Applicable policies"]
+
+    F["Grant / Block"]
+    G["Session controls"]
+    H["Access outcome"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    E --> G
+    F --> H
+    G --> H
 ```
 
 Microsoft Entra Conditional Access combines signals such as user, device, location, and other context to make access decisions. Multiple policies can apply to the same sign-in, and all applicable policy requirements must be satisfied.
@@ -147,17 +130,24 @@ Before asking why a requirement failed, determine whether the policy actually ap
 
 Conceptually:
 
-```text
-User
-  +
-Resource
-  +
-Conditions
-  ↓
-Does the policy match?
-  ↓
-YES → Policy applies
-NO  → Policy does not apply
+```mermaid
+flowchart TD
+
+    A["User"]
+    B["Resource"]
+    C["Conditions"]
+
+    D["Does the policy match?"]
+
+    E["YES<br/>Policy applies"]
+    F["NO<br/>Policy does not apply"]
+
+    A --> D
+    B --> D
+    C --> D
+
+    D -->|YES| E
+    D -->|NO| F
 ```
 
 A Conditional Access policy is built from assignments and access controls. The assignments determine who and what the policy targets, while conditions further narrow when the policy applies. Multiple configured assignments are logically combined using AND.
@@ -166,18 +156,41 @@ This distinction is important because **Not applied is not the same as Failure**
 
 For example:
 
-```text
-Policy
-All users
-+
-SharePoint
-+
-iOS
+```mermaid
+flowchart TD
 
-Sign-in
-User = Alice
-Application = SharePoint
-Platform = Windows
+    A["Policy"]
+
+    B["All users"]
+    C["SharePoint"]
+    D["iOS"]
+
+    E["Sign-in"]
+
+    F["User = Alice"]
+    G["Application = SharePoint"]
+    H["Platform = Windows"]
+
+    I["Does the sign-in match all conditions?"]
+    J["NO<br/>Policy does not apply"]
+
+    A --> B
+    A --> C
+    A --> D
+
+    E --> F
+    E --> G
+    E --> H
+
+    B --> I
+    C --> I
+    D --> I
+
+    F --> I
+    G --> I
+    H --> I
+
+    I -->|NO| J
 ```
 
 The policy does not apply.
@@ -198,19 +211,32 @@ It simply was not part of that access decision.
 
 Now consider a user whose sign-in matches three policies:
 
-```text
-                    Sign-in
-                       │
-        ┌──────────────┼──────────────┐
-        ▼              ▼              ▼
-     Policy A       Policy B       Policy C
-       MFA           Device          Session
-        │              │              │
-     Satisfied       Failed        Applied
-        │              │              │
-        └──────────────┼──────────────┘
-                       ▼
-                  Final outcome
+```mermaid
+flowchart TD
+
+    A["Sign-in"]
+
+    B["Policy A<br/>MFA"]
+    C["Policy B<br/>Device"]
+    D["Policy C<br/>Session"]
+
+    E["MFA satisfied"]
+    F["Device requirement failed"]
+    G["Session control applied"]
+
+    H["Final outcome"]
+
+    A --> B
+    A --> C
+    A --> D
+
+    B --> E
+    C --> F
+    D --> G
+
+    E --> H
+    F --> H
+    G --> H
 ```
 
 Policy A being successful does not cancel Policy B.
@@ -236,17 +262,9 @@ This deserves its own section because it is one of the easiest mistakes to make.
 
 Suppose the sign-in shows:
 
-```text
-Policy A
-Require MFA
-    ↓
-Success
+**Policy A: Require MFA → Success**
 
-Policy B
-Require compliant device
-    ↓
-Failure
-```
+**Policy B: Require compliant device → Failure**
 
 The correct interpretation is:
 
@@ -287,11 +305,7 @@ Multiple grant controls can be configured together.
 
 For example:
 
-```text
-MFA
- AND
-Compliant device
-```
+MFA **AND** Compliant device
 
 A user can satisfy MFA and still fail the device requirement.
 
@@ -319,11 +333,7 @@ Conditional Access can require a specific authentication strength rather than si
 
 For example:
 
-```text
-MFA completed
-      ≠
-Required authentication strength satisfied
-```
+**MFA completed ≠ Required authentication strength satisfied**
 
 The important question is:
 
@@ -337,18 +347,21 @@ This distinction matters when a policy requires a stronger authentication method
 
 Conditional Access is easier to understand if we separate the major layers:
 
-```text
-1. Does the policy apply?
-        ↓
-2. What conditions are being evaluated?
-        ↓
-3. What requirements does the policy introduce?
-        ↓
-4. Are those requirements satisfied?
-        ↓
-5. Are session controls applied?
-        ↓
-6. What is the resulting user experience?
+```mermaid
+flowchart TD
+
+    A["1. Does the policy apply?"]
+    B["2. What conditions are being evaluated?"]
+    C["3. What requirements does the policy introduce?"]
+    D["4. Are those requirements satisfied?"]
+    E["5. Are session controls applied?"]
+    F["6. What is the resulting user experience?"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
 ```
 
 Microsoft describes Conditional Access evaluation in two broad phases: session details are gathered for evaluation, then applicable controls are enforced. Once grant controls are satisfied, session controls can be applied.
@@ -359,15 +372,7 @@ A user can successfully authenticate and still receive a restricted experience.
 
 For example:
 
-```text
-Authentication
-      ↓
-Access granted
-      ↓
-Session control
-      ↓
-Restricted experience
-```
+**Authentication → Access granted → Session control → Restricted experience**
 
 <ArticleImageLightbox
   src={conditionalAccessEvaluationVsOutcome.src}
@@ -382,17 +387,7 @@ Authentication Context is another example where the access decision cannot be re
 
 An application may work normally while one sensitive operation requires additional protection:
 
-```text
-Application
-     ↓
-Normal access
-     ↓
-Sensitive operation
-     ↓
-Authentication Context
-     ↓
-Additional requirement
-```
+**Application → Normal access → Sensitive operation → Authentication Context → Additional requirement**
 
 In this scenario, the entire application is not necessarily blocked.
 
@@ -412,15 +407,9 @@ A report-only policy can show a failure without actually blocking the user.
 
 Think of it as:
 
-```text
-Enabled policy
-    ↓
-What happened?
+**Enabled policy → What happened?**
 
-Report-only policy
-    ↓
-What would happen?
-```
+**Report-only policy → What would happen?**
 
 The important distinction is:
 
@@ -446,17 +435,7 @@ Answers:
 
 > **What actually happened during this sign-in?**
 
-```text
-             WHAT IF
-                ↓
-       What would apply?
-
-                vs.
-
-          SIGN-IN LOG
-                ↓
-       What actually happened?
-```
+**WHAT IF → What would apply?** vs. **SIGN-IN LOG → What actually happened?**
 
 The What If tool simulates a sign-in scenario and reports policies that apply and policies that do not apply. An actual sign-in event provides the production evidence for a specific request.
 
@@ -472,72 +451,64 @@ A user accesses SharePoint.
 
 The sign-in matches two policies.
 
-### Policy A
+```mermaid
+flowchart TD
 
-```text
-Target:
-All employees
+    A["User"]
+    B["SharePoint"]
 
-Grant:
-Require MFA
-```
+    C["Policy A applies"]
+    D["Require MFA"]
+    E["MFA satisfied"]
 
-Result:
+    F["Policy B applies"]
+    G["Require compliant device"]
+    H["Device = non-compliant"]
+    I["Requirement not satisfied"]
 
-```text
-Success
-```
+    J["Access denied"]
 
-### Policy B
+    A --> B
 
-```text
-Target:
-All employees
+    B --> C
+    C --> D
+    D --> E
 
-Grant:
-Require compliant device
-```
+    B --> F
+    F --> G
+    G --> H
+    H --> I
 
-Result:
-
-```text
-Failure
+    E --> J
+    I --> J
 ```
 
 The sign-in evidence shows:
 
-```text
-Authentication
-MFA succeeded
+```mermaid
+flowchart TD
 
-Device
-Non-compliant
+    A["Authentication"]
+    A1["MFA succeeded"]
 
-Conditional Access
-Policy A → Success
-Policy B → Failure
-```
+    B["Device"]
+    B1["Non-compliant"]
 
-The evaluation can now be reconstructed:
+    C["Conditional Access"]
+    C1["Policy A → Success"]
+    C2["Policy B → Failure"]
 
-```text
-User
- ↓
-SharePoint
- ↓
-Policy A applies
- ↓
-MFA satisfied
- ↓
-Policy B applies
- ↓
-Compliant-device requirement
- ↓
-Device = non-compliant
- ↓
-Requirement not satisfied
- ↓
-Access denied
+    D["Sign-in evidence"]
+
+    A --> A1
+    B --> B1
+    C --> C1
+    C --> C2
+
+    A1 --> D
+    B1 --> D
+    C1 --> D
+    C2 --> D
 ```
 
 The correct conclusion is:
@@ -554,41 +525,56 @@ The important lesson is that the individual policy results must be connected to 
 
 The whole article can ultimately be reduced to this:
 
-```text
-                         SIGN-IN
-                            │
-                            ▼
-                     SIGN-IN CONTEXT
-                            │
-             ┌──────────────┼──────────────┐
-             ▼              ▼              ▼
-          Identity        Device        Network
-             │              │              │
-             └──────────────┼──────────────┘
-                            ▼
-                       ASSIGNMENTS
-                            │
-                            ▼
-                        CONDITIONS
-                            │
-                            ▼
-                  APPLICABLE POLICIES
-                            │
-             ┌──────────────┼──────────────┐
-             ▼              ▼              ▼
-           Grant           Block         Session
-          controls        controls       controls
-             │              │              │
-             └──────────────┼──────────────┘
-                            ▼
-                     ACCESS OUTCOME
-                            │
-                  ┌─────────┴─────────┐
-                  ▼                   ▼
-               Allowed              Denied
-                  │
-                  ▼
-             Session behavior
+```mermaid
+flowchart TD
+
+    A["SIGN-IN"]
+    B["SIGN-IN CONTEXT"]
+
+    C["Identity"]
+    D["Device"]
+    E["Network"]
+
+    F["ASSIGNMENTS"]
+    G["CONDITIONS"]
+    H["APPLICABLE POLICIES"]
+
+    I["Grant controls"]
+    J["Block controls"]
+    K["Session controls"]
+
+    L["ACCESS OUTCOME"]
+
+    M["Allowed"]
+    N["Denied"]
+
+    O["Session behavior"]
+
+    A --> B
+
+    B --> C
+    B --> D
+    B --> E
+
+    C --> F
+    D --> F
+    E --> F
+
+    F --> G
+    G --> H
+
+    H --> I
+    H --> J
+    H --> K
+
+    I --> L
+    J --> L
+    K --> L
+
+    L --> M
+    L --> N
+
+    M --> O
 ```
 
 The important part is the sequence:
@@ -647,28 +633,29 @@ The important part is the sequence:
 
 When looking at a Conditional Access evaluation, use this order:
 
-```text
-1. Identify the sign-in
-        ↓
-2. Identify the applicable policies
-        ↓
-3. Determine what each policy requires
-        ↓
-4. Check which requirements were satisfied
-        ↓
-5. Find the requirement that wasn't satisfied
-        ↓
-6. Determine the resulting access/session outcome
+```mermaid
+flowchart TD
+
+    A["1. Identify the sign-in"]
+    B["2. Identify the applicable policies"]
+    C["3. Determine what each policy requires"]
+    D["4. Check which requirements were satisfied"]
+    E["5. Find the requirement that wasn't satisfied"]
+    F["6. Determine the resulting access / session outcome"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
 ```
 
 Notice what is **not** at the beginning:
 
-```text
-❌ Exclude the user
-❌ Disable the policy
-❌ Remove MFA
-❌ Change the device requirement
-```
+<ul>❌ Exclude the user</ul>
+<ul>❌ Disable the policy</ul>
+<ul>❌ Remove MFA</ul>
+<ul>❌ Change the device requirement</ul>
 
 Those are remediation decisions.
 
@@ -684,21 +671,7 @@ Conditional Access becomes much easier to understand when it is treated as an **
 
 The essential sequence is:
 
-```text
-Sign-in context
-      ↓
-Policy applicability
-      ↓
-Applicable policies
-      ↓
-Requirements
-      ↓
-Satisfied / unsatisfied controls
-      ↓
-Access decision
-      ↓
-Session experience
-```
+**Sign-in context → Policy applicability → Applicable policies → Requirements → Satisfied / unsatisfied controls → Access decision → Session experience**
 
 The most important ideas are simple:
 

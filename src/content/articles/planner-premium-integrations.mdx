@@ -87,24 +87,27 @@ Premium plans use a different project-data model backed by Dataverse. Microsoft 
 
 A simplified model is:
 
-```text
-Basic Planner
-      │
-      ▼
- Planner service
-      │
-      ▼
- Microsoft 365 data services
+```mermaid
+flowchart TD
 
+    subgraph BASIC["Basic Planner"]
+        A["Planner service"]
+        B["Microsoft 365 data services"]
 
-Premium Planner
-      │
-      ▼
-   Dataverse
-      │
-      ├── Project data
-      ├── Security
-      └── Platform integration
+        A --> B
+    end
+
+    subgraph PREMIUM["Premium Planner"]
+        C["Dataverse"]
+
+        D["Project data"]
+        E["Security"]
+        F["Platform integration"]
+
+        C --> D
+        C --> E
+        C --> F
+    end
 ```
 
 The important takeaway is:
@@ -128,16 +131,24 @@ A better mental model is:
 
 At a simplified level:
 
-```text
-                    Dataverse
-                        │
-        ┌───────────────┼───────────────┐
-        ▼               ▼               ▼
-      Tables       Relationships      Security
-        │               │               │
-        └───────────────┼───────────────┘
-                        ▼
-                 Business data
+```mermaid
+flowchart TD
+
+    A["Dataverse"]
+
+    B["Tables"]
+    C["Relationships"]
+    D["Security"]
+
+    E["Business data"]
+
+    A --> B
+    A --> C
+    A --> D
+
+    B --> E
+    C --> E
+    D --> E
 ```
 
 For Planner Premium, the important point is not to learn Dataverse as a product in isolation.
@@ -163,26 +174,28 @@ Microsoft currently states plainly:
 
 Conceptually:
 
-```text
-Power Automate
-      │
-      ▼
-Planner connector
-      │
-      ▼
-Basic Plan
+```mermaid
+flowchart TD
+
+    A["Power Automate"]
+    B["Planner connector"]
+    C["Basic Plan"]
+
+    A --> B
+    B --> C
 ```
 
 Premium follows a different architecture:
 
-```text
-Power Automate
-      │
-      ▼
-Premium integration path
-      │
-      ▼
-Dataverse-backed project
+```mermaid
+flowchart TD
+
+    A["Power Automate"]
+    B["Premium integration path"]
+    C["Dataverse-backed project"]
+
+    A --> B
+    B --> C
 ```
 
 The connector's supported integration surface is designed for Basic plans, while Premium projects use a different project-data architecture.
@@ -202,15 +215,15 @@ Microsoft provides an administrative setting called `AllowDataFlowToDataverse` b
 
 Conceptually:
 
-```text
-Basic Plan
-    │
-    │ Conversion
-    ▼
-Premium Plan
-    │
-    ▼
-Dataverse-backed project data
+```mermaid
+flowchart TD
+
+    A["Basic Plan"]
+    B["Premium Plan"]
+    C["Dataverse-backed project data"]
+
+    A -->|"Conversion"| B
+    B --> C
 ```
 
 The project may still appear familiar to users in Planner.
@@ -223,15 +236,7 @@ That is why a successful plan conversion does not automatically mean every conne
 
 Consider a Basic Planner workflow:
 
-```text
-Form
-  ↓
-Power Automate
-  ↓
-Planner connector
-  ↓
-Create task
-```
+**Form → Power Automate → Planner connector → Create task**
 
 If the destination becomes Premium, do not begin by asking:
 

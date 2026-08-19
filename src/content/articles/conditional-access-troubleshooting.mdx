@@ -82,18 +82,21 @@ Microsoft Entra sign-in logs provide the evidence needed to understand what happ
 
 That gives us a repeatable troubleshooting method:
 
-```text
-Symptom
-   ↓
-Evidence
-   ↓
-Policy
-   ↓
-Evaluation
-   ↓
-Root Cause
-   ↓
-Remediation
+```mermaid
+flowchart TD
+
+    A["Symptom"]
+    B["Evidence"]
+    C["Policy"]
+    D["Evaluation"]
+    E["Root Cause"]
+    F["Remediation"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
 ```
 
 > **Don't start by asking, "Which policy should I change?" Start by asking, "What did Microsoft Entra evaluate in this exact sign-in?"**
@@ -139,24 +142,21 @@ Then inspect the event's most relevant details:
 
 A useful mental model is:
 
-```text
-WHO
-User / identity
-      ↓
-HOW
-Client / authentication
-      ↓
-WHERE
-Location / device
-      ↓
-WHAT
-Application / resource
-      ↓
-WHY
-Conditional Access / risk
-      ↓
-RESULT
-Status / error
+```mermaid
+flowchart TD
+
+    A["WHO<br/>User / identity"]
+    B["HOW<br/>Client / authentication"]
+    C["WHERE<br/>Location / device"]
+    D["WHAT<br/>Application / resource"]
+    E["WHY<br/>Conditional Access / risk"]
+    F["RESULT<br/>Status / error"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
 ```
 
 Common Conditional Access-related error codes can provide an early clue, including device compliance, domain-join, approved-client, Conditional Access block, risk, and Intune protection errors.
@@ -175,17 +175,9 @@ Multiple policies can apply to the same sign-in.
 
 For example:
 
-```text
-Policy A
-Require MFA
-   ↓
-Satisfied
+**Policy A: Require MFA → Satisfied**
 
-Policy B
-Require compliant device
-   ↓
-Not satisfied
-```
+**Policy B: Require compliant device → Not satisfied**
 
 The user can therefore complete MFA successfully and still be denied.
 
@@ -272,15 +264,17 @@ Device-related failures commonly occur when the device is:
 
 A useful sequence is:
 
-```text
-Conditional Access requires
-a device condition
-        ↓
-Check Device info
-        ↓
-Check compliance / join state
-        ↓
-Identify unmet requirement
+```mermaid
+flowchart TD
+
+    A["Conditional Access requires<br/>a device condition"]
+    B["Check Device info"]
+    C["Check compliance / join state"]
+    D["Identify unmet requirement"]
+
+    A --> B
+    B --> C
+    C --> D
 ```
 
 Do not immediately remove the device requirement from the policy.
@@ -299,17 +293,7 @@ A user may be physically in one place while Microsoft Entra evaluates the public
 
 The investigation should therefore follow the actual network path:
 
-```text
-User
- ↓
-Public IP
- ↓
-VPN / Proxy
- ↓
-Named network
- ↓
-Conditional Access
-```
+**User → Public IP → VPN / Proxy → Named network → Conditional Access**
 
 The important distinction is:
 
@@ -335,17 +319,7 @@ The source identifies built-in strengths including:
 
 The evaluation can therefore look like:
 
-```text
-Initial authentication
-        ↓
-Conditional Access
-        ↓
-Required authentication strength
-        ↓
-Additional authentication
-        ↓
-Access
-```
+**Initial authentication → Conditional Access → Required authentication strength → Additional authentication → Access**
 
 So:
 
@@ -397,11 +371,7 @@ Multiple controls can be combined.
 
 For example:
 
-```text
-MFA
- AND
-Compliant device
-```
+MFA **AND** Compliant device
 
 A user can satisfy the first requirement and still fail the second.
 
@@ -431,15 +401,7 @@ Those symptoms can point toward **session controls**.
 
 Conceptually:
 
-```text
-Authentication
-      ↓
-Access granted
-      ↓
-Session control
-      ↓
-Restricted experience
-```
+**Authentication → Access granted → Session control → Restricted experience**
 
 This distinction matters because changing authentication requirements may do nothing to resolve a session restriction.
 
@@ -469,15 +431,9 @@ Use it to accelerate investigation of a complex failure by narrowing the availab
 
 The important distinction is:
 
-```text
-What If
-   ↓
-What would apply?
+**What If → What would apply?**
 
-Sign-in logs
-   ↓
-What actually happened?
-```
+**Sign-in logs → What actually happened?**
 
 None of these replaces the actual sign-in event during a production incident.
 
@@ -492,15 +448,9 @@ None of these replaces the actual sign-in event during a production incident.
 
 ### MFA succeeds, but access is still blocked
 
-```text
-MFA
- ↓
-Success
+**MFA → Success**
 
-Compliant device
- ↓
-Failure
-```
+**Compliant device → Failure**
 
 **Root cause:** multiple grant requirements apply.
 
@@ -508,15 +458,7 @@ Failure
 
 ### The user can access the application but cannot download
 
-```text
-Sign-in
- ↓
-Success
- ↓
-Session control
- ↓
-Restricted action
-```
+**Sign-in → Success → Session control → Restricted action**
 
 **Root cause:** a session restriction is being enforced.
 
@@ -524,15 +466,7 @@ Restricted action
 
 ### Only one sensitive workflow fails
 
-```text
-Application
- ↓
-Normal access
- ↓
-Sensitive resource
- ↓
-Authentication Context
-```
+**Application → Normal access → Sensitive resource → Authentication Context**
 
 **Root cause:** the context or resulting authentication requirement was not satisfied.
 
@@ -540,11 +474,7 @@ Authentication Context
 
 ### A BYOD user is blocked by device requirements
 
-```text
-Hybrid joined device
-        AND
-Compliant device
-```
+Hybrid joined device **AND** Compliant device
 
 **Root cause:** the targeted population cannot satisfy the selected requirements.
 
@@ -552,11 +482,7 @@ Compliant device
 
 ### A Report-only failure is mistaken for an actual block
 
-```text
-Report-only policy
-       ↓
-Failure
-```
+**Report-only policy → Failure**
 
 **Root cause:** a report-only policy does not enforce access.
 
@@ -600,24 +526,27 @@ Maintain permanent emergency-access exclusions so administrators do not lock the
 
 The entire methodology can be reduced to:
 
-```text
-1. Capture the symptom
-          ↓
-2. Find the exact sign-in
-          ↓
-3. Review authentication and device details
-          ↓
-4. Review Conditional Access
-          ↓
-5. Identify the unmet requirement
-          ↓
-6. Classify the root cause
-          ↓
-7. Apply the narrowest remediation
-          ↓
-8. Retest
-          ↓
-9. Document the result
+```mermaid
+flowchart TD
+
+    A["Capture the symptom"]
+    B["Find the exact sign-in"]
+    C["Review authentication and device details"]
+    D["Review Conditional Access"]
+    E["Identify the unmet requirement"]
+    F["Classify the root cause"]
+    G["Apply the narrowest remediation"]
+    H["Retest"]
+    I["Document the result"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    H --> I
 ```
 
 Notice what is deliberately missing:
@@ -656,19 +585,7 @@ And the unmet requirement points toward the root cause.
 
 Use the same sequence every time:
 
-```text
-Symptom
-   ↓
-Evidence
-   ↓
-Policy
-   ↓
-Evaluation
-   ↓
-Root Cause
-   ↓
-Remediation
-```
+**Symptom → Evidence → Policy → Evaluation → Root Cause → Remediation**
 
 That consistency is what turns Conditional Access troubleshooting from guesswork into a repeatable support-engineering process.
 

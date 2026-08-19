@@ -94,13 +94,7 @@ Start by assessing:
 
 A simple model is:
 
-```text
-Team tasks
-    ↓
-Structured project?
-    ↓
-Premium may add value
-```
+**Team tasks → Structured project? → Premium may add value**
 
 Not every user involved in a project necessarily needs the same level of interaction with it.
 
@@ -203,16 +197,27 @@ A good pilot should test whether Premium helps teams:
 
 The pilot should produce evidence, not just enthusiasm.
 
-```text
-Pilot
-  ↓
-What improved?
-What remained difficult?
-What should become standard?
-  ↓
-Refine
-  ↓
-Scale
+```mermaid
+flowchart TD
+
+    A["Pilot"]
+
+    B["What improved?"]
+    C["What remained difficult?"]
+    D["What should become standard?"]
+
+    E["Refine"]
+    F["Scale"]
+
+    A --> B
+    A --> C
+    A --> D
+
+    B --> E
+    C --> E
+    D --> E
+
+    E --> F
 ```
 
 That turns adoption into a tested operating model rather than a company-wide experiment.
@@ -266,19 +271,7 @@ It is not proof of adoption.
 
 A better model is:
 
-```text
-License assigned
-      ↓
-User trained
-      ↓
-Project created
-      ↓
-Project maintained
-      ↓
-Premium capabilities used
-      ↓
-Business outcome improved
-```
+**License assigned → User trained → Project created → Project maintained → Premium capabilities used → Business outcome improved**
 
 Possible indicators include:
 

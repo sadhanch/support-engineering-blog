@@ -153,17 +153,20 @@ You do not need to watch the entire Microsoft ecosystem every day.
 
 Establish a small set of trusted signals:
 
-```text
-Microsoft 365 Message Center
-            +
-Microsoft 365 Roadmap
-            +
-Planner documentation
-            +
-Release information
-            │
-            ▼
-      Change review
+```mermaid
+flowchart TD
+
+    A["Microsoft 365 Message Center"]
+    B["Microsoft 365 Roadmap"]
+    C["Planner documentation"]
+    D["Release information"]
+
+    E["Change review"]
+
+    A --> E
+    B --> E
+    C --> E
+    D --> E
 ```
 
 The important distinction is:
@@ -236,16 +239,24 @@ The role can coordinate with Microsoft 365 administration, the PMO, enterprise a
 
 A simple model is:
 
-```text
-              Planner Product Owner
-                        │
-          ┌─────────────┼─────────────┐
-          ▼             ▼             ▼
-       Monitor        Assess       Communicate
-          │             │             │
-          └─────────────┼─────────────┘
-                        ▼
-                Update the model
+```mermaid
+flowchart TD
+
+    A["Planner Product Owner"]
+
+    B["Monitor"]
+    C["Assess"]
+    D["Communicate"]
+
+    E["Update the model"]
+
+    A --> B
+    A --> C
+    A --> D
+
+    B --> E
+    C --> E
+    D --> E
 ```
 
 The objective is not to create another layer of bureaucracy.
@@ -262,20 +273,16 @@ It should explain **how your organization uses Planner**.
 
 That can include:
 
-```text
-Planner Administration Record
-─────────────────────────────
-Approved use cases
-Plan / licensing model
-Known limitations
-Integration inventory
-Governance standards
-Recent product changes
-Upcoming changes
-Owner
-Last reviewed
-Next review
-```
+- Approved use cases
+- Plan / licensing model
+- Known limitations 
+- Integration inventory
+- Governance standards
+- Recent product changes
+- Upcoming changes
+- Owner
+- Last reviewed
+- Next review
 
 A stale document can be worse than having no document because users assume it is authoritative.
 
@@ -287,19 +294,22 @@ The best long-term model is not a one-time audit.
 
 It is a recurring cycle:
 
-```text
-Monitor
-   ↓
-Assess
-   ↓
-Decide
-   ↓
-Update
-   ↓
-Communicate
-   ↓
-Review again
-   ↺
+```mermaid
+flowchart TD
+
+    A["Monitor"]
+    B["Assess"]
+    C["Decide"]
+    D["Update"]
+    E["Communicate"]
+    F["Review again"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> A
 ```
 
 A quarterly review can cover:

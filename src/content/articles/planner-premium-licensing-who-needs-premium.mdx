@@ -285,17 +285,22 @@ is not automatically a valid licensing model.
 
 A better model is:
 
-```text
-                ONE PREMIUM PROJECT
-                       │
-        ┌──────────────┼──────────────┐
-        │              │              │
-        ▼              ▼              ▼
-   Project Manager  Contributors  Stakeholders
-        │              │              │
-        ▼              ▼              ▼
- Premium capability  Basic         Visibility /
-      access       participation     reporting
+```mermaid
+flowchart TD
+
+    subgraph P["ONE PREMIUM PROJECT"]
+        A["Project Manager"]
+        B["Contributors"]
+        C["Stakeholders"]
+
+        D["Premium capability access"]
+        E["Basic participation"]
+        F["Visibility / reporting"]
+
+        A --> D
+        B --> E
+        C --> F
+    end
 ```
 
 This is one of the most important cost-control opportunities in a large rollout.
@@ -493,19 +498,7 @@ Licenses should be reviewed when:
 
 The lifecycle should be:
 
-```text
-Request
-  ↓
-Evaluate
-  ↓
-Assign
-  ↓
-Use
-  ↓
-Review
-  ↓
-Continue or Reclaim
-```
+**Request → Evaluate → Assign → Use → Review → Continue or Reclaim**
 
 This is much healthier than treating a Premium license as a permanent entitlement.
 
@@ -621,25 +614,7 @@ Reassess the license when responsibilities or workloads change.
 
 Return licenses that are no longer justified to the available pool.
 
-```text
-Assess
-  ↓
-Classify
-  ↓
-Request
-  ↓
-Validate
-  ↓
-Trial
-  ↓
-License
-  ↓
-Adopt
-  ↓
-Review
-  ↓
-Reclaim
-```
+**Assess → Classify → Request → Validate → Trial → License → Adopt → Review → Reclaim**
 
 <PlannerPremiumLicenseFitCheck />
 

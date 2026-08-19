@@ -478,6 +478,10 @@ const structuredData = type === "article"
             initializeMermaid
         } from "../scripts/mermaid";
 
+        import {
+            initializeCodeCopy
+        } from "../scripts/code-copy";
+
 
         import {
             initializeAnalyticsConsent
@@ -489,6 +493,8 @@ const structuredData = type === "article"
         initializeTheme();
 
         initializeMermaid();
+
+        initializeCodeCopy();
 
         initializeAnalyticsConsent();
 

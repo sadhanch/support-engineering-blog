@@ -120,23 +120,31 @@ Microsoft currently documents Planner Portfolios around **Premium plans**. Basic
 
 The practical boundary is:
 
-```text
-                    Planner Portfolio
-                           │
-             ┌─────────────┴─────────────┐
-             │                           │
-      Premium Project A           Premium Project B
-             │                           │
-             └─────────────┬─────────────┘
-                           │
-                    Consolidated View
+```mermaid
+flowchart TD
 
+    A["Planner Portfolio"]
 
-        Outside the current Portfolio model:
+    B["Premium Project A"]
+    C["Premium Project B"]
 
-        Planner Basic
-        Azure DevOps
-        Project Online
+    D["Consolidated View"]
+
+    A --> B
+    A --> C
+
+    B --> D
+    C --> D
+
+    E["Outside current Portfolio model"]
+
+    F["Planner Basic"]
+    G["Azure DevOps"]
+    H["Project Online"]
+
+    E --> F
+    E --> G
+    E --> H
 ```
 
 This is especially important during a Project Online retirement transition.
@@ -181,15 +189,7 @@ Those are different activities.
 
 A useful maturity model is:
 
-```text
-Individual Project
-       ↓
-Portfolio Visibility
-       ↓
-Portfolio Governance
-       ↓
-Strategic Portfolio Management
-```
+**Individual Project → Portfolio Visibility → Portfolio Governance → Strategic Portfolio Management**
 
 Planner Premium Portfolios sit primarily in the **portfolio visibility** layer.
 
@@ -285,19 +285,23 @@ A broader reporting layer can.
 
 This gives us a useful model:
 
-```text
-Premium Projects
-      │
-      ▼
-Planner Portfolio
-      │
-      │  Operational visibility
-      ▼
-    Power BI
-      │
-      ├── PMO reporting
-      ├── Executive dashboards
-      └── Cross-system analysis
+```mermaid
+flowchart TD
+
+    A["Premium Projects"]
+    B["Planner Portfolio"]
+    C["Power BI"]
+
+    D["PMO reporting"]
+    E["Executive dashboards"]
+    F["Cross-system analysis"]
+
+    A --> B
+    B -->|"Operational visibility"| C
+
+    C --> D
+    C --> E
+    C --> F
 ```
 
 This does **not** mean every Planner Portfolio needs Power BI.
@@ -314,14 +318,20 @@ Mixed environments are normal in enterprise organizations.
 
 A company may have:
 
-```text
-Planner Premium ───────┐
-                       │
-Azure DevOps ──────────┤
-                       │
-Project Online ────────┤──► Reporting Layer
-                       │
-ERP / Other PPM ───────┘
+```mermaid
+flowchart LR
+
+    A["Planner Premium"]
+    B["Azure DevOps"]
+    C["Project Online"]
+    D["ERP / Other PPM"]
+
+    E["Reporting Layer"]
+
+    A --> E
+    B --> E
+    C --> E
+    D --> E
 ```
 
 Trying to force these systems into a single Planner Portfolio is the wrong architectural goal.
@@ -344,19 +354,25 @@ These layers can be connected without being the same product.
 
 For example:
 
-```text
-Systems of Execution
-        │
-        ├── Planner Premium
-        ├── Azure DevOps
-        ├── ERP
-        └── Other systems
-                │
-                ▼
-        Reporting / Portfolio Model
-                │
-                ▼
-        PMO / Leadership Decisions
+```mermaid
+flowchart TD
+
+    subgraph SOE["Systems of Execution"]
+        A["Planner Premium"]
+        B["Azure DevOps"]
+        C["ERP"]
+        D["Other systems"]
+    end
+
+    E["Reporting / Portfolio Model"]
+    F["PMO / Leadership Decisions"]
+
+    A --> E
+    B --> E
+    C --> E
+    D --> E
+
+    E --> F
 ```
 
 The organization does not need one application to perform every function.

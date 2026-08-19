@@ -106,12 +106,18 @@ The boundary becomes obvious when the question changes from a **project** to a *
 
 Suppose Alex works on three Premium projects:
 
-```text
-                 Alex
+```mermaid
+flowchart TD
 
-Project A ───────────── 40%
-Project B ───────────── 30%
-Project C ───────────── 20%
+    A["Alex"]
+
+    B["Project A<br/>40%"]
+    C["Project B<br/>30%"]
+    D["Project C<br/>20%"]
+
+    A --> B
+    A --> C
+    A --> D
 ```
 
 A manager may want to know:
@@ -122,24 +128,24 @@ Planner Premium does not provide a native screen that combines those assignments
 
 This is a scope boundary, not simply a missing filter or alternate navigation option.
 
-```text
-              Planner Premium
+```mermaid
+flowchart TD
 
-              Single Project
-                    │
-                    ▼
-          People / Assignments
-                    │
-                    ▼
-          Project-level workload
+    A["Planner Premium"]
 
-              ── boundary ──
+    subgraph S1["Single Project"]
+        B["People / Assignments"]
+        C["Project-level workload"]
 
-           Multiple Projects
-                    │
-                    ▼
-          No native resource
-          aggregation view
+        B --> C
+    end
+
+    subgraph S2["Multiple Projects"]
+        D["No native resource aggregation view"]
+    end
+
+    A --> B
+    C -. "boundary" .-> D
 ```
 
 ---
@@ -172,15 +178,27 @@ It is a way to examine workload distribution **within the plan**.
 
 It is not a centralized workspace where a manager selects a person and sees:
 
-```text
-Person
-  ↓
-Project A
-Project B
-Project C
-Project D
-  ↓
-Combined workload
+```mermaid
+flowchart TD
+
+    A["Person"]
+
+    B["Project A"]
+    C["Project B"]
+    D["Project C"]
+    E["Project D"]
+
+    F["Combined workload"]
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+
+    B --> F
+    C --> F
+    D --> F
+    E --> F
 ```
 
 The practical distinction is:
@@ -197,18 +215,23 @@ Premium project data is available in Dataverse for reporting scenarios, includin
 
 The architecture can look like:
 
-```text
-Premium Project A ──┐
-Premium Project B ──┤
-Premium Project C ──┤
-                    ▼
-                Dataverse
-                    │
-                    ▼
-                 Power BI
-                    │
-                    ▼
-          Combined analytical view
+```mermaid
+flowchart TD
+
+    A["Premium Project A"]
+    B["Premium Project B"]
+    C["Premium Project C"]
+
+    D["Dataverse"]
+    E["Power BI"]
+    F["Combined analytical view"]
+
+    A --> D
+    B --> D
+    C --> D
+
+    D --> E
+    E --> F
 ```
 
 <ComparisonTable
@@ -321,19 +344,22 @@ when assignments, tasks, schedules, and project execution need to be changed.
 
 This gives us a clean separation:
 
-```text
-          MANAGE                         ANALYZE
-             │                              │
-             ▼                              ▼
-      Planner Premium                  Power BI
-             │                              │
-      Project-level                    Cross-project
-       assignments                      reporting
-             │                              │
-             └──────────────┬───────────────┘
-                            │
-                       Same data,
-                  different purpose
+```mermaid
+flowchart TD
+
+    A["Planner Premium"]
+    B["Project-level assignments"]
+
+    C["Power BI"]
+    D["Cross-project reporting"]
+
+    E["Same data,<br/>different purpose"]
+
+    A --> B
+    C --> D
+
+    B --> E
+    D --> E
 ```
 
 <PlannerPremiumResourceScopeCheck />

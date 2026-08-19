@@ -35,6 +35,22 @@ function getMermaidConfig() {
 
         theme: "base" as const,
 
+        htmlLabels: true,
+
+        flowchart: {
+
+            useMaxWidth: true,
+
+            wrappingWidth: 320,
+
+            nodeSpacing: 30,
+
+            rankSpacing: 40,
+
+            curve: "linear"
+
+        },
+
         fontFamily:
             '"Inter", sans-serif',
 
@@ -137,7 +153,7 @@ function prepareDiagrams(): HTMLElement[] {
 
     const codeBlocks =
         document.querySelectorAll<HTMLElement>(
-            ".article-content pre[data-language='mermaid']"
+            ".article-content pre > code.language-mermaid"
         );
 
     const diagrams: HTMLElement[] = [];
@@ -282,7 +298,7 @@ export function initializeMermaid() {
 
     const diagrams =
         document.querySelectorAll(
-            ".article-content pre[data-language='mermaid']"
+            ".article-content pre > code.language-mermaid"
         );
 
     if (!diagrams.length) {

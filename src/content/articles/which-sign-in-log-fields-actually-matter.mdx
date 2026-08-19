@@ -70,36 +70,27 @@ The better approach is simple:
 
 Think of a sign-in investigation as:
 
-```text
-Question
-   ↓
-Relevant fields
-   ↓
-Evidence
-   ↓
-Next question
-```
+**Question → Relevant fields → Evidence → Next question**
 
 For example:
 
-```text
-Did the sign-in fail?
-        ↓
-Status + Error code
-```
+**Did the sign-in fail? → Status + Error code**
 
 Or:
 
-```text
-Why did Conditional Access block it?
-        ↓
-Conditional Access
-        ↓
-Applicable policies
-        ↓
-Policy result
-        ↓
-Unmet requirement
+```mermaid
+flowchart TD
+
+    A["Why did Conditional Access block it?"]
+    B["Conditional Access"]
+    C["Applicable policies"]
+    D["Policy result"]
+    E["Unmet requirement"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
 ```
 
 The goal is not to memorize the entire sign-in schema.
@@ -124,15 +115,7 @@ Then inspect:
 
 A useful investigation path is:
 
-```text
-Status
-  ↓
-Error code
-  ↓
-Failure reason
-  ↓
-Additional details
-```
+**Status → Error code → Failure reason → Additional details**
 
 Status tells you the outcome, but the outcome alone does not explain the cause. A failure can involve Conditional Access, authentication, credentials, device conditions, sessions, applications, or user actions.
 
@@ -186,13 +169,7 @@ These codes provide useful clues, but they should be interpreted with the rest o
 
 For example:
 
-```text
-53003
-  ↓
-Conditional Access
-  ↓
-Inspect applied policies
-```
+**53003 → Conditional Access → Inspect applied policies**
 
 ---
 
@@ -229,32 +206,30 @@ Authentication requirement describes the requirement associated with the sign-in
 
 For example:
 
-```text
-Password
-   ↓
-Success
+```mermaid
+flowchart TD
 
-MFA
-   ↓
-User declined
-   ↓
-Sign-in fails
+    A["Password"] --> B["Success"]
+
+    C["MFA"] --> D["User declined"]
+    D --> E["Sign-in fails"]
+
+    B --> E
 ```
 
 or:
 
-```text
-Password
-   ↓
-Success
+```mermaid
+flowchart TD
 
-MFA
-   ↓
-Satisfied by token
-   ↓
-Conditional Access
-   ↓
-Access granted
+    A["Password"] --> B["Success"]
+
+    C["MFA"] --> D["Satisfied by token"]
+
+    B --> E["Conditional Access"]
+    D --> E
+
+    E --> F["Access granted"]
 ```
 
 The important question is:
@@ -316,15 +291,7 @@ Sign-in information can include the application, application ID, resource, resou
 
 A useful model is:
 
-```text
-Application
-      ↓
-Authentication
-      ↓
-Resource
-      ↓
-Access decision
-```
+**Application → Authentication → Resource → Access decision**
 
 This distinction becomes valuable when an application appears to work normally but a particular service or resource does not.
 
@@ -346,17 +313,7 @@ Then investigate:
 
 The investigation path is:
 
-```text
-Sign-in event
-      ↓
-Conditional Access
-      ↓
-Applicable policies
-      ↓
-Policy result
-      ↓
-Unmet requirement
-```
+**Sign-in event → Conditional Access → Applicable policies → Policy result → Unmet requirement**
 
 One important point:
 
@@ -403,15 +360,9 @@ They serve different purposes.
 
 A simple model is:
 
-```text
-Correlation ID
-      ↓
-Broader sign-in session
+**Correlation ID → Broader sign-in session**
 
-Request ID
-      ↓
-Specific request / token context
-```
+**Request ID → Specific request / token context**
 
 When escalating a difficult authentication issue, retain both when available.
 
@@ -423,24 +374,27 @@ Individual fields rarely provide the complete answer.
 
 Consider:
 
-```text
-Status
-Failure
-    ↓
-Error code
-53003
-    ↓
-Conditional Access
-Policy blocked
-    ↓
-Device
-Non-compliant
-    ↓
-Authentication details
-MFA succeeded
-    ↓
-Resource
-SharePoint
+```mermaid
+flowchart TD
+
+    A["Status"] --> A1["Failure"]
+
+    B["Error code"] --> B1["53003"]
+
+    C["Conditional Access"] --> C1["Policy blocked"]
+
+    D["Device"] --> D1["Non-compliant"]
+
+    E["Authentication details"] --> E1["MFA succeeded"]
+
+    F["Resource"] --> F1["SharePoint"]
+
+    A1 --> G["Sign-in failure"]
+    B1 --> G
+    C1 --> G
+    D1 --> G
+    E1 --> G
+    F1 --> G
 ```
 
 The conclusion is much more useful than simply saying:
@@ -520,30 +474,46 @@ This gives administrators a practical starting point without requiring them to m
 
 When you do not know where to begin, use this sequence:
 
-```text
-What happened?
-    ↓
-Status + Error
+```mermaid
+flowchart TD
 
-How did it happen?
-    ↓
-Client + Protocol + Authentication
+    A["Sign-in event"]
 
-What surrounded the request?
-    ↓
-Device + Location
+    B["What happened?"]
+    B1["Status + Error"]
 
-What was being accessed?
-    ↓
-Application + Resource
+    C["How did it happen?"]
+    C1["Client + Protocol + Authentication"]
 
-Why was the decision made?
-    ↓
-Conditional Access + Risk
+    D["What surrounded the request?"]
+    D1["Device + Location"]
 
-How do I connect related events?
-    ↓
-Correlation ID + Request ID
+    E["What was being accessed?"]
+    E1["Application + Resource"]
+
+    F["Why was the decision made?"]
+    F1["Conditional Access + Risk"]
+
+    G["How do I connect related events?"]
+    G1["Correlation ID + Request ID"]
+
+    A --> B
+    B --> B1
+
+    A --> C
+    C --> C1
+
+    A --> D
+    D --> D1
+
+    A --> E
+    E --> E1
+
+    A --> F
+    F --> F1
+
+    A --> G
+    G --> G1
 ```
 
 This is a **selection strategy**, not a requirement to inspect every field.
@@ -562,15 +532,7 @@ It begins with a question.
 
 Then select the fields that can provide the evidence.
 
-```text
-Question
-   ↓
-Field
-   ↓
-Evidence
-   ↓
-Next question
-```
+**Question → Field → Evidence → Next question**
 
 If you need to know whether the request failed, start with **Status and Error code**.
 
