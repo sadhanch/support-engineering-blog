@@ -67,27 +67,30 @@ That is useful, but it is only the outcome.
 
 A sign-in event is better understood as the record of an access decision:
 
-```text
-WHO
-Identity
-   ↓
-HOW
-Client + Protocol + Authentication
-   ↓
-WHERE
-Device + Location
-   ↓
-WHAT
-Application + Resource
-   ↓
-WHY
-Conditional Access + Risk
-   ↓
-RESULT
-Status + Error
-   ↓
-CORRELATE
-Correlation ID + Request ID
+```mermaid
+flowchart TD
+
+    A["WHO — Identity"]
+
+    B["HOW — Client + Protocol + Authentication"]
+
+    C["WHERE — Device + Location"]
+
+    D["WHAT — Application + Resource"]
+
+    E["WHY — Conditional Access + Risk"]
+
+    F["RESULT — Status + Error"]
+
+    G["CORRELATE — Correlation ID + Request ID"]
+
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
 ```
 
 The goal of this guide is not to explain every field Microsoft can expose.

@@ -1,6 +1,6 @@
 /* ==========================================================
    SEDS — Code Blocks
-   Purpose: Markdown code snippets
+   Purpose: Article code snippets
    ========================================================== */
 
 .article-content pre {
@@ -15,7 +15,9 @@
 
     border-radius: var(--radius-lg);
 
-    background: #0f172a;
+    background: var(--surface-code);
+
+    color: var(--text-code);
 
 }
 
@@ -23,7 +25,7 @@
 
     display: block;
 
-    color: #f8fafc;
+    color: inherit;
 
     font-family:
         "Cascadia Code",
@@ -36,21 +38,68 @@
 
     line-height: 1.7;
 
+    tab-size: 4;
+
 }
 
 .article-content :not(pre) > code {
 
     padding: .15rem .4rem;
 
+    border: 1px solid var(--border-light);
+
     border-radius: var(--radius-sm);
 
-    background: var(--surface-secondary);
+    background: var(--surface-tertiary);
+
+    color: var(--text-primary);
 
     font-size: .9em;
 
     font-family:
         "Cascadia Code",
+        "JetBrains Mono",
+        "Fira Code",
         Consolas,
         monospace;
+
+}
+
+/* ==========================================================
+   Shiki Theme Integration
+   ========================================================== */
+
+.article-content pre.astro-code,
+.article-content pre.astro-code code {
+
+    background: var(--surface-code) !important;
+
+}
+
+
+/* ----------------------------------------------------------
+   Light theme
+---------------------------------------------------------- */
+
+.article-content pre.astro-code,
+.article-content pre.astro-code span {
+
+    color: var(--shiki-light) !important;
+
+}
+
+
+/* ----------------------------------------------------------
+   Dark theme
+---------------------------------------------------------- */
+
+[data-theme="dark"]
+.article-content pre.astro-code,
+[data-theme="dark"]
+.article-content pre.astro-code span {
+
+    color: var(--shiki-dark) !important;
+
+    background-color: transparent !important;
 
 }

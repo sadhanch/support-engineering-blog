@@ -56,7 +56,7 @@
     --surface-primary: var(--color-white);
     --surface-secondary: var(--gray-50);
     --surface-tertiary: var(--gray-100);
-    --surface-code: var(--gray-900);
+    --surface-code: var(--gray-100);
     --surface-header: rgba(255, 255, 255, 0.88);
 
 
@@ -69,6 +69,7 @@
     --text-secondary: var(--gray-500);
     --text-tertiary: var(--gray-400);
     --text-inverse: var(--color-white);
+    --text-code: var(--gray-800);
 
 
     /* ======================================================
@@ -334,6 +335,7 @@
     --text-secondary: #CBD5E1;
     --text-tertiary: #94A3B8;
     --text-inverse: #0B1120;
+    --text-code: #F8FAFC;
 
 
     /* ======================================================

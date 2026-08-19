@@ -1,0 +1,72 @@
+/* ==========================================================
+   SEDS — Mermaid Diagrams
+   Purpose: Theme-aware technical diagrams
+   ========================================================== */
+
+.article-content .mermaid-diagram {
+
+    margin: var(--space-8) 0;
+
+    padding: var(--space-5);
+
+    overflow-x: auto;
+
+    border: 1px solid var(--border-default);
+
+    border-radius: var(--radius-lg);
+
+    background: var(--surface-primary);
+
+}
+
+
+/* ----------------------------------------------------------
+   SVG
+---------------------------------------------------------- */
+
+.article-content .mermaid-diagram svg {
+
+    display: block;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    height: auto;
+
+    margin-inline: auto;
+
+}
+
+
+/* ----------------------------------------------------------
+   Fallback before JavaScript rendering
+---------------------------------------------------------- */
+
+.article-content .mermaid-diagram:not(
+    [data-processed="true"]
+) {
+
+    font-family: var(--font-family-code);
+
+    white-space: pre;
+
+    color: var(--text-code);
+
+}
+
+
+/* ----------------------------------------------------------
+   Reduced motion
+---------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .article-content .mermaid-diagram,
+    .article-content .mermaid-diagram svg {
+
+        transition: none;
+
+    }
+
+}

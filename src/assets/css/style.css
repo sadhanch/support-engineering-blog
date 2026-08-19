@@ -58,6 +58,7 @@
 @import "./components/table-of-contents.css";
 @import "./components/prose.css";
 @import "./components/code-block.css";
+@import "./components/mermaid.css";
 @import "./components/callout.css";
 @import "./components/technology-stack.css";
 @import "./components/references.css";

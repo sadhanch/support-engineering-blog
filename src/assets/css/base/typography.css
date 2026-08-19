@@ -154,8 +154,11 @@ pre {
     margin: var(--space-6) 0;
     padding: var(--space-5);
     overflow-x: auto;
+
     background: var(--surface-code);
-    color: var(--text-inverse);
+    color: var(--text-code);
+
+    border: 1px solid var(--border-default);
     border-radius: var(--radius-md);
 }
 

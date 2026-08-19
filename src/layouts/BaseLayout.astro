@@ -474,6 +474,10 @@ const structuredData = type === "article"
             initializeTheme
         } from "../scripts/theme";
 
+        import {
+            initializeMermaid
+        } from "../scripts/mermaid";
+
 
         import {
             initializeAnalyticsConsent
@@ -483,6 +487,8 @@ const structuredData = type === "article"
         initializeGlobalSearch();
 
         initializeTheme();
+
+        initializeMermaid();
 
         initializeAnalyticsConsent();
 

@@ -11,13 +11,41 @@ import sitemap from "@astrojs/sitemap";
    SEDS — Astro Configuration
    Purpose:
    Configures the site URL, content integrations, search,
-   sitemap generation, and MDX support.
+   sitemap generation, MDX support, and Markdown rendering.
    ==========================================================
 */
 
 export default defineConfig({
 
     site: "https://blog.sadhan.ch",
+
+    markdown: {
+
+        syntaxHighlight: {
+
+            type: "shiki",
+
+            excludeLangs: [
+                "mermaid"
+            ]
+
+        },
+
+        shikiConfig: {
+
+            themes: {
+
+                light: "github-light",
+
+                dark: "github-dark"
+
+            },
+
+            defaultColor: false
+
+        }
+
+    },
 
     integrations: [
 

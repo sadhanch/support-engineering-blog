@@ -51,6 +51,13 @@ function applyTheme(theme: Theme) {
 
     }
 
+
+    window.dispatchEvent(
+        new CustomEvent(
+            "seb-theme-change"
+        )
+    );
+
 }
 
 
