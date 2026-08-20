@@ -1,0 +1,713 @@
+---
+/*
+ * DataverseFitSelector.astro
+ *
+ * Purpose:
+ * Helps readers decide whether a workload is a strong,
+ * possible, or weak fit for Microsoft Dataverse.
+ *
+ * The selector follows the article's beginner mental model:
+ * structured business data → relationships → security →
+ * governance → Power Platform integration.
+ *
+ * Self-contained Astro component.
+ */
+---
+
+<section
+  class="dvfs"
+  data-dvfs
+  aria-labelledby="dvfs-title"
+>
+  <div class="dvfs__header">
+    <div class="dvfs__header-copy">
+      <p class="dvfs__eyebrow">Workload selector</p>
+
+      <h3 id="dvfs-title">
+        Is Dataverse a good fit for this workload?
+      </h3>
+
+      <p class="dvfs__intro">
+        Choose the characteristics that describe the workload. The selector
+        provides a starting point for deciding whether Dataverse is worth
+        evaluating as the business data platform.
+      </p>
+    </div>
+
+    <span class="dvfs__badge" data-badge aria-live="polite">
+      Start with the workload
+    </span>
+  </div>
+
+  <fieldset class="dvfs__choices">
+    <legend class="dvfs__legend">
+      Select the characteristics that apply
+    </legend>
+
+    <label class="dvfs__choice">
+      <input
+        type="checkbox"
+        name="dataverse-fit"
+        value="structured"
+      />
+
+      <span class="dvfs__marker" aria-hidden="true">
+        <span>✓</span>
+      </span>
+
+      <span class="dvfs__choice-body">
+        <strong>Structured business data</strong>
+
+        <span>
+          The workload needs defined tables, data types, and reusable business
+          records rather than loosely structured information.
+        </span>
+
+        <small>DATA MODEL · TABLES + COLUMNS</small>
+      </span>
+    </label>
+
+    <label class="dvfs__choice">
+      <input
+        type="checkbox"
+        name="dataverse-fit"
+        value="relationships"
+      />
+
+      <span class="dvfs__marker" aria-hidden="true">
+        <span>✓</span>
+      </span>
+
+      <span class="dvfs__choice-body">
+        <strong>Relationships between records</strong>
+
+        <span>
+          The solution depends on connected business entities such as people,
+          departments, cases, accounts, assets, or transactions.
+        </span>
+
+        <small>DATA MODEL · RELATIONSHIPS</small>
+      </span>
+    </label>
+
+    <label class="dvfs__choice">
+      <input
+        type="checkbox"
+        name="dataverse-fit"
+        value="security"
+      />
+
+      <span class="dvfs__marker" aria-hidden="true">
+        <span>✓</span>
+      </span>
+
+      <span class="dvfs__choice-body">
+        <strong>Controlled access to data</strong>
+
+        <span>
+          The workload needs role-based access, record-level controls,
+          environment boundaries, or other governed security patterns.
+        </span>
+
+        <small>SECURITY · GOVERNED ACCESS</small>
+      </span>
+    </label>
+
+    <label class="dvfs__choice">
+      <input
+        type="checkbox"
+        name="dataverse-fit"
+        value="platform"
+      />
+
+      <span class="dvfs__marker" aria-hidden="true">
+        <span>✓</span>
+      </span>
+
+      <span class="dvfs__choice-body">
+        <strong>Power Platform integration</strong>
+
+        <span>
+          The data needs to work closely with Power Apps, Power Automate,
+          Dynamics 365, Power Pages, or related Microsoft workloads.
+        </span>
+
+        <small>PLATFORM · APPS + AUTOMATION</small>
+      </span>
+    </label>
+
+    <label class="dvfs__choice">
+      <input
+        type="checkbox"
+        name="dataverse-fit"
+        value="governance"
+      />
+
+      <span class="dvfs__marker" aria-hidden="true">
+        <span>✓</span>
+      </span>
+
+      <span class="dvfs__choice-body">
+        <strong>Governed application data</strong>
+
+        <span>
+          The workload needs a managed data foundation with lifecycle,
+          auditing, capacity awareness, and organizational governance.
+        </span>
+
+        <small>GOVERNANCE · LIFECYCLE + AUDIT</small>
+      </span>
+    </label>
+
+    <label class="dvfs__choice">
+      <input
+        type="checkbox"
+        name="dataverse-fit"
+        value="api"
+      />
+
+      <span class="dvfs__marker" aria-hidden="true">
+        <span>✓</span>
+      </span>
+
+      <span class="dvfs__choice-body">
+        <strong>APIs or pro-code access</strong>
+
+        <span>
+          The workload may need Web API, SDK, connectors, custom applications,
+          or other integration patterns around the business data.
+        </span>
+
+        <small>INTEGRATION · API + SDK</small>
+      </span>
+    </label>
+  </fieldset>
+
+  <div
+    class="dvfs__result"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="dvfs__result-head">
+      <div>
+        <span class="dvfs__result-kicker">Initial assessment</span>
+
+        <h4 data-title>
+          Select the characteristics that apply.
+        </h4>
+      </div>
+
+      <span class="dvfs__result-level" data-level>
+        No assessment yet
+      </span>
+    </div>
+
+    <p class="dvfs__result-description" data-description>
+      This selector is a starting point for workload evaluation, not a final
+      architecture or licensing decision.
+    </p>
+
+    <div class="dvfs__grid">
+      <div class="dvfs__card">
+        <span class="dvfs__card-label">What the selection suggests</span>
+
+        <strong data-signal>
+          Start by describing the workload.
+        </strong>
+      </div>
+
+      <div class="dvfs__card">
+        <span class="dvfs__card-label">Why it may fit</span>
+
+        <strong data-fit>
+          Select one or more characteristics to evaluate Dataverse's role.
+        </strong>
+      </div>
+
+      <div class="dvfs__card">
+        <span class="dvfs__card-label">What to review next</span>
+
+        <strong data-next>
+          Consider data model, security, capacity, licensing, and integration
+          requirements.
+        </strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="dvfs__principle">
+    <span class="dvfs__principle-mark" aria-hidden="true">→</span>
+
+    <p>
+      <strong>Workload first, platform second.</strong>
+      Dataverse is valuable when the workload needs the business-data,
+      application, security, integration, and governance capabilities it
+      provides.
+    </p>
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll("[data-dvfs]");
+
+  roots.forEach((root) => {
+    const badge = root.querySelector("[data-badge]");
+    const title = root.querySelector("[data-title]");
+    const level = root.querySelector("[data-level]");
+    const description = root.querySelector("[data-description]");
+    const signal = root.querySelector("[data-signal]");
+    const fit = root.querySelector("[data-fit]");
+    const next = root.querySelector("[data-next]");
+
+    const checks = Array.from(
+      root.querySelectorAll('input[name="dataverse-fit"]')
+    );
+
+    if (
+      !badge ||
+      !title ||
+      !level ||
+      !description ||
+      !signal ||
+      !fit ||
+      !next
+    ) {
+      return;
+    }
+
+    const state = {
+      structured: "Structured business data",
+      relationships: "Relationships",
+      security: "Security",
+      platform: "Power Platform integration",
+      governance: "Governance",
+      api: "APIs / pro-code access"
+    };
+
+    function update() {
+      const selected = checks
+        .filter((check) => check.checked)
+        .map((check) => check.value);
+
+      const count = selected.length;
+
+      root.dataset.state =
+        count === 0
+          ? "empty"
+          : count <= 2
+            ? "possible"
+            : count <= 4
+              ? "good"
+              : "strong";
+
+      if (count === 0) {
+        badge.textContent = "Start with the workload";
+        level.textContent = "No assessment yet";
+        title.textContent =
+          "Select the characteristics that apply.";
+        description.textContent =
+          "This selector is a starting point for workload evaluation, not a final architecture or licensing decision.";
+        signal.textContent =
+          "Start by describing the workload.";
+        fit.textContent =
+          "Select one or more characteristics to evaluate Dataverse's role.";
+        next.textContent =
+          "Consider data model, security, capacity, licensing, and integration requirements.";
+        return;
+      }
+
+      const labels = selected.map((item) => state[item]);
+
+      if (count <= 2) {
+        badge.textContent = "POSSIBLE FIT";
+        level.textContent = "Evaluate the workload carefully";
+        title.textContent =
+          "Dataverse may fit, but the workload needs more context.";
+        description.textContent =
+          "The selected characteristics align with some Dataverse capabilities, but they are not enough by themselves to establish a strong platform fit.";
+        signal.textContent =
+          `${labels.join(" + ")} are present.`;
+        fit.textContent =
+          "Compare Dataverse with the existing data source and the workload's security, integration, and lifecycle requirements.";
+        next.textContent =
+          "Review the data model, access requirements, platform dependencies, expected growth, and licensing.";
+        return;
+      }
+
+      if (count <= 4) {
+        badge.textContent = "GOOD FIT";
+        level.textContent = "Dataverse is worth evaluating";
+        title.textContent =
+          "Several workload characteristics align well with Dataverse.";
+        description.textContent =
+          "The workload appears to benefit from capabilities that Dataverse is designed to provide for governed business applications.";
+        signal.textContent =
+          `${labels.length} Dataverse-aligned characteristics selected.`;
+        fit.textContent =
+          "Dataverse is a strong candidate for the business data layer, especially when Power Platform integration is important.";
+        next.textContent =
+          "Validate security design, data relationships, capacity, licensing, environments, and integration boundaries.";
+        return;
+      }
+
+      badge.textContent = "STRONG FIT";
+      level.textContent = "Dataverse is a strong candidate";
+      title.textContent =
+        "The workload closely matches the Dataverse application-data model.";
+      description.textContent =
+        "The selected requirements point toward governed business data that needs application integration, security, relationships, and lifecycle capabilities.";
+      signal.textContent =
+        `${labels.length} Dataverse-aligned characteristics selected.`;
+      fit.textContent =
+        "Start an architecture assessment with Dataverse as the leading business-data option.";
+      next.textContent =
+        "Design the data model and security boundaries, then validate capacity, licensing, environments, ALM, and operational ownership.";
+    }
+
+    checks.forEach((check) => {
+      check.addEventListener("change", update);
+    });
+
+    update();
+  });
+</script>
+
+<style>
+  .dvfs {
+    --dvfs-surface: var(--surface-primary, #ffffff);
+    --dvfs-surface-soft: var(--surface-secondary, #f8fafc);
+    --dvfs-text: var(--text-primary, #0f172a);
+    --dvfs-text-secondary: var(--text-secondary, #475569);
+    --dvfs-text-tertiary: var(--text-tertiary, #64748b);
+    --dvfs-border: var(--border-default, #dbe3ec);
+    --dvfs-border-soft: var(--border-subtle, #e7edf4);
+    --dvfs-accent: var(--color-accent, #4ea1e0);
+    --dvfs-state: var(--dvfs-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--dvfs-text);
+    background: var(--dvfs-surface);
+    border: 1px solid var(--dvfs-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .dvfs[data-state="possible"] {
+    --dvfs-state: var(--color-warning, #c2410c);
+  }
+
+  .dvfs[data-state="good"] {
+    --dvfs-state: var(--color-info, #0f8a8a);
+  }
+
+  .dvfs[data-state="strong"] {
+    --dvfs-state: var(--color-success, #15803d);
+  }
+
+  .dvfs__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .dvfs__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--dvfs-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .dvfs h3,
+  .dvfs h4,
+  .dvfs p {
+    margin-top: 0;
+  }
+
+  .dvfs h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .dvfs__intro {
+    max-width: 70ch;
+    margin-bottom: 0;
+    color: var(--dvfs-text-secondary);
+    line-height: 1.6;
+  }
+
+  .dvfs__badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 0.45rem 0.75rem;
+    color: var(--dvfs-state);
+    background: color-mix(
+      in srgb,
+      var(--dvfs-state) 8%,
+      var(--dvfs-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--dvfs-state) 30%,
+      var(--dvfs-border)
+    );
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .dvfs__choices {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .dvfs__legend {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    color: var(--dvfs-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .dvfs__choice {
+    position: relative;
+    display: block;
+    height: 100%;
+    padding: 0.95rem;
+    background: var(--dvfs-surface-soft);
+    border: 1px solid var(--dvfs-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .dvfs__choice:hover {
+    transform: translateY(-1px);
+    border-color: var(--dvfs-accent);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .dvfs__choice:has(input:focus-visible) {
+    outline: 2px solid var(--dvfs-accent);
+    outline-offset: 2px;
+  }
+
+  .dvfs__choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .dvfs__choice:has(input:checked) {
+    border-color: var(--dvfs-state);
+    background: color-mix(
+      in srgb,
+      var(--dvfs-state) 8%,
+      var(--dvfs-surface)
+    );
+    box-shadow:
+      inset 0 0 0 1px var(--dvfs-state),
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .dvfs__marker {
+    display: grid;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-bottom: 0.7rem;
+    border: 2px solid var(--dvfs-text-tertiary);
+    border-radius: 0.3rem;
+    color: transparent;
+  }
+
+  .dvfs__marker span {
+    font-size: 0.7rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .dvfs__choice:has(input:checked) .dvfs__marker {
+    border-color: var(--dvfs-state);
+    background: var(--dvfs-state);
+    color: var(--dvfs-surface);
+  }
+
+  .dvfs__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .dvfs__choice-body strong {
+    color: var(--dvfs-text);
+    line-height: 1.3;
+  }
+
+  .dvfs__choice-body > span {
+    color: var(--dvfs-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .dvfs__choice-body small {
+    color: var(--dvfs-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .dvfs__result {
+    margin-top: var(--space-6, 1.5rem);
+    padding: 1.2rem;
+    background: var(--dvfs-surface-soft);
+    border: 1px solid var(--dvfs-border);
+    border-left: 4px solid var(--dvfs-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .dvfs__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .dvfs__result-kicker {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--dvfs-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .dvfs__result h4 {
+    margin-bottom: 0;
+    color: var(--dvfs-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .dvfs__result-level {
+    flex: 0 0 auto;
+    color: var(--dvfs-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .dvfs__result-description {
+    max-width: 72ch;
+    margin: 0.65rem 0 0;
+    color: var(--dvfs-text-secondary);
+    line-height: 1.6;
+  }
+
+  .dvfs__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin-top: 1rem;
+  }
+
+  .dvfs__card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: var(--dvfs-surface);
+    border: 1px solid var(--dvfs-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .dvfs__card-label {
+    color: var(--dvfs-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .dvfs__card strong {
+    color: var(--dvfs-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .dvfs__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--dvfs-surface);
+    border: 1px solid var(--dvfs-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .dvfs__principle-mark {
+    flex: 0 0 auto;
+    color: var(--dvfs-accent);
+    font-weight: 800;
+  }
+
+  .dvfs__principle p {
+    margin: 0;
+    color: var(--dvfs-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 800px) {
+    .dvfs__choices {
+      grid-template-columns: 1fr;
+    }
+
+    .dvfs__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .dvfs {
+      padding: 1rem;
+    }
+
+    .dvfs__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .dvfs__badge {
+      justify-self: start;
+    }
+
+    .dvfs__result-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dvfs__choice {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,776 @@
+---
+/*
+ * DataverseArchitectureDecisionGuide.astro
+ *
+ * Purpose:
+ * Helps readers choose an appropriate Dataverse or integration
+ * architecture pattern for a workload.
+ *
+ * This component is a reasoning aid. It does not replace a full
+ * architecture, security, performance, capacity, or licensing review.
+ */
+---
+
+<section
+  class="dadg"
+  data-dadg
+  aria-labelledby="dadg-title"
+>
+  <div class="dadg__header">
+    <div class="dadg__header-copy">
+      <p class="dadg__eyebrow">Architecture decision guide</p>
+
+      <h3 id="dadg-title">
+        Which Dataverse pattern fits the workload?
+      </h3>
+
+      <p class="dadg__intro">
+        Start with the workload rather than the technology. Choose the scenario
+        that best describes what the data needs to do, then use the suggested
+        pattern as the starting point for architecture review.
+      </p>
+    </div>
+
+    <span
+      class="dadg__badge"
+      data-badge
+      aria-live="polite"
+    >
+      Choose a workload
+    </span>
+  </div>
+
+  <fieldset class="dadg__choices">
+    <legend class="dadg__legend">
+      Select the scenario that best matches your workload
+    </legend>
+
+    <label class="dadg__choice">
+      <input
+        type="radio"
+        name="dataverse-architecture-pattern"
+        value="transactional"
+      />
+
+      <span
+        class="dadg__marker dadg__marker--green"
+        aria-hidden="true"
+      >
+        <span></span>
+      </span>
+
+      <span class="dadg__choice-body">
+        <strong>Transactional business data</strong>
+
+        <span>
+          The workload needs governed relational business data, strong
+          relationships, business rules, security, and application lifecycle
+          support.
+        </span>
+
+        <small>
+          RELATIONAL · OPERATIONAL · GOVERNED
+        </small>
+      </span>
+    </label>
+
+    <label class="dadg__choice">
+      <input
+        type="radio"
+        name="dataverse-architecture-pattern"
+        value="high-volume"
+      />
+
+      <span
+        class="dadg__marker dadg__marker--purple"
+        aria-hidden="true"
+      >
+        <span></span>
+      </span>
+
+      <span class="dadg__choice-body">
+        <strong>High-volume or bursty data</strong>
+
+        <span>
+          The workload produces high-volume, semi-structured, or bursty
+          operational data where partitioning and workload-specific scale
+          matter.
+        </span>
+
+        <small>
+          HIGH VOLUME · PARTITIONED · SEMI-STRUCTURED
+        </small>
+      </span>
+    </label>
+
+    <label class="dadg__choice">
+      <input
+        type="radio"
+        name="dataverse-architecture-pattern"
+        value="external-authority"
+      />
+
+      <span
+        class="dadg__marker dadg__marker--blue"
+        aria-hidden="true"
+      >
+        <span></span>
+      </span>
+
+      <span class="dadg__choice-body">
+        <strong>External system remains authoritative</strong>
+
+        <span>
+          Another platform owns the source data and the application needs
+          Dataverse-style access without creating another operational copy.
+        </span>
+
+        <small>
+          EXTERNAL SYSTEM OF RECORD · NO PRIMARY REPLICATION
+        </small>
+      </span>
+    </label>
+
+    <label class="dadg__choice">
+      <input
+        type="radio"
+        name="dataverse-architecture-pattern"
+        value="analytics"
+      />
+
+      <span
+        class="dadg__marker dadg__marker--teal"
+        aria-hidden="true"
+      >
+        <span></span>
+      </span>
+
+      <span class="dadg__choice-body">
+        <strong>Analytics or AI workload</strong>
+
+        <span>
+          The workload needs analytical scale, semantic models, reporting, or
+          AI-oriented data products rather than transactional API processing.
+        </span>
+
+        <small>
+          ANALYTICS · FABRIC / ONELAKE · AI
+        </small>
+      </span>
+    </label>
+
+    <label class="dadg__choice">
+      <input
+        type="radio"
+        name="dataverse-architecture-pattern"
+        value="business-operation"
+      />
+
+      <span
+        class="dadg__marker dadg__marker--orange"
+        aria-hidden="true"
+      >
+        <span></span>
+      </span>
+
+      <span class="dadg__choice-body">
+        <strong>Business operation or domain logic</strong>
+
+        <span>
+          The application needs a governed business operation that should be
+          exposed to code, automation, or event-driven processing.
+        </span>
+
+        <small>
+          CUSTOM API · PLUG-IN · EVENTS · AUTOMATION
+        </small>
+      </span>
+    </label>
+  </fieldset>
+
+  <div
+    class="dadg__result"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="dadg__result-head">
+      <div>
+        <span class="dadg__result-kicker">
+          Starting recommendation
+        </span>
+
+        <h4 data-title>
+          Choose a workload above.
+        </h4>
+      </div>
+
+      <span
+        class="dadg__result-level"
+        data-level
+      >
+        Waiting for selection
+      </span>
+    </div>
+
+    <p
+      class="dadg__result-description"
+      data-description
+    >
+      The recommendation will identify a likely Dataverse or integration
+      pattern and the main architectural question to validate next.
+    </p>
+
+    <div class="dadg__grid">
+      <div class="dadg__card">
+        <span class="dadg__card-label">
+          Suggested pattern
+        </span>
+
+        <strong data-pattern>
+          Select a workload.
+        </strong>
+      </div>
+
+      <div class="dadg__card">
+        <span class="dadg__card-label">
+          Why it fits
+        </span>
+
+        <strong data-fit>
+          The guide will explain the architectural match.
+        </strong>
+      </div>
+
+      <div class="dadg__card">
+        <span class="dadg__card-label">
+          Review next
+        </span>
+
+        <strong data-next>
+          Validate security, performance, capacity, integration, and ALM.
+        </strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="dadg__principle">
+    <span
+      class="dadg__principle-mark"
+      aria-hidden="true"
+    >
+      →
+    </span>
+
+    <p>
+      <strong>Start with the system of record.</strong>
+      Dataverse is a strong fit for governed operational business data, while
+      other patterns are more appropriate when external systems, analytical
+      scale, or high-volume workloads drive the architecture.
+    </p>
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>(
+    "[data-dadg]"
+  );
+
+  roots.forEach((root) => {
+    if (root.dataset.initialized === "true") {
+      return;
+    }
+
+    root.dataset.initialized = "true";
+
+    const badge =
+      root.querySelector<HTMLElement>("[data-badge]");
+
+    const title =
+      root.querySelector<HTMLElement>("[data-title]");
+
+    const level =
+      root.querySelector<HTMLElement>("[data-level]");
+
+    const description =
+      root.querySelector<HTMLElement>("[data-description]");
+
+    const pattern =
+      root.querySelector<HTMLElement>("[data-pattern]");
+
+    const fit =
+      root.querySelector<HTMLElement>("[data-fit]");
+
+    const next =
+      root.querySelector<HTMLElement>("[data-next]");
+
+    const choices = Array.from(
+      root.querySelectorAll<HTMLInputElement>(
+        'input[name="dataverse-architecture-pattern"]'
+      )
+    );
+
+    if (
+      !badge ||
+      !title ||
+      !level ||
+      !description ||
+      !pattern ||
+      !fit ||
+      !next
+    ) {
+      return;
+    }
+
+    const results = {
+      transactional: {
+        badge: "TRANSACTIONAL",
+        level: "Dataverse-first candidate",
+        title:
+          "Standard or custom Dataverse tables are the natural starting point.",
+        description:
+          "The workload is centered on governed operational business data with relational structure, security, business rules, APIs, and application lifecycle requirements.",
+        pattern:
+          "Standard or custom Dataverse tables",
+        fit:
+          "Dataverse is designed for relational business data that sits behind Power Apps, Power Automate, Power Pages, Dynamics 365, and related workloads.",
+        next:
+          "Validate the schema, relationships, security model, expected volume, integrations, capacity, and ALM."
+      },
+
+      "high-volume": {
+        badge: "HIGH VOLUME",
+        level: "Elastic-table candidate",
+        title:
+          "Evaluate Elastic Tables for the high-volume workload.",
+        description:
+          "The workload is characterized by bursty or high-volume semi-structured data where partitioning and workload-specific scale are important.",
+        pattern:
+          "Elastic Tables",
+        fit:
+          "Elastic Tables are intended for high-volume, partitioned, semi-structured workloads and have different consistency and transaction characteristics from standard tables.",
+        next:
+          "Design the partition key early and validate consistency, transaction needs, retention, query patterns, and operational behavior."
+      },
+
+      "external-authority": {
+        badge: "EXTERNAL SYSTEM OF RECORD",
+        level: "Virtual-table candidate",
+        title:
+          "Consider Virtual Tables when the external system remains authoritative.",
+        description:
+          "The workload needs Dataverse-style access to data that should remain owned by another system rather than being copied into Dataverse as the primary record.",
+        pattern:
+          "Virtual Tables / external-data pattern",
+        fit:
+          "Virtual Tables can surface external data through the Dataverse experience without making Dataverse the authoritative storage location.",
+        next:
+          "Validate supported capabilities, security, search, auditing, integration behavior, and the limitations of a non-persisted data model."
+      },
+
+      analytics: {
+        badge: "ANALYTICS / AI",
+        level: "Analytics offload",
+        title:
+          "Keep analytical workloads away from transactional Dataverse APIs.",
+        description:
+          "The workload is primarily analytical, reporting-oriented, or intended to support AI and data products rather than operational transactions.",
+        pattern:
+          "Fabric / OneLake analytical pattern",
+        fit:
+          "Fabric and OneLake provide a more appropriate analytical path for large-scale reporting, semantic models, and AI-oriented data workloads.",
+        next:
+          "Define the data movement or linking pattern, freshness requirements, semantic model, governance, and analytical ownership."
+      },
+
+      "business-operation": {
+        badge: "BUSINESS OPERATION",
+        level: "Extensibility candidate",
+        title:
+          "Expose the business operation through a governed server-side pattern.",
+        description:
+          "The workload needs a reusable business operation that should be callable by applications, automation, or event-driven integrations.",
+        pattern:
+          "Custom API / Plug-in / Event endpoint",
+        fit:
+          "Custom APIs and plug-ins can encapsulate business logic, while webhooks or Service Bus support event-driven integration when asynchronous processing is more appropriate.",
+        next:
+          "Choose synchronous versus asynchronous execution, define idempotency and retry behavior, and validate latency and transaction boundaries."
+      }
+    };
+
+    choices.forEach((choice) => {
+      choice.addEventListener("change", () => {
+        const result =
+          results[
+            choice.value as keyof typeof results
+          ];
+
+        if (!result) {
+          return;
+        }
+
+        root.dataset.state = choice.value;
+
+        badge.textContent = result.badge;
+        level.textContent = result.level;
+        title.textContent = result.title;
+        description.textContent = result.description;
+        pattern.textContent = result.pattern;
+        fit.textContent = result.fit;
+        next.textContent = result.next;
+      });
+    });
+  });
+</script>
+
+<style>
+  .dadg {
+    --dadg-surface: var(--surface-primary, #ffffff);
+    --dadg-surface-soft: var(--surface-secondary, #f8fafc);
+    --dadg-text: var(--text-primary, #0f172a);
+    --dadg-text-secondary: var(--text-secondary, #475569);
+    --dadg-text-tertiary: var(--text-tertiary, #64748b);
+    --dadg-border: var(--border-default, #dbe3ec);
+    --dadg-border-soft: var(--border-subtle, #e7edf4);
+    --dadg-accent: var(--color-accent, #4ea1e0);
+    --dadg-state: var(--dadg-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--dadg-text);
+    background: var(--dadg-surface);
+    border: 1px solid var(--dadg-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow:
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .dadg[data-state="transactional"] {
+    --dadg-state: var(--color-success, #15803d);
+  }
+
+  .dadg[data-state="high-volume"] {
+    --dadg-state: #7c3aed;
+  }
+
+  .dadg[data-state="external-authority"] {
+    --dadg-state: var(--color-accent, #4ea1e0);
+  }
+
+  .dadg[data-state="analytics"] {
+    --dadg-state: var(--color-info, #0f8a8a);
+  }
+
+  .dadg[data-state="business-operation"] {
+    --dadg-state: #c2410c;
+  }
+
+  .dadg__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .dadg__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--dadg-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .dadg h3,
+  .dadg h4,
+  .dadg p {
+    margin-top: 0;
+  }
+
+  .dadg h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .dadg__intro {
+    max-width: 72ch;
+    margin-bottom: 0;
+    color: var(--dadg-text-secondary);
+    line-height: 1.6;
+  }
+
+  .dadg__badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 0.45rem 0.75rem;
+    color: var(--dadg-state);
+    background: color-mix(
+      in srgb,
+      var(--dadg-state) 8%,
+      var(--dadg-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--dadg-state) 30%,
+      var(--dadg-border)
+    );
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .dadg__choices {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .dadg__legend {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    color: var(--dadg-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .dadg__choice {
+    position: relative;
+    display: block;
+    height: 100%;
+    padding: 1rem;
+    background: var(--dadg-surface-soft);
+    border: 1px solid var(--dadg-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .dadg__choice:hover {
+    transform: translateY(-1px);
+    border-color: var(--dadg-accent);
+    box-shadow:
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .dadg__choice:has(input:focus-visible) {
+    outline: 2px solid var(--dadg-accent);
+    outline-offset: 2px;
+  }
+
+  .dadg__choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .dadg__choice:has(input:checked) {
+    border-color: var(--dadg-state);
+    background: color-mix(
+      in srgb,
+      var(--dadg-state) 8%,
+      var(--dadg-surface)
+    );
+    box-shadow:
+      inset 0 0 0 1px var(--dadg-state),
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .dadg__marker {
+    display: grid;
+    place-items: center;
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-bottom: 0.7rem;
+    border: 2px solid var(--dadg-text-tertiary);
+    border-radius: 50%;
+  }
+
+  .dadg__marker span {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+  }
+
+  .dadg__choice:has(input:checked) .dadg__marker {
+    border-color: var(--dadg-state);
+  }
+
+  .dadg__choice:has(input:checked) .dadg__marker span {
+    background: var(--dadg-state);
+  }
+
+  .dadg__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .dadg__choice-body strong {
+    color: var(--dadg-text);
+    line-height: 1.3;
+  }
+
+  .dadg__choice-body > span {
+    color: var(--dadg-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .dadg__choice-body small {
+    color: var(--dadg-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .dadg__result {
+    margin-top: var(--space-6, 1.5rem);
+    padding: 1.2rem;
+    background: var(--dadg-surface-soft);
+    border: 1px solid var(--dadg-border);
+    border-left: 4px solid var(--dadg-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .dadg__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .dadg__result-kicker {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--dadg-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .dadg__result h4 {
+    margin-bottom: 0;
+    color: var(--dadg-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .dadg__result-level {
+    flex: 0 0 auto;
+    color: var(--dadg-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .dadg__result-description {
+    max-width: 74ch;
+    margin: 0.65rem 0 0;
+    color: var(--dadg-text-secondary);
+    line-height: 1.6;
+  }
+
+  .dadg__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin-top: 1rem;
+  }
+
+  .dadg__card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: var(--dadg-surface);
+    border: 1px solid var(--dadg-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .dadg__card-label {
+    color: var(--dadg-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .dadg__card strong {
+    color: var(--dadg-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .dadg__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--dadg-surface);
+    border: 1px solid var(--dadg-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .dadg__principle-mark {
+    flex: 0 0 auto;
+    color: var(--dadg-accent);
+    font-weight: 800;
+  }
+
+  .dadg__principle p {
+    margin: 0;
+    color: var(--dadg-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 800px) {
+    .dadg__choices,
+    .dadg__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .dadg {
+      padding: 1rem;
+    }
+
+    .dadg__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .dadg__badge {
+      justify-self: start;
+    }
+
+    .dadg__result-head {
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .dadg__result-level {
+      text-align: left;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dadg__choice {
+      transition: none;
+    }
+  }
+</style>

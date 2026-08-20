@@ -1,0 +1,758 @@
+---
+/*
+ * PowerAutomateProductionReadiness.astro
+ *
+ * Purpose:
+ * Interactive production-readiness assessment for a critical
+ * Power Automate workload.
+ *
+ * This is an architectural readiness aid, not a Microsoft
+ * licensing, capacity, or compliance assessment.
+ */
+---
+
+<section
+  class="papr"
+  data-papr
+  aria-labelledby="papr-title"
+>
+  <div class="papr__header">
+    <div>
+      <p class="papr__eyebrow">Production readiness</p>
+
+      <h3 id="papr-title">
+        How production-ready is your automation?
+      </h3>
+
+      <p class="papr__intro">
+        Answer a few questions about runtime, reliability, observability,
+        ownership, ALM, and governance. The result highlights the areas that
+        deserve attention before a critical flow is promoted or scaled.
+      </p>
+    </div>
+
+    <span
+      class="papr__score"
+      data-score
+      aria-live="polite"
+    >
+      0 / 6
+    </span>
+  </div>
+
+  <div class="papr__progress" aria-hidden="true">
+    <span data-progress></span>
+  </div>
+
+  <div class="papr__questions">
+    <!-- Runtime -->
+    <fieldset class="papr__question">
+      <legend>
+        <span class="papr__number">1</span>
+        Runtime
+      </legend>
+
+      <p>
+        Is the expected trigger volume, concurrency, and connector workload
+        understood?
+      </p>
+
+      <div class="papr__options">
+        <label>
+          <input type="radio" name="papr-runtime" value="yes" />
+          <span>Yes</span>
+        </label>
+
+        <label>
+          <input type="radio" name="papr-runtime" value="no" />
+          <span>Not yet</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- Reliability -->
+    <fieldset class="papr__question">
+      <legend>
+        <span class="papr__number">2</span>
+        Reliability
+      </legend>
+
+      <p>
+        Are transient failures, throttling, retries, and idempotency explicitly
+        designed?
+      </p>
+
+      <div class="papr__options">
+        <label>
+          <input type="radio" name="papr-reliability" value="yes" />
+          <span>Yes</span>
+        </label>
+
+        <label>
+          <input type="radio" name="papr-reliability" value="no" />
+          <span>Not yet</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- Performance -->
+    <fieldset class="papr__question">
+      <legend>
+        <span class="papr__number">3</span>
+        Performance
+      </legend>
+
+      <p>
+        Are loops, pagination, payload size, concurrency, and expensive
+        processing intentionally controlled?
+      </p>
+
+      <div class="papr__options">
+        <label>
+          <input type="radio" name="papr-performance" value="yes" />
+          <span>Yes</span>
+        </label>
+
+        <label>
+          <input type="radio" name="papr-performance" value="no" />
+          <span>Not yet</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- Observability -->
+    <fieldset class="papr__question">
+      <legend>
+        <span class="papr__number">4</span>
+        Observability
+      </legend>
+
+      <p>
+        Can operators detect failures, throttling, abnormal runs, and
+        dependency problems without relying only on individual run history?
+      </p>
+
+      <div class="papr__options">
+        <label>
+          <input type="radio" name="papr-observability" value="yes" />
+          <span>Yes</span>
+        </label>
+
+        <label>
+          <input type="radio" name="papr-observability" value="no" />
+          <span>Not yet</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- Ownership -->
+    <fieldset class="papr__question">
+      <legend>
+        <span class="papr__number">5</span>
+        Ownership
+      </legend>
+
+      <p>
+        Does the automation have durable business and technical ownership,
+        governed connections, and a documented support path?
+      </p>
+
+      <div class="papr__options">
+        <label>
+          <input type="radio" name="papr-ownership" value="yes" />
+          <span>Yes</span>
+        </label>
+
+        <label>
+          <input type="radio" name="papr-ownership" value="no" />
+          <span>Not yet</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- ALM -->
+    <fieldset class="papr__question">
+      <legend>
+        <span class="papr__number">6</span>
+        ALM &amp; Governance
+      </legend>
+
+      <p>
+        Is the flow solution-aware, deployed through a controlled lifecycle,
+        and governed by appropriate environments, DLP, connectors, and
+        licensing?
+      </p>
+
+      <div class="papr__options">
+        <label>
+          <input type="radio" name="papr-alm" value="yes" />
+          <span>Yes</span>
+        </label>
+
+        <label>
+          <input type="radio" name="papr-alm" value="no" />
+          <span>Not yet</span>
+        </label>
+      </div>
+    </fieldset>
+  </div>
+
+  <div
+    class="papr__result"
+    data-result
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="papr__result-top">
+      <div>
+        <span class="papr__result-eyebrow">Readiness assessment</span>
+
+        <h4 data-result-title>
+          Complete the assessment.
+        </h4>
+      </div>
+
+      <span
+        class="papr__result-status"
+        data-result-status
+      >
+        Awaiting input
+      </span>
+    </div>
+
+    <p data-result-description>
+      Answer the six questions above to identify the strongest production-readiness
+      gaps.
+    </p>
+
+    <div class="papr__result-grid">
+      <div class="papr__result-card">
+        <span>Strong areas</span>
+        <strong data-strengths>—</strong>
+      </div>
+
+      <div class="papr__result-card">
+        <span>Attention needed</span>
+        <strong data-gaps>—</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="papr__note">
+    <strong>Use this as an engineering checkpoint.</strong>
+    A positive result does not replace workload testing, Microsoft service
+    limits, licensing review, security review, or an organization-specific
+    production approval process.
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>("[data-papr]");
+
+  roots.forEach((root) => {
+    if (root.dataset.initialized === "true") {
+      return;
+    }
+
+    root.dataset.initialized = "true";
+
+    const scoreElement =
+      root.querySelector<HTMLElement>("[data-score]");
+
+    const progressElement =
+      root.querySelector<HTMLElement>("[data-progress]");
+
+    const resultTitle =
+      root.querySelector<HTMLElement>("[data-result-title]");
+
+    const resultStatus =
+      root.querySelector<HTMLElement>("[data-result-status]");
+
+    const resultDescription =
+      root.querySelector<HTMLElement>("[data-result-description]");
+
+    const strengthsElement =
+      root.querySelector<HTMLElement>("[data-strengths]");
+
+    const gapsElement =
+      root.querySelector<HTMLElement>("[data-gaps]");
+
+    const questions = Array.from(
+      root.querySelectorAll<HTMLElement>(".papr__question")
+    );
+
+    const inputs = Array.from(
+      root.querySelectorAll<HTMLInputElement>(
+        '.papr__question input[type="radio"]'
+      )
+    );
+
+    const total = questions.length;
+
+    function updateAssessment() {
+      const answered = questions.filter((question) =>
+        question.querySelector<HTMLInputElement>(
+          'input[type="radio"]:checked'
+        )
+      );
+
+      const yesCount = questions.filter((question) => {
+        const selected =
+          question.querySelector<HTMLInputElement>(
+            'input[type="radio"]:checked'
+          );
+
+        return selected?.value === "yes";
+      }).length;
+
+      const noCount = questions.filter((question) => {
+        const selected =
+          question.querySelector<HTMLInputElement>(
+            'input[type="radio"]:checked'
+          );
+
+        return selected?.value === "no";
+      }).length;
+
+      const answeredCount = answered.length;
+      const percentage =
+        total === 0
+          ? 0
+          : Math.round((answeredCount / total) * 100);
+
+      scoreElement!.textContent =
+        `${yesCount} / ${total}`;
+
+      progressElement!.style.width =
+        `${percentage}%`;
+
+      if (answeredCount < total) {
+        root.dataset.state = "incomplete";
+
+        resultTitle!.textContent =
+          `${answeredCount} of ${total} areas assessed.`;
+
+        resultStatus!.textContent =
+          `${total - answeredCount} remaining`;
+
+        resultDescription!.textContent =
+          "Complete the remaining questions to produce a production-readiness assessment.";
+
+        strengthsElement!.textContent =
+          answeredCount === 0
+            ? "Complete the assessment."
+            : `${yesCount} area${yesCount === 1 ? "" : "s"} currently meet the checkpoint.`;
+
+        gapsElement!.textContent =
+          noCount === 0
+            ? "Complete the assessment."
+            : `${noCount} area${noCount === 1 ? "" : "s"} need attention.`;
+
+        return;
+      }
+
+      if (yesCount === total) {
+        root.dataset.state = "ready";
+
+        resultTitle!.textContent =
+          "Strong production-readiness baseline.";
+
+        resultStatus!.textContent =
+          "Ready for deeper validation";
+
+        resultDescription!.textContent =
+          "The core production controls are represented. Continue with workload testing, service-limit validation, security review, licensing validation, and your organization's release approval process.";
+
+        strengthsElement!.textContent =
+          "Runtime, reliability, performance, observability, ownership, ALM & governance";
+
+        gapsElement!.textContent =
+          "No checklist gaps identified";
+        return;
+      }
+
+      if (yesCount >= 4) {
+        root.dataset.state = "attention";
+
+        resultTitle!.textContent =
+          "Production-ready with controls to strengthen.";
+
+        resultStatus!.textContent =
+          "Review before scaling";
+
+        resultDescription!.textContent =
+          "The automation has a reasonable production foundation, but unresolved areas should be addressed before the workload becomes more critical or reaches higher volume.";
+
+        strengthsElement!.textContent =
+          `${yesCount} of ${total} readiness areas`;
+
+        gapsElement!.textContent =
+          `${noCount} area${noCount === 1 ? "" : "s"} need attention`;
+
+        return;
+      }
+
+      root.dataset.state = "review";
+
+      resultTitle!.textContent =
+        "Architecture review recommended.";
+
+      resultStatus!.textContent =
+        "Strengthen before production";
+
+      resultDescription!.textContent =
+        "Several production controls are still missing. Address the gaps around runtime behavior, reliability, observability, ownership, ALM, or governance before treating the automation as business-critical.";
+
+      strengthsElement!.textContent =
+        `${yesCount} of ${total} readiness areas`;
+
+      gapsElement!.textContent =
+        `${noCount} area${noCount === 1 ? "" : "s"} need attention`;
+    }
+
+    inputs.forEach((input) => {
+      input.addEventListener("change", updateAssessment);
+    });
+
+    updateAssessment();
+  });
+</script>
+
+<style>
+  .papr {
+    --papr-surface: var(--surface-primary, #ffffff);
+    --papr-surface-soft: var(--surface-secondary, #f8fafc);
+    --papr-text: var(--text-primary, #0f172a);
+    --papr-text-secondary: var(--text-secondary, #475569);
+    --papr-text-tertiary: var(--text-tertiary, #64748b);
+    --papr-border: var(--border-default, #dbe3ec);
+    --papr-border-soft: var(--border-subtle, #e7edf4);
+    --papr-accent: var(--color-accent, #4ea1e0);
+    --papr-state: var(--papr-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--papr-text);
+    background: var(--papr-surface);
+    border: 1px solid var(--papr-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow:
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .papr[data-state="ready"] {
+    --papr-state: var(--color-success, #15803d);
+  }
+
+  .papr[data-state="attention"] {
+    --papr-state: #b45309;
+  }
+
+  .papr[data-state="review"] {
+    --papr-state: var(--color-error, #b91c1c);
+  }
+
+  .papr__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: 1rem;
+  }
+
+  .papr__eyebrow,
+  .papr__result-eyebrow {
+    margin: 0 0 0.3rem;
+    color: var(--papr-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .papr h3,
+  .papr h4,
+  .papr p {
+    margin-top: 0;
+  }
+
+  .papr h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .papr__intro {
+    max-width: 75ch;
+    margin-bottom: 0;
+    color: var(--papr-text-secondary);
+    line-height: 1.6;
+  }
+
+  .papr__score {
+    flex: 0 0 auto;
+    min-width: 4.5rem;
+    padding: 0.55rem 0.75rem;
+    color: var(--papr-state);
+    background: color-mix(
+      in srgb,
+      var(--papr-state) 8%,
+      var(--papr-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--papr-state) 30%,
+      var(--papr-border)
+    );
+    border-radius: 999px;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .papr__progress {
+    width: 100%;
+    height: 0.35rem;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    background: var(--papr-border-soft);
+    border-radius: 999px;
+  }
+
+  .papr__progress span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--papr-state);
+    border-radius: inherit;
+    transition:
+      width 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .papr__questions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .papr__question {
+    min-width: 0;
+    margin: 0;
+    padding: 1rem;
+    background: var(--papr-surface-soft);
+    border: 1px solid var(--papr-border);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .papr__question legend {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: 100%;
+    padding: 0;
+    color: var(--papr-text);
+    font-weight: 700;
+  }
+
+  .papr__number {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 1.55rem;
+    height: 1.55rem;
+    color: var(--papr-accent);
+    background: color-mix(
+      in srgb,
+      var(--papr-accent) 9%,
+      var(--papr-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--papr-accent) 35%,
+      var(--papr-border)
+    );
+    border-radius: 50%;
+    font-size: var(--font-size-xs, 0.75rem);
+  }
+
+  .papr__question > p {
+    margin: 0.7rem 0 0.85rem;
+    color: var(--papr-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .papr__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .papr__options label {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .papr__options input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .papr__options label span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 5rem;
+    padding: 0.45rem 0.75rem;
+    color: var(--papr-text-secondary);
+    background: var(--papr-surface);
+    border: 1px solid var(--papr-border);
+    border-radius: 999px;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .papr__options label:hover span {
+    border-color: var(--papr-accent);
+  }
+
+  .papr__options label:has(input:focus-visible) span {
+    outline: 2px solid var(--papr-accent);
+    outline-offset: 2px;
+  }
+
+  .papr__options label:has(input:checked) span {
+    color: var(--papr-state);
+    background: color-mix(
+      in srgb,
+      var(--papr-state) 8%,
+      var(--papr-surface)
+    );
+    border-color: var(--papr-state);
+  }
+
+  .papr__result {
+    margin-top: 1.25rem;
+    padding: 1.2rem;
+    background: var(--papr-surface-soft);
+    border: 1px solid var(--papr-border);
+    border-left: 4px solid var(--papr-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .papr__result-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .papr__result h4 {
+    margin-bottom: 0;
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .papr__result-status {
+    flex: 0 0 auto;
+    color: var(--papr-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .papr__result > p {
+    max-width: 75ch;
+    margin: 0.65rem 0 0;
+    color: var(--papr-text-secondary);
+    line-height: 1.6;
+  }
+
+  .papr__result-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .papr__result-card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.85rem;
+    background: var(--papr-surface);
+    border: 1px solid var(--papr-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .papr__result-card span {
+    color: var(--papr-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .papr__result-card strong {
+    color: var(--papr-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .papr__note {
+    margin-top: 1rem;
+    padding: 0.85rem 1rem;
+    color: var(--papr-text-secondary);
+    background: var(--papr-surface);
+    border: 1px solid var(--papr-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .papr__note strong {
+    color: var(--papr-text);
+  }
+
+  @media (max-width: 800px) {
+    .papr__questions,
+    .papr__result-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .papr {
+      padding: 1rem;
+    }
+
+    .papr__header,
+    .papr__result-top {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .papr__score {
+      align-self: flex-start;
+    }
+
+    .papr__result-status {
+      text-align: left;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .papr__progress span,
+    .papr__options label span {
+      transition: none;
+    }
+  }
+</style>

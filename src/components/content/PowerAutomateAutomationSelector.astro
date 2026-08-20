@@ -1,0 +1,670 @@
+---
+/*
+ * PowerAutomateAutomationSelector.astro
+ *
+ * Purpose:
+ * Helps readers choose the Power Automate automation model that
+ * best fits a workload.
+ *
+ * Beginner mental model:
+ * Cloud flows              → automate cloud services
+ * Desktop flows / RPA      → automate interfaces
+ * Business process flows   → guide people through stages
+ *
+ * This is a reasoning aid, not an architecture or licensing decision.
+ */
+---
+
+<section
+  class="paas"
+  data-paas
+  aria-labelledby="paas-title"
+>
+  <div class="paas__header">
+    <div class="paas__header-copy">
+      <p class="paas__eyebrow">Automation selector</p>
+
+      <h3 id="paas-title">
+        Which Power Automate model fits your scenario?
+      </h3>
+
+      <p class="paas__intro">
+        Choose what you are trying to automate. The selector recommends the
+        Power Automate model that best matches the workload and explains the
+        reasoning behind it.
+      </p>
+    </div>
+
+    <span
+      class="paas__badge"
+      data-badge
+      aria-live="polite"
+    >
+      Choose a scenario
+    </span>
+  </div>
+
+  <fieldset class="paas__choices">
+    <legend class="paas__legend">
+      Select the scenario that best describes your workload
+    </legend>
+
+    <label class="paas__choice">
+      <input
+        type="radio"
+        name="power-automate-model"
+        value="cloud"
+      />
+
+      <span
+        class="paas__marker"
+        aria-hidden="true"
+      >
+        <span></span>
+      </span>
+
+      <span class="paas__choice-body">
+        <strong>Cloud services and applications</strong>
+
+        <span>
+          The process starts from an event, schedule, or manual request and
+          needs to work across online services, data sources, or APIs.
+        </span>
+
+        <small>
+          CLOUD AUTOMATION · CONNECTORS / APIS
+        </small>
+      </span>
+    </label>
+
+    <label class="paas__choice">
+      <input
+        type="radio"
+        name="power-automate-model"
+        value="desktop"
+      />
+
+      <span
+        class="paas__marker"
+        aria-hidden="true"
+      >
+        <span></span>
+      </span>
+
+      <span class="paas__choice-body">
+        <strong>Desktop or legacy interface</strong>
+
+        <span>
+          The process depends on Windows applications, websites, or another
+          user interface where a suitable API or connector is not available.
+        </span>
+
+        <small>
+          DESKTOP AUTOMATION · RPA
+        </small>
+      </span>
+    </label>
+
+    <label class="paas__choice">
+      <input
+        type="radio"
+        name="power-automate-model"
+        value="business-process"
+      />
+
+      <span
+        class="paas__marker"
+        aria-hidden="true"
+      >
+        <span></span>
+      </span>
+
+      <span class="paas__choice-body">
+        <strong>Human-guided business process</strong>
+
+        <span>
+          Users need to move through defined stages and steps while the
+          application guides them through a repeatable process.
+        </span>
+
+        <small>
+          BUSINESS PROCESS GUIDANCE · STAGES + STEPS
+        </small>
+      </span>
+    </label>
+  </fieldset>
+
+  <div
+    class="paas__result"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="paas__result-head">
+      <div>
+        <span class="paas__result-kicker">
+          Recommended direction
+        </span>
+
+        <h4 data-title>
+          Select a scenario above.
+        </h4>
+      </div>
+
+      <span
+        class="paas__result-level"
+        data-level
+      >
+        Waiting for selection
+      </span>
+    </div>
+
+    <p
+      class="paas__result-description"
+      data-description
+    >
+      Start with the type of work you need to automate, then choose the
+      automation model that matches it.
+    </p>
+
+    <div class="paas__grid">
+      <div class="paas__card">
+        <span class="paas__card-label">
+          Recommended model
+        </span>
+
+        <strong data-model>
+          Choose a scenario.
+        </strong>
+      </div>
+
+      <div class="paas__card">
+        <span class="paas__card-label">
+          Why it fits
+        </span>
+
+        <strong data-fit>
+          The selector will explain the match.
+        </strong>
+      </div>
+
+      <div class="paas__card">
+        <span class="paas__card-label">
+          What to consider next
+        </span>
+
+        <strong data-next>
+          Review the process, systems, access, and operating requirements.
+        </strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="paas__principle">
+    <span
+      class="paas__principle-mark"
+      aria-hidden="true"
+    >
+      →
+    </span>
+
+    <p>
+      <strong>Choose the automation model from the workload.</strong>
+      Use cloud flows for connector/API-based automation, desktop flows when
+      UI automation is necessary, and business process flows when users need
+      structured guidance.
+    </p>
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>(
+    "[data-paas]"
+  );
+
+  roots.forEach((root) => {
+    if (root.dataset.initialized === "true") {
+      return;
+    }
+
+    root.dataset.initialized = "true";
+
+    const badge = root.querySelector<HTMLElement>("[data-badge]");
+    const title = root.querySelector<HTMLElement>("[data-title]");
+    const level = root.querySelector<HTMLElement>("[data-level]");
+    const description =
+      root.querySelector<HTMLElement>("[data-description]");
+    const model = root.querySelector<HTMLElement>("[data-model]");
+    const fit = root.querySelector<HTMLElement>("[data-fit]");
+    const next = root.querySelector<HTMLElement>("[data-next]");
+
+    const choices = Array.from(
+      root.querySelectorAll<HTMLInputElement>(
+        'input[name="power-automate-model"]'
+      )
+    );
+
+    if (
+      !badge ||
+      !title ||
+      !level ||
+      !description ||
+      !model ||
+      !fit ||
+      !next
+    ) {
+      return;
+    }
+
+    const results = {
+      cloud: {
+        badge: "CLOUD FLOW",
+        level: "Cloud-based automation",
+        title:
+          "A Cloud Flow is the natural starting point.",
+        description:
+          "The workload is centered on events, services, data, or APIs that can be reached through Power Automate connectors or supported integration patterns.",
+        model:
+          "Cloud flow — automated, instant, or scheduled",
+        fit:
+          "Cloud flows are designed to orchestrate work across online services and business systems.",
+        next:
+          "Identify the trigger, required connectors, actions, conditions, approvals, and expected outcome."
+      },
+
+      desktop: {
+        badge: "DESKTOP FLOW / RPA",
+        level: "Interface-based automation",
+        title:
+          "A Desktop Flow fits when the interface must be automated.",
+        description:
+          "The workload depends on a Windows application, website, or legacy interface where a suitable API or connector is not available.",
+        model:
+          "Desktop flow / robotic process automation",
+        fit:
+          "Desktop flows can automate user-interface actions, keystrokes, clicks, and other interactions with desktop or web applications.",
+        next:
+          "Confirm that UI automation is actually required, then evaluate machines, execution mode, reliability, and operational ownership."
+      },
+
+      "business-process": {
+        badge: "BUSINESS PROCESS FLOW",
+        level: "Human-guided process",
+        title:
+          "A Business Process Flow fits when users need structured guidance.",
+        description:
+          "The workload is primarily about guiding people through defined stages and steps rather than executing background automation on its own.",
+        model:
+          "Business process flow",
+        fit:
+          "Business process flows help users follow consistent stages in model-driven business processes.",
+        next:
+          "Define the stages, required steps, user roles, transition criteria, and the Dataverse-backed process context."
+      }
+    };
+
+    choices.forEach((choice) => {
+      choice.addEventListener("change", () => {
+        const result = results[
+          choice.value as keyof typeof results
+        ];
+
+        if (!result) {
+          return;
+        }
+
+        root.dataset.state = choice.value;
+
+        badge.textContent = result.badge;
+        level.textContent = result.level;
+        title.textContent = result.title;
+        description.textContent = result.description;
+        model.textContent = result.model;
+        fit.textContent = result.fit;
+        next.textContent = result.next;
+      });
+    });
+  });
+</script>
+
+<style>
+  .paas {
+    --paas-surface: var(--surface-primary, #ffffff);
+    --paas-surface-soft: var(--surface-secondary, #f8fafc);
+    --paas-text: var(--text-primary, #0f172a);
+    --paas-text-secondary: var(--text-secondary, #475569);
+    --paas-text-tertiary: var(--text-tertiary, #64748b);
+    --paas-border: var(--border-default, #dbe3ec);
+    --paas-border-soft: var(--border-subtle, #e7edf4);
+    --paas-accent: var(--color-accent, #4ea1e0);
+    --paas-state: var(--paas-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--paas-text);
+    background: var(--paas-surface);
+    border: 1px solid var(--paas-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow:
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .paas[data-state="cloud"] {
+    --paas-state: var(--color-accent, #4ea1e0);
+  }
+
+  .paas[data-state="desktop"] {
+    --paas-state: var(--color-success, #15803d);
+  }
+
+  .paas[data-state="business-process"] {
+    --paas-state: var(--color-info, #0f8a8a);
+  }
+
+  .paas__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .paas__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--paas-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .paas h3,
+  .paas h4,
+  .paas p {
+    margin-top: 0;
+  }
+
+  .paas h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .paas__intro {
+    max-width: 70ch;
+    margin-bottom: 0;
+    color: var(--paas-text-secondary);
+    line-height: 1.6;
+  }
+
+  .paas__badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 0.45rem 0.75rem;
+    color: var(--paas-state);
+    background: color-mix(
+      in srgb,
+      var(--paas-state) 8%,
+      var(--paas-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--paas-state) 30%,
+      var(--paas-border)
+    );
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .paas__choices {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .paas__legend {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    color: var(--paas-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .paas__choice {
+    position: relative;
+    display: block;
+    height: 100%;
+    padding: 1rem;
+    background: var(--paas-surface-soft);
+    border: 1px solid var(--paas-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .paas__choice:hover {
+    transform: translateY(-1px);
+    border-color: var(--paas-accent);
+    box-shadow:
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .paas__choice:has(input:focus-visible) {
+    outline: 2px solid var(--paas-accent);
+    outline-offset: 2px;
+  }
+
+  .paas__choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .paas__choice:has(input:checked) {
+    border-color: var(--paas-state);
+    background: color-mix(
+      in srgb,
+      var(--paas-state) 8%,
+      var(--paas-surface)
+    );
+    box-shadow:
+      inset 0 0 0 1px var(--paas-state),
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .paas__marker {
+    display: grid;
+    place-items: center;
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-bottom: 0.7rem;
+    border: 2px solid var(--paas-text-tertiary);
+    border-radius: 50%;
+  }
+
+  .paas__marker span {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+  }
+
+  .paas__choice:has(input:checked) .paas__marker {
+    border-color: var(--paas-state);
+  }
+
+  .paas__choice:has(input:checked) .paas__marker span {
+    background: var(--paas-state);
+  }
+
+  .paas__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .paas__choice-body strong {
+    color: var(--paas-text);
+    line-height: 1.3;
+  }
+
+  .paas__choice-body > span {
+    color: var(--paas-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .paas__choice-body small {
+    color: var(--paas-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .paas__result {
+    margin-top: var(--space-6, 1.5rem);
+    padding: 1.2rem;
+    background: var(--paas-surface-soft);
+    border: 1px solid var(--paas-border);
+    border-left: 4px solid var(--paas-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .paas__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .paas__result-kicker {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--paas-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .paas__result h4 {
+    margin-bottom: 0;
+    color: var(--paas-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .paas__result-level {
+    flex: 0 0 auto;
+    color: var(--paas-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .paas__result-description {
+    max-width: 72ch;
+    margin: 0.65rem 0 0;
+    color: var(--paas-text-secondary);
+    line-height: 1.6;
+  }
+
+  .paas__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin-top: 1rem;
+  }
+
+  .paas__card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: var(--paas-surface);
+    border: 1px solid var(--paas-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .paas__card-label {
+    color: var(--paas-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .paas__card strong {
+    color: var(--paas-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .paas__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--paas-surface);
+    border: 1px solid var(--paas-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .paas__principle-mark {
+    flex: 0 0 auto;
+    color: var(--paas-accent);
+    font-weight: 800;
+  }
+
+  .paas__principle p {
+    margin: 0;
+    color: var(--paas-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 900px) {
+    .paas__choices {
+      grid-template-columns: 1fr;
+    }
+
+    .paas__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .paas {
+      padding: 1rem;
+    }
+
+    .paas__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .paas__badge {
+      justify-self: start;
+    }
+
+    .paas__result-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .paas__choice {
+      transition: none;
+    }
+  }
+</style>

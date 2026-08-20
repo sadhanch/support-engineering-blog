@@ -1,0 +1,776 @@
+---
+/*
+ * PowerAppsEnterpriseReadiness.astro
+ *
+ * Purpose:
+ * Provides a lightweight engineering-readiness assessment for a
+ * Power Apps workload.
+ *
+ * This is a reasoning aid, not a compliance certification or
+ * Microsoft licensing assessment.
+ */
+---
+
+<section
+  class="paer"
+  data-paer
+  aria-labelledby="paer-title"
+>
+  <div class="paer__header">
+    <div class="paer__header-copy">
+      <p class="paer__eyebrow">Enterprise readiness</p>
+
+      <h3 id="paer-title">
+        Is this Power Apps workload ready for production?
+      </h3>
+
+      <p class="paer__intro">
+        Review the engineering foundations that matter when a Power Apps
+        workload moves beyond a prototype. Select the statements that are
+        true for your application.
+      </p>
+    </div>
+
+    <div
+      class="paer__status"
+      data-status
+      aria-live="polite"
+    >
+      <strong data-score>0 / 8</strong>
+      <span data-status-label>Start the assessment</span>
+    </div>
+  </div>
+
+  <fieldset class="paer__checks">
+    <legend class="paer__legend">
+      Select everything that is already in place
+    </legend>
+
+    <label class="paer__check">
+      <input type="checkbox" value="workload" />
+
+      <span class="paer__box" aria-hidden="true"></span>
+
+      <span class="paer__check-copy">
+        <strong>Workload and app model are defined</strong>
+        <span>
+          The business workload is understood and the selected Power Apps
+          experience is appropriate for it.
+        </span>
+      </span>
+
+      <span class="paer__dimension">Architecture</span>
+    </label>
+
+    <label class="paer__check">
+      <input type="checkbox" value="data" />
+
+      <span class="paer__box" aria-hidden="true"></span>
+
+      <span class="paer__check-copy">
+        <strong>Data architecture is defined</strong>
+        <span>
+          Data sources, ownership, relationships, access requirements, and
+          the appropriate data platform have been considered.
+        </span>
+      </span>
+
+      <span class="paer__dimension">Data</span>
+    </label>
+
+    <label class="paer__check">
+      <input type="checkbox" value="security" />
+
+      <span class="paer__box" aria-hidden="true"></span>
+
+      <span class="paer__check-copy">
+        <strong>Security boundaries are understood</strong>
+        <span>
+          Identity, environment access, application access, connector
+          permissions, and data permissions have been considered together.
+        </span>
+      </span>
+
+      <span class="paer__dimension">Security</span>
+    </label>
+
+    <label class="paer__check">
+      <input type="checkbox" value="performance" />
+
+      <span class="paer__box" aria-hidden="true"></span>
+
+      <span class="paer__check-copy">
+        <strong>Performance has been tested realistically</strong>
+        <span>
+          Delegation, query behavior, connector calls, payloads, and
+          representative data volumes have been considered.
+        </span>
+      </span>
+
+      <span class="paer__dimension">Performance</span>
+    </label>
+
+    <label class="paer__check">
+      <input type="checkbox" value="environment" />
+
+      <span class="paer__box" aria-hidden="true"></span>
+
+      <span class="paer__check-copy">
+        <strong>Environment strategy is defined</strong>
+        <span>
+          Development, test or UAT, and production boundaries are appropriate
+          for the workload.
+        </span>
+      </span>
+
+      <span class="paer__dimension">Governance</span>
+    </label>
+
+    <label class="paer__check">
+      <input type="checkbox" value="alm" />
+
+      <span class="paer__box" aria-hidden="true"></span>
+
+      <span class="paer__check-copy">
+        <strong>ALM and deployment are repeatable</strong>
+        <span>
+          Solutions, source control, validation, pipelines, environment
+          variables, connection references, and deployment ownership have
+          been considered.
+        </span>
+      </span>
+
+      <span class="paer__dimension">ALM</span>
+    </label>
+
+    <label class="paer__check">
+      <input type="checkbox" value="operations" />
+
+      <span class="paer__box" aria-hidden="true"></span>
+
+      <span class="paer__check-copy">
+        <strong>Monitoring and operational evidence exist</strong>
+        <span>
+          The team can investigate application behavior, failures, important
+          changes, and relevant audit activity.
+        </span>
+      </span>
+
+      <span class="paer__dimension">Operations</span>
+    </label>
+
+    <label class="paer__check">
+      <input type="checkbox" value="ownership" />
+
+      <span class="paer__box" aria-hidden="true"></span>
+
+      <span class="paer__check-copy">
+        <strong>Ownership and support are defined</strong>
+        <span>
+          Production ownership, support responsibilities, documentation, and
+          recovery or rollback expectations are understood.
+        </span>
+      </span>
+
+      <span class="paer__dimension">Operations</span>
+    </label>
+  </fieldset>
+
+  <div
+    class="paer__result"
+    data-result
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="paer__result-head">
+      <div>
+        <span class="paer__result-kicker">
+          Current assessment
+        </span>
+
+        <h4 data-title>
+          Start with the foundations.
+        </h4>
+      </div>
+
+      <span
+        class="paer__result-level"
+        data-level
+      >
+        Prototype stage
+      </span>
+    </div>
+
+    <p
+      class="paer__result-description"
+      data-description
+    >
+      Select the engineering foundations that are already in place. The
+      assessment highlights the next area that deserves attention.
+    </p>
+
+    <div class="paer__progress" aria-hidden="true">
+      <span data-progress></span>
+    </div>
+
+    <div class="paer__next">
+      <span class="paer__next-label">
+        Next focus
+      </span>
+
+      <strong data-next>
+        Define the workload, application model, and data architecture.
+      </strong>
+    </div>
+  </div>
+
+  <div class="paer__principle">
+    <span
+      class="paer__principle-mark"
+      aria-hidden="true"
+    >
+      →
+    </span>
+
+    <p>
+      <strong>Readiness is not a score.</strong>
+      A high number of completed checks does not guarantee that a workload is
+      production-ready. Use the result to identify engineering gaps and
+      decide what needs deeper review.
+    </p>
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>(
+    "[data-paer]"
+  );
+
+  roots.forEach((root) => {
+    if (root.dataset.initialized === "true") {
+      return;
+    }
+
+    root.dataset.initialized = "true";
+
+    const checks = Array.from(
+      root.querySelectorAll<HTMLInputElement>(
+        '.paer__check input[type="checkbox"]'
+      )
+    );
+
+    const score =
+      root.querySelector<HTMLElement>("[data-score]");
+
+    const statusLabel =
+      root.querySelector<HTMLElement>("[data-status-label]");
+
+    const title =
+      root.querySelector<HTMLElement>("[data-title]");
+
+    const level =
+      root.querySelector<HTMLElement>("[data-level]");
+
+    const description =
+      root.querySelector<HTMLElement>("[data-description]");
+
+    const progress =
+      root.querySelector<HTMLElement>("[data-progress]");
+
+    const next =
+      root.querySelector<HTMLElement>("[data-next]");
+
+    if (
+      !score ||
+      !statusLabel ||
+      !title ||
+      !level ||
+      !description ||
+      !progress ||
+      !next
+    ) {
+      return;
+    }
+
+    const results = [
+      {
+        min: 0,
+        max: 1,
+        label: "Prototype stage",
+        title: "Start with the foundations.",
+        description:
+          "The workload still has several foundational areas to define before production readiness can be assessed meaningfully.",
+        next:
+          "Define the workload, application model, data architecture, and ownership."
+      },
+      {
+        min: 2,
+        max: 3,
+        label: "Engineering review needed",
+        title: "The foundation is forming.",
+        description:
+          "Some production concerns are addressed, but important architecture, security, performance, or lifecycle questions remain.",
+        next:
+          "Review the unchecked areas before moving the workload toward production."
+      },
+      {
+        min: 4,
+        max: 5,
+        label: "Production preparation",
+        title: "The workload is becoming operational.",
+        description:
+          "Several important engineering controls are present. Focus on closing the remaining gaps and validating them under realistic conditions.",
+        next:
+          "Prioritize performance, security, ALM, governance, and operational evidence."
+      },
+      {
+        min: 6,
+        max: 7,
+        label: "Strong foundation",
+        title: "Most production foundations are in place.",
+        description:
+          "The workload has a strong engineering foundation, but the remaining unchecked area can still represent a meaningful production risk.",
+        next:
+          "Validate the remaining gap and confirm ownership, recovery, and operational readiness."
+      },
+      {
+        min: 8,
+        max: 8,
+        label: "Ready for deeper validation",
+        title: "The major foundations are covered.",
+        description:
+          "All assessment areas have been selected. This is a strong starting point for deeper architecture, testing, governance, and operational validation.",
+        next:
+          "Validate the implementation with realistic workloads and your organization's governance and licensing requirements."
+      }
+    ];
+
+    const update = () => {
+      const selected = checks.filter(
+        (check) => check.checked
+      ).length;
+
+      const total = checks.length;
+
+      score.textContent = `${selected} / ${total}`;
+
+      const percentage =
+        total > 0
+          ? (selected / total) * 100
+          : 0;
+
+      progress.style.width = `${percentage}%`;
+
+      const result =
+        results.find(
+          (item) =>
+            selected >= item.min &&
+            selected <= item.max
+        ) ?? results[0];
+
+      statusLabel.textContent = result.label;
+      level.textContent = result.label;
+      title.textContent = result.title;
+      description.textContent = result.description;
+      next.textContent = result.next;
+
+      root.dataset.level =
+        selected >= 8
+          ? "complete"
+          : selected >= 6
+            ? "strong"
+            : selected >= 4
+              ? "preparation"
+              : selected >= 2
+                ? "review"
+                : "prototype";
+    };
+
+    checks.forEach((check) => {
+      check.addEventListener("change", update);
+    });
+
+    update();
+  });
+</script>
+
+<style>
+  .paer {
+    --paer-surface: var(--surface-primary, #ffffff);
+    --paer-surface-soft: var(--surface-secondary, #f8fafc);
+    --paer-text: var(--text-primary, #0f172a);
+    --paer-text-secondary: var(--text-secondary, #475569);
+    --paer-text-tertiary: var(--text-tertiary, #64748b);
+    --paer-border: var(--border-default, #dbe3ec);
+    --paer-border-soft: var(--border-subtle, #e7edf4);
+    --paer-accent: var(--color-accent, #4ea1e0);
+    --paer-state: var(--paer-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--paer-text);
+    background: var(--paer-surface);
+    border: 1px solid var(--paer-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow:
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .paer[data-level="review"] {
+    --paer-state: var(--color-warning, #b45309);
+  }
+
+  .paer[data-level="preparation"] {
+    --paer-state: var(--color-info, #0f8a8a);
+  }
+
+  .paer[data-level="strong"],
+  .paer[data-level="complete"] {
+    --paer-state: var(--color-success, #15803d);
+  }
+
+  .paer__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .paer__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--paer-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .paer h3,
+  .paer h4,
+  .paer p {
+    margin-top: 0;
+  }
+
+  .paer h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .paer__intro {
+    max-width: 72ch;
+    margin-bottom: 0;
+    color: var(--paer-text-secondary);
+    line-height: 1.6;
+  }
+
+  .paer__status {
+    flex: 0 0 auto;
+    min-width: 7rem;
+    padding: 0.75rem 0.9rem;
+    color: var(--paer-state);
+    background: color-mix(
+      in srgb,
+      var(--paer-state) 8%,
+      var(--paer-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--paer-state) 30%,
+      var(--paer-border)
+    );
+    border-radius: var(--radius-md, 0.65rem);
+    text-align: center;
+  }
+
+  .paer__status strong,
+  .paer__status span {
+    display: block;
+  }
+
+  .paer__status strong {
+    font-size: 1.15rem;
+    line-height: 1.2;
+  }
+
+  .paer__status span {
+    margin-top: 0.2rem;
+    color: var(--paer-text-secondary);
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1.35;
+  }
+
+  .paer__checks {
+    display: grid;
+    gap: 0.65rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .paer__legend {
+    margin-bottom: 0.4rem;
+    color: var(--paer-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .paer__check {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.8rem;
+    padding: 0.85rem 0.9rem;
+    background: var(--paer-surface-soft);
+    border: 1px solid var(--paer-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .paer__check:hover {
+    border-color: var(--paer-accent);
+  }
+
+  .paer__check:has(input:focus-visible) {
+    outline: 2px solid var(--paer-accent);
+    outline-offset: 2px;
+  }
+
+  .paer__check:has(input:checked) {
+    border-color: var(--paer-state);
+    background: color-mix(
+      in srgb,
+      var(--paer-state) 7%,
+      var(--paer-surface)
+    );
+    box-shadow:
+      inset 0 0 0 1px var(--paer-state);
+  }
+
+  .paer__check input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .paer__box {
+    position: relative;
+    display: block;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.1rem;
+    border: 2px solid var(--paer-text-tertiary);
+    border-radius: 0.3rem;
+  }
+
+  .paer__check:has(input:checked) .paer__box {
+    border-color: var(--paer-state);
+    background: var(--paer-state);
+  }
+
+  .paer__check:has(input:checked) .paer__box::after {
+    position: absolute;
+    top: 0.1rem;
+    left: 0.34rem;
+    width: 0.35rem;
+    height: 0.65rem;
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    color: #ffffff;
+    content: "";
+    transform: rotate(45deg);
+  }
+
+  .paer__check-copy {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .paer__check-copy strong {
+    color: var(--paer-text);
+    line-height: 1.35;
+  }
+
+  .paer__check-copy span {
+    color: var(--paer-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .paer__dimension {
+    align-self: start;
+    padding: 0.3rem 0.55rem;
+    color: var(--paer-text-tertiary);
+    background: var(--paer-surface);
+    border: 1px solid var(--paer-border-soft);
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .paer__result {
+    margin-top: var(--space-6, 1.5rem);
+    padding: 1.2rem;
+    background: var(--paer-surface-soft);
+    border: 1px solid var(--paer-border);
+    border-left: 4px solid var(--paer-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .paer__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .paer__result-kicker {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--paer-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .paer__result h4 {
+    margin-bottom: 0;
+    color: var(--paer-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .paer__result-level {
+    flex: 0 0 auto;
+    color: var(--paer-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .paer__result-description {
+    max-width: 74ch;
+    margin: 0.65rem 0 0;
+    color: var(--paer-text-secondary);
+    line-height: 1.6;
+  }
+
+  .paer__progress {
+    width: 100%;
+    height: 0.45rem;
+    margin-top: 1rem;
+    overflow: hidden;
+    background: var(--paer-border-soft);
+    border-radius: 999px;
+  }
+
+  .paer__progress span {
+    display: block;
+    width: 0%;
+    height: 100%;
+    background: var(--paer-state);
+    border-radius: inherit;
+    transition:
+      width 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .paer__next {
+    display: grid;
+    gap: 0.25rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--paer-border);
+  }
+
+  .paer__next-label {
+    color: var(--paer-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .paer__next strong {
+    color: var(--paer-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .paer__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--paer-surface);
+    border: 1px solid var(--paer-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .paer__principle-mark {
+    flex: 0 0 auto;
+    color: var(--paer-accent);
+    font-weight: 800;
+  }
+
+  .paer__principle p {
+    margin: 0;
+    color: var(--paer-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 700px) {
+    .paer__header {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .paer__status {
+      justify-self: start;
+    }
+
+    .paer__check {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .paer__dimension {
+      grid-column: 2;
+      justify-self: start;
+    }
+
+    .paer__result-head {
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .paer__result-level {
+      text-align: left;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .paer {
+      padding: 1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .paer__check,
+    .paer__progress span {
+      transition: none;
+    }
+  }
+</style>
