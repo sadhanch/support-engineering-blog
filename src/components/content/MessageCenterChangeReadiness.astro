@@ -1,0 +1,525 @@
+---
+/* ==========================================================
+   SEDS — Message Center Change Readiness
+   Purpose:
+   Interactive readiness check for Microsoft 365
+   Message Center changes.
+   ========================================================== */
+
+interface ReadinessItem {
+    id: string;
+    label: string;
+    description: string;
+}
+
+const readinessItems: ReadinessItem[] = [
+    {
+        id: "owner",
+        label: "Owner assigned",
+        description:
+            "A primary owner has been assigned to the change, with a backup where appropriate."
+    },
+    {
+        id: "impact",
+        label: "Impact assessed",
+        description:
+            "Tenant, user, licensing, and security or compliance impact have been considered."
+    },
+    {
+        id: "testing",
+        label: "Testing completed or deemed unnecessary",
+        description:
+            "The change has been tested where uncertainty or meaningful impact justified validation."
+    },
+    {
+        id: "communication",
+        label: "Communication prepared",
+        description:
+            "Users, help desk, documentation, or other stakeholders have been prepared where required."
+    },
+    {
+        id: "deployment",
+        label: "Change deployed",
+        description:
+            "Required configuration, policy, licensing, integration, or client changes have been applied."
+    },
+    {
+        id: "validation",
+        label: "Post-rollout validation completed",
+        description:
+            "Expected state, user impact, security or audit signals, adoption, and feedback have been reviewed."
+    },
+    {
+        id: "evidence",
+        label: "Closure evidence retained",
+        description:
+            "The decision, testing, approvals, communications, configuration changes, and findings are recorded as appropriate."
+    }
+];
+---
+
+<section
+    class="message-center-readiness"
+    data-message-center-readiness
+    aria-labelledby="message-center-readiness-title"
+>
+    <div class="message-center-readiness__header">
+        <div>
+            <span class="message-center-readiness__eyebrow">
+                Change Readiness Check
+            </span>
+
+            <h3 id="message-center-readiness-title">
+                Is this Message Center change ready to close?
+            </h3>
+
+            <p>
+                Work through the checks below before treating a meaningful
+                Microsoft 365 change as completed.
+            </p>
+        </div>
+
+        <div
+            class="message-center-readiness__progress"
+            aria-live="polite"
+        >
+            <strong data-progress-count>0 / 7</strong>
+            <span>complete</span>
+        </div>
+    </div>
+
+    <div class="message-center-readiness__body">
+
+        <ol class="message-center-readiness__list">
+            {
+                readinessItems.map((item, index) => (
+                    <li class="message-center-readiness__item">
+                        <label>
+                            <input
+                                type="checkbox"
+                                data-readiness-check
+                                value={item.id}
+                            />
+
+                            <span class="message-center-readiness__check">
+                                <span aria-hidden="true">✓</span>
+                            </span>
+
+                            <span class="message-center-readiness__item-content">
+                                <strong>
+                                    {index + 1}. {item.label}
+                                </strong>
+
+                                <small>
+                                    {item.description}
+                                </small>
+                            </span>
+                        </label>
+                    </li>
+                ))
+            }
+        </ol>
+
+        <div
+            class="message-center-readiness__result"
+            data-readiness-result
+            aria-live="polite"
+        >
+            <div class="message-center-readiness__result-icon" aria-hidden="true">
+                !
+            </div>
+
+            <div>
+                <strong data-result-title>
+                    Change still needs attention
+                </strong>
+
+                <p data-result-message>
+                    Complete the relevant readiness checks before closing
+                    the change.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="message-center-readiness__footer">
+
+        <button
+            type="button"
+            class="message-center-readiness__reset"
+            data-readiness-reset
+        >
+            Reset checklist
+        </button>
+
+        <span>
+            This checklist supports administrative readiness; it does not
+            replace change-specific assessment or approval requirements.
+        </span>
+
+    </footer>
+</section>
+
+<script>
+    function initializeMessageCenterReadiness() {
+        const components =
+            document.querySelectorAll<HTMLElement>(
+                "[data-message-center-readiness]"
+            );
+
+        components.forEach((component) => {
+            if (
+                component.dataset.initialized === "true"
+            ) {
+                return;
+            }
+
+            component.dataset.initialized = "true";
+
+            const checks =
+                Array.from(
+                    component.querySelectorAll<HTMLInputElement>(
+                        "[data-readiness-check]"
+                    )
+                );
+
+            const progressCount =
+                component.querySelector<HTMLElement>(
+                    "[data-progress-count]"
+                );
+
+            const resultTitle =
+                component.querySelector<HTMLElement>(
+                    "[data-result-title]"
+                );
+
+            const resultMessage =
+                component.querySelector<HTMLElement>(
+                    "[data-result-message]"
+                );
+
+            const result =
+                component.querySelector<HTMLElement>(
+                    "[data-readiness-result]"
+                );
+
+            const resetButton =
+                component.querySelector<HTMLButtonElement>(
+                    "[data-readiness-reset]"
+                );
+
+            if (
+                !progressCount ||
+                !resultTitle ||
+                !resultMessage ||
+                !result ||
+                !resetButton
+            ) {
+                return;
+            }
+
+            function updateState() {
+                const completed =
+                    checks.filter(
+                        (check) => check.checked
+                    ).length;
+
+                const total =
+                    checks.length;
+
+                progressCount.textContent =
+                    `${completed} / ${total}`;
+
+                if (completed === total) {
+                    result.dataset.state = "complete";
+
+                    resultTitle.textContent =
+                        "Change appears ready to close";
+
+                    resultMessage.textContent =
+                        "The readiness checks are complete. Confirm that the retained evidence is appropriate for the change before closing it.";
+                } else if (completed >= 4) {
+                    result.dataset.state = "progress";
+
+                    resultTitle.textContent =
+                        "Change is progressing";
+
+                    resultMessage.textContent =
+                        `${total - completed} readiness check${
+                            total - completed === 1
+                                ? ""
+                                : "s"
+                        } remain${
+                            total - completed === 1
+                                ? "s"
+                                : ""
+                        }. Review the remaining items before closure.`;
+                } else {
+                    result.dataset.state = "attention";
+
+                    resultTitle.textContent =
+                        "Change still needs attention";
+
+                    resultMessage.textContent =
+                        "Complete the relevant readiness checks before treating the change as completed.";
+                }
+            }
+
+            checks.forEach((check) => {
+                check.addEventListener(
+                    "change",
+                    updateState
+                );
+            });
+
+            resetButton.addEventListener(
+                "click",
+                () => {
+                    checks.forEach(
+                        (check) => {
+                            check.checked = false;
+                        }
+                    );
+
+                    updateState();
+                }
+            );
+
+            updateState();
+        });
+    }
+
+    initializeMessageCenterReadiness();
+
+    document.addEventListener(
+        "astro:page-load",
+        initializeMessageCenterReadiness
+    );
+</script>
+
+<style>
+    .message-center-readiness {
+        margin-block: var(--space-10);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        background: var(--color-surface);
+        overflow: hidden;
+    }
+
+    .message-center-readiness__header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: var(--space-6);
+        padding: var(--space-6);
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .message-center-readiness__eyebrow {
+        display: block;
+        margin-bottom: var(--space-2);
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--color-primary);
+    }
+
+    .message-center-readiness__header h3 {
+        margin: 0;
+    }
+
+    .message-center-readiness__header p {
+        max-width: 48rem;
+        margin: var(--space-3) 0 0;
+    }
+
+    .message-center-readiness__progress {
+        flex: 0 0 auto;
+        min-width: 5rem;
+        text-align: center;
+    }
+
+    .message-center-readiness__progress strong {
+        display: block;
+        font-size: 1.25rem;
+    }
+
+    .message-center-readiness__progress span {
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+    }
+
+    .message-center-readiness__body {
+        padding: var(--space-6);
+    }
+
+    .message-center-readiness__list {
+        display: grid;
+        gap: var(--space-3);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .message-center-readiness__item label {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+        cursor: pointer;
+        padding: var(--space-4);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        background: var(--color-background);
+        transition:
+            border-color 0.2s ease,
+            background-color 0.2s ease;
+    }
+
+    .message-center-readiness__item label:hover {
+        border-color: var(--color-primary);
+    }
+
+    .message-center-readiness__item input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .message-center-readiness__check {
+        display: grid;
+        flex: 0 0 auto;
+        width: 1.35rem;
+        height: 1.35rem;
+        place-items: center;
+        border: 2px solid var(--color-border);
+        border-radius: 0.35rem;
+        color: transparent;
+    }
+
+    .message-center-readiness__check span {
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    .message-center-readiness__item input:checked
+        + .message-center-readiness__check {
+        border-color: var(--color-primary);
+        background: var(--color-primary);
+        color: #fff;
+    }
+
+    .message-center-readiness__item
+        input:focus-visible
+        + .message-center-readiness__check {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 3px;
+    }
+
+    .message-center-readiness__item-content {
+        display: grid;
+        gap: 0.25rem;
+    }
+
+    .message-center-readiness__item-content strong {
+        font-size: 0.95rem;
+    }
+
+    .message-center-readiness__item-content small {
+        color: var(--color-text-muted);
+        line-height: 1.5;
+    }
+
+    .message-center-readiness__result {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-3);
+        margin-top: var(--space-6);
+        padding: var(--space-4);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+    }
+
+    .message-center-readiness__result-icon {
+        display: grid;
+        flex: 0 0 auto;
+        width: 1.75rem;
+        height: 1.75rem;
+        place-items: center;
+        border-radius: 50%;
+        font-weight: 700;
+    }
+
+    .message-center-readiness__result p {
+        margin: 0.25rem 0 0;
+        color: var(--color-text-muted);
+    }
+
+    .message-center-readiness__result[data-state="complete"] {
+        border-color: var(--color-success);
+    }
+
+    .message-center-readiness__result[data-state="complete"]
+        .message-center-readiness__result-icon {
+        background: var(--color-success);
+        color: #fff;
+    }
+
+    .message-center-readiness__result[data-state="progress"] {
+        border-color: var(--color-primary);
+    }
+
+    .message-center-readiness__result[data-state="progress"]
+        .message-center-readiness__result-icon {
+        background: var(--color-primary);
+        color: #fff;
+    }
+
+    .message-center-readiness__result[data-state="attention"]
+        .message-center-readiness__result-icon {
+        background: var(--color-warning);
+        color: #fff;
+    }
+
+    .message-center-readiness__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-4);
+        padding: var(--space-4) var(--space-6);
+        border-top: 1px solid var(--color-border);
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+    }
+
+    .message-center-readiness__reset {
+        flex: 0 0 auto;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--color-primary);
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .message-center-readiness__reset:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+        .message-center-readiness__header {
+            flex-direction: column;
+        }
+
+        .message-center-readiness__progress {
+            text-align: left;
+        }
+
+        .message-center-readiness__footer {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>

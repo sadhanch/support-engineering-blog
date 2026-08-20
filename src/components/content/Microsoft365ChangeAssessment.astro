@@ -1,0 +1,684 @@
+---
+/*
+ * Microsoft365ChangeAssessment.astro
+ *
+ * Purpose:
+ * Helps Microsoft 365 administrators assess the likely impact of a change
+ * and choose a proportional next action.
+ *
+ * The component follows the article's four impact lenses:
+ * Tenant → User → Licensing → Security & Compliance
+ *
+ * It then maps the selected change type to practical assessment questions
+ * and a suggested disposition:
+ * Monitor → Test / Pilot → Act now → No action.
+ *
+ * Self-contained Astro component.
+ */
+---
+
+<section
+  class="m365ca"
+  data-m365ca
+  aria-labelledby="m365ca-title"
+>
+  <div class="m365ca__header">
+    <div class="m365ca__header-copy">
+      <p class="m365ca__eyebrow">Change assessment</p>
+
+      <h3 id="m365ca-title">
+        What should you do with this Microsoft 365 change?
+      </h3>
+
+      <p class="m365ca__intro">
+        Choose the type of change you are assessing. The assessment highlights
+        the impact areas to review and suggests a proportional next action.
+      </p>
+    </div>
+
+    <span class="m365ca__badge" data-badge aria-live="polite">
+      Choose a change type
+    </span>
+  </div>
+
+  <fieldset class="m365ca__choices">
+    <legend class="m365ca__legend">
+      Select the change type
+    </legend>
+
+    <label class="m365ca__choice">
+      <input
+        type="radio"
+        name="m365-change-type"
+        value="feature"
+      />
+      <span class="m365ca__marker" aria-hidden="true"><span></span></span>
+
+      <span class="m365ca__choice-body">
+        <strong>Feature or capability change</strong>
+        <span>
+          A new, changed, or expanded Microsoft 365 capability is being
+          introduced.
+        </span>
+        <small>FEATURE · Capability / Experience</small>
+      </span>
+    </label>
+
+    <label class="m365ca__choice">
+      <input
+        type="radio"
+        name="m365-change-type"
+        value="retirement"
+      />
+      <span class="m365ca__marker" aria-hidden="true"><span></span></span>
+
+      <span class="m365ca__choice-body">
+        <strong>Retirement or deprecation</strong>
+        <span>
+          An existing service, feature, experience, or dependency is being
+          removed or retired.
+        </span>
+        <small>RETIREMENT · Migration / Deadline</small>
+      </span>
+    </label>
+
+    <label class="m365ca__choice">
+      <input
+        type="radio"
+        name="m365-change-type"
+        value="licensing"
+      />
+      <span class="m365ca__marker" aria-hidden="true"><span></span></span>
+
+      <span class="m365ca__choice-body">
+        <strong>Licensing or entitlement change</strong>
+        <span>
+          The change may introduce a new license, plan dependency, add-on, or
+          entitlement boundary.
+        </span>
+        <small>LICENSING · SKU / Access</small>
+      </span>
+    </label>
+
+    <label class="m365ca__choice">
+      <input
+        type="radio"
+        name="m365-change-type"
+        value="security"
+      />
+      <span class="m365ca__marker" aria-hidden="true"><span></span></span>
+
+      <span class="m365ca__choice-body">
+        <strong>Security or compliance change</strong>
+        <span>
+          The change may affect access, data handling, auditing, retention,
+          governance, or regulatory requirements.
+        </span>
+        <small>SECURITY · Compliance / Control</small>
+      </span>
+    </label>
+
+    <label class="m365ca__choice">
+      <input
+        type="radio"
+        name="m365-change-type"
+        value="user"
+      />
+      <span class="m365ca__marker" aria-hidden="true"><span></span></span>
+
+      <span class="m365ca__choice-body">
+        <strong>User experience or workflow change</strong>
+        <span>
+          The change is primarily visible in how users work, navigate, or
+          complete tasks.
+        </span>
+        <small>USER · Workflow / Training</small>
+      </span>
+    </label>
+
+    <label class="m365ca__choice">
+      <input
+        type="radio"
+        name="m365-change-type"
+        value="tenant"
+      />
+      <span class="m365ca__marker" aria-hidden="true"><span></span></span>
+
+      <span class="m365ca__choice-body">
+        <strong>Tenant configuration change</strong>
+        <span>
+          The change may alter tenant settings, policy behavior, integrations,
+          automation, clients, or administrative controls.
+        </span>
+        <small>TENANT · Configuration / Dependency</small>
+      </span>
+    </label>
+  </fieldset>
+
+  <div
+    class="m365ca__result"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="m365ca__result-head">
+      <div>
+        <span class="m365ca__result-kicker">Assessment outcome</span>
+        <h4 data-title>Select a change type above.</h4>
+      </div>
+
+      <span class="m365ca__result-level" data-level>
+        Waiting for selection
+      </span>
+    </div>
+
+    <p class="m365ca__result-description" data-description>
+      Start by identifying what kind of change you are assessing.
+    </p>
+
+    <div class="m365ca__grid">
+      <div class="m365ca__card">
+        <span class="m365ca__card-label">Impact lenses</span>
+        <strong data-impact>
+          Tenant · User · Licensing · Security &amp; Compliance
+        </strong>
+      </div>
+
+      <div class="m365ca__card">
+        <span class="m365ca__card-label">Questions to answer</span>
+        <strong data-questions>
+          Choose a change type to see the most relevant checks.
+        </strong>
+      </div>
+
+      <div class="m365ca__card">
+        <span class="m365ca__card-label">Suggested disposition</span>
+        <strong data-disposition>
+          Monitor · Test / Pilot · Act now · No action
+        </strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="m365ca__principle">
+    <span class="m365ca__principle-mark" aria-hidden="true">→</span>
+
+    <p>
+      <strong>Proportional change management.</strong>
+      The objective is not to turn every announcement into a project. Match
+      the response to the change's scope, impact, urgency, and risk.
+    </p>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector("[data-m365ca]");
+
+  if (root) {
+    const badge = root.querySelector("[data-badge]");
+    const title = root.querySelector("[data-title]");
+    const level = root.querySelector("[data-level]");
+    const description = root.querySelector("[data-description]");
+    const impact = root.querySelector("[data-impact]");
+    const questions = root.querySelector("[data-questions]");
+    const disposition = root.querySelector("[data-disposition]");
+
+    const results = {
+      feature: {
+        badge: "FEATURE · Capability",
+        level: "Assess before adoption",
+        title: "Determine what the capability changes operationally.",
+        description:
+          "A feature may affect configuration, integrations, user workflows, licensing, or support even when no immediate action appears necessary.",
+        impact:
+          "Tenant · User · Licensing · Security & Compliance",
+        questions:
+          "What changes technically? Who uses it? Does it alter defaults or policy behavior? Is training required? Does licensing change?",
+        disposition:
+          "Test / Pilot when impact is meaningful; otherwise Monitor or No action."
+      },
+
+      retirement: {
+        badge: "RETIREMENT · Migration",
+        level: "Treat as deadline-driven",
+        title: "Turn the retirement into owned migration work.",
+        description:
+          "Retirements can affect business processes, dependencies, licensing, security, and continuity. They should not remain as FYI items.",
+        impact:
+          "Tenant · User · Licensing · Security & Compliance",
+        questions:
+          "What workloads depend on it? What is the replacement? What migration effort is required? Who owns it? What is the deadline?",
+        disposition:
+          "Act now when critical or deadline-driven; use Test / Pilot before migration where appropriate."
+      },
+
+      licensing: {
+        badge: "LICENSING · Entitlement",
+        level: "Check access and cost",
+        title: "Determine whether the change alters entitlement or licensing.",
+        description:
+          "A capability may be broadly announced while availability still depends on subscription, plan, add-on, or user assignment.",
+        impact:
+          "Licensing · User · Tenant",
+        questions:
+          "Is the capability included? Is an add-on required? Which users need it? Could assignment or removal affect access or data?",
+        disposition:
+          "Act now when access or cost changes; otherwise Monitor while licensing is validated."
+      },
+
+      security: {
+        badge: "SECURITY · Compliance",
+        level: "Review controls early",
+        title: "Assess security and compliance before rollout.",
+        description:
+          "Changes that affect data, access, auditing, retention, AI or service behavior can carry obligations beyond simple feature adoption.",
+        impact:
+          "Security & Compliance · Tenant · User · Licensing",
+        questions:
+          "Does data handling change? Are DLP, retention, eDiscovery, audit, access, or governance controls affected?",
+        disposition:
+          "Act now when control or regulatory impact is material; otherwise Test / Pilot before broad rollout."
+      },
+
+      user: {
+        badge: "USER · Workflow",
+        level: "Prepare the experience",
+        title: "Determine what users will see, learn, or do differently.",
+        description:
+          "A change can be technically safe but operationally disruptive if users are not prepared for a new workflow or interface.",
+        impact:
+          "User · Tenant",
+        questions:
+          "Does the UI change? Does the workflow change? Is training or documentation needed? Could help-desk volume increase?",
+        disposition:
+          "Test / Pilot when the workflow changes; otherwise Monitor or No action."
+      },
+
+      tenant: {
+        badge: "TENANT · Configuration",
+        level: "Check dependencies",
+        title: "Determine whether tenant-wide configuration or dependencies are affected.",
+        description:
+          "Configuration changes can affect policies, integrations, scripts, automations, clients, and shared administrative controls.",
+        impact:
+          "Tenant · Security & Compliance · User · Licensing",
+        questions:
+          "Which settings change? What integrations or scripts depend on current behavior? Could the change affect users tenant-wide?",
+        disposition:
+          "Test / Pilot for meaningful configuration changes; Act now when required to prevent disruption."
+      }
+    };
+
+    root
+      .querySelectorAll('input[name="m365-change-type"]')
+      .forEach((input) => {
+        input.addEventListener("change", (event) => {
+          const value = event.currentTarget.value;
+          const result = results[value];
+
+          if (!result) return;
+
+          root.dataset.state = value;
+          badge.textContent = result.badge;
+          level.textContent = result.level;
+          title.textContent = result.title;
+          description.textContent = result.description;
+          impact.textContent = result.impact;
+          questions.textContent = result.questions;
+          disposition.textContent = result.disposition;
+        });
+      });
+  }
+</script>
+
+<style>
+  .m365ca {
+    --m365ca-surface: var(--surface-primary, #ffffff);
+    --m365ca-surface-soft: var(--surface-secondary, #f8fafc);
+    --m365ca-text: var(--text-primary, #0f172a);
+    --m365ca-text-secondary: var(--text-secondary, #475569);
+    --m365ca-text-tertiary: var(--text-tertiary, #64748b);
+    --m365ca-border: var(--border-default, #dbe3ec);
+    --m365ca-border-soft: var(--border-subtle, #e7edf4);
+    --m365ca-accent: var(--color-accent, #4ea1e0);
+    --m365ca-state: var(--m365ca-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--m365ca-text);
+    background: var(--m365ca-surface);
+    border: 1px solid var(--m365ca-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .m365ca[data-state="feature"] {
+    --m365ca-state: var(--color-info, #0f8a8a);
+  }
+
+  .m365ca[data-state="retirement"] {
+    --m365ca-state: var(--color-error, #dc2626);
+  }
+
+  .m365ca[data-state="licensing"] {
+    --m365ca-state: var(--color-warning, #c2410c);
+  }
+
+  .m365ca[data-state="security"] {
+    --m365ca-state: #7c3aed;
+  }
+
+  .m365ca[data-state="user"] {
+    --m365ca-state: var(--color-success, #15803d);
+  }
+
+  .m365ca[data-state="tenant"] {
+    --m365ca-state: var(--color-accent, #4ea1e0);
+  }
+
+  .m365ca__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .m365ca__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--m365ca-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .m365ca h3,
+  .m365ca h4,
+  .m365ca p {
+    margin-top: 0;
+  }
+
+  .m365ca h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .m365ca__intro {
+    max-width: 70ch;
+    margin-bottom: 0;
+    color: var(--m365ca-text-secondary);
+    line-height: 1.6;
+  }
+
+  .m365ca__badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 0.45rem 0.75rem;
+    color: var(--m365ca-state);
+    background: color-mix(
+      in srgb,
+      var(--m365ca-state) 8%,
+      var(--m365ca-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--m365ca-state) 30%,
+      var(--m365ca-border)
+    );
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .m365ca__choices {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .m365ca__legend {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    color: var(--m365ca-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .m365ca__choice {
+    position: relative;
+    display: block;
+    height: 100%;
+    padding: 0.95rem;
+    background: var(--m365ca-surface-soft);
+    border: 1px solid var(--m365ca-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .m365ca__choice:hover {
+    transform: translateY(-1px);
+    border-color: var(--m365ca-accent);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .m365ca__choice:has(input:focus-visible) {
+    outline: 2px solid var(--m365ca-accent);
+    outline-offset: 2px;
+  }
+
+  .m365ca__choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .m365ca__choice:has(input:checked) {
+    border-color: var(--m365ca-state);
+    background: color-mix(
+      in srgb,
+      var(--m365ca-state) 8%,
+      var(--m365ca-surface)
+    );
+    box-shadow:
+      inset 0 0 0 1px var(--m365ca-state),
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .m365ca__marker {
+    display: grid;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-bottom: 0.7rem;
+    border: 2px solid var(--m365ca-text-tertiary);
+    border-radius: 50%;
+  }
+
+  .m365ca__marker span {
+    width: 0.48rem;
+    height: 0.48rem;
+    border-radius: 50%;
+  }
+
+  .m365ca__choice:has(input:checked) .m365ca__marker {
+    border-color: var(--m365ca-state);
+  }
+
+  .m365ca__choice:has(input:checked) .m365ca__marker span {
+    background: var(--m365ca-state);
+  }
+
+  .m365ca__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .m365ca__choice-body strong {
+    color: var(--m365ca-text);
+    line-height: 1.3;
+  }
+
+  .m365ca__choice-body > span {
+    color: var(--m365ca-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .m365ca__choice-body small {
+    color: var(--m365ca-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .m365ca__result {
+    margin-top: var(--space-6, 1.5rem);
+    padding: 1.2rem;
+    background: var(--m365ca-surface-soft);
+    border: 1px solid var(--m365ca-border);
+    border-left: 4px solid var(--m365ca-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .m365ca__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .m365ca__result-kicker {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--m365ca-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .m365ca__result h4 {
+    margin-bottom: 0;
+    color: var(--m365ca-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .m365ca__result-level {
+    flex: 0 0 auto;
+    color: var(--m365ca-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .m365ca__result-description {
+    max-width: 72ch;
+    margin: 0.65rem 0 0;
+    color: var(--m365ca-text-secondary);
+    line-height: 1.6;
+  }
+
+  .m365ca__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3, 0.75rem);
+    margin-top: 1rem;
+  }
+
+  .m365ca__card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: var(--m365ca-surface);
+    border: 1px solid var(--m365ca-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .m365ca__card-label {
+    color: var(--m365ca-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .m365ca__card strong {
+    color: var(--m365ca-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .m365ca__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--m365ca-surface);
+    border: 1px solid var(--m365ca-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .m365ca__principle-mark {
+    flex: 0 0 auto;
+    color: var(--m365ca-accent);
+    font-weight: 800;
+  }
+
+  .m365ca__principle p {
+    margin: 0;
+    color: var(--m365ca-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 800px) {
+    .m365ca__choices {
+      grid-template-columns: 1fr;
+    }
+
+    .m365ca__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .m365ca {
+      padding: 1rem;
+    }
+
+    .m365ca__header {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .m365ca__badge {
+      justify-self: start;
+    }
+
+    .m365ca__result-head {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .m365ca__choice {
+      transition: none;
+    }
+  }
+</style>
