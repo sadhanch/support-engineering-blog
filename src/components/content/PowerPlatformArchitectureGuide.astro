@@ -1,0 +1,763 @@
+---
+/*
+ * PowerPlatformArchitectureGuide.astro
+ *
+ * Purpose:
+ * Helps readers map a solution responsibility to the Power Platform
+ * component or adjacent service that is a natural architectural fit.
+ *
+ * This is a responsibility-mapping aid, not a licensing, security,
+ * capacity, or compliance assessment.
+ */
+---
+
+<section
+  class="ppag"
+  data-ppag
+  aria-labelledby="ppag-title"
+>
+  <div class="ppag__header">
+    <div>
+      <p class="ppag__eyebrow">Architecture guide</p>
+
+      <h3 id="ppag-title">
+        Where should this responsibility live?
+      </h3>
+
+      <p class="ppag__intro">
+        Select the primary responsibility you are designing for. The guide
+        identifies a natural starting point and the platform boundaries worth
+        reviewing next.
+      </p>
+    </div>
+
+    <span
+      class="ppag__badge"
+      data-badge
+      aria-live="polite"
+    >
+      Choose a responsibility
+    </span>
+  </div>
+
+  <fieldset class="ppag__choices">
+    <legend>
+      What does this part of the solution need to do?
+    </legend>
+
+    <label class="ppag__choice">
+      <input
+        type="radio"
+        name="ppag-responsibility"
+        value="experience"
+      />
+
+      <span
+        class="ppag__icon ppag__icon--purple"
+        aria-hidden="true"
+      >
+        ◇
+      </span>
+
+      <span class="ppag__choice-body">
+        <strong>Present information or capture user input</strong>
+        <span>
+          Build forms, screens, navigation, task-oriented experiences, and
+          user-facing interactions.
+        </span>
+        <small>EXPERIENCE · UX · INTERACTION</small>
+      </span>
+    </label>
+
+    <label class="ppag__choice">
+      <input
+        type="radio"
+        name="ppag-responsibility"
+        value="data"
+      />
+
+      <span
+        class="ppag__icon ppag__icon--green"
+        aria-hidden="true"
+      >
+        ◎
+      </span>
+
+      <span class="ppag__choice-body">
+        <strong>Store and govern business data</strong>
+        <span>
+          Model business entities, relationships, access, data-centric rules,
+          auditability, and operational lifecycle.
+        </span>
+        <small>DATA · RELATIONSHIPS · SECURITY</small>
+      </span>
+    </label>
+
+    <label class="ppag__choice">
+      <input
+        type="radio"
+        name="ppag-responsibility"
+        value="orchestration"
+      />
+
+      <span
+        class="ppag__icon ppag__icon--blue"
+        aria-hidden="true"
+      >
+        ↗
+      </span>
+
+      <span class="ppag__choice-body">
+        <strong>Trigger, coordinate, approve, or notify</strong>
+        <span>
+          React to events, coordinate steps, run approvals, send notifications,
+          and move work between systems.
+        </span>
+        <small>ORCHESTRATION · WORKFLOW · EVENTS</small>
+      </span>
+    </label>
+
+    <label class="ppag__choice">
+      <input
+        type="radio"
+        name="ppag-responsibility"
+        value="compute"
+      />
+
+      <span
+        class="ppag__icon ppag__icon--teal"
+        aria-hidden="true"
+      >
+        ⌁
+      </span>
+
+      <span class="ppag__choice-body">
+        <strong>Perform complex or long-running computation</strong>
+        <span>
+          Run specialized processing or expose integration logic that is not a
+          natural fit for the app or workflow layer.
+        </span>
+        <small>COMPUTE · APIs · SPECIALIZED SERVICES</small>
+      </span>
+    </label>
+
+    <label class="ppag__choice">
+      <input
+        type="radio"
+        name="ppag-responsibility"
+        value="analytics"
+      />
+
+      <span
+        class="ppag__icon ppag__icon--orange"
+        aria-hidden="true"
+      >
+        ▥
+      </span>
+
+      <span class="ppag__choice-body">
+        <strong>Analyze large volumes of data</strong>
+        <span>
+          Build analytical models, reporting, or data products without turning
+          the operational application into a general-purpose analytics engine.
+        </span>
+        <small>ANALYTICS · REPORTING · DATA PRODUCTS</small>
+      </span>
+    </label>
+  </fieldset>
+
+  <div
+    class="ppag__result"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="ppag__result-head">
+      <div>
+        <span class="ppag__result-kicker">
+          Starting recommendation
+        </span>
+
+        <h4 data-title>
+          Choose a responsibility above.
+        </h4>
+      </div>
+
+      <span
+        class="ppag__result-level"
+        data-level
+      >
+        Waiting for selection
+      </span>
+    </div>
+
+    <p
+      class="ppag__result-description"
+      data-description
+    >
+      The guide will show the natural starting component and the boundaries
+      worth reviewing around it.
+    </p>
+
+    <div class="ppag__result-grid">
+      <div class="ppag__result-card">
+        <span>Natural starting point</span>
+        <strong data-primary>
+          Select a responsibility.
+        </strong>
+      </div>
+
+      <div class="ppag__result-card">
+        <span>Common companions</span>
+        <strong data-companions>
+          The guide will identify adjacent platform components.
+        </strong>
+      </div>
+
+      <div class="ppag__result-card">
+        <span>Review next</span>
+        <strong data-review>
+          Security, ALM, governance, monitoring, and integration boundaries.
+        </strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="ppag__principle">
+    <span
+      class="ppag__principle-mark"
+      aria-hidden="true"
+    >
+      →
+    </span>
+
+    <p>
+      <strong>Design the boundary, not just the component.</strong>
+      A good architecture gives each platform service a clear responsibility
+      and makes the hand-off between services explicit.
+    </p>
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>(
+    "[data-ppag]"
+  );
+
+  roots.forEach((root) => {
+    if (root.dataset.initialized === "true") {
+      return;
+    }
+
+    root.dataset.initialized = "true";
+
+    const badge =
+      root.querySelector<HTMLElement>("[data-badge]");
+
+    const title =
+      root.querySelector<HTMLElement>("[data-title]");
+
+    const level =
+      root.querySelector<HTMLElement>("[data-level]");
+
+    const description =
+      root.querySelector<HTMLElement>("[data-description]");
+
+    const primary =
+      root.querySelector<HTMLElement>("[data-primary]");
+
+    const companions =
+      root.querySelector<HTMLElement>("[data-companions]");
+
+    const review =
+      root.querySelector<HTMLElement>("[data-review]");
+
+    if (
+      !badge ||
+      !title ||
+      !level ||
+      !description ||
+      !primary ||
+      !companions ||
+      !review
+    ) {
+      return;
+    }
+
+    const choices = Array.from(
+      root.querySelectorAll<HTMLInputElement>(
+        'input[name="ppag-responsibility"]'
+      )
+    );
+
+    const results = {
+      experience: {
+        badge: "EXPERIENCE",
+        level: "Power Apps",
+        title:
+          "Power Apps is the natural starting point for the user experience.",
+        description:
+          "Use the app layer for presentation, navigation, user interaction, forms, and experience-specific behavior.",
+        primary:
+          "Power Apps — Canvas Apps, Model-Driven Apps, or Power Pages",
+        companions:
+          "Dataverse for governed business data; Power Automate for workflow and process orchestration.",
+        review:
+          "UX requirements, identity, data access, performance, environments, ALM, and external-user boundaries where applicable."
+      },
+
+      data: {
+        badge: "BUSINESS DATA",
+        level: "Dataverse",
+        title:
+          "Dataverse is the natural starting point for governed business data.",
+        description:
+          "Use the data layer for business entities, relationships, security, data-centric rules, auditing, APIs, and operational lifecycle.",
+        primary:
+          "Dataverse — tables, relationships, security, and data-centric rules",
+        companions:
+          "Power Apps for experience; Power Automate for process orchestration; Fabric or Power BI for analytics.",
+        review:
+          "Data ownership, schema design, security model, capacity, APIs, integration, auditing, environments, and ALM."
+      },
+
+      orchestration: {
+        badge: "ORCHESTRATION",
+        level: "Power Automate",
+        title:
+          "Power Automate is the natural starting point for workflow orchestration.",
+        description:
+          "Use the automation layer to react to events, coordinate actions, run approvals, notify users, and connect systems.",
+        primary:
+          "Power Automate — cloud flows and workflow orchestration",
+        companions:
+          "Dataverse for business state; Power Apps for user interaction; connectors and APIs for downstream systems.",
+        review:
+          "Trigger volume, connector limits, concurrency, retries, idempotency, observability, ownership, ALM, and DLP."
+      },
+
+      compute: {
+        badge: "SPECIALIZED COMPUTE",
+        level: "Azure / APIs",
+        title:
+          "Consider Azure services or APIs for specialized or long-running work.",
+        description:
+          "Keep complex computation and specialized integration outside the experience or orchestration layer when those workloads need stronger execution boundaries.",
+        primary:
+          "Azure Functions / APIs / specialized services",
+        companions:
+          "Power Automate for orchestration; Dataverse for operational state where appropriate.",
+        review:
+          "Runtime duration, scale, queueing, failure handling, authentication, API boundaries, monitoring, and cost."
+      },
+
+      analytics: {
+        badge: "ANALYTICS",
+        level: "Power BI / Fabric",
+        title:
+          "Use the analytics layer for large-scale reporting and data products.",
+        description:
+          "Keep analytical workloads separate from the transactional application so reporting and analysis do not become part of the operational execution path.",
+        primary:
+          "Power BI / Fabric",
+        companions:
+          "Dataverse as an operational source; Link to Fabric or other appropriate data integration patterns.",
+        review:
+          "Data freshness, semantic models, governance, access, data movement, retention, and analytical ownership."
+      }
+    };
+
+    choices.forEach((choice) => {
+      choice.addEventListener("change", () => {
+        const result =
+          results[
+            choice.value as keyof typeof results
+          ];
+
+        if (!result) {
+          return;
+        }
+
+        root.dataset.state = choice.value;
+
+        badge.textContent = result.badge;
+        level.textContent = result.level;
+        title.textContent = result.title;
+        description.textContent = result.description;
+        primary.textContent = result.primary;
+        companions.textContent = result.companions;
+        review.textContent = result.review;
+      });
+    });
+  });
+</script>
+
+<style>
+  .ppag {
+    --ppag-surface: var(--surface-primary, #ffffff);
+    --ppag-surface-soft: var(--surface-secondary, #f8fafc);
+    --ppag-text: var(--text-primary, #0f172a);
+    --ppag-text-secondary: var(--text-secondary, #475569);
+    --ppag-text-tertiary: var(--text-tertiary, #64748b);
+    --ppag-border: var(--border-default, #dbe3ec);
+    --ppag-border-soft: var(--border-subtle, #e7edf4);
+    --ppag-accent: var(--color-accent, #4ea1e0);
+    --ppag-state: var(--ppag-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--ppag-text);
+    background: var(--ppag-surface);
+    border: 1px solid var(--ppag-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow:
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .ppag[data-state="experience"] {
+    --ppag-state: #6b21a8;
+  }
+
+  .ppag[data-state="data"] {
+    --ppag-state: #15803d;
+  }
+
+  .ppag[data-state="orchestration"] {
+    --ppag-state: #2563eb;
+  }
+
+  .ppag[data-state="compute"] {
+    --ppag-state: #0f766e;
+  }
+
+  .ppag[data-state="analytics"] {
+    --ppag-state: #c2410c;
+  }
+
+  .ppag__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: var(--space-6, 1.5rem);
+  }
+
+  .ppag__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--ppag-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ppag h3,
+  .ppag h4,
+  .ppag p {
+    margin-top: 0;
+  }
+
+  .ppag h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .ppag__intro {
+    max-width: 74ch;
+    margin-bottom: 0;
+    color: var(--ppag-text-secondary);
+    line-height: 1.6;
+  }
+
+  .ppag__badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 0.45rem 0.75rem;
+    color: var(--ppag-state);
+    background: color-mix(
+      in srgb,
+      var(--ppag-state) 8%,
+      var(--ppag-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--ppag-state) 30%,
+      var(--ppag-border)
+    );
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .ppag__choices {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .ppag__choices legend {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    color: var(--ppag-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .ppag__choice {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: flex-start;
+    gap: 0.75rem;
+    min-height: 100%;
+    padding: 1rem;
+    background: var(--ppag-surface-soft);
+    border: 1px solid var(--ppag-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .ppag__choice:hover {
+    transform: translateY(-1px);
+    border-color: var(--ppag-accent);
+    box-shadow:
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .ppag__choice:has(input:focus-visible) {
+    outline: 2px solid var(--ppag-accent);
+    outline-offset: 2px;
+  }
+
+  .ppag__choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .ppag__choice:has(input:checked) {
+    border-color: var(--ppag-state);
+    background: color-mix(
+      in srgb,
+      var(--ppag-state) 8%,
+      var(--ppag-surface)
+    );
+    box-shadow:
+      inset 0 0 0 1px var(--ppag-state),
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .ppag__icon {
+    display: grid;
+    place-items: center;
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 0.7rem;
+    font-size: 1.2rem;
+    font-weight: 800;
+    border: 1px solid currentColor;
+  }
+
+  .ppag__icon--purple {
+    color: #6b21a8;
+    background: rgb(107 33 168 / 0.07);
+  }
+
+  .ppag__icon--green {
+    color: #15803d;
+    background: rgb(21 128 61 / 0.07);
+  }
+
+  .ppag__icon--blue {
+    color: #2563eb;
+    background: rgb(37 99 235 / 0.07);
+  }
+
+  .ppag__icon--teal {
+    color: #0f766e;
+    background: rgb(15 118 110 / 0.07);
+  }
+
+  .ppag__icon--orange {
+    color: #c2410c;
+    background: rgb(194 65 12 / 0.07);
+  }
+
+  .ppag__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .ppag__choice-body strong {
+    color: var(--ppag-text);
+    line-height: 1.3;
+  }
+
+  .ppag__choice-body > span {
+    color: var(--ppag-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .ppag__choice-body small {
+    color: var(--ppag-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .ppag__result {
+    margin-top: 1.25rem;
+    padding: 1.2rem;
+    background: var(--ppag-surface-soft);
+    border: 1px solid var(--ppag-border);
+    border-left: 4px solid var(--ppag-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .ppag__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .ppag__result-kicker {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--ppag-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ppag__result h4 {
+    margin-bottom: 0;
+    color: var(--ppag-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .ppag__result-level {
+    flex: 0 0 auto;
+    color: var(--ppag-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .ppag__result-description {
+    max-width: 74ch;
+    margin: 0.65rem 0 0;
+    color: var(--ppag-text-secondary);
+    line-height: 1.6;
+  }
+
+  .ppag__result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .ppag__result-card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: var(--ppag-surface);
+    border: 1px solid var(--ppag-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .ppag__result-card span {
+    color: var(--ppag-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .ppag__result-card strong {
+    color: var(--ppag-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .ppag__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--ppag-surface);
+    border: 1px solid var(--ppag-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .ppag__principle-mark {
+    flex: 0 0 auto;
+    color: var(--ppag-accent);
+    font-weight: 800;
+  }
+
+  .ppag__principle p {
+    margin: 0;
+    color: var(--ppag-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .ppag__principle strong {
+    color: var(--ppag-text);
+  }
+
+  @media (max-width: 820px) {
+    .ppag__choices,
+    .ppag__result-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ppag {
+      padding: 1rem;
+    }
+
+    .ppag__header,
+    .ppag__result-head {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .ppag__badge {
+      align-self: flex-start;
+    }
+
+    .ppag__result-level {
+      text-align: left;
+    }
+
+    .ppag__choice {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ppag__choice {
+      transition: none;
+    }
+  }
+</style>

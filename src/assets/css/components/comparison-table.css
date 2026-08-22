@@ -2,7 +2,7 @@
    SEDS — Comparison Table
    File: comparison-table.css
    Purpose: Reusable responsive comparison table
-   Version: 1.1.0
+   Version: 1.2.0
 
    Design principles
 
@@ -11,6 +11,8 @@
    3. Columns use predictable proportions.
    4. Long-form content wraps inside cells.
    5. Emphasised columns use vertical visual treatment.
+   6. Tables with more than three columns remain readable.
+   7. Words are never broken character-by-character.
    ========================================================== */
 
 
@@ -36,9 +38,9 @@
    No scrolling is required.
 
    Mobile:
-   Horizontal scrolling is enabled because a three-column
-   comparison table cannot remain comfortably readable
-   within a narrow viewport.
+   Horizontal scrolling is enabled because comparison tables
+   with multiple long-form columns cannot remain comfortably
+   readable within a narrow viewport.
    ========================================================== */
 
 .comparison-table__scroll {
@@ -69,9 +71,11 @@
     width: 100%;
 
     /*
-     * Important:
-     * Prevent long content from expanding the table beyond
-     * the available article width.
+     * Keep predictable column sizing.
+     *
+     * IMPORTANT:
+     * Column widths are defined below based on the number
+     * of columns in the table.
      */
 
     table-layout: fixed;
@@ -90,34 +94,104 @@
 
 
 /* ==========================================================
-   Column Widths
+   Column Widths — Three Column Tables
 
    The first column identifies the capability.
-
-   The two remaining columns contain the comparison data.
-
-   This keeps the table balanced even when the article
-   content area becomes narrower.
+   The remaining two columns share the comparison area.
    ========================================================== */
 
-.comparison-table thead th:first-child,
-.comparison-table tbody th {
+.comparison-table table:not(:has(thead th:nth-child(4)))
+    thead th:first-child,
+.comparison-table table:not(:has(thead th:nth-child(4)))
+    tbody th {
 
     width: 18%;
 
 }
 
-.comparison-table thead th:nth-child(2),
-.comparison-table tbody td:nth-child(2) {
+.comparison-table table:not(:has(thead th:nth-child(4)))
+    thead th:nth-child(2),
+.comparison-table table:not(:has(thead th:nth-child(4)))
+    tbody td:nth-child(2) {
 
     width: 41%;
 
 }
 
-.comparison-table thead th:nth-child(3),
-.comparison-table tbody td:nth-child(3) {
+.comparison-table table:not(:has(thead th:nth-child(4)))
+    thead th:nth-child(3),
+.comparison-table table:not(:has(thead th:nth-child(4)))
+    tbody td:nth-child(3) {
 
     width: 41%;
+
+}
+
+
+/* ==========================================================
+   Column Widths — Four Column Tables
+
+   The first column remains the row-label column.
+
+   The three comparison columns now share the remaining
+   82% of the table width evenly.
+
+   This fixes the previous issue where the fourth column
+   was squeezed because the original three-column rules
+   already consumed 100% of the table width.
+   ========================================================== */
+
+.comparison-table table:has(thead th:nth-child(4))
+    thead th:first-child,
+.comparison-table table:has(thead th:nth-child(4))
+    tbody th {
+
+    width: 18%;
+
+}
+
+.comparison-table table:has(thead th:nth-child(4))
+    thead th:nth-child(2),
+.comparison-table table:has(thead th:nth-child(4))
+    thead th:nth-child(3),
+.comparison-table table:has(thead th:nth-child(4))
+    thead th:nth-child(4),
+.comparison-table table:has(thead th:nth-child(4))
+    tbody td:nth-child(2),
+.comparison-table table:has(thead th:nth-child(4))
+    tbody td:nth-child(3),
+.comparison-table table:has(thead th:nth-child(4))
+    tbody td:nth-child(4) {
+
+    width: 27.333%;
+
+}
+
+
+/* ==========================================================
+   ADDED — Long Content Protection
+
+   Prevent long words, URLs, identifiers, or other unusually
+   long strings from forcing a column to expand.
+
+   Normal words should remain intact.
+
+   This is intentionally NOT using word-break: break-all.
+   ========================================================== */
+
+.comparison-table tbody th,
+.comparison-table tbody td {
+
+    min-width: 0;
+
+    overflow-wrap:
+        break-word;
+
+    word-break:
+        normal;
+
+    hyphens:
+        auto;
 
 }
 
@@ -219,15 +293,6 @@
     border-bottom:
         1px solid
         var(--border-subtle);
-
-    /*
-     * Prevent long words, URLs or unusually long strings
-     * from expanding the table.
-     */
-
-    overflow-wrap: anywhere;
-
-    word-break: normal;
 
 }
 
@@ -404,8 +469,9 @@
 
    At this point horizontal scrolling is intentional.
 
-   The table remains readable instead of compressing three
-   long-form columns into an unusable layout.
+   The table retains a readable minimum width rather than
+   compressing multiple long-form columns into an unusable
+   layout.
    ========================================================== */
 
 @media (max-width: 768px) {
@@ -421,6 +487,13 @@
 
     .comparison-table__scroll {
 
+        /*
+         * Mobile scrolling safety
+         *
+         * The table itself stays wider than the viewport,
+         * while the wrapper becomes the scrolling surface.
+         */
+
         overflow-x: auto;
 
         -webkit-overflow-scrolling: touch;
@@ -431,7 +504,7 @@
     .comparison-table table {
 
         /*
-         * Mobile gets a minimum width so that the content
+         * Mobile gets a minimum width so that content
          * remains readable while scrolling horizontally.
          */
 

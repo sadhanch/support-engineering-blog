@@ -1,0 +1,870 @@
+---
+/*
+ * PowerPlatformExecutionModelSelector.astro
+ *
+ * Purpose:
+ * Helps readers choose a natural execution model for a workload:
+ * Power Apps, Power Automate, AI Agent, or a composed architecture.
+ *
+ * This is an architectural decision aid, not a licensing, capacity,
+ * security, or compliance assessment.
+ */
+---
+
+<section
+  class="ppems"
+  data-ppems
+  aria-labelledby="ppems-title"
+>
+  <div class="ppems__header">
+    <div>
+      <p class="ppems__eyebrow">Execution model selector</p>
+
+      <h3 id="ppems-title">
+        Which execution model fits the work?
+      </h3>
+
+      <p class="ppems__intro">
+        Answer a few questions about interaction, predictability, ambiguity,
+        and autonomy. The selector suggests a natural starting point and
+        highlights when a composed architecture may be stronger.
+      </p>
+    </div>
+
+    <span
+      class="ppems__badge"
+      data-badge
+      aria-live="polite"
+    >
+      Choose your workload
+    </span>
+  </div>
+
+  <fieldset class="ppems__questions">
+    <legend>Classify the work</legend>
+
+    <div class="ppems__question">
+      <span class="ppems__question-title">
+        1. Does a person need to interact directly with the process?
+      </span>
+
+      <div class="ppems__options">
+        <label>
+          <input
+            type="radio"
+            name="ppems-interaction"
+            value="yes"
+          />
+          <span>Yes</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppems-interaction"
+            value="no"
+          />
+          <span>No</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="ppems__question">
+      <span class="ppems__question-title">
+        2. Are the business rules and execution path known in advance?
+      </span>
+
+      <div class="ppems__options">
+        <label>
+          <input
+            type="radio"
+            name="ppems-predictability"
+            value="yes"
+          />
+          <span>Yes</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppems-predictability"
+            value="no"
+          />
+          <span>No</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="ppems__question">
+      <span class="ppems__question-title">
+        3. Does the work require reasoning, adaptation, or interpretation of
+        ambiguous information?
+      </span>
+
+      <div class="ppems__options">
+        <label>
+          <input
+            type="radio"
+            name="ppems-reasoning"
+            value="yes"
+          />
+          <span>Yes</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppems-reasoning"
+            value="no"
+          />
+          <span>No</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="ppems__question">
+      <span class="ppems__question-title">
+        4. Does the workload need multiple execution models?
+      </span>
+
+      <div class="ppems__options">
+        <label>
+          <input
+            type="radio"
+            name="ppems-composition"
+            value="yes"
+          />
+          <span>Yes</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppems-composition"
+            value="no"
+          />
+          <span>No</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="ppems__question">
+      <span class="ppems__question-title">
+        5. Must execution remain highly predictable and auditable?
+      </span>
+
+      <div class="ppems__options">
+        <label>
+          <input
+            type="radio"
+            name="ppems-auditability"
+            value="yes"
+          />
+          <span>Yes</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppems-auditability"
+            value="no"
+          />
+          <span>No</span>
+        </label>
+      </div>
+    </div>
+  </fieldset>
+
+  <div
+    class="ppems__result"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="ppems__result-head">
+      <div>
+        <span class="ppems__result-kicker">
+          Recommended starting point
+        </span>
+
+        <h4 data-title>
+          Complete the classification.
+        </h4>
+      </div>
+
+      <span
+        class="ppems__result-level"
+        data-level
+      >
+        Awaiting input
+      </span>
+    </div>
+
+    <p data-description>
+      The selector will identify the execution model that best matches the
+      characteristics of the work.
+    </p>
+
+    <div class="ppems__meter" aria-hidden="true">
+      <span data-meter></span>
+    </div>
+
+    <div class="ppems__cards">
+      <div class="ppems__card">
+        <span>Natural starting point</span>
+        <strong data-primary>—</strong>
+      </div>
+
+      <div class="ppems__card">
+        <span>Why it fits</span>
+        <strong data-fit>—</strong>
+      </div>
+
+      <div class="ppems__card">
+        <span>Review next</span>
+        <strong data-review>—</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="ppems__principle">
+    <span
+      class="ppems__principle-mark"
+      aria-hidden="true"
+    >
+      →
+    </span>
+
+    <p>
+      <strong>Choose the execution model for the work.</strong>
+      A composed architecture may be stronger than forcing a whole workload
+      into one technology.
+    </p>
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>(
+    "[data-ppems]"
+  );
+
+  roots.forEach((root) => {
+    if (root.dataset.initialized === "true") {
+      return;
+    }
+
+    root.dataset.initialized = "true";
+
+    const badge =
+      root.querySelector<HTMLElement>("[data-badge]");
+
+    const title =
+      root.querySelector<HTMLElement>("[data-title]");
+
+    const level =
+      root.querySelector<HTMLElement>("[data-level]");
+
+    const description =
+      root.querySelector<HTMLElement>("[data-description]");
+
+    const meter =
+      root.querySelector<HTMLElement>("[data-meter]");
+
+    const primary =
+      root.querySelector<HTMLElement>("[data-primary]");
+
+    const fit =
+      root.querySelector<HTMLElement>("[data-fit]");
+
+    const review =
+      root.querySelector<HTMLElement>("[data-review]");
+
+    const inputs = Array.from(
+      root.querySelectorAll<HTMLInputElement>(
+        '.ppems__options input[type="radio"]'
+      )
+    );
+
+    if (
+      !badge ||
+      !title ||
+      !level ||
+      !description ||
+      !meter ||
+      !primary ||
+      !fit ||
+      !review
+    ) {
+      return;
+    }
+
+    const getValue = (name: string) =>
+      root.querySelector<HTMLInputElement>(
+        `input[name="${name}"]:checked`
+      )?.value;
+
+    function updateAssessment() {
+      const interaction = getValue("ppems-interaction");
+      const predictability = getValue("ppems-predictability");
+      const reasoning = getValue("ppems-reasoning");
+      const composition = getValue("ppems-composition");
+      const auditability = getValue("ppems-auditability");
+
+      const selected = [
+        interaction,
+        predictability,
+        reasoning,
+        composition,
+        auditability
+      ].filter(Boolean).length;
+
+      if (selected < 5) {
+        root.dataset.state = "incomplete";
+
+        badge.textContent = "CLASSIFY WORKLOAD";
+        title.textContent = `${selected} of 5 areas classified`;
+        level.textContent = `${5 - selected} remaining`;
+
+        description.textContent =
+          "Complete the classification to receive an execution-model recommendation.";
+
+        meter.style.width =
+          `${Math.round((selected / 5) * 100)}%`;
+
+        primary.textContent = "Complete the classification";
+        fit.textContent = "Complete the classification";
+        review.textContent = "Complete the classification";
+
+        return;
+      }
+
+      /*
+       * Recommendation logic:
+       *
+       * Power Apps:
+       * Direct human interaction is the dominant characteristic.
+       *
+       * Power Automate:
+       * The process is predictable and auditable.
+       *
+       * AI Agent:
+       * The process is ambiguous and reasoning/adaptation is central.
+       *
+       * Composed:
+       * Multiple execution models are explicitly needed.
+       *
+       * Mixed characteristics intentionally favor composition when the
+       * workload contains both deterministic and adaptive requirements.
+       */
+      const needsApp = interaction === "yes";
+      const predictable = predictability === "yes";
+      const needsReasoning = reasoning === "yes";
+      const needsComposition = composition === "yes";
+      const highlyAuditable = auditability === "yes";
+
+      if (needsComposition) {
+        root.dataset.state = "composed";
+        meter.style.width = "100%";
+
+        badge.textContent = "COMPOSED";
+        level.textContent = "Multiple models";
+
+        title.textContent =
+          "A composed architecture is the strongest starting point.";
+
+        description.textContent =
+          "Different parts of the workload need different execution models. Keep interaction, deterministic execution, reasoning, and governed actions in the components best suited to them.";
+
+        primary.textContent =
+          "Power Apps + Dataverse + Power Automate + AI Agent";
+
+        fit.textContent =
+          "The workload contains distinct human, deterministic, and/or reasoning responsibilities.";
+
+        review.textContent =
+          "Define boundaries, data context, tools, permissions, human approval, ALM, monitoring, and ownership.";
+
+        return;
+      }
+
+      if (needsApp && needsReasoning) {
+        root.dataset.state = "composed";
+        meter.style.width = "100%";
+
+        badge.textContent = "COMPOSED";
+        level.textContent = "App + reasoning";
+
+        title.textContent =
+          "Combine a human experience with governed agentic reasoning.";
+
+        description.textContent =
+          "Users need an application experience, while parts of the process also require interpretation or adaptive reasoning.";
+
+        primary.textContent =
+          "Power Apps + Dataverse + AI Agent";
+
+        fit.textContent =
+          "Keep the human experience in the app and place reasoning behind explicit data, tool, and action boundaries.";
+
+        review.textContent =
+          "Agent permissions, business context, escalation, human approval, monitoring, and governed actions.";
+
+        return;
+      }
+
+      if (needsApp) {
+        root.dataset.state = "app";
+        meter.style.width = "65%";
+
+        badge.textContent = "POWER APPS";
+        level.textContent = "Human-centered";
+
+        title.textContent =
+          "Power Apps is the natural starting point.";
+
+        description.textContent =
+          "The workload is primarily about people interacting with structured information, tasks, records, or business experiences.";
+
+        primary.textContent =
+          "Power Apps";
+
+        fit.textContent =
+          "Human interaction is the dominant requirement.";
+
+        review.textContent =
+          "User experience, data model, security, performance, ALM, and any automation triggered by the experience.";
+
+        return;
+      }
+
+      if (needsReasoning && !highlyAuditable && !predictable) {
+        root.dataset.state = "agent";
+        meter.style.width = "90%";
+
+        badge.textContent = "AI AGENT";
+        level.textContent = "Adaptive reasoning";
+
+        title.textContent =
+          "An AI agent is a natural starting point.";
+
+        description.textContent =
+          "The work is context-rich and does not follow a completely predictable path, so reasoning and adaptation are central to the problem.";
+
+        primary.textContent =
+          "AI Agent";
+
+        fit.textContent =
+          "Ambiguous input, multiple possible paths, and context-dependent decisions benefit from adaptive reasoning.";
+
+        review.textContent =
+          "Tools, data access, least privilege, human escalation, observability, ALM, and allowed actions.";
+
+        return;
+      }
+
+      if (predictable || highlyAuditable) {
+        root.dataset.state = "workflow";
+        meter.style.width = "50%";
+
+        badge.textContent = "POWER AUTOMATE";
+        level.textContent = "Deterministic";
+
+        title.textContent =
+          "Power Automate is the natural starting point.";
+
+        description.textContent =
+          "The process is structured, repeatable, and can be expressed through explicit triggers, rules, actions, and validation.";
+
+        primary.textContent =
+          "Power Automate";
+
+        fit.textContent =
+          "Predictability, repeatability, and auditability are more important than adaptive reasoning.";
+
+        review.textContent =
+          "Triggers, connector limits, retries, idempotency, ALM, ownership, monitoring, and governance.";
+
+        return;
+      }
+
+      /*
+       * Remaining case:
+       * No strong signal for a single execution model.
+       */
+      root.dataset.state = "review";
+      meter.style.width = "35%";
+
+      badge.textContent = "ARCHITECTURE REVIEW";
+      level.textContent = "Mixed characteristics";
+
+      title.textContent =
+        "Reassess the workload before choosing a model.";
+
+      description.textContent =
+        "The answers do not identify a strong execution-model signal. Split the workload into its human, deterministic, reasoning, and integration responsibilities before selecting technology.";
+
+      primary.textContent =
+        "Start with the business boundary";
+
+      fit.textContent =
+        "The workload may need multiple components or a clearer definition of what is actually being automated.";
+
+      review.textContent =
+        "Separate interaction, business state, deterministic steps, reasoning, specialized compute, and governance requirements.";
+    }
+
+    inputs.forEach((input) => {
+      input.addEventListener("change", updateAssessment);
+    });
+
+    updateAssessment();
+  });
+</script>
+
+<style>
+  .ppems {
+    --ppems-surface: var(--surface-primary, #ffffff);
+    --ppems-surface-soft: var(--surface-secondary, #f8fafc);
+    --ppems-text: var(--text-primary, #0f172a);
+    --ppems-text-secondary: var(--text-secondary, #475569);
+    --ppems-text-tertiary: var(--text-tertiary, #64748b);
+    --ppems-border: var(--border-default, #dbe3ec);
+    --ppems-border-soft: var(--border-subtle, #e7edf4);
+    --ppems-accent: var(--color-accent, #4ea1e0);
+    --ppems-state: var(--ppems-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--ppems-text);
+    background: var(--ppems-surface);
+    border: 1px solid var(--ppems-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow:
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .ppems[data-state="app"] {
+    --ppems-state: #6b21a8;
+  }
+
+  .ppems[data-state="workflow"] {
+    --ppems-state: #2563eb;
+  }
+
+  .ppems[data-state="agent"] {
+    --ppems-state: #15803d;
+  }
+
+  .ppems[data-state="composed"] {
+    --ppems-state: #7c3aed;
+  }
+
+  .ppems[data-state="review"] {
+    --ppems-state: #b45309;
+  }
+
+  .ppems__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .ppems__eyebrow {
+    margin: 0 0 0.3rem;
+    color: var(--ppems-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ppems h3,
+  .ppems h4,
+  .ppems p {
+    margin-top: 0;
+  }
+
+  .ppems h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .ppems__intro {
+    max-width: 74ch;
+    margin-bottom: 0;
+    color: var(--ppems-text-secondary);
+    line-height: 1.6;
+  }
+
+  .ppems__badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 0.45rem 0.75rem;
+    color: var(--ppems-state);
+    background: color-mix(
+      in srgb,
+      var(--ppems-state) 8%,
+      var(--ppems-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--ppems-state) 30%,
+      var(--ppems-border)
+    );
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .ppems__questions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .ppems__questions legend {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    color: var(--ppems-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+  }
+
+  .ppems__question {
+    padding: 1rem;
+    background: var(--ppems-surface-soft);
+    border: 1px solid var(--ppems-border);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .ppems__question-title {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--ppems-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .ppems__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .ppems__options label {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .ppems__options input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .ppems__options label span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.25rem;
+    padding: 0.45rem 0.8rem;
+    color: var(--ppems-text-secondary);
+    background: var(--ppems-surface);
+    border: 1px solid var(--ppems-border);
+    border-radius: 999px;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .ppems__options label:hover span {
+    border-color: var(--ppems-accent);
+  }
+
+  .ppems__options label:has(input:focus-visible) span {
+    outline: 2px solid var(--ppems-accent);
+    outline-offset: 2px;
+  }
+
+  .ppems__options label:has(input:checked) span {
+    color: var(--ppems-state);
+    background: color-mix(
+      in srgb,
+      var(--ppems-state) 8%,
+      var(--ppems-surface)
+    );
+    border-color: var(--ppems-state);
+  }
+
+  .ppems__result {
+    margin-top: 1.25rem;
+    padding: 1.2rem;
+    background: var(--ppems-surface-soft);
+    border: 1px solid var(--ppems-border);
+    border-left: 4px solid var(--ppems-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .ppems__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .ppems__result-kicker {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--ppems-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ppems__result h4 {
+    margin-bottom: 0;
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .ppems__result-level {
+    flex: 0 0 auto;
+    color: var(--ppems-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .ppems__result > p {
+    max-width: 74ch;
+    margin: 0.65rem 0 0;
+    color: var(--ppems-text-secondary);
+    line-height: 1.6;
+  }
+
+  .ppems__meter {
+    width: 100%;
+    height: 0.45rem;
+    margin-top: 1rem;
+    overflow: hidden;
+    background: var(--ppems-border-soft);
+    border-radius: 999px;
+  }
+
+  .ppems__meter span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--ppems-state);
+    border-radius: inherit;
+    transition:
+      width 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .ppems__cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .ppems__card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: var(--ppems-surface);
+    border: 1px solid var(--ppems-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .ppems__card span {
+    color: var(--ppems-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .ppems__card strong {
+    color: var(--ppems-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .ppems__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--ppems-surface);
+    border: 1px solid var(--ppems-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .ppems__principle-mark {
+    flex: 0 0 auto;
+    color: var(--ppems-accent);
+    font-weight: 800;
+  }
+
+  .ppems__principle p {
+    margin: 0;
+    color: var(--ppems-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .ppems__principle strong {
+    color: var(--ppems-text);
+  }
+
+  @media (max-width: 900px) {
+    .ppems__questions,
+    .ppems__cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ppems {
+      padding: 1rem;
+    }
+
+    .ppems__header,
+    .ppems__result-head {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .ppems__badge {
+      align-self: flex-start;
+    }
+
+    .ppems__result-level {
+      text-align: left;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ppems__meter span,
+    .ppems__options label span {
+      transition: none;
+    }
+  }
+</style>

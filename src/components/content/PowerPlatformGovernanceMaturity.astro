@@ -1,0 +1,847 @@
+---
+/*
+ * PowerPlatformGovernanceMaturity.astro
+ *
+ * Purpose:
+ * Provides an interactive governance-posture assessment for a
+ * Power Platform workload.
+ *
+ * This is a governance design aid, not a licensing, compliance,
+ * security certification, or Microsoft-supported maturity score.
+ */
+---
+
+<section
+  class="ppgm"
+  data-ppgm
+  aria-labelledby="ppgm-title"
+>
+  <div class="ppgm__header">
+    <div>
+      <p class="ppgm__eyebrow">Governance maturity</p>
+
+      <h3 id="ppgm-title">
+        What level of governance does this workload need?
+      </h3>
+
+      <p class="ppgm__intro">
+        Answer four questions about criticality, data sensitivity, external
+        exposure, and lifecycle. The result suggests a proportional governance
+        posture rather than applying the same controls to every workload.
+      </p>
+    </div>
+
+    <span
+      class="ppgm__badge"
+      data-badge
+      aria-live="polite"
+    >
+      Choose your workload
+    </span>
+  </div>
+
+  <fieldset class="ppgm__questions">
+    <legend>
+      Classify the workload
+    </legend>
+
+    <div class="ppgm__question">
+      <span class="ppgm__question-title">1. Business criticality</span>
+
+      <div class="ppgm__options">
+        <label>
+          <input
+            type="radio"
+            name="ppgm-criticality"
+            value="personal"
+          />
+          <span>Personal productivity</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppgm-criticality"
+            value="departmental"
+          />
+          <span>Departmental</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppgm-criticality"
+            value="critical"
+          />
+          <span>Business-critical</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppgm-criticality"
+            value="regulated"
+          />
+          <span>Regulated / high-risk</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="ppgm__question">
+      <span class="ppgm__question-title">2. Data sensitivity</span>
+
+      <div class="ppgm__options">
+        <label>
+          <input
+            type="radio"
+            name="ppgm-sensitivity"
+            value="general"
+          />
+          <span>General</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppgm-sensitivity"
+            value="internal"
+          />
+          <span>Internal</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppgm-sensitivity"
+            value="sensitive"
+          />
+          <span>Sensitive</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppgm-sensitivity"
+            value="high"
+          />
+          <span>Highly sensitive</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="ppgm__question">
+      <span class="ppgm__question-title">3. External exposure</span>
+
+      <div class="ppgm__options">
+        <label>
+          <input
+            type="radio"
+            name="ppgm-exposure"
+            value="internal"
+          />
+          <span>Internal only</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppgm-exposure"
+            value="external"
+          />
+          <span>External users</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppgm-exposure"
+            value="public"
+          />
+          <span>Public / portal</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="ppgm__question">
+      <span class="ppgm__question-title">4. Lifecycle stage</span>
+
+      <div class="ppgm__options">
+        <label>
+          <input
+            type="radio"
+            name="ppgm-lifecycle"
+            value="prototype"
+          />
+          <span>Prototype</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppgm-lifecycle"
+            value="development"
+          />
+          <span>Development</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="ppgm-lifecycle"
+            value="production"
+          />
+          <span>Production</span>
+        </label>
+      </div>
+    </div>
+  </fieldset>
+
+  <div
+    class="ppgm__result"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="ppgm__result-head">
+      <div>
+        <span class="ppgm__result-kicker">
+          Suggested governance posture
+        </span>
+
+        <h4 data-title>
+          Complete the classification.
+        </h4>
+      </div>
+
+      <span
+        class="ppgm__result-level"
+        data-level
+      >
+        Awaiting input
+      </span>
+    </div>
+
+    <p data-description>
+      The assessment will recommend a proportional governance posture and
+      identify the controls that should be reviewed next.
+    </p>
+
+    <div class="ppgm__meter" aria-hidden="true">
+      <span data-meter></span>
+    </div>
+
+    <div class="ppgm__cards">
+      <div class="ppgm__card">
+        <span>Environment</span>
+        <strong data-environment>
+          —
+        </strong>
+      </div>
+
+      <div class="ppgm__card">
+        <span>Recommended controls</span>
+        <strong data-controls>
+          —
+        </strong>
+      </div>
+
+      <div class="ppgm__card">
+        <span>Review focus</span>
+        <strong data-review>
+          —
+        </strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="ppgm__principle">
+    <span
+      class="ppgm__principle-mark"
+      aria-hidden="true"
+    >
+      →
+    </span>
+
+    <p>
+      <strong>Govern proportionally.</strong>
+      Personal productivity, departmental applications, business-critical
+      workloads, and regulated systems should not automatically receive the
+      same governance intensity.
+    </p>
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>(
+    "[data-ppgm]"
+  );
+
+  roots.forEach((root) => {
+    if (root.dataset.initialized === "true") {
+      return;
+    }
+
+    root.dataset.initialized = "true";
+
+    const badge =
+      root.querySelector<HTMLElement>("[data-badge]");
+
+    const title =
+      root.querySelector<HTMLElement>("[data-title]");
+
+    const level =
+      root.querySelector<HTMLElement>("[data-level]");
+
+    const description =
+      root.querySelector<HTMLElement>("[data-description]");
+
+    const meter =
+      root.querySelector<HTMLElement>("[data-meter]");
+
+    const environment =
+      root.querySelector<HTMLElement>("[data-environment]");
+
+    const controls =
+      root.querySelector<HTMLElement>("[data-controls]");
+
+    const review =
+      root.querySelector<HTMLElement>("[data-review]");
+
+    const inputs = Array.from(
+      root.querySelectorAll<HTMLInputElement>(
+        '.ppgm__options input[type="radio"]'
+      )
+    );
+
+    if (
+      !badge ||
+      !title ||
+      !level ||
+      !description ||
+      !meter ||
+      !environment ||
+      !controls ||
+      !review
+    ) {
+      return;
+    }
+
+    const values = {
+      criticality: (): string | undefined =>
+        root.querySelector<HTMLInputElement>(
+          'input[name="ppgm-criticality"]:checked'
+        )?.value,
+
+      sensitivity: (): string | undefined =>
+        root.querySelector<HTMLInputElement>(
+          'input[name="ppgm-sensitivity"]:checked'
+        )?.value,
+
+      exposure: (): string | undefined =>
+        root.querySelector<HTMLInputElement>(
+          'input[name="ppgm-exposure"]:checked'
+        )?.value,
+
+      lifecycle: (): string | undefined =>
+        root.querySelector<HTMLInputElement>(
+          'input[name="ppgm-lifecycle"]:checked'
+        )?.value
+    };
+
+    function updateAssessment() {
+      const criticality = values.criticality();
+      const sensitivity = values.sensitivity();
+      const exposure = values.exposure();
+      const lifecycle = values.lifecycle();
+
+      const selected = [
+        criticality,
+        sensitivity,
+        exposure,
+        lifecycle
+      ].filter(Boolean).length;
+
+      if (selected < 4) {
+        root.dataset.state = "incomplete";
+
+        badge.textContent = "CLASSIFY WORKLOAD";
+
+        title.textContent =
+          `${selected} of 4 areas classified`;
+
+        level.textContent =
+          `${4 - selected} remaining`;
+
+        description.textContent =
+          "Complete the classification to receive a proportional governance recommendation.";
+
+        meter.style.width =
+          `${Math.round((selected / 4) * 100)}%`;
+
+        environment.textContent =
+          "Complete the classification";
+
+        controls.textContent =
+          "Complete the classification";
+
+        review.textContent =
+          "Complete the classification";
+
+        return;
+      }
+
+      let score = 0;
+
+      if (criticality === "departmental") score += 1;
+      if (criticality === "critical") score += 2;
+      if (criticality === "regulated") score += 3;
+
+      if (sensitivity === "internal") score += 1;
+      if (sensitivity === "sensitive") score += 2;
+      if (sensitivity === "high") score += 3;
+
+      if (exposure === "external") score += 1;
+      if (exposure === "public") score += 2;
+
+      if (lifecycle === "development") score += 1;
+      if (lifecycle === "production") score += 2;
+
+      /*
+       * The score is intentionally used only to recommend a proportional
+       * posture. It is not a Microsoft-defined maturity model.
+       */
+      if (score <= 2) {
+        root.dataset.state = "light";
+        meter.style.width = "25%";
+
+        badge.textContent = "LIGHTWEIGHT";
+        level.textContent = "Lower-risk workload";
+
+        title.textContent =
+          "Lightweight governance is a reasonable starting point.";
+
+        description.textContent =
+          "Keep basic environment boundaries, ownership, and connector guardrails in place without imposing unnecessary enterprise controls.";
+
+        environment.textContent =
+          "Default / maker or suitable shared environment";
+
+        controls.textContent =
+          "Basic environment boundaries, ownership, DLP guardrails, and minimal monitoring";
+
+        review.textContent =
+          "Data path, owner, connector use, and future transition to structured ALM";
+        return;
+      }
+
+      if (score <= 5) {
+        root.dataset.state = "structured";
+        meter.style.width = "50%";
+
+        badge.textContent = "STRUCTURED";
+        level.textContent = "Moderate-risk workload";
+
+        title.textContent =
+          "Use structured governance and clear lifecycle boundaries.";
+
+        description.textContent =
+          "The workload has enough organizational or data sensitivity to justify dedicated development, clear ownership, and repeatable ALM.";
+
+        environment.textContent =
+          "Dedicated development with test/UAT and controlled production";
+
+        controls.textContent =
+          "Environment separation, DLP, source control, ownership, and solution-aware ALM";
+
+        review.textContent =
+          "Security roles, connector policy, approvals, deployment process, and monitoring";
+        return;
+      }
+
+      if (score <= 8) {
+        root.dataset.state = "controlled";
+        meter.style.width = "75%";
+
+        badge.textContent = "CONTROLLED";
+        level.textContent = "High-risk workload";
+
+        title.textContent =
+          "Use managed, controlled governance before scaling.";
+
+        description.textContent =
+          "The workload warrants stronger environment controls, managed deployment, monitoring, durable ownership, and defined recovery procedures.";
+
+        environment.textContent =
+          "Managed development, test/UAT, and production boundaries";
+
+        controls.textContent =
+          "Managed solutions, stronger DLP/security, approvals, monitoring, backup, and recovery";
+
+        review.textContent =
+          "Least privilege, sensitive data paths, operational telemetry, capacity, licensing, and rollback";
+        return;
+      }
+
+      root.dataset.state = "highly-governed";
+      meter.style.width = "100%";
+
+      badge.textContent = "HIGHLY GOVERNED";
+      level.textContent = "Very high-risk workload";
+
+      title.textContent =
+        "Apply the strongest governance posture available to the workload.";
+
+      description.textContent =
+        "The workload combines strong business, data, exposure, or lifecycle risk and should receive the highest level of security, compliance, ALM, monitoring, and recovery discipline.";
+
+      environment.textContent =
+        "Managed and tightly controlled production environment";
+
+      controls.textContent =
+        "Strict DLP and security, managed ALM, audit, monitoring, recovery, and formal ownership";
+
+      review.textContent =
+        "Architecture review, compliance obligations, continuity, licensing, auditability, and exception management";
+    }
+
+    inputs.forEach((input) => {
+      input.addEventListener("change", updateAssessment);
+    });
+
+    updateAssessment();
+  });
+</script>
+
+<style>
+  .ppgm {
+    --ppgm-surface: var(--surface-primary, #ffffff);
+    --ppgm-surface-soft: var(--surface-secondary, #f8fafc);
+    --ppgm-text: var(--text-primary, #0f172a);
+    --ppgm-text-secondary: var(--text-secondary, #475569);
+    --ppgm-text-tertiary: var(--text-tertiary, #64748b);
+    --ppgm-border: var(--border-default, #dbe3ec);
+    --ppgm-border-soft: var(--border-subtle, #e7edf4);
+    --ppgm-accent: var(--color-accent, #4ea1e0);
+    --ppgm-state: var(--ppgm-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--ppgm-text);
+    background: var(--ppgm-surface);
+    border: 1px solid var(--ppgm-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow:
+      var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .ppgm[data-state="light"] {
+    --ppgm-state: #15803d;
+  }
+
+  .ppgm[data-state="structured"] {
+    --ppgm-state: #2563eb;
+  }
+
+  .ppgm[data-state="controlled"] {
+    --ppgm-state: #7c3aed;
+  }
+
+  .ppgm[data-state="highly-governed"] {
+    --ppgm-state: #6b21a8;
+  }
+
+  .ppgm__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .ppgm__eyebrow,
+  .ppgm__result-kicker {
+    margin: 0 0 0.3rem;
+    color: var(--ppgm-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ppgm h3,
+  .ppgm h4,
+  .ppgm p {
+    margin-top: 0;
+  }
+
+  .ppgm h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .ppgm__intro {
+    max-width: 74ch;
+    margin-bottom: 0;
+    color: var(--ppgm-text-secondary);
+    line-height: 1.6;
+  }
+
+  .ppgm__badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 0.45rem 0.75rem;
+    color: var(--ppgm-state);
+    background: color-mix(
+      in srgb,
+      var(--ppgm-state) 8%,
+      var(--ppgm-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--ppgm-state) 30%,
+      var(--ppgm-border)
+    );
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .ppgm__questions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .ppgm__questions legend {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    color: var(--ppgm-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+  }
+
+  .ppgm__question {
+    padding: 1rem;
+    background: var(--ppgm-surface-soft);
+    border: 1px solid var(--ppgm-border);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .ppgm__question-title {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--ppgm-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+  }
+
+  .ppgm__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .ppgm__options label {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .ppgm__options input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .ppgm__options label span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.25rem;
+    padding: 0.45rem 0.75rem;
+    color: var(--ppgm-text-secondary);
+    background: var(--ppgm-surface);
+    border: 1px solid var(--ppgm-border);
+    border-radius: 999px;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .ppgm__options label:hover span {
+    border-color: var(--ppgm-accent);
+  }
+
+  .ppgm__options label:has(input:focus-visible) span {
+    outline: 2px solid var(--ppgm-accent);
+    outline-offset: 2px;
+  }
+
+  .ppgm__options label:has(input:checked) span {
+    color: var(--ppgm-state);
+    background: color-mix(
+      in srgb,
+      var(--ppgm-state) 8%,
+      var(--ppgm-surface)
+    );
+    border-color: var(--ppgm-state);
+  }
+
+  .ppgm__result {
+    margin-top: 1.25rem;
+    padding: 1.2rem;
+    background: var(--ppgm-surface-soft);
+    border: 1px solid var(--ppgm-border);
+    border-left: 4px solid var(--ppgm-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .ppgm__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .ppgm__result h4 {
+    margin-bottom: 0;
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .ppgm__result-level {
+    flex: 0 0 auto;
+    color: var(--ppgm-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .ppgm__result > p {
+    max-width: 74ch;
+    margin: 0.65rem 0 0;
+    color: var(--ppgm-text-secondary);
+    line-height: 1.6;
+  }
+
+  .ppgm__meter {
+    width: 100%;
+    height: 0.45rem;
+    margin-top: 1rem;
+    overflow: hidden;
+    background: var(--ppgm-border-soft);
+    border-radius: 999px;
+  }
+
+  .ppgm__meter span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--ppgm-state);
+    border-radius: inherit;
+    transition:
+      width 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .ppgm__cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .ppgm__card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: var(--ppgm-surface);
+    border: 1px solid var(--ppgm-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .ppgm__card span {
+    color: var(--ppgm-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .ppgm__card strong {
+    color: var(--ppgm-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .ppgm__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--ppgm-surface);
+    border: 1px solid var(--ppgm-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .ppgm__principle-mark {
+    flex: 0 0 auto;
+    color: var(--ppgm-accent);
+    font-weight: 800;
+  }
+
+  .ppgm__principle p {
+    margin: 0;
+    color: var(--ppgm-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .ppgm__principle strong {
+    color: var(--ppgm-text);
+  }
+
+  @media (max-width: 900px) {
+    .ppgm__questions,
+    .ppgm__cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ppgm {
+      padding: 1rem;
+    }
+
+    .ppgm__header,
+    .ppgm__result-head {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .ppgm__badge {
+      align-self: flex-start;
+    }
+
+    .ppgm__result-level {
+      text-align: left;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ppgm__meter span,
+    .ppgm__options label span {
+      transition: none;
+    }
+  }
+</style>
