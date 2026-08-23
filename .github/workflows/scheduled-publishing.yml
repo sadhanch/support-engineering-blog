@@ -1,0 +1,130 @@
+# ==========================================================
+# Support Engineering Blog
+# Scheduled Publishing Workflow
+# ==========================================================
+#
+# Purpose:
+# Checks once per day for approved articles whose publishAt
+# timestamp has been reached but which are not yet live.
+#
+# When a pending publication is found, the workflow triggers
+# the Cloudflare Pages Deploy Hook stored in the repository
+# secret CLOUDFLARE_DEPLOY_HOOK.
+#
+# Publication policy:
+# - Standard publication window: 09:07 IST
+# - Timezone: Asia/Kolkata
+# - One scheduled check per day
+#
+# The workflow does not modify article files or create commits.
+# Git remains the source of truth for article content.
+# ==========================================================
+
+name: Scheduled Publishing
+
+on:
+  schedule:
+    # 09:07 IST every day.
+    #
+    # GitHub supports IANA timezone-aware schedules.
+    # Running at minute 07 avoids the top-of-the-hour period,
+    # where GitHub documents increased scheduling load.
+    - cron: "7 9 * * *"
+      timezone: "Asia/Kolkata"
+
+  # Allows manual testing from the GitHub Actions UI.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scheduled-publishing
+  cancel-in-progress: false
+
+jobs:
+  check-publications:
+    name: Check Scheduled Publications
+    runs-on: ubuntu-latest
+
+    steps:
+      # ------------------------------------------------------
+      # Checkout
+      # ------------------------------------------------------
+      # The checker reads article frontmatter from the current
+      # default-branch checkout.
+      # ------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ------------------------------------------------------
+      # Node.js
+      # ------------------------------------------------------
+      # Use a current LTS Node release for the publication
+      # checker.
+      # ------------------------------------------------------
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # ------------------------------------------------------
+      # Scheduled Publication Check
+      # ------------------------------------------------------
+      # The checker intentionally returns:
+      #
+      #   0  = nothing needs publishing
+      #   10 = at least one publication is pending
+      #   1  = checker failure
+      #
+      # We capture the exit code instead of allowing exit code
+      # 10 to fail the workflow.
+      # ------------------------------------------------------
+      - name: Check for pending publications
+        id: publication-check
+        shell: bash
+        run: |
+          set +e
+
+          node scripts/check-scheduled-publication.mjs
+
+          exit_code=$?
+
+          echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT"
+
+          if [ "$exit_code" -eq 0 ]; then
+            echo "No scheduled publications require deployment."
+            exit 0
+          fi
+
+          if [ "$exit_code" -eq 10 ]; then
+            echo "A scheduled publication requires deployment."
+            exit 0
+          fi
+
+          echo "Scheduled publication checker failed."
+          exit "$exit_code"
+
+      # ------------------------------------------------------
+      # Cloudflare Deployment
+      # ------------------------------------------------------
+      # Only call the Deploy Hook when the checker reports
+      # exit code 10.
+      # ------------------------------------------------------
+      - name: Trigger Cloudflare Pages deployment
+        if: steps.publication-check.outputs.exit_code == '10'
+        env:
+            CLOUDFLARE_DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+        run: |
+            if [ -z "$CLOUDFLARE_DEPLOY_HOOK" ]; then
+            echo "CLOUDFLARE_DEPLOY_HOOK repository secret is not configured."
+            exit 1
+            fi
+
+            echo "Triggering Cloudflare Pages deployment..."
+
+            curl --fail --silent --show-error \
+            --request POST \
+            "$CLOUDFLARE_DEPLOY_HOOK"
+
+            echo "Cloudflare Pages deployment triggered successfully."
