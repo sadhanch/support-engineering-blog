@@ -19,6 +19,7 @@ The Support Engineering Blog (SEB) is a static technical publication built with 
 - [Troubleshooting](docs/10-troubleshooting.md)
 - [Architecture and Project Decisions](docs/11-decisions.md)
 - [Final Repository Audit](docs/12-final-audit.md)
+- [Progressive Web App](docs/13-progressive-web-app.md)
 
 ## Technology
 
@@ -31,6 +32,7 @@ The Support Engineering Blog (SEB) is a static technical publication built with 
 - `@astrojs/rss`
 - Cloudflare Pages
 - GitHub
+- Progressive Web App APIs (Manifest + Service Worker)
 
 ## Common commands
 

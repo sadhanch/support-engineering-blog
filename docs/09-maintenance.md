@@ -29,6 +29,8 @@ Before publishing an article:
 [ ] Theme behavior checked
 [ ] Search checked when search code changed
 [ ] Favicon checked when document shell changed
+[ ] PWA manifest checked when PWA configuration changed
+[ ] Service worker/offline fallback checked when PWA code changed
 [ ] Analytics consent checked when analytics code changed
 [ ] git status reviewed
 ```
@@ -43,6 +45,7 @@ Review:
 - broken links or unexpected 404s
 - newly published content
 - content that needs updates
+- PWA behavior on the primary supported browser/device combination
 
 ## Periodic technical maintenance
 
@@ -53,6 +56,16 @@ npm outdated
 ```
 
 Do not upgrade Astro or major integrations blindly. Run the full production build and regression QA after dependency upgrades.
+
+For PWA changes, also verify:
+
+```text
+manifest identity
+service-worker activation
+cache versioning
+offline fallback
+app shortcuts
+```
 
 ## Content maintenance
 

@@ -9,15 +9,18 @@ GitHub repository
        v
 Cloudflare Pages
        |
-       | Astro build
+       | npm run build
        v
-Static site
+Static Astro site
        |
        +--> HTML pages
        +--> optimized images
        +--> Pagefind search index
        +--> sitemap
        +--> RSS feed
+       +--> PWA manifest
+       +--> PWA service worker
+       +--> offline fallback page
 ```
 
 ## Application structure
@@ -31,10 +34,18 @@ src/
 ├── data/                Static navigation/content datasets
 ├── layouts/             Base document and article layouts
 ├── lib/                 Content, taxonomy, search and relationship logic
-├── pages/               Astro routes
-├── scripts/             Browser-side behavior
+├── pages/               Astro routes, including /offline/
+├── scripts/             Browser-side behavior, including PWA registration
 ├── templates/           Legacy/reference XML and article template assets
 └── utils/               Small shared utilities
+
+public/
+├── favicon/             Browser favicon assets
+├── logo/                Approved blog logo assets
+├── social/              Article Open Graph images
+├── icons/               PWA application icons
+├── manifest.webmanifest PWA application manifest
+└── sw.js                PWA service worker
 ```
 
 ## Astro configuration
@@ -118,12 +129,80 @@ The route:
 - X/Twitter metadata
 - JSON-LD
 - favicon
+- Web App Manifest link
 - RSS link
 - theme initialization
 - global header/footer
 - accessibility skip link
 - analytics consent
 - global client-side initialization
+- PWA service-worker registration
+
+## Progressive Web App architecture
+
+The PWA is intentionally layered on top of the static publication:
+
+```text
+BaseLayout.astro
+      |
+      +--> /manifest.webmanifest
+      |
+      +--> pwa-register.ts
+                    |
+                    v
+                 /sw.js
+                    |
+          +---------+----------+
+          |                    |
+          v                    v
+   static asset cache     page/document cache
+          |                    |
+          +---------+----------+
+                    |
+                    v
+              /offline/
+```
+
+### Manifest
+
+`public/manifest.webmanifest` defines:
+
+- application name and short name
+- description
+- start URL and scope
+- standalone display mode
+- theme/background colors
+- 192px and 512px application icons
+- shortcuts for Latest Articles, Microsoft 365, Power Platform, and Search
+
+### Service worker
+
+`public/sw.js` provides three intentionally small behaviors:
+
+1. Cache the `/offline/` page during installation.
+2. Use network-first navigation so fresh online content wins.
+3. Cache same-origin CSS, JavaScript, and font resources for offline support.
+
+Successful page navigations are stored in a versioned page cache. When a navigation fails offline, the worker first checks for the previously cached page and then falls back to `/offline/`.
+
+Cache generations are controlled through `CACHE_VERSION` in `public/sw.js`. Old cache generations are removed during service-worker activation.
+
+### Offline page
+
+`src/pages/offline.astro` is intentionally self-contained and uses inline critical CSS. This prevents the offline fallback from depending on separately cached stylesheet assets.
+
+### PWA scope decisions
+
+The current PWA intentionally excludes:
+
+- push notifications
+- background sync
+- native share integration
+- share-target behavior
+- a separate PWA-only reader interface
+- precaching of the entire article library
+
+The dedicated Android application remains the place for richer mobile-specific behavior.
 
 ## Search
 

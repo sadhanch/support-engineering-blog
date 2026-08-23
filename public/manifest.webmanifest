@@ -1,5 +1,5 @@
 {
-  "name": "Support Engineering Blog",
+  "name": "SEB",
   "short_name": "Support Engineering",
   "description": "Technical documentation, Microsoft 365 administration, and support engineering resources.",
   "start_url": "/",
@@ -19,6 +19,32 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Latest Articles",
+      "short_name": "Latest",
+      "description": "Browse the latest Support Engineering Blog articles.",
+      "url": "/articles/"
+    },
+    {
+      "name": "Microsoft 365",
+      "short_name": "M365",
+      "description": "Browse Microsoft 365 articles.",
+      "url": "/category/microsoft-365/"
+    },
+    {
+      "name": "Power Platform",
+      "short_name": "Power Platform",
+      "description": "Browse Power Platform articles.",
+      "url": "/category/power-platform/"
+    },
+    {
+      "name": "Search",
+      "short_name": "Search",
+      "description": "Search the Support Engineering Blog.",
+      "url": "/search/"
     }
   ]
 }

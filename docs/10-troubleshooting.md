@@ -70,6 +70,114 @@ Check:
 4. `src/scripts/search.ts` can load `/pagefind/pagefind.js`.
 5. Search page element IDs still match the script.
 
+## PWA manifest is not detected
+
+Check:
+
+1. `dist/manifest.webmanifest` exists after `npm run build`.
+2. `BaseLayout.astro` contains the manifest link.
+3. The production URL returns:
+   `https://blog.sadhan.ch/manifest.webmanifest`
+4. The manifest is valid JSON.
+5. Both `/icons/icon-192.png` and `/icons/icon-512.png` are reachable.
+6. Browser DevTools → Application → Manifest shows the expected metadata.
+
+## Service worker is not registering
+
+Check:
+
+1. `dist/sw.js` exists after the build.
+2. `BaseLayout.astro` loads `src/scripts/pwa-register.ts`.
+3. The production site is served over HTTPS.
+4. Browser DevTools → Application → Service Workers shows `/sw.js`.
+5. There is no stale service worker preventing the new version from activating.
+
+For local development, unregister the old service worker when testing a changed cache generation.
+
+## Previously visited article does not load offline
+
+Check:
+
+1. The article was fully loaded once while online.
+2. The service worker is active.
+3. The browser is actually in Offline mode.
+4. A successful online navigation occurred after the current service-worker version became active.
+5. The page is same-origin with `blog.sadhan.ch`.
+
+Article/document navigation uses a network-first strategy. Online requests update the page cache; offline navigation falls back to the cached document when available.
+
+## Custom offline page does not appear
+
+The service worker must cache `/offline/` during installation.
+
+Verify:
+
+```text
+public/sw.js
+```
+
+contains the installation cache step for:
+
+```text
+/offline/
+```
+
+Then verify:
+
+```text
+dist/offline/index.html
+```
+
+exists after the build.
+
+If a previously visited route still loads while offline, that is expected: cached page content is preferred over the general offline fallback.
+
+## App shortcuts are not visible
+
+Manifest shortcuts are only exposed by browsers and operating systems that support the feature.
+
+Check:
+
+1. `public/manifest.webmanifest` contains the `shortcuts` array.
+2. The generated `dist/manifest.webmanifest` contains the same shortcuts.
+3. The PWA is installed rather than opened only as a normal browser tab.
+4. The target platform exposes shortcuts from the application icon/menu.
+
+## PWA cache appears stale
+
+The service worker uses a versioned cache controlled by:
+
+```text
+CACHE_VERSION
+```
+
+in `public/sw.js`.
+
+When the cache generation is deliberately changed, the old static/page caches are removed during service-worker activation.
+
+Do not manually edit `dist/` to repair a cache problem.
+
+## Large JavaScript chunk warning
+
+The build may report:
+
+```text
+Some chunks are larger than 500 kB after minification.
+```
+
+The current largest chunk is associated with the Mermaid runtime. The repository already uses dynamic `import("mermaid")` and checks for Mermaid diagrams before loading the library.
+
+Do not immediately raise `build.chunkSizeWarningLimit` just to suppress the warning.
+
+First inspect generated JavaScript sizes:
+
+```bash
+find dist/_astro -type f -name "*.js" -printf '%s %p
+' | sort -nr | head -15
+```
+
+If performance work is justified, measure whether ordinary pages actually request the large Mermaid chunk before changing Mermaid or Rollup/Rolldown configuration.
+
 ## Favicon is missing or incorrect
 
 The current favicon is:
@@ -136,7 +244,8 @@ Check:
 2. Cloudflare Pages deployment started.
 3. Build completed successfully.
 4. Production deployment is the expected commit.
-5. Browser cache is not masking the result.
+5. `manifest.webmanifest` and `sw.js` are reachable in production when PWA changes were included.
+6. Browser/service-worker caches are not masking the result.
 
 ## General rule
 

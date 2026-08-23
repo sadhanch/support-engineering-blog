@@ -44,12 +44,27 @@ The editorial workflow established for the project follows these principles:
 
 ## Current content
 
-The repository currently (11th August, 2026) contains two published articles:
+The repository currently contains **27 article source files** in `src/content/articles/`, using Markdown and MDX. The production build also generates the site's discovery, API, legal, learning-path, search, taxonomy, and offline routes.
 
-- Project Online retirement
-- Planner Premium structured project delivery
+The content system is designed to scale beyond the current article set without requiring changes to the article page architecture.
 
-The content system is designed to scale beyond these articles without requiring changes to the article page architecture.
+## Progressive Web App
+
+The blog also provides a lightweight Progressive Web App layer. The PWA is intentionally an extension of the existing static site rather than a separate application.
+
+Current PWA capabilities include:
+
+- Web App Manifest
+- installable application identity
+- 192px and 512px application icons
+- standalone display mode
+- service-worker caching
+- network-first navigation for fresh content
+- cached previously visited pages for offline reading
+- branded `/offline/` fallback
+- app-icon shortcuts for common destinations
+
+The PWA deliberately does **not** add push notifications, background sync, native sharing, or a separate mobile reader UI. Those features are outside the current web/PWA scope and may be considered for the dedicated Android application.
 
 ## Scope
 

@@ -39,6 +39,9 @@ The production build includes:
 - Pagefind index
 - RSS feed
 - sitemap
+- PWA manifest
+- PWA service worker
+- offline fallback route
 - static assets
 
 ## Deployment workflow
@@ -79,11 +82,17 @@ After a deployment:
 4. Check light/dark theme.
 5. Check keyboard navigation.
 6. Check favicon.
-7. If relevant, verify Analytics consent behavior.
-8. Confirm the Cloudflare deployment completed successfully.
+7. Verify `https://blog.sadhan.ch/manifest.webmanifest` returns the expected manifest.
+8. Verify `https://blog.sadhan.ch/sw.js` returns the current service worker.
+9. Verify the installed PWA still opens with the expected identity and shortcuts on a supported platform.
+10. If relevant, verify offline behavior using a previously visited article and the `/offline/` fallback.
+11. If relevant, verify Analytics consent behavior.
+12. Confirm the Cloudflare deployment completed successfully.
 
 ## Rollback
 
 If a deployment introduces a regression, use Cloudflare Pages deployment history to identify the previous successful deployment and roll back/redeploy according to the current Cloudflare Pages controls.
+
+Remember that an installed PWA may retain a service-worker cache across deployments. A service-worker version change is handled by `CACHE_VERSION` in `public/sw.js`; when a new service-worker version activates, old PWA caches are removed.
 
 Do not attempt to repair a production deployment by manually editing generated `dist/` files.

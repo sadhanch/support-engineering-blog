@@ -1,21 +1,76 @@
 ---
+/**
+ * Support Engineering Blog
+ * ========================
+ * Page: Offline Fallback
+ *
+ * Purpose:
+ * Provides the branded offline experience used by the PWA service worker
+ * when a requested page cannot be retrieved from the network and is not
+ * already available in the service-worker cache.
+ *
+ * Design notes:
+ * - This page is intentionally self-contained.
+ * - Critical styles are kept inline so the page can render without relying
+ *   on external CSS assets while offline.
+ * - The page respects the user's operating-system light/dark preference.
+ *
+ * PWA role:
+ * Served as the final navigation fallback by public/sw.js.
+ */
+
 const title = "You're offline";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- ==========================================================
+         Document Metadata
+         ========================================================== -->
+
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0F172A" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <!-- Keep the offline experience visually aligned with the
+         Support Engineering Blog application theme. -->
+    <meta
+      name="theme-color"
+      content="#0F172A"
+    />
+
     <title>{title} — Support Engineering Blog</title>
 
+    <!-- ==========================================================
+         Offline-First Styles
+         ==========================================================
+         These styles intentionally remain inline.
+
+         The offline page may be requested when the browser cannot
+         retrieve external CSS assets. Keeping the critical styling
+         here ensures the fallback remains visually usable offline.
+         ========================================================== -->
+
     <style is:inline>
+      /* ----------------------------------------------------------
+         Base Document Configuration
+         ---------------------------------------------------------- */
+
       :root {
         color-scheme: light dark;
+
         font-family:
-          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
       }
 
       html,
@@ -24,10 +79,15 @@ const title = "You're offline";
         min-height: 100%;
       }
 
+      /* ----------------------------------------------------------
+         Page Layout
+         ---------------------------------------------------------- */
+
       body {
         min-height: 100vh;
         display: grid;
         place-items: center;
+
         background: #f8fafc;
         color: #0f172a;
       }
@@ -36,36 +96,64 @@ const title = "You're offline";
         width: min(680px, calc(100% - 48px));
       }
 
+      /* ----------------------------------------------------------
+         Offline Page Branding
+         ---------------------------------------------------------- */
+
       .eyebrow {
         margin-bottom: 24px;
+
         font-family:
-          "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+          "SFMono-Regular",
+          Consolas,
+          "Liberation Mono",
+          monospace;
+
         font-size: 12px;
         font-weight: 600;
         letter-spacing: 0.12em;
         text-transform: uppercase;
+
         color: #2563eb;
       }
 
+      /* ----------------------------------------------------------
+         Primary Heading
+         ---------------------------------------------------------- */
+
       h1 {
         margin: 0 0 20px;
+
         font-size: clamp(40px, 7vw, 68px);
         line-height: 1.02;
         letter-spacing: -0.04em;
       }
 
+      /* ----------------------------------------------------------
+         Supporting Message
+         ---------------------------------------------------------- */
+
       p {
         max-width: 58ch;
         margin: 0 0 32px;
+
         color: #475569;
         font-size: 18px;
         line-height: 1.7;
       }
 
+      /* ----------------------------------------------------------
+         Recovery Navigation
+         ----------------------------------------------------------
+         Provides a simple path back to the homepage once the user
+         has connectivity again.
+         ---------------------------------------------------------- */
+
       a {
         display: inline-flex;
         align-items: center;
         gap: 8px;
+
         color: #0f172a;
         font-weight: 700;
         text-decoration: none;
@@ -74,6 +162,14 @@ const title = "You're offline";
       a:hover {
         text-decoration: underline;
       }
+
+      /* ----------------------------------------------------------
+         Dark Mode
+         ----------------------------------------------------------
+         Uses the operating system preference because the offline
+         page intentionally does not depend on the blog's normal
+         theme initialization JavaScript.
+         ---------------------------------------------------------- */
 
       @media (prefers-color-scheme: dark) {
         body {
@@ -93,16 +189,28 @@ const title = "You're offline";
   </head>
 
   <body>
+    <!-- ==========================================================
+         Offline Content
+         ========================================================== -->
+
     <main>
-      <div class="eyebrow">Support Engineering Blog</div>
+      <!-- Publication identifier -->
+      <div class="eyebrow">
+        Support Engineering Blog
+      </div>
 
-      <h1>You're offline.</h1>
+      <!-- Primary offline message -->
+      <h1>
+        You're offline.
+      </h1>
 
+      <!-- Explanation and cached-content guidance -->
       <p>
         It looks like you're not connected to the internet right now.
         Previously visited articles may still be available.
       </p>
 
+      <!-- Return path -->
       <a href="/">
         Return to the homepage
         <span aria-hidden="true">→</span>

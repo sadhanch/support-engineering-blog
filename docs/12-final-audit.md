@@ -2,7 +2,7 @@
 
 ## Audit basis
 
-The archive contains the tracked source/configuration files at the time of the final documentation pass. External platform settings are therefore not independently represented in the repository.
+The audit records the source/configuration state documented during the current maintenance pass. External platform settings are therefore not independently represented in the repository.
 
 ## Confirmed structure
 
@@ -21,6 +21,11 @@ The repository contains:
 - theme handling
 - SEO metadata
 - structured data
+- PWA manifest
+- PWA application icons
+- PWA service worker
+- branded offline fallback
+- installed-app shortcuts
 - Cloudflare/GitHub deployment-compatible configuration
 
 ## Important implementation relationships
@@ -34,12 +39,14 @@ BaseLayout.astro
  ├── SEO metadata
  ├── structured data
  ├── favicon
+ ├── Web App Manifest
  ├── RSS
  ├── Header
  ├── page slot
  ├── ConsentBanner
  ├── Footer
  └── client initialization
+       └── PWA service-worker registration
 ```
 
 ### Article pipeline
@@ -68,6 +75,53 @@ src/lib/relatedArticles.ts
 top three related articles
 ```
 
+### PWA pipeline
+
+```text
+BaseLayout.astro
+    |
+    +--> /manifest.webmanifest
+    |
+    +--> pwa-register.ts
+              |
+              v
+           /sw.js
+              |
+        +-----+------------------+
+        |                        |
+        v                        v
+ static asset cache        page cache
+        |                        |
+        +-----------+------------+
+                    |
+                    v
+                /offline/
+```
+
+## PWA audit checks
+
+The PWA has been validated for:
+
+- manifest metadata recognition
+- 192px and 512px icons
+- standalone display mode
+- service-worker registration
+- custom offline fallback
+- cached previously visited article behavior
+- fresh online article behavior replacing cached content
+- versioned cache cleanup
+- installed-app shortcuts
+
+The PWA deliberately remains lightweight. Native share, push notifications, background sync, and full-site precaching are not part of the current implementation.
+
+## Build and bundle awareness
+
+The production build completes successfully and Pagefind indexes the generated site.
+
+The build currently emits a Vite warning for a JavaScript chunk larger than the default 500 kB warning threshold. The largest chunk is associated with the Mermaid runtime. This is documented as a performance investigation item, not as a current production failure.
+
+The Mermaid client integration already performs a dynamic import only when Mermaid diagrams are present, so global site JavaScript should not be inferred from the warning alone. Performance work should first measure which pages actually request the large Mermaid chunk.
+
 ## Audit observations requiring awareness
 
 These are not necessarily production failures, but they are worth preserving as future cleanup candidates.
@@ -84,7 +138,7 @@ This does not prevent the Astro site from building, but it is not an accurate pr
 
 ### 2. Potentially unused direct dependencies
 
-The current source references `@astrojs/rss`, `@astrojs/sitemap`, `@astrojs/mdx`, `astro-pagefind`, and Pagefind directly.
+The current source references `@astrojs/rss`, `@astrojs/sitemap`, `@astrojs/mdx`, `astro-pagefind`, Mermaid, and Pagefind directly.
 
 The following direct dependencies appear in `package.json` but are not directly referenced by the current source/configuration:
 
@@ -132,15 +186,13 @@ This is not a runtime issue. If both files are intentionally used by different d
 
 as the default SEO/social image.
 
-The supplied Git archive does not contain a top-level:
+The supplied Git archive contains article-specific social images but does not contain a top-level:
 
 ```text
 public/og-cover.png
 ```
 
-The repository does contain article images, but the configured default image path should be verified before relying on it for social sharing.
-
-This is the most important item in this audit to verify separately because it affects Open Graph/Twitter image delivery rather than normal page rendering.
+The configured default image path should therefore be verified before relying on it for social sharing.
 
 ## What the audit intentionally did not change
 
@@ -155,7 +207,7 @@ The documentation pass does not modify:
 - Search Console
 - Bing Webmaster Tools
 
-The purpose of this pass is to document the final system and record future cleanup candidates without introducing a new feature or changing a working production deployment.
+The purpose of this pass is to document the current system and record future cleanup candidates without introducing unrelated production changes.
 
 ## Final production posture
 
@@ -169,6 +221,7 @@ The project is structured as a static publication with:
 - automated sitemap/RSS generation
 - consent-controlled analytics
 - SEO metadata and structured data
+- a lightweight installable/offline PWA layer
 - Cloudflare Pages deployment
 
-The next changes should be driven by a concrete publishing, maintenance, accessibility, SEO, or product requirement rather than continued structural experimentation.
+The next changes should be driven by a concrete publishing, maintenance, accessibility, SEO, performance, or product requirement rather than continued structural experimentation.
