@@ -95,3 +95,21 @@ optimized build assets
 ```
 
 These are build outputs.
+
+
+## Scheduled publishing maintenance
+
+The scheduled publishing system consists of four maintained pieces:
+
+```text
+src/content.config.ts
+src/lib/articles.ts
+scripts/check-scheduled-publication.mjs
+.github/workflows/scheduled-publishing.yml
+```
+
+When changing publication behavior, keep the content filter and the checker aligned. The checker should determine when a rebuild is needed; Astro remains the final authority on which articles are generated.
+
+Do not replace the `CLOUDFLARE_DEPLOY_HOOK` secret with a hard-coded URL. Treat the Deploy Hook as a secret.
+
+The daily workflow currently runs at **09:07 Asia/Kolkata**. The manual `workflow_dispatch` trigger should remain enabled because it provides a safe way to validate the automation without waiting for the next scheduled run.

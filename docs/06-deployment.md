@@ -96,3 +96,33 @@ If a deployment introduces a regression, use Cloudflare Pages deployment history
 Remember that an installed PWA may retain a service-worker cache across deployments. A service-worker version change is handled by `CACHE_VERSION` in `public/sw.js`; when a new service-worker version activates, old PWA caches are removed.
 
 Do not attempt to repair a production deployment by manually editing generated `dist/` files.
+
+## Scheduled publication deployment path
+
+Normal commits continue to deploy through the existing GitHub-connected Cloudflare Pages build. Scheduled publication adds a second, controlled deployment trigger:
+
+```text
+09:07 IST daily
+      |
+      v
+GitHub Actions
+      |
+      v
+check-scheduled-publication.mjs
+      |
+      +--> nothing due -> no deployment
+      |
+      +--> due + not live -> POST to Cloudflare Deploy Hook
+                                      |
+                                      v
+                                  Cloudflare build
+                                      |
+                                      v
+                                published article
+```
+
+The Deploy Hook URL is stored as the GitHub repository secret `CLOUDFLARE_DEPLOY_HOOK`. It must never be committed to the repository.
+
+The scheduled workflow is defined in `.github/workflows/scheduled-publishing.yml`. It can also be started manually with GitHub Actions for testing.
+
+The current production workflow was tested end-to-end before being considered ready for daily use.

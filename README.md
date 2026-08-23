@@ -20,6 +20,7 @@ The Support Engineering Blog (SEB) is a static technical publication built with 
 - [Architecture and Project Decisions](docs/11-decisions.md)
 - [Final Repository Audit](docs/12-final-audit.md)
 - [Progressive Web App](docs/13-progressive-web-app.md)
+- [Scheduled Publishing](docs/14-scheduled-publishing.md)
 
 ## Technology
 
@@ -33,6 +34,7 @@ The Support Engineering Blog (SEB) is a static technical publication built with 
 - Cloudflare Pages
 - GitHub
 - Progressive Web App APIs (Manifest + Service Worker)
+- GitHub Actions scheduled publishing
 
 ## Common commands
 
@@ -60,6 +62,8 @@ src/content.config.ts
 ```
 
 Both `.md` and `.mdx` files are supported.
+
+Scheduled articles can use the optional `publishAt` frontmatter field. Existing articles do not need this field. See [Scheduled Publishing](docs/14-scheduled-publishing.md).
 
 ## Production notes
 

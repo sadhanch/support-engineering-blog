@@ -138,6 +138,46 @@ The route:
 - global client-side initialization
 - PWA service-worker registration
 
+## Scheduled publishing architecture
+
+Scheduled publishing is layered on top of the existing static GitHub → Cloudflare Pages pipeline. It does not modify article files or require a database.
+
+```text
+Article with publishAt
+        |
+        v
+GitHub main
+        |
+        | daily 09:07 Asia/Kolkata
+        v
+GitHub Actions
+        |
+        | check-scheduled-publication.mjs
+        |
+        +--> no due + unpublished article -> stop
+        |
+        +--> due + not live -> Cloudflare Deploy Hook
+                                      |
+                                      v
+                              Cloudflare Pages
+                                      |
+                                      v
+                                Astro build
+```
+
+The content layer remains the source of truth for whether an article is eligible for publication. GitHub Actions only determines whether a rebuild is needed.
+
+The relevant files are:
+
+```text
+src/content.config.ts                  Article schema including optional publishAt
+src/lib/articles.ts                     Central published-article filter
+scripts/check-scheduled-publication.mjs Due-publication checker
+.github/workflows/scheduled-publishing.yml Daily scheduler + deployment trigger
+```
+
+The Cloudflare Deploy Hook URL is stored only as the GitHub Actions repository secret `CLOUDFLARE_DEPLOY_HOOK`.
+
 ## Progressive Web App architecture
 
 The PWA is intentionally layered on top of the static publication:

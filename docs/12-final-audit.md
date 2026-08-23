@@ -209,6 +209,23 @@ The documentation pass does not modify:
 
 The purpose of this pass is to document the current system and record future cleanup candidates without introducing unrelated production changes.
 
+## Scheduled publishing audit
+
+Scheduled publishing has been validated end-to-end in production. The following paths were tested:
+
+```text
+future publishAt -> article excluded from generated routes
+past publishAt   -> article included in generated routes
+checker no due   -> exit 0
+checker due/not live -> exit 10
+Cloudflare Deploy Hook -> production rebuild
+already-live article -> no repeated deployment trigger
+```
+
+The workflow is stored in `.github/workflows/scheduled-publishing.yml` and the checker in `scripts/check-scheduled-publication.mjs`.
+
+The production schedule is **09:07 Asia/Kolkata daily**.
+
 ## Final production posture
 
 The project is structured as a static publication with:

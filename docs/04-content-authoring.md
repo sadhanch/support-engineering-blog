@@ -169,3 +169,37 @@ Avoid:
 - filler
 - generic marketing language
 - presenting recommendations as Microsoft statements
+
+## Scheduled publishing
+
+The article schema supports an optional `publishAt` timestamp for approved articles that should become public at a defined time. Existing articles do not need the field.
+
+Example:
+
+```yaml
+draft: false
+publishDate: 2026-09-01
+publishAt: "2026-09-01T09:07:00+05:30"
+```
+
+Publication rules are:
+
+```text
+draft: true
+    -> never published
+
+draft: false + future publishAt
+    -> not generated yet
+
+draft: false + past publishAt
+    -> generated and published
+
+draft: false + no publishAt
+    -> existing articles remain published normally
+```
+
+The standard daily publication window is **09:07 Asia/Kolkata (IST)**. The timestamp should include the explicit `+05:30` offset.
+
+Do not add `publishAt` to historical articles unless their publication timing needs to change.
+
+The automated workflow checks once per day and triggers Cloudflare only when an approved, due article is still absent from production.

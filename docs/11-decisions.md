@@ -65,3 +65,30 @@ The project does not currently require:
 - PWA share-target behavior
 
 Adding infrastructure should require a concrete requirement rather than being done preemptively.
+
+
+## Decision: scheduled publishing without a CMS
+
+The blog uses GitHub + Astro + Cloudflare Pages as its source/build/deployment stack. Scheduled publishing was implemented without introducing a CMS, database, server, or repository-mutating bot.
+
+Decision:
+
+- Add optional `publishAt` to the article schema.
+- Treat `draft` as the editorial approval state.
+- Treat `publishAt` as the exact publication timestamp when provided.
+- Keep historical articles unchanged.
+- Run a single scheduled GitHub Actions check each day at 09:07 Asia/Kolkata.
+- Trigger Cloudflare through a Deploy Hook only when a due article is still absent from production.
+- Keep the Deploy Hook URL in the repository secret `CLOUDFLARE_DEPLOY_HOOK`.
+
+Reasoning:
+
+This preserves Git as the source of truth, keeps Astro's static architecture intact, and avoids introducing another content system.
+
+## Decision: daily rather than 15-minute scheduling
+
+The publication model is one article per day. A 15-minute always-on scheduler was therefore rejected in favor of a single daily publication window. The current standard time is 09:07 IST, intentionally offset from the top of the hour.
+
+## Decision: PWA remains lightweight
+
+The PWA intentionally remains an installable/offline layer over the static site. Richer mobile features remain scoped to the dedicated Android application rather than being duplicated in the web PWA.

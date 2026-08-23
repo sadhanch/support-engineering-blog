@@ -266,3 +266,49 @@ Build
   ↓
 Verify
 ```
+
+
+## Scheduled publishing troubleshooting
+
+### Article remains hidden after its publication time
+
+Check the article frontmatter first:
+
+```yaml
+draft: false
+publishAt: "2026-09-01T09:07:00+05:30"
+```
+
+Then run locally:
+
+```bash
+node scripts/check-scheduled-publication.mjs
+```
+
+Expected normal output when nothing is due:
+
+```text
+No scheduled publications are waiting for deployment.
+```
+
+A due, unpublished article causes the checker to return exit code `10`.
+
+### GitHub Actions does not trigger Cloudflare
+
+Check:
+
+1. The workflow is enabled.
+2. The repository secret `CLOUDFLARE_DEPLOY_HOOK` exists.
+3. The checker returns exit code `10` when a publication is due.
+4. The Cloudflare Deploy Hook still points to the `main` branch.
+5. The workflow's Cloudflare step is not being skipped.
+
+The workflow can be started manually from **Actions → Scheduled Publishing → Run workflow**.
+
+### Checker returns 10 locally but the article is already live
+
+The checker tests the production article URL. If the URL is already reachable, the article should not be considered pending. If this condition is unexpected, check the production URL and the article slug derived from the source filename.
+
+### Do not confuse Cloudflare build timing with publication filtering
+
+A future article can exist in GitHub and even be processed by a normal Cloudflare build while remaining excluded from generated routes. It becomes public only after a build occurs when its `publishAt` timestamp has been reached.
