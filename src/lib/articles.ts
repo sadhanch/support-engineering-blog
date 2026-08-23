@@ -33,9 +33,24 @@ function enrichArticle(article: Awaited<ReturnType<typeof getCollection<"article
 
 export async function getAllArticles() {
 
+    const now = new Date();
+    
     const articles = await getCollection(
         "articles",
-        ({ data }) => !data.draft
+        ({ data }) => {
+            if (data.draft) {
+                return false;
+            }
+
+            if (
+                data.publishAt &&
+                data.publishAt > new Date()
+            ) {
+                return false;
+            }
+
+            return true;
+        }
     );
 
     return articles

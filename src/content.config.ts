@@ -64,6 +64,15 @@ const articles = defineCollection({
         publishDate:
             z.date(),
 
+        /**
+         * Optional exact publication timestamp.
+         *
+         * When provided, the article remains unpublished until this
+         * timestamp. Existing articles without publishAt remain published
+         * according to the existing draft/publishDate behavior.
+         */
+        publishAt: z.coerce.date().optional(),
+
         updatedDate:
             z.date().optional(),
 
