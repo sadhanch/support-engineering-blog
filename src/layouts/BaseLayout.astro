@@ -406,6 +406,11 @@ const structuredData = type === "article"
     />
 
     <link
+        rel="manifest"
+        href="/manifest.webmanifest"
+    />
+
+    <link
         rel="alternate"
         type="application/rss+xml"
         title="Support Engineering Blog RSS Feed"
@@ -499,6 +504,8 @@ const structuredData = type === "article"
         initializeAnalyticsConsent();
 
     </script>
+
+    <script src="../scripts/pwa-register.ts"></script>
 
 </body>
 
