@@ -1,0 +1,154 @@
+# ==========================================================
+# Support Engineering Blog
+# Content Quality Workflow
+# ==========================================================
+#
+# Purpose:
+# Validates article content and performs a production build
+# whenever content or application code is pushed or reviewed.
+#
+# The workflow is intentionally separate from the scheduled
+# publishing workflow.
+#
+# Content Quality:
+#   1. Validate article metadata and publication rules.
+#   2. Build the complete Astro site.
+#
+# A failure in either stage blocks the workflow.
+# ==========================================================
+
+name: Content Quality
+
+on:
+
+  # --------------------------------------------------------
+  # Pull requests
+  # --------------------------------------------------------
+  # Validate proposed changes before they are merged.
+  # --------------------------------------------------------
+  pull_request:
+
+  # --------------------------------------------------------
+  # Main branch
+  # --------------------------------------------------------
+  # Validate changes that reach the production branch.
+  # --------------------------------------------------------
+  push:
+    branches:
+      - main
+
+  # --------------------------------------------------------
+  # Manual execution
+  # --------------------------------------------------------
+  # Allows the workflow to be run from the GitHub Actions UI.
+  # --------------------------------------------------------
+  workflow_dispatch:
+
+
+# ----------------------------------------------------------
+# Permissions
+# ----------------------------------------------------------
+#
+# The workflow only needs to read repository contents.
+# ----------------------------------------------------------
+
+permissions:
+  contents: read
+
+
+# ----------------------------------------------------------
+# Concurrency
+# ----------------------------------------------------------
+#
+# Cancel an older validation run when a newer commit is
+# pushed to the same pull request.
+# ----------------------------------------------------------
+
+concurrency:
+  group: content-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+
+jobs:
+
+  # ========================================================
+  # Content and Build Validation
+  # ========================================================
+
+  validate:
+    name: Validate Content and Build
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ----------------------------------------------------
+      # Checkout
+      # ----------------------------------------------------
+      #
+      # Retrieve the exact repository revision being tested.
+      # ----------------------------------------------------
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      # ----------------------------------------------------
+      # Node.js
+      # ----------------------------------------------------
+      #
+      # The validator and Astro build run on Node.js.
+      # ----------------------------------------------------
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+
+      # ----------------------------------------------------
+      # Install dependencies
+      # ----------------------------------------------------
+      #
+      # npm ci uses the lockfile and provides a reproducible
+      # dependency installation for CI.
+      # ----------------------------------------------------
+
+      - name: Install dependencies
+        run: npm ci
+
+
+      # ----------------------------------------------------
+      # Content Quality Check
+      # ----------------------------------------------------
+      #
+      # This validates:
+      # - required article metadata
+      # - publication dates
+      # - publishAt timestamps
+      # - publication date consistency
+      # - social images
+      # - internal article links
+      # - duplicate slugs
+      #
+      # Errors return exit code 1 and stop the workflow.
+      # Editorial warnings do not fail the workflow.
+      # ----------------------------------------------------
+
+      - name: Validate content
+        run: npm run content:check
+
+
+      # ----------------------------------------------------
+      # Astro Build
+      # ----------------------------------------------------
+      #
+      # The complete static site is built after content
+      # validation succeeds.
+      #
+      # This catches integration problems that metadata
+      # validation alone cannot detect.
+      # ----------------------------------------------------
+
+      - name: Build site
+        run: npm run build

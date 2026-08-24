@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "content:check": "node scripts/validate-content.mjs",
     "astro": "astro"
   },
   "dependencies": {
