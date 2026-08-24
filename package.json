@@ -10,6 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "content:check": "node scripts/validate-content.mjs",
+    "content:health": "node scripts/content-health.mjs",
     "astro": "astro"
   },
   "dependencies": {
