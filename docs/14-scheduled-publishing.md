@@ -164,6 +164,22 @@ Second checker run after publication
 
 The temporary test article was removed after validation.
 
+## Interaction with the Content Quality workflow
+
+Scheduled publishing and content quality have separate responsibilities.
+
+```text
+scheduled-publishing.yml
+    -> decides whether a deployment is needed
+
+content-quality.yml
+    -> validates repository/content health and performs the Astro build
+```
+
+The scheduled-publishing workflow does not replace the Content Quality workflow. A normal push to `main` is validated by the Content Quality workflow, while the scheduled workflow exists to trigger a rebuild when an already-approved article reaches its `publishAt` time.
+
+Keep these workflows separate when maintaining the system.
+
 ## Operational procedure for publishing an article
 
 For a scheduled article:

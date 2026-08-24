@@ -100,10 +100,14 @@ nothing to commit, working tree clean
 ## Recommended pre-push checks
 
 ```bash
+npm run content:check
+npm run content:health
 npm run build
 git diff --check
 git status
 ```
+
+For normal article/content changes, run `content:check` before the build. Run `content:health` when reviewing publication state, taxonomy, metadata coverage, or technical review status.
 
 For content changes, also inspect the rendered article locally.
 

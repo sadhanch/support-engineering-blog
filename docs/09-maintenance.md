@@ -5,7 +5,8 @@
 Before publishing an article:
 
 ```text
-[ ] Frontmatter validates
+[ ] `npm run content:check` passes
+[ ] `npm run content:health` reviewed when metadata/publication state changed
 [ ] Title is accurate
 [ ] Description is accurate
 [ ] Excerpt is present
@@ -34,6 +35,18 @@ Before publishing an article:
 [ ] Analytics consent checked when analytics code changed
 [ ] git status reviewed
 ```
+
+## Technical review cycle
+
+Run the health report periodically:
+
+```bash
+npm run content:health
+```
+
+Prioritize articles reported as review candidates and record `reviewedDate` only after a real technical accuracy review. The current review threshold is 180 days.
+
+When product behavior, licensing, security, governance, or retirement status changes materially, review the affected article before the 180-day threshold if necessary.
 
 ## Monthly
 
@@ -113,3 +126,28 @@ When changing publication behavior, keep the content filter and the checker alig
 Do not replace the `CLOUDFLARE_DEPLOY_HOOK` secret with a hard-coded URL. Treat the Deploy Hook as a secret.
 
 The daily workflow currently runs at **09:07 Asia/Kolkata**. The manual `workflow_dispatch` trigger should remain enabled because it provides a safe way to validate the automation without waiting for the next scheduled run.
+
+## Content quality and health tooling
+
+Maintained scripts:
+
+```text
+scripts/validate-content.mjs
+scripts/content-health.mjs
+scripts/config/technology-taxonomy.mjs
+```
+
+The GitHub quality workflow is:
+
+```text
+.github/workflows/content-quality.yml
+```
+
+Use these commands for maintenance:
+
+```bash
+npm run content:check
+npm run content:health
+```
+
+`content:check` should remain suitable for CI and should not be turned into a catch-all editorial linter. `content:health` is intentionally advisory.

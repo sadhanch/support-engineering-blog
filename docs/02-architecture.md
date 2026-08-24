@@ -35,7 +35,11 @@ src/
 ├── layouts/             Base document and article layouts
 ├── lib/                 Content, taxonomy, search and relationship logic
 ├── pages/               Astro routes, including /offline/
-├── scripts/             Browser-side behavior, including PWA registration
+├── scripts/             Maintenance tools and browser-side behavior
+│   ├── check-scheduled-publication.mjs
+│   ├── content-health.mjs
+│   ├── validate-content.mjs
+│   └── config/technology-taxonomy.mjs
 ├── templates/           Legacy/reference XML and article template assets
 └── utils/               Small shared utilities
 
@@ -84,6 +88,7 @@ The article schema validates:
 - tags
 - publish date
 - update date
+- optional reviewed date
 - featured state
 - draft state
 - author
@@ -137,6 +142,45 @@ The route:
 - analytics consent
 - global client-side initialization
 - PWA service-worker registration
+
+
+## Content quality and health architecture
+
+The repository separates blocking content validation from read-only maintenance reporting.
+
+```text
+Article source
+    |
+    +--> content.config.ts
+    |       -> schema validity
+    |
+    +--> validate-content.mjs
+    |       -> blocking quality checks
+    |
+    +--> content-health.mjs
+    |       -> publication health
+    |       -> metadata coverage
+    |       -> taxonomy health
+    |       -> technical review health
+    |
+    +--> Astro build
+```
+
+The quality gate is enforced by:
+
+```text
+.github/workflows/content-quality.yml
+```
+
+The workflow runs `npm run content:check` followed by `npm run build`. It does not deploy the site.
+
+The permanent taxonomy source is:
+
+```text
+scripts/config/technology-taxonomy.mjs
+```
+
+The optional internal `reviewedDate` field is validated but is not rendered in the public article interface.
 
 ## Scheduled publishing architecture
 

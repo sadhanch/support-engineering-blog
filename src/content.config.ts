@@ -76,6 +76,20 @@ const articles = defineCollection({
         updatedDate:
             z.date().optional(),
 
+        /**
+         * Optional date on which the article was last technically reviewed.
+         *
+         * This is intentionally separate from updatedDate:
+         *
+         * - updatedDate    = content was changed
+         * - reviewedDate   = technical accuracy was reviewed
+         *
+         * The field is optional so existing articles do not require a
+         * fabricated review date.
+         */
+        reviewedDate:
+            z.date().optional(),
+
         featured:
             z.boolean().default(false),
 

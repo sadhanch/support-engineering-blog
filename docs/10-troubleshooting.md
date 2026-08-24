@@ -268,6 +268,53 @@ Verify
 ```
 
 
+
+## Content Quality check fails
+
+Run:
+
+```bash
+npm run content:check
+```
+
+Read the `ERRORS` section first. A warning does not fail the command.
+
+Common blocking causes include malformed frontmatter, invalid dates, a `publishAt` date earlier than `publishDate`, missing social images, broken internal article links, duplicate slugs, or invalid `reviewedDate`.
+
+## Content Health shows unexpected taxonomy overlap
+
+Run:
+
+```bash
+npm run content:health
+```
+
+If the report identifies a potential technology overlap, inspect the affected article slugs. The canonical taxonomy is defined in:
+
+```text
+scripts/config/technology-taxonomy.mjs
+```
+
+Do not perform broad replacements across the repository. Normalize only the relevant `technology` metadata.
+
+## Content Health shows an article without technical review
+
+This is not a build error. It means the article has no recorded `reviewedDate`. Perform an actual technical review first, then record the review date.
+
+## Content Health shows a review candidate
+
+The current threshold is 180 days since `reviewedDate`. A review candidate is a maintenance signal, not proof that the article is inaccurate. Recheck current Microsoft documentation and update the article or `reviewedDate` as appropriate.
+
+## reviewedDate causes validation to fail
+
+Use a valid date such as:
+
+```yaml
+reviewedDate: 2026-08-24
+```
+
+Free-form values such as `reviewedDate: recently` are invalid and intentionally fail Content Quality.
+
 ## Scheduled publishing troubleshooting
 
 ### Article remains hidden after its publication time

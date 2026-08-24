@@ -28,6 +28,14 @@
  * - Category distribution
  * - Technology distribution
  * - Editorial completeness
+ * - Taxonomy overlap signals
+ * - Low-frequency technology signals
+ * - Technical review health
+ *
+ * Taxonomy findings are advisory only.
+ * Review findings are advisory only.
+ *
+ * The script never changes article metadata automatically.
  *
  * ==========================================================
  */
@@ -35,6 +43,22 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+
+import {
+    TECHNOLOGY_TAXONOMY
+} from "./config/technology-taxonomy.mjs";
+
+
+/* ==========================================================
+   Review policy
+   ----------------------------------------------------------
+   Articles older than this many days since their last
+   recorded technical review are reported as review
+   candidates.
+   ========================================================== */
+
+const REVIEW_INTERVAL_DAYS =
+    180;
 
 
 /* ==========================================================
@@ -44,6 +68,7 @@ import process from "node:process";
 const ROOT_DIRECTORY =
     process.cwd();
 
+
 const ARTICLES_DIRECTORY =
     path.join(
         ROOT_DIRECTORY,
@@ -51,6 +76,101 @@ const ARTICLES_DIRECTORY =
         "content",
         "articles"
     );
+
+
+/* ==========================================================
+   Taxonomy Health
+   ========================================================== */
+
+/**
+ * Identifies technology labels that belong to an explicitly
+ * configured taxonomy group.
+ *
+ * The analysis is advisory only.
+ * No article metadata is modified automatically.
+ */
+function getTechnologyAliasFindings(
+    technologyArticles
+) {
+
+    const findings = [];
+
+
+    for (
+        const [
+            canonical,
+            aliases
+        ] of Object.entries(
+            TECHNOLOGY_TAXONOMY
+        )
+    ) {
+
+        const presentAliases =
+            aliases.filter(
+                (alias) =>
+                    technologyArticles.has(
+                        alias
+                    )
+            );
+
+
+        /*
+         * Only report a potential overlap when more than one
+         * label from the same taxonomy group is currently used.
+         */
+        if (
+            presentAliases.length < 2
+        ) {
+
+            continue;
+
+        }
+
+
+        const affectedArticles =
+            new Set();
+
+
+        for (
+            const alias of
+            presentAliases
+        ) {
+
+            for (
+                const slug of
+                technologyArticles.get(
+                    alias
+                ) ?? []
+            ) {
+
+                affectedArticles.add(
+                    slug
+                );
+
+            }
+
+        }
+
+
+        findings.push({
+
+            canonical,
+
+            labels:
+                presentAliases,
+
+            articles:
+                [...affectedArticles]
+                    .sort()
+
+        });
+
+    }
+
+
+    return findings;
+
+}
 
 
 /* ==========================================================
@@ -71,8 +191,10 @@ function parseDate(
 
     }
 
+
     const date =
         new Date(value);
+
 
     if (
         Number.isNaN(
@@ -84,60 +206,8 @@ function parseDate(
 
     }
 
+
     return date;
-
-}
-
-
-/**
- * Returns the calendar date portion of an ISO-style value.
- *
- * This preserves the date written by the author instead of
- * converting a publishAt timestamp into another timezone.
- */
-function getCalendarDate(
-    value
-) {
-
-    if (!value) {
-
-        return null;
-
-    }
-
-    const match =
-        value.match(
-            /^\d{4}-\d{2}-\d{2}/
-        );
-
-    return match
-        ? match[0]
-        : null;
-
-}
-
-
-/**
- * Determines whether a scheduled publication has reached
- * its publication timestamp.
- */
-function isPublishedBySchedule(
-    publishAt
-) {
-
-    const date =
-        parseDate(
-            publishAt
-        );
-
-    if (!date) {
-
-        return false;
-
-    }
-
-    return date.getTime()
-        <= Date.now();
 
 }
 
@@ -151,8 +221,8 @@ function isPublishedBySchedule(
  * frontmatter reader rather than importing Astro's virtual
  * content modules.
  *
- * Astro remains responsible for full schema validation.
- * This script only needs the metadata required for reporting.
+ * Astro remains responsible for complete schema validation.
+ * This script only reads the metadata required for reporting.
  */
 function parseFrontmatter(
     content
@@ -163,11 +233,13 @@ function parseFrontmatter(
             /^---\r?\n([\s\S]*?)\r?\n---/
         );
 
+
     if (!match) {
 
         return null;
 
     }
+
 
     const frontmatter =
         match[1];
@@ -186,16 +258,19 @@ function parseFrontmatter(
                 "m"
             );
 
+
         const valueMatch =
             frontmatter.match(
                 expression
             );
+
 
         if (!valueMatch) {
 
             return null;
 
         }
+
 
         return (
             valueMatch[1] ??
@@ -208,12 +283,15 @@ function parseFrontmatter(
 
 
     /**
-     * Read a YAML array from a single-line array such as:
+     * Read a simple multiline YAML array such as:
      *
-     * tags:
+     * technology:
      *   - Microsoft 365
+     *   - Microsoft Azure
      *
-     * The multiline form is handled separately below.
+     * This intentionally handles the metadata structure used
+     * by the blog rather than attempting to become a full YAML
+     * parser.
      */
     const readArray = (
         name
@@ -224,10 +302,12 @@ function parseFrontmatter(
                 /\r?\n/
             );
 
+
         const values = [];
 
         let collecting =
             false;
+
 
         for (
             const line of lines
@@ -246,77 +326,128 @@ function parseFrontmatter(
             }
 
 
-            if (
-                collecting
-            ) {
+            if (!collecting) {
 
-                const match =
-                    line.match(
-                        /^\s*-\s*(?:"([^"]*)"|'([^']*)'|(.+))$/
-                    );
+                continue;
+
+            }
 
 
-                if (match) {
+            const match =
+                line.match(
+                    /^\s*-\s*(?:"([^"]*)"|'([^']*)'|(.+))$/
+                );
+
+
+            if (match) {
+
+                const value = (
+                    match[1] ??
+                    match[2] ??
+                    match[3] ??
+                    ""
+                ).trim();
+
+
+                if (value) {
 
                     values.push(
-                        (
-                            match[1] ??
-                            match[2] ??
-                            match[3]
-                        ).trim()
+                        value
                     );
 
-                    continue;
-
                 }
 
+                continue;
 
-                if (
-                    line.trim() !== ""
-                ) {
+            }
 
-                    break;
 
-                }
+            if (
+                line.trim() !== ""
+            ) {
+
+                break;
 
             }
 
         }
+
 
         return values;
 
     };
 
 
-    const technology =
-        readArray(
-            "technology"
-        );
-
-    const tags =
-        readArray(
-            "tags"
-        );
-
-    const summary =
-        readArray(
-            "summary"
-        );
-
-
     /**
-     * Count simple reference entries.
+     * Count references specifically inside the references
+     * block.
      *
-     * The existing schema stores references as objects, so
-     * counting "title:" entries provides a lightweight report
-     * without attempting to fully parse nested YAML.
+     * This avoids accidentally counting the article's own
+     * top-level `title:` field as a reference.
      */
-    const references =
-        (
-            frontmatter.match(
-                /^\s*title:/gm
-            ) ?? []
-        ).length;
+    const readReferenceCount = () => {
+
+        const lines =
+            frontmatter.split(
+                /\r?\n/
+            );
+
+
+        let collecting =
+            false;
+
+        let count =
+            0;
+
+
+        for (
+            const line of lines
+        ) {
+
+            if (
+                /^references:\s*$/.test(line)
+            ) {
+
+                collecting = true;
+
+                continue;
+
+            }
+
+
+            if (!collecting) {
+
+                continue;
+
+            }
+
+
+            if (
+                /^\s+-\s+title:\s*/.test(line)
+            ) {
+
+                count += 1;
+
+                continue;
+
+            }
+
+
+            if (
+                line.trim() !== "" &&
+                !/^\s{2,}/.test(line)
+            ) {
+
+                break;
+
+            }
+
+        }
+
+
+        return count;
+
+    };
 
 
     return {
@@ -327,11 +458,14 @@ function parseFrontmatter(
         category:
             readValue("category"),
 
-        technology,
+        technology:
+            readArray("technology"),
 
-        tags,
+        tags:
+            readArray("tags"),
 
-        summary,
+        summary:
+            readArray("summary"),
 
         publishDate:
             readValue("publishDate"),
@@ -342,6 +476,9 @@ function parseFrontmatter(
         updatedDate:
             readValue("updatedDate"),
 
+        reviewedDate:
+            readValue("reviewedDate"),
+
         draft:
             readValue("draft"),
 
@@ -351,7 +488,87 @@ function parseFrontmatter(
         author:
             readValue("author"),
 
-        references
+        references:
+            readReferenceCount()
+
+    };
+
+}
+
+
+/* ==========================================================
+   Review Health
+   ========================================================== */
+
+/**
+ * Determines whether an article should be considered a
+ * technical review candidate.
+ *
+ * Articles without reviewedDate are intentionally not treated
+ * as stale. They are reported separately as "review date not
+ * recorded" so that we do not invent review history.
+ */
+function getReviewCandidate(
+    metadata,
+    slug,
+    now
+) {
+
+    if (
+        !metadata.reviewedDate
+    ) {
+
+        return null;
+
+    }
+
+
+    const reviewedDate =
+        parseDate(
+            metadata.reviewedDate
+        );
+
+
+    if (!reviewedDate) {
+
+        return null;
+
+    }
+
+
+    const ageInDays =
+        Math.floor(
+            (
+                now.getTime() -
+                reviewedDate.getTime()
+            ) /
+            (
+                1000 *
+                60 *
+                60 *
+                24
+            )
+        );
+
+
+    if (
+        ageInDays <
+        REVIEW_INTERVAL_DAYS
+    ) {
+
+        return null;
+
+    }
+
+
+    return {
+
+        slug,
+
+        reviewedDate:
+            metadata.reviewedDate,
+
+        ageInDays
 
     };
 
@@ -373,6 +590,7 @@ function getArticleFiles() {
         return [];
 
     }
+
 
     return fs
         .readdirSync(
@@ -400,16 +618,147 @@ function increment(
     const normalized =
         key?.trim();
 
+
     if (!normalized) {
 
         return;
 
     }
 
+
     map.set(
         normalized,
         (map.get(normalized) ?? 0) + 1
     );
+
+}
+
+
+/**
+ * Identifies technologies that currently occur only once or
+ * twice in the article collection.
+ *
+ * Low frequency does not mean that the taxonomy is wrong.
+ * It simply highlights labels worth reviewing as the
+ * publication grows.
+ */
+function getLowFrequencyTechnologies(
+    technologies
+) {
+
+    return [
+        ...technologies.entries()
+    ]
+
+        .filter(
+            (
+                [
+                    ,
+                    count
+                ]
+            ) =>
+                count <= 2
+        )
+
+        .sort(
+            (a, b) =>
+                a[1] - b[1] ||
+                a[0].localeCompare(
+                    b[0]
+                )
+        );
+
+}
+
+
+/* ==========================================================
+   Report helpers
+   ========================================================== */
+
+/**
+ * Returns a percentage for a coverage metric.
+ */
+function formatPercentage(
+    value,
+    total
+) {
+
+    if (!total) {
+
+        return "0%";
+
+    }
+
+
+    return `${Math.round(
+        (value / total) * 100
+    )}%`;
+
+}
+
+
+/**
+ * Prints a sorted distribution map.
+ *
+ * Highest-count values appear first.
+ * Equal-count values are alphabetized.
+ */
+function printDistribution(
+    title,
+    map
+) {
+
+    console.log(
+        ""
+    );
+
+
+    console.log(
+        title
+    );
+
+
+    console.log(
+        "────────────────────────────"
+    );
+
+
+    const entries =
+        [...map.entries()]
+            .sort(
+                (a, b) =>
+                    b[1] - a[1] ||
+                    a[0].localeCompare(
+                        b[0]
+                    )
+            );
+
+
+    if (
+        !entries.length
+    ) {
+
+        console.log(
+            "None"
+        );
+
+        return;
+
+    }
+
+
+    for (
+        const [
+            name,
+            count
+        ] of entries
+    ) {
+
+        console.log(
+            `${String(count).padStart(2, " ")}  ${name}`
+        );
+
+    }
 
 }
 
@@ -422,6 +771,7 @@ function main() {
 
     const files =
         getArticleFiles();
+
 
     const now =
         new Date();
@@ -463,6 +813,9 @@ function main() {
     let updatedDateCount =
         0;
 
+    let reviewedDateCount =
+        0;
+
 
     /* --------------------------------------------------------
        Editorial signal collections
@@ -474,6 +827,10 @@ function main() {
 
     const missingUpdatedDate = [];
 
+    const missingReviewedDate = [];
+
+    const reviewCandidates = [];
+
 
     /* --------------------------------------------------------
        Distribution maps
@@ -482,7 +839,20 @@ function main() {
     const categories =
         new Map();
 
+
     const technologies =
+        new Map();
+
+
+    /* --------------------------------------------------------
+       Technology article index
+       --------------------------------------------------------
+       Stores the article slugs using each technology so the
+       taxonomy report can show exactly which articles are
+       affected by a potential overlap.
+       -------------------------------------------------------- */
+
+    const technologyArticles =
         new Map();
 
 
@@ -500,11 +870,13 @@ function main() {
                 file
             );
 
+
         const content =
             fs.readFileSync(
                 filePath,
                 "utf8"
             );
+
 
         const metadata =
             parseFrontmatter(
@@ -519,11 +891,42 @@ function main() {
         }
 
 
+        /*
+         * Derive the article slug before any review-health
+         * processing so that every report entry has a valid
+         * article identifier.
+         */
         const slug =
             file.replace(
                 /\.(md|mdx)$/,
                 ""
             );
+
+
+        /* ----------------------------------------------------
+           Review Health
+           ----------------------------------------------------
+           Review candidates are calculated only after the
+           article metadata and slug are available.
+           ---------------------------------------------------- */
+
+        const reviewCandidate =
+            getReviewCandidate(
+                metadata,
+                slug,
+                now
+            );
+
+
+        if (
+            reviewCandidate
+        ) {
+
+            reviewCandidates.push(
+                reviewCandidate
+            );
+
+        }
 
 
         /* ----------------------------------------------------
@@ -642,8 +1045,23 @@ function main() {
         }
 
 
+        if (
+            metadata.reviewedDate
+        ) {
+
+            reviewedDateCount += 1;
+
+        } else {
+
+            missingReviewedDate.push(
+                slug
+            );
+
+        }
+
+
         /* ----------------------------------------------------
-           Distribution
+           Category distribution
            ---------------------------------------------------- */
 
         increment(
@@ -652,8 +1070,13 @@ function main() {
         );
 
 
+        /* ----------------------------------------------------
+           Technology distribution and article index
+           ---------------------------------------------------- */
+
         for (
-            const item of metadata.technology
+            const item of
+            metadata.technology
         ) {
 
             increment(
@@ -661,86 +1084,55 @@ function main() {
                 item
             );
 
+
+            const normalizedTechnology =
+                item.trim();
+
+
+            if (
+                !technologyArticles.has(
+                    normalizedTechnology
+                )
+            ) {
+
+                technologyArticles.set(
+                    normalizedTechnology,
+                    []
+                );
+
+            }
+
+
+            technologyArticles
+                .get(
+                    normalizedTechnology
+                )
+                .push(
+                    slug
+                );
+
         }
 
     }
 
 
     /* ========================================================
-       Report helpers
+       Taxonomy analysis
+       --------------------------------------------------------
+       These calculations happen only after every article has
+       been processed and the technology maps are complete.
        ======================================================== */
 
-    const percentage =
-        (value) => {
-
-            if (!files.length) {
-
-                return "0%";
-
-            }
-
-            return `${Math.round(
-                (value / files.length) * 100
-            )}%`;
-
-        };
+    const taxonomyAliasFindings =
+        getTechnologyAliasFindings(
+            technologyArticles
+        );
 
 
-    const printDistribution =
-        (
-            title,
-            map
-        ) => {
-
-            console.log(
-                ""
-            );
-
-            console.log(
-                title
-            );
-
-            console.log(
-                "────────────────────────────"
-            );
-
-
-            const entries =
-                [...map.entries()]
-                    .sort(
-                        (a, b) =>
-                            b[1] - a[1] ||
-                            a[0].localeCompare(
-                                b[0]
-                            )
-                    );
-
-
-            if (!entries.length) {
-
-                console.log(
-                    "None"
-                );
-
-                return;
-
-            }
-
-
-            for (
-                const [
-                    name,
-                    count
-                ] of entries
-            ) {
-
-                console.log(
-                    `${String(count).padStart(2, " ")}  ${name}`
-                );
-
-            }
-
-        };
+    const lowFrequencyTechnologies =
+        getLowFrequencyTechnologies(
+            technologies
+        );
 
 
     /* ========================================================
@@ -751,13 +1143,16 @@ function main() {
         ""
     );
 
+
     console.log(
         "Support Engineering Blog"
     );
 
+
     console.log(
         "Content Health Report"
     );
+
 
     console.log(
         "════════════════════════════"
@@ -772,25 +1167,31 @@ function main() {
         ""
     );
 
+
     console.log(
         "PUBLICATION"
     );
+
 
     console.log(
         "────────────────────────────"
     );
 
+
     console.log(
         `Total articles       ${files.length}`
     );
+
 
     console.log(
         `Published            ${publishedCount}`
     );
 
+
     console.log(
         `Scheduled            ${scheduledCount}`
     );
+
 
     console.log(
         `Draft                ${draftCount}`
@@ -805,36 +1206,70 @@ function main() {
         ""
     );
 
+
     console.log(
         "METADATA COVERAGE"
     );
+
 
     console.log(
         "────────────────────────────"
     );
 
-    console.log(
-        `Social images        ${socialImageCount}/${files.length} (${percentage(socialImageCount)})`
-    );
 
     console.log(
-        `References           ${referencesCount}/${files.length} (${percentage(referencesCount)})`
+        `Social images        ${socialImageCount}/${files.length} (${formatPercentage(
+            socialImageCount,
+            files.length
+        )})`
     );
 
-    console.log(
-        `Technology metadata  ${technologyCount}/${files.length} (${percentage(technologyCount)})`
-    );
 
     console.log(
-        `Tags                 ${tagsCount}/${files.length} (${percentage(tagsCount)})`
+        `References           ${referencesCount}/${files.length} (${formatPercentage(
+            referencesCount,
+            files.length
+        )})`
     );
 
-    console.log(
-        `Summary              ${summaryCount}/${files.length} (${percentage(summaryCount)})`
-    );
 
     console.log(
-        `Updated date         ${updatedDateCount}/${files.length} (${percentage(updatedDateCount)})`
+        `Technology metadata  ${technologyCount}/${files.length} (${formatPercentage(
+            technologyCount,
+            files.length
+        )})`
+    );
+
+
+    console.log(
+        `Tags                 ${tagsCount}/${files.length} (${formatPercentage(
+            tagsCount,
+            files.length
+        )})`
+    );
+
+
+    console.log(
+        `Summary              ${summaryCount}/${files.length} (${formatPercentage(
+            summaryCount,
+            files.length
+        )})`
+    );
+
+
+    console.log(
+        `Updated date         ${updatedDateCount}/${files.length} (${formatPercentage(
+            updatedDateCount,
+            files.length
+        )})`
+    );
+
+
+    console.log(
+        `Reviewed date        ${reviewedDateCount}/${files.length} (${formatPercentage(
+            reviewedDateCount,
+            files.length
+        )})`
     );
 
 
@@ -846,25 +1281,149 @@ function main() {
         ""
     );
 
+
     console.log(
         "EDITORIAL SIGNALS"
     );
+
 
     console.log(
         "────────────────────────────"
     );
 
+
     console.log(
         `Without references   ${missingReferences.length}`
     );
+
 
     console.log(
         `Without summary      ${missingSummary.length}`
     );
 
+
     console.log(
         `Without updatedDate  ${missingUpdatedDate.length}`
     );
+
+
+    console.log(
+        `Without reviewedDate ${missingReviewedDate.length}`
+    );
+
+
+    /* ========================================================
+       Review Health
+       ======================================================== */
+
+    console.log(
+        ""
+    );
+
+
+    console.log(
+        "REVIEW HEALTH"
+    );
+
+
+    console.log(
+        "────────────────────────────"
+    );
+
+
+    console.log(
+        `Review interval      ${REVIEW_INTERVAL_DAYS} days`
+    );
+
+
+    console.log(
+        `Review dates recorded ${reviewedDateCount}/${files.length} (${formatPercentage(
+            reviewedDateCount,
+            files.length
+        )})`
+    );
+
+
+    console.log(
+        `Review candidates    ${reviewCandidates.length}`
+    );
+
+
+    /* --------------------------------------------------------
+       Articles due for technical review
+       -------------------------------------------------------- */
+
+    if (
+        reviewCandidates.length
+    ) {
+
+        console.log(
+            ""
+        );
+
+
+        console.log(
+            "ARTICLES DUE FOR TECHNICAL REVIEW"
+        );
+
+
+        console.log(
+            "────────────────────────────"
+        );
+
+
+        reviewCandidates
+            .sort(
+                (a, b) =>
+                    b.ageInDays -
+                    a.ageInDays
+            )
+            .forEach(
+                (
+                    candidate
+                ) => {
+
+                    console.log(
+                        `- ${candidate.slug} (${candidate.ageInDays} days since review)`
+                    );
+
+                }
+            );
+
+    }
+
+
+    /* --------------------------------------------------------
+       Articles without recorded technical review
+       -------------------------------------------------------- */
+
+    if (
+        missingReviewedDate.length
+    ) {
+
+        console.log(
+            ""
+        );
+
+
+        console.log(
+            "ARTICLES WITHOUT A RECORDED TECHNICAL REVIEW"
+        );
+
+
+        console.log(
+            "────────────────────────────"
+        );
+
+
+        missingReviewedDate.forEach(
+            (slug) =>
+                console.log(
+                    `- ${slug}`
+                )
+        );
+
+    }
 
 
     /* ========================================================
@@ -876,10 +1435,204 @@ function main() {
         categories
     );
 
+
     printDistribution(
         "TECHNOLOGIES",
         technologies
     );
+
+
+    /* ========================================================
+       Taxonomy Health
+       ======================================================== */
+
+    console.log(
+        ""
+    );
+
+
+    console.log(
+        "TAXONOMY HEALTH"
+    );
+
+
+    console.log(
+        "────────────────────────────"
+    );
+
+
+    /* --------------------------------------------------------
+       Potential technology overlaps
+       -------------------------------------------------------- */
+
+    console.log(
+        ""
+    );
+
+
+    console.log(
+        "POTENTIAL TECHNOLOGY OVERLAPS"
+    );
+
+
+    console.log(
+        "────────────────────────────"
+    );
+
+
+    if (
+        !taxonomyAliasFindings.length
+    ) {
+
+        console.log(
+            "None detected."
+        );
+
+    } else {
+
+        for (
+            const finding of
+            taxonomyAliasFindings
+        ) {
+
+            console.log(
+                `⚠ ${finding.canonical}`
+            );
+
+
+            console.log(
+                `  Labels: ${finding.labels.join(" ↔ ")}`
+            );
+
+
+            console.log(
+                `  Articles affected: ${finding.articles.length}`
+            );
+
+        }
+
+    }
+
+
+    /* --------------------------------------------------------
+       Low-frequency technologies
+       -------------------------------------------------------- */
+
+    console.log(
+        ""
+    );
+
+
+    console.log(
+        "LOW-FREQUENCY TECHNOLOGIES"
+    );
+
+
+    console.log(
+        "────────────────────────────"
+    );
+
+
+    if (
+        !lowFrequencyTechnologies.length
+    ) {
+
+        console.log(
+            "None detected."
+        );
+
+    } else {
+
+        for (
+            const [
+                technology,
+                count
+            ] of lowFrequencyTechnologies
+        ) {
+
+            console.log(
+                `- ${technology} (${count} article${
+                    count === 1
+                        ? ""
+                        : "s"
+                })`
+            );
+
+        }
+
+    }
+
+
+    /* --------------------------------------------------------
+       Taxonomy review candidates
+       -------------------------------------------------------- */
+
+    if (
+        taxonomyAliasFindings.length
+    ) {
+
+        console.log(
+            ""
+        );
+
+
+        console.log(
+            "TAXONOMY REVIEW CANDIDATES"
+        );
+
+
+        console.log(
+            "────────────────────────────"
+        );
+
+
+        for (
+            const finding of
+            taxonomyAliasFindings
+        ) {
+
+            console.log(
+                ""
+            );
+
+
+            console.log(
+                `${finding.canonical}:`
+            );
+
+
+            for (
+                const alias of
+                finding.labels
+            ) {
+
+                const articles =
+                    technologyArticles.get(
+                        alias
+                    ) ?? [];
+
+
+                console.log(
+                    `  ${alias}`
+                );
+
+
+                for (
+                    const slug of
+                    articles
+                ) {
+
+                    console.log(
+                        `    - ${slug}`
+                    );
+
+                }
+
+            }
+
+        }
+
+    }
 
 
     /* ========================================================
@@ -894,13 +1647,16 @@ function main() {
             ""
         );
 
+
         console.log(
             "ARTICLES WITHOUT REFERENCES"
         );
 
+
         console.log(
             "────────────────────────────"
         );
+
 
         missingReferences.forEach(
             (slug) =>
@@ -920,13 +1676,16 @@ function main() {
             ""
         );
 
+
         console.log(
             "ARTICLES WITHOUT SUMMARY"
         );
 
+
         console.log(
             "────────────────────────────"
         );
+
 
         missingSummary.forEach(
             (slug) =>
@@ -946,13 +1705,16 @@ function main() {
             ""
         );
 
+
         console.log(
             "ARTICLES WITHOUT UPDATED DATE"
         );
 
+
         console.log(
             "────────────────────────────"
         );
+
 
         missingUpdatedDate.forEach(
             (slug) =>
@@ -972,21 +1734,26 @@ function main() {
         ""
     );
 
+
     console.log(
         "REPORT COMPLETE"
     );
+
 
     console.log(
         "────────────────────────────"
     );
 
+
     console.log(
         `Generated: ${now.toISOString()}`
     );
 
+
     console.log(
         ""
     );
+
 
     process.exitCode =
         0;

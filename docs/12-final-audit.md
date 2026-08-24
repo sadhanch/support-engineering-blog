@@ -26,6 +26,11 @@ The repository contains:
 - PWA service worker
 - branded offline fallback
 - installed-app shortcuts
+- scheduled publishing automation
+- content quality validation
+- content health reporting
+- shared technology taxonomy configuration
+- technical review tracking
 - Cloudflare/GitHub deployment-compatible configuration
 
 ## Important implementation relationships
@@ -113,6 +118,29 @@ The PWA has been validated for:
 - installed-app shortcuts
 
 The PWA deliberately remains lightweight. Native share, push notifications, background sync, and full-site precaching are not part of the current implementation.
+
+
+## Content quality and health audit
+
+The current maintenance tooling has been validated against the repository content set. The Content Quality validator checks the article collection and is enforced by GitHub Actions through `.github/workflows/content-quality.yml`.
+
+The repository currently reports:
+
+```text
+27 article source files
+0 blocking content errors
+1 non-blocking editorial warning
+```
+
+The current warning concerns the description length of `project-online-is-retiring.mdx`. It is intentionally non-blocking.
+
+The most recent verified production build generated **82 pages** and completed successfully. The Content Health report currently covers 27 article source files, with 23 published, 4 scheduled, and 0 drafts.
+
+Content Health reports the current publication and metadata state and also provides Taxonomy Health and Review Health sections.
+
+The technology taxonomy was normalized to canonical labels, and the health report currently reports no potential technology overlaps.
+
+The optional `reviewedDate` field has been validated with one real article review entry. Invalid review dates correctly fail Content Quality. The field remains internal editorial metadata and is not rendered on public article pages.
 
 ## Build and bundle awareness
 
@@ -239,6 +267,11 @@ The project is structured as a static publication with:
 - consent-controlled analytics
 - SEO metadata and structured data
 - a lightweight installable/offline PWA layer
+- scheduled publication automation
+- automated content quality gates
+- read-only content health reporting
+- maintained technology taxonomy
+- technical review tracking
 - Cloudflare Pages deployment
 
 The next changes should be driven by a concrete publishing, maintenance, accessibility, SEO, performance, or product requirement rather than continued structural experimentation.

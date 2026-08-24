@@ -47,6 +47,8 @@ publishDate: 2026-07-31
 
 updatedDate: 2026-07-31
 
+reviewedDate: 2026-08-24
+
 featured: true
 
 draft: false
@@ -98,6 +100,10 @@ Required publication date.
 
 Optional last-update date.
 
+### `reviewedDate`
+
+Optional internal date recording when the article was last technically reviewed. It is used by Content Health and is not currently rendered on public article pages. Do not invent historical review dates.
+
 ### `featured`
 
 Controls featured article selection.
@@ -119,6 +125,44 @@ References require:
 - description
 
 The schema validates URLs using Zod.
+
+
+## Content quality commands
+
+Before committing content changes, run:
+
+```bash
+npm run content:check
+npm run content:health
+npm run build
+```
+
+`content:check` is the blocking quality gate. `content:health` is a read-only maintenance report. See [Content Quality, Health, Taxonomy, and Review](15-content-quality-and-health.md).
+
+## Technology taxonomy
+
+Use the canonical technology labels defined in `scripts/config/technology-taxonomy.mjs`. The current canonical forms are:
+
+```text
+Microsoft Power Automate
+Microsoft Power Platform
+Microsoft Power BI
+Microsoft Azure
+```
+
+Do not use the historical aliases `Power Automate`, `Power Platform`, `Power BI`, or `Azure` in the article `technology` field. These terms may still appear naturally in prose and tags.
+
+## Technical review tracking
+
+When an article has actually undergone a technical accuracy review, record the review date with:
+
+```yaml
+reviewedDate: 2026-08-24
+```
+
+This is different from `updatedDate`. A review does not require a content edit. The current maintenance threshold is 180 days, but a review should also be triggered earlier by major product, licensing, security, governance, or retirement changes.
+
+Do not add a `reviewedDate` merely to remove an item from the health report. It should represent a real review.
 
 ## Related articles
 

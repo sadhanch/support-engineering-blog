@@ -21,6 +21,7 @@ The Support Engineering Blog (SEB) is a static technical publication built with 
 - [Final Repository Audit](docs/12-final-audit.md)
 - [Progressive Web App](docs/13-progressive-web-app.md)
 - [Scheduled Publishing](docs/14-scheduled-publishing.md)
+- [Content Quality, Health, Taxonomy, and Review](docs/15-content-quality-and-health.md)
 
 ## Technology
 
@@ -43,6 +44,8 @@ npm install
 npm run dev
 npm run build
 npm run preview
+npm run content:check
+npm run content:health
 ```
 
 `npm run build` produces the static production output in `dist/`.
@@ -63,7 +66,11 @@ src/content.config.ts
 
 Both `.md` and `.mdx` files are supported.
 
-Scheduled articles can use the optional `publishAt` frontmatter field. Existing articles do not need this field. See [Scheduled Publishing](docs/14-scheduled-publishing.md).
+Scheduled articles can use the optional `publishAt` frontmatter field. Existing articles do not need this field. Articles can also record an optional internal `reviewedDate` for technical review tracking. See [Scheduled Publishing](docs/14-scheduled-publishing.md) and [Content Quality, Health, Taxonomy, and Review](docs/15-content-quality-and-health.md).
+
+## Maintenance documentation
+
+The current maintenance package documents PWA behavior, scheduled publishing, content quality gates, content health reporting, technology taxonomy, and technical review tracking. Start with [Maintenance](docs/09-maintenance.md) and [Content Quality, Health, Taxonomy, and Review](docs/15-content-quality-and-health.md).
 
 ## Production notes
 

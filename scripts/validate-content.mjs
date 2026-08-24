@@ -138,6 +138,12 @@ function parseFrontmatter(
         publishDate:
             readValue("publishDate"),
 
+        updatedDate:
+            readValue("updatedDate"),
+
+        reviewedDate:
+            readValue("reviewedDate"),
+
         publishAt:
             readValue("publishAt"),
 
@@ -362,6 +368,20 @@ function validatePublicationMetadata(
         addError(
             file,
             `publishAt must include an explicit timezone offset or Z: "${metadata.publishAt}".`
+        );
+
+    }
+
+    if (
+        metadata.reviewedDate &&
+        !isValidDate(
+            metadata.reviewedDate
+        )
+    ) {
+
+        addError(
+            file,
+            `reviewedDate is not a valid date: "${metadata.reviewedDate}".`
         );
 
     }

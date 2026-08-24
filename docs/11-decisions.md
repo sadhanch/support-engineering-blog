@@ -31,6 +31,10 @@ This document records important decisions made during the project so that future
 | PWA full precache | Avoided | The publication is frequently updated and contains a growing article/image library |
 | Production branch | `main` | Simple single-production-branch workflow |
 | Domain | `blog.sadhan.ch` | Dedicated publication subdomain |
+| Content validation | Dedicated read-only Node validator + CI workflow | Catch structural/publication/content errors before production without mixing editorial reporting into CI |
+| Content health | Read-only health report | Surface publication, metadata, taxonomy, and review signals without blocking on subjective editorial conditions |
+| Technology taxonomy | Shared canonical configuration | Prevent drift between reporting and article metadata normalization |
+| Technical review | Optional internal `reviewedDate` | Distinguish technical review from content modification and publication dates without changing public UI |
 
 ## Editorial decisions
 
@@ -66,6 +70,43 @@ The project does not currently require:
 
 Adding infrastructure should require a concrete requirement rather than being done preemptively.
 
+
+
+## Decision: content quality and health are separate concerns
+
+The repository uses two commands:
+
+```text
+npm run content:check
+npm run content:health
+```
+
+`content:check` is deterministic and blocking. `content:health` is observational and advisory. This prevents subjective editorial signals such as missing review history or low-frequency taxonomy labels from failing production builds.
+
+## Decision: technology taxonomy uses a shared source of truth
+
+Canonical technology labels and recognized aliases are stored in:
+
+```text
+scripts/config/technology-taxonomy.mjs
+```
+
+The initial normalized labels are:
+
+```text
+Microsoft Power Automate
+Microsoft Power Platform
+Microsoft Power BI
+Microsoft Azure
+```
+
+A one-time normalization was performed on article frontmatter, and the migration utility was removed after verification. Future taxonomy changes should be deliberate and reviewable rather than broad string replacements.
+
+## Decision: technical review is separate from updatedDate
+
+`updatedDate` records a content change. `reviewedDate` records a technical accuracy review. The latter is optional, internal, and not rendered publicly.
+
+The current health threshold is 180 days, while significant product, licensing, security, governance, or retirement changes can justify earlier review.
 
 ## Decision: scheduled publishing without a CMS
 
