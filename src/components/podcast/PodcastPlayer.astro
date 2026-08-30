@@ -1,0 +1,276 @@
+---
+/**
+ * ==========================================================
+ * Support Engineering Weekly — Podcast Player
+ * ==========================================================
+ *
+ * Purpose:
+ * Provides the reusable audio-player shell for podcast
+ * episodes. Playback is handled client-side by
+ * podcast-player.ts.
+ * ==========================================================
+ */
+
+interface Chapter {
+
+    start: number;
+
+    title: string;
+
+}
+
+
+interface Props {
+
+    audioUrl: string;
+
+    audioMimeType: string;
+
+    duration: number;
+
+    chapters?: Chapter[];
+
+}
+
+const {
+
+    audioUrl,
+
+    audioMimeType,
+
+    duration,
+
+    chapters = []
+
+} = Astro.props;
+
+
+const formatTime = (
+    seconds: number
+) => {
+
+    const safeSeconds =
+        Math.max(
+            0,
+            Math.floor(seconds)
+        );
+
+    const minutes =
+        Math.floor(
+            safeSeconds / 60
+        );
+
+    const remainingSeconds =
+        safeSeconds % 60;
+
+    return `${String(minutes).padStart(2, "0")}:${String(
+        remainingSeconds
+    ).padStart(2, "0")}`;
+
+};
+---
+
+<div
+    class="podcast-player"
+    data-podcast-player
+>
+
+    <audio
+        class="podcast-player__audio"
+        preload="metadata"
+    >
+
+        <source
+            src={audioUrl}
+            type={audioMimeType}
+        />
+
+        Your browser does not support
+        the audio element.
+
+    </audio>
+
+
+    <div class="podcast-player__main">
+
+        <button
+            type="button"
+            class="podcast-player__play"
+            data-action="play"
+            aria-label="Play episode"
+        >
+
+            <span
+                data-play-icon
+                aria-hidden="true"
+            >
+                ▶
+            </span>
+
+            <span
+                data-pause-icon
+                aria-hidden="true"
+                hidden
+            >
+                ❚❚
+            </span>
+
+        </button>
+
+
+        <div class="podcast-player__timeline">
+
+            <div class="podcast-player__times">
+
+                <span data-current-time>
+                    00:00
+                </span>
+
+                <span>
+                    {formatTime(duration)}
+                </span>
+
+            </div>
+
+
+            <input
+                class="podcast-player__seek"
+                type="range"
+                min="0"
+                max={duration}
+                value="0"
+                step="1"
+                data-action="seek"
+                aria-label="Seek through episode"
+            />
+
+        </div>
+
+    </div>
+
+
+    <div class="podcast-player__controls">
+
+        <button
+            type="button"
+            class="podcast-player__control"
+            data-action="backward"
+            aria-label="Skip backward 10 seconds"
+        >
+
+            −10
+
+        </button>
+
+
+        <button
+            type="button"
+            class="podcast-player__control"
+            data-action="forward"
+            aria-label="Skip forward 30 seconds"
+        >
+
+            +30
+
+        </button>
+
+
+        <label class="podcast-player__speed">
+
+            <span class="podcast-player__control-label">
+                Speed
+            </span>
+
+            <select
+                data-action="speed"
+                aria-label="Playback speed"
+            >
+
+                <option value="0.75">
+                    0.75×
+                </option>
+
+                <option value="1" selected>
+                    1×
+                </option>
+
+                <option value="1.25">
+                    1.25×
+                </option>
+
+                <option value="1.5">
+                    1.5×
+                </option>
+
+                <option value="2">
+                    2×
+                </option>
+
+            </select>
+
+        </label>
+
+    </div>
+
+
+    {
+
+        chapters.length > 0 && (
+
+            <div class="podcast-player__chapter">
+
+                <span class="podcast-player__chapter-label">
+                    Chapter
+                </span>
+
+                <span data-current-chapter>
+                    {chapters[0].title}
+                </span>
+
+            </div>
+
+        )
+
+    }
+
+
+    <ol
+        class="podcast-player__chapters"
+        data-chapters
+    >
+
+        {
+
+            chapters.map(
+                (chapter, index) => (
+
+                    <li>
+
+                        <button
+                            type="button"
+                            data-chapter-start={chapter.start}
+                            class:list={{
+                                "is-active": index === 0
+                            }}
+                        >
+
+                            <span>
+                                {formatTime(chapter.start)}
+                            </span>
+
+                            <strong>
+                                {chapter.title}
+                            </strong>
+
+                        </button>
+
+                    </li>
+
+                )
+            )
+
+        }
+
+    </ol>
+
+</div>

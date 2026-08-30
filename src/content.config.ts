@@ -129,39 +129,27 @@ const podcast = defineCollection({
 
     schema: z.object({
 
-        /**
-         * Sequential episode number.
-         *
-         * Stored as an integer so the presentation layer can
-         * format it as Episode 001, Episode 002, etc.
-         */
         episodeNumber:
             z.number().int().positive(),
 
-        /**
-         * Optional season number.
-         *
-         * Seasons are supported by the content model but are
-         * not required to be exposed in the initial UI.
-         */
         season:
             z.number().int().positive().optional(),
 
+        guid:
+            z.string(),
+
         title:
             z.string(),
+
+        artwork:
+            z.string().url().optional(),
 
         description:
             z.string(),
 
         publishDate:
-            z.date(),
+            z.coerce.date(),
 
-        /**
-         * Publicly accessible production audio.
-         *
-         * The actual archival master is intentionally NOT stored
-         * in the website repository.
-         */
         audio: z.object({
 
             url:
@@ -175,43 +163,39 @@ const podcast = defineCollection({
 
         }),
 
-        /**
-         * Optional relationship to an existing Support Engineering
-         * Blog article.
-         *
-         * This should contain the article content ID/slug.
-         */
-        relatedArticle:
-            z.string().optional(),
-
-        /**
-         * Optional technical resources associated with the episode.
-         */
-        resources: z.array(
+        chapters: z.array(
 
             z.object({
 
-                title:
-                    z.string(),
+                start:
+                    z.number().int().nonnegative(),
 
-                url:
-                    z.string().url()
+                title:
+                    z.string()
 
             })
 
         ).default([]),
 
         /**
-         * Optional human-readable transcript resource.
+         * Optional references to Support Engineering Blog articles
+         * associated with this podcast episode.
+         *
+         * An episode may reference zero, one, or multiple articles.
          */
-        transcript:
-            z.string().optional(),
+        relatedArticles:
+            z.array(
+                z.string()
+            ).default([]),
 
-        /**
-         * Optional timed-caption resource in WebVTT format.
-         */
+        transcript:
+            z.string().url().optional(),
+
         captions:
-            z.string().optional()
+            z.string().url().optional(),
+
+        transcriptFile:
+            z.string().optional(),
 
     })
 

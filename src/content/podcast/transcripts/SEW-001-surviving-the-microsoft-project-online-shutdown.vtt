@@ -1,0 +1,2476 @@
+WEBVTT
+
+NOTE Support Engineering Weekly — Episode 001
+NOTE Timeline normalized to the uploaded audio duration.
+
+1
+00:00:00.000 --> 00:00:10.040
+Announcer: This is Support Engineering Weekly from the Support Engineering Blog, technical conversations for engineers who
+
+2
+00:00:10.040 --> 00:00:14.057
+Announcer: troubleshoot, support, and operate Microsoft technologies.
+
+3
+00:00:14.057 --> 00:00:21.345
+Speaker 1: So, on September 30th, 2026, a whole decade of enterprise project data, custom workflows, and
+
+4
+00:00:21.345 --> 00:00:27.176
+Speaker 1: literally multi-million-dollar IT investments are going to effectively hit a brick wall.
+
+5
+00:00:27.176 --> 00:00:29.050
+Speaker 2: Yeah, a massive, unyielding brick wall.
+
+6
+00:00:29.050 --> 00:00:33.829
+Speaker 1: Right. Because Microsoft is officially pulling the plug on Project Online, and, you know, the
+
+7
+00:00:33.829 --> 00:00:38.609
+Speaker 1: most dangerous part of this entire transition we're looking at, most IT directors and enterprise
+
+8
+00:00:38.609 --> 00:00:43.388
+Speaker 1: architects currently think they can just, like, click an upgrade button to migrate their entire
+
+9
+00:00:43.388 --> 00:00:44.981
+Speaker 1: organization to the new system.
+
+10
+00:00:44.981 --> 00:00:50.604
+Speaker 2: Which is terrifying, honestly. Because they can't. I mean, that button simply does not exist.
+
+11
+00:00:50.604 --> 00:00:51.004
+Speaker 1: It does not exist at all.
+
+12
+00:01:01.380 --> 00:01:04.267
+Speaker 2: No, it is a really harsh awakening for a lot of these organizations. We are
+
+13
+00:01:04.267 --> 00:01:07.153
+Speaker 2: looking at a scenario where companies are going to try and map these legacy, deeply
+
+14
+00:01:07.153 --> 00:01:10.040
+Speaker 2: customized architectures onto a completely new cloud-native paradigm. And when those systems inevitably reject the
+
+15
+00:01:10.040 --> 00:01:12.157
+Speaker 2: transplant—and they will—the operational disruption is just going to be massive.
+
+16
+00:01:12.157 --> 00:01:17.196
+Speaker 1: Which is exactly why we are unpacking this today. If you are managing complex enterprise
+
+17
+00:01:17.196 --> 00:01:22.235
+Speaker 1: portfolios right now, or, you know, if you're the architect responsible for keeping the lights
+
+18
+00:01:22.235 --> 00:01:27.274
+Speaker 1: on when a major vendor forces a platform shift, you are staring down a transition
+
+19
+00:01:27.274 --> 00:01:29.962
+Speaker 1: landscape that is completely reshaping how organizations operate.
+
+20
+00:01:29.962 --> 00:01:30.899
+Speaker 2: Absolutely.
+
+21
+00:01:30.899 --> 00:01:35.467
+Speaker 1: So, we've gone through a massive stack of source material for this deep dive today,
+
+22
+00:01:35.467 --> 00:01:40.036
+Speaker 1: anchored pretty heavily by a really comprehensive engineering breakdown by Sadhan Chandra. And our mission
+
+23
+00:01:40.036 --> 00:01:43.081
+Speaker 1: here is to decode the actual mechanics of this retirement.
+
+24
+00:01:43.081 --> 00:01:44.955
+Speaker 2: Because there's a lot of noise out there right now.
+
+25
+00:01:44.955 --> 00:01:49.205
+Speaker 1: So much noise. We need to look at the immediate deadlines, some of which are
+
+26
+00:01:49.205 --> 00:01:53.455
+Speaker 1: going to hit way before 2026. And we have to dismantle this really pervasive myth
+
+27
+00:01:53.455 --> 00:01:57.138
+Speaker 1: that Planner Premium is just, you know, a reskinned version of Project Online.
+
+28
+00:01:57.138 --> 00:01:59.012
+Speaker 2: Right, the UI trap.
+
+29
+00:01:59.012 --> 00:02:03.951
+Speaker 1: Exactly. We have to open up the hood on Microsoft Dataverse to understand why legacy
+
+30
+00:02:03.951 --> 00:02:08.890
+Speaker 1: workflows are breaking, and then map out the three very specific, very different transition paths
+
+31
+00:02:08.890 --> 00:02:11.194
+Speaker 1: Microsoft has actually engineered for survival here.
+
+32
+00:02:11.194 --> 00:02:14.438
+Speaker 2: This isn't an optional software update where you can just, you know, cling to the
+
+33
+00:02:14.438 --> 00:02:16.817
+Speaker 2: old version for another five years while you figure it out.
+
+34
+00:02:16.817 --> 00:02:17.754
+Speaker 1: Oh, right. They are cutting the cord.
+
+35
+00:02:17.754 --> 00:02:23.673
+Speaker 2: They really are. Microsoft is fundamentally altering the underlying philosophy of work management. They're moving
+
+36
+00:02:23.673 --> 00:02:29.591
+Speaker 2: away from isolated, static project data and moving toward this integrated, AI-ready ecosystem. But to
+
+37
+00:02:29.591 --> 00:02:35.510
+Speaker 2: grasp the magnitude of where we actually have to go, we first have to understand
+
+38
+00:02:35.510 --> 00:02:40.244
+Speaker 2: the timeline that is actively constricting around legacy systems, like right now.
+
+39
+00:02:40.244 --> 00:02:45.767
+Speaker 1: Right. So let's get right into that ticking clock. The hard, final end-of-service date for
+
+40
+00:02:45.767 --> 00:02:50.553
+Speaker 1: Project Online is September 30, 2026. At that moment, the lights go out.
+
+41
+00:02:50.553 --> 00:02:51.490
+Speaker 2: Totally dark.
+
+42
+00:02:51.490 --> 00:02:57.112
+Speaker 1: The service is unsupported, and it's completely inaccessible. But if you're the IT architect listening
+
+43
+00:02:57.112 --> 00:03:02.735
+Speaker 1: to this deep dive right now, your immediate headache is not 2026. You have these
+
+44
+00:03:02.735 --> 00:03:06.483
+Speaker 1: severe constraints hitting much sooner, starting on October 1st, 2025.
+
+45
+00:03:06.483 --> 00:03:12.106
+Speaker 2: Yeah, October 2025 is really the first major choke point, because on that date, Project
+
+46
+00:03:12.106 --> 00:03:15.854
+Speaker 2: Online-only subscriptions will no longer be available for new customers.
+
+47
+00:03:15.854 --> 00:03:16.791
+Speaker 1: Wow.
+
+48
+00:03:16.791 --> 00:03:20.540
+Speaker 2: So if you have existing subscriptions, you know, your environment remains supported for another year.
+
+49
+00:03:20.540 --> 00:03:21.477
+Speaker 1: Yeah.
+
+50
+00:03:21.477 --> 00:03:24.288
+Speaker 2: But the gates to the legacy ecosystem are closed.
+
+51
+00:03:24.288 --> 00:03:29.467
+Speaker 1: Okay, so think about the real-world implications of that for a second. Let's say you
+
+52
+00:03:29.467 --> 00:03:34.646
+Speaker 1: are a global logistics company running absolutely everything on Project Online, and then in, say,
+
+53
+00:03:34.646 --> 00:03:37.408
+Speaker 1: November 2025, you acquire a mid-sized regional distributor...
+
+54
+00:03:37.408 --> 00:03:38.345
+Speaker 2: Which happens all the time.
+
+55
+00:03:38.345 --> 00:03:42.562
+Speaker 1: Right. And you want to onboard their 500 project managers into your existing Project Online
+
+56
+00:03:42.562 --> 00:03:46.779
+Speaker 1: environment just to, you know, maintain operational continuity while you figure out a long-term plan...
+
+57
+00:03:46.779 --> 00:03:47.716
+Speaker 2: You can't do it.
+
+58
+00:03:47.716 --> 00:03:53.901
+Speaker 1: You literally can't. You cannot buy the legacy licenses for that new subsidiary. You are
+
+59
+00:03:53.901 --> 00:03:58.024
+Speaker 1: legally and technically walled off from expanding your legacy footprint.
+
+60
+00:03:58.024 --> 00:04:03.203
+Speaker 2: Which forces you into this awful dual-operating environment. You suddenly have your core business on
+
+61
+00:04:03.203 --> 00:04:08.381
+Speaker 2: a dying legacy platform, and your newly acquired subsidiary has to operate on modern tools,
+
+62
+00:04:08.381 --> 00:04:11.143
+Speaker 2: and you have zero native bridge between them.
+
+63
+00:04:11.143 --> 00:04:13.018
+Speaker 1: That sounds like an integration nightmare.
+
+64
+00:04:13.018 --> 00:04:18.518
+Speaker 2: It is. The pressure to migrate just accelerates exponentially at that point. And then Microsoft
+
+65
+00:04:18.518 --> 00:04:21.451
+Speaker 2: tightens the vise again on April 1st, 2026.
+
+66
+00:04:21.451 --> 00:04:22.389
+Speaker 1: Right, the second milestone.
+
+67
+00:04:22.389 --> 00:04:28.307
+Speaker 2: Exactly. On that date, the creation of new Project Web App sites—what we call PWA
+
+68
+00:04:28.307 --> 00:04:29.885
+Speaker 2: sites—is completely blocked globally.
+
+69
+00:04:29.885 --> 00:04:33.966
+Speaker 1: So even if you have the licenses, like even if you were an existing customer
+
+70
+00:04:33.966 --> 00:04:38.047
+Speaker 1: paying your bills, as of April 1st, 2026, you cannot spin up a new PWA
+
+71
+00:04:38.047 --> 00:04:38.319
+Speaker 1: environment.
+
+72
+00:04:38.319 --> 00:04:41.131
+Speaker 2: No new sandboxes, no new departments coming online, nothing.
+
+73
+00:04:41.131 --> 00:04:46.309
+Speaker 1: And the source material actually notes that existing PWA sites that don't contain active projects
+
+74
+00:04:46.309 --> 00:04:51.488
+Speaker 1: are going to become inaccessible. So they are essentially freezing all new legacy deployments solid
+
+75
+00:04:51.488 --> 00:04:54.250
+Speaker 1: a full six months before the final shutdown.
+
+76
+00:04:54.250 --> 00:04:59.189
+Speaker 2: Yeah, it is a highly calculated throttling strategy. Because Microsoft knows that if they don't
+
+77
+00:04:59.189 --> 00:05:04.128
+Speaker 2: physically block the creation of new legacy environments, enterprise teams will just continue to spin
+
+78
+00:05:04.128 --> 00:05:06.432
+Speaker 2: them up right until the final hour.
+
+79
+00:05:06.432 --> 00:05:07.369
+Speaker 1: Because it's comfortable, it's what they know.
+
+80
+00:05:07.369 --> 00:05:13.617
+Speaker 2: Exactly. Human nature, right? So the April 2026 deadline is the point of no return
+
+81
+00:05:13.617 --> 00:05:14.866
+Speaker 2: for legacy infrastructure.
+
+82
+00:05:14.866 --> 00:05:15.266
+Speaker 1: Yeah.
+
+83
+00:05:18.615 --> 00:05:20.957
+Speaker 2: But, you know, while we are defining the parameters of this sunset, we really need
+
+84
+00:05:20.957 --> 00:05:22.363
+Speaker 2: to be incredibly precise about the naming conventions here.
+
+85
+00:05:22.363 --> 00:05:24.237
+Speaker 1: Oh man, the naming conventions are a total minefield.
+
+86
+00:05:24.237 --> 00:05:27.986
+Speaker 2: They really are. It has caused so much unnecessary panic in the market.
+
+87
+00:05:27.986 --> 00:05:32.671
+Speaker 1: So let's clarify exactly what is surviving this purge, based on the engineering documentation. Because
+
+88
+00:05:32.671 --> 00:05:35.483
+Speaker 1: it's not everything with the word "Project" in it.
+
+89
+00:05:35.483 --> 00:05:35.883
+Speaker 2: Right.
+
+90
+00:05:38.762 --> 00:05:41.352
+Speaker 1: Microsoft Project desktop, you know, the localized application you actually install on your physical machine,
+
+91
+00:05:41.352 --> 00:05:42.042
+Speaker 1: that is not retiring.
+
+92
+00:05:42.042 --> 00:05:42.979
+Speaker 2: Still safe.
+
+93
+00:05:42.979 --> 00:05:50.008
+Speaker 1: Project Server Subscription Edition, which is the massive on-premises heavyweight version, that is not retiring
+
+94
+00:05:50.008 --> 00:05:53.287
+Speaker 1: either. And Microsoft Planner is aggressively expanding.
+
+95
+00:05:53.287 --> 00:05:54.225
+Speaker 2: Oh, massively expanding.
+
+96
+00:05:54.225 --> 00:05:59.496
+Speaker 1: Right. The only thing being ripped out of the infrastructure is the cloud-based Project Online
+
+97
+00:05:59.496 --> 00:05:59.847
+Speaker 1: service.
+
+98
+00:05:59.847 --> 00:06:04.533
+Speaker 2: Which leads directly into the most dangerous misconception we found across all the source material.
+
+99
+00:06:04.533 --> 00:06:06.407
+Speaker 1: 1:1 myth.
+
+100
+00:06:06.407 --> 00:06:12.302
+Speaker 2: Yes. Microsoft has been highly visible in their campaign to consolidate Microsoft To Do, the
+
+101
+00:06:12.302 --> 00:06:18.196
+Speaker 2: basic Planner application, and Project for the web into a single, unified interface within Microsoft
+
+102
+00:06:18.196 --> 00:06:18.589
+Speaker 2: Teams.
+
+103
+00:06:18.589 --> 00:06:22.952
+Speaker 1: They merged all the menus together. You open Teams, you click the little Planner icon,
+
+104
+00:06:22.952 --> 00:06:27.023
+Speaker 1: and theoretically all your tasks are just sitting there in one clean, beautiful view.
+
+105
+00:06:27.023 --> 00:06:32.429
+Speaker 2: And from a user interface perspective, it is a brilliant piece of consolidation. It looks
+
+106
+00:06:32.429 --> 00:06:37.836
+Speaker 2: completely seamless. But because of this UI unification, there is this widespread assumption across IT
+
+107
+00:06:37.836 --> 00:06:43.242
+Speaker 2: departments that the new flagship product, which they call Planner Premium, is simply Project Online
+
+108
+00:06:43.242 --> 00:06:45.765
+Speaker 2: with a fresh coat of UI paint.
+
+109
+00:06:45.765 --> 00:06:47.639
+Speaker 1: They just think it's a rebrand.
+
+110
+00:06:47.639 --> 00:06:49.514
+Speaker 2: Exactly. They believe it is a one-to-one replacement.
+
+111
+00:06:49.514 --> 00:06:53.028
+Speaker 1: It is the ultimate trap of the graphical user interface. You see a Gantt chart
+
+112
+00:06:53.028 --> 00:06:56.542
+Speaker 1: in the old software, and then you see a Gantt chart in the new software,
+
+113
+00:06:56.542 --> 00:06:58.885
+Speaker 1: and you just assume the engine underneath them is identical.
+
+114
+00:06:58.885 --> 00:07:00.759
+Speaker 2: And it couldn't be further from the truth.
+
+115
+00:07:00.759 --> 00:07:07.006
+Speaker 1: But the source documentation makes a really harsh distinction here. Microsoft is actively divorcing collaborative
+
+116
+00:07:07.006 --> 00:07:12.004
+Speaker 1: project execution from what they call mature project portfolio management, or PPM.
+
+117
+00:07:12.004 --> 00:07:17.359
+Speaker 2: This is a huge philosophical shift. Historically, organizations used Project Online to do both of
+
+118
+00:07:17.359 --> 00:07:19.501
+Speaker 2: those things at the same time.
+
+119
+00:07:19.501 --> 00:07:20.438
+Speaker 1: Right, all in one bucket.
+
+120
+00:07:20.438 --> 00:07:26.061
+Speaker 2: Right. They used it to manage the daily, collaborative tasks of their teams, who's doing
+
+121
+00:07:26.061 --> 00:07:31.683
+Speaker 2: what on Tuesday, but they also used it to manage the complex, multi-year financial portfolios
+
+122
+00:07:31.683 --> 00:07:33.557
+Speaker 2: of the entire global enterprise.
+
+123
+00:07:33.557 --> 00:07:37.306
+Speaker 1: So high-level strategy and low-level task management all mixed together.
+
+124
+00:07:37.306 --> 00:07:45.338
+Speaker 2: Exactly. But the new architecture totally rejects that dual purpose. Planner Premium is engineered explicitly—and
+
+125
+00:07:45.338 --> 00:07:48.551
+Speaker 2: I mean exclusively—for collaborative project execution.
+
+126
+00:07:48.551 --> 00:07:55.009
+Speaker 1: Wow. So if you've spent the last 10 years customizing Project Online to handle your
+
+127
+00:07:55.009 --> 00:08:01.468
+Speaker 1: CapEx and OpEx amortization, mapping thousands of enterprise resources across global time zones, and running
+
+128
+00:08:01.468 --> 00:08:04.482
+Speaker 1: these really complex portfolio demand management scenarios...
+
+129
+00:08:04.482 --> 00:08:05.419
+Speaker 2: Which so many companies do.
+
+130
+00:08:05.419 --> 00:08:08.933
+Speaker 1: Right. And you think you are going to just port that operating model over to
+
+131
+00:08:08.933 --> 00:08:11.979
+Speaker 1: Planner Premium because the UI looks nice, the system is going to shatter.
+
+132
+00:08:11.979 --> 00:08:17.601
+Speaker 2: It will fail at the structural level. The functionality isn't just missing; it is fundamentally
+
+133
+00:08:17.601 --> 00:08:19.475
+Speaker 2: incompatible with the new philosophy.
+
+134
+00:08:19.475 --> 00:08:24.712
+Speaker 1: Okay, so to understand why an enterprise PMO cannot just transplant their legacy data into
+
+135
+00:08:24.712 --> 00:08:29.949
+Speaker 1: Planner Premium, we have to look past the user interface. We need to examine the
+
+136
+00:08:29.949 --> 00:08:35.186
+Speaker 1: underlying technical architecture, because the sources reveal this massive, often misunderstood divide between the architecture
+
+137
+00:08:35.186 --> 00:08:37.280
+Speaker 1: of basic Planner and Planner Premium.
+
+138
+00:08:37.280 --> 00:08:41.433
+Speaker 2: Yeah, this is where it gets really technical, but it's so important. To the end
+
+139
+00:08:41.433 --> 00:08:45.586
+Speaker 2: user, you know, Planner is just Planner. They have a Microsoft 365 E3 license, they
+
+140
+00:08:45.586 --> 00:08:49.463
+Speaker 2: open the app, and they just drag a task card from to-do to done.
+
+141
+00:08:49.463 --> 00:08:50.400
+Speaker 1: Smooth and easy.
+
+142
+00:08:50.400 --> 00:08:57.428
+Speaker 2: Super easy. But structurally, basic Planner is incredibly lightweight and highly distributed across the back
+
+143
+00:08:57.428 --> 00:08:57.897
+Speaker 2: end.
+
+144
+00:08:57.897 --> 00:09:00.708
+Speaker 1: It is essentially just a visual aggregation layer.
+
+145
+00:09:00.708 --> 00:09:04.612
+Speaker 2: Right, that's a great way to put it. When a user creates a task in
+
+146
+00:09:04.612 --> 00:09:08.517
+Speaker 2: basic Planner, the raw telemetry of that task—so the title, the due date, the assignee—that
+
+147
+00:09:08.517 --> 00:09:10.079
+Speaker 2: is written to an Azure database.
+
+148
+00:09:10.079 --> 00:09:11.016
+Speaker 1: Okay, Azure.
+
+149
+00:09:11.016 --> 00:09:16.422
+Speaker 2: But then, when that same user attaches a PDF specification document to that exact same
+
+150
+00:09:16.422 --> 00:09:21.829
+Speaker 2: task, the PDF does not go to Azure. It is routed to the connected SharePoint
+
+151
+00:09:21.829 --> 00:09:25.073
+Speaker 2: document library associated with that specific Microsoft 365 Group.
+
+152
+00:09:25.073 --> 00:09:29.368
+Speaker 1: And when the team starts arguing in the comments section of that task about, you
+
+153
+00:09:29.368 --> 00:09:33.663
+Speaker 1: know, why the deadline was missed, that conversation data isn't in Azure or SharePoint; it's
+
+154
+00:09:33.663 --> 00:09:35.381
+Speaker 1: being logged in an Exchange mailbox.
+
+155
+00:09:35.381 --> 00:09:41.472
+Speaker 2: Exactly. Basic Planner is basically an illusion of centralization. The visual layer is pulling from
+
+156
+00:09:41.472 --> 00:09:47.563
+Speaker 2: Azure, SharePoint, and Exchange simultaneously just to render a simple Kanban board on your screen.
+
+157
+00:09:47.563 --> 00:09:52.524
+Speaker 1: It's a patchwork quilt. But I mean, it's highly efficient for what it does. If
+
+158
+00:09:52.524 --> 00:09:57.485
+Speaker 1: you are a marketing team tracking collateral deliverables or like an HR team onboarding new
+
+159
+00:09:57.485 --> 00:10:02.446
+Speaker 1: hires, that distributed architecture is fast, it's super cheap for Microsoft to host, and it
+
+160
+00:10:02.446 --> 00:10:07.407
+Speaker 1: scales infinitely because the data is just flat records resting in these disparate silos. There
+
+161
+00:10:07.407 --> 00:10:10.053
+Speaker 1: is no heavy logic required to connect them.
+
+162
+00:10:10.053 --> 00:10:15.676
+Speaker 2: But you cannot run a $50 million engineering portfolio on a distributed illusion.
+
+163
+00:10:15.676 --> 00:10:16.613
+Speaker 1: No, definitely not.
+
+164
+00:10:16.613 --> 00:10:22.532
+Speaker 2: You cannot apply complex mathematical logic to task data in Azure if the metadata you
+
+165
+00:10:22.532 --> 00:10:28.450
+Speaker 2: need is stranded over in SharePoint. And this is exactly why Planner Premium abandons that
+
+166
+00:10:28.450 --> 00:10:31.607
+Speaker 2: distributed architecture entirely and relies on Microsoft Dataverse.
+
+167
+00:10:31.607 --> 00:10:36.292
+Speaker 1: Okay, Dataverse. We have to break this down, because it is thrown around in marketing
+
+168
+00:10:36.292 --> 00:10:40.978
+Speaker 1: materials constantly as a buzzword. For the architect trying to build a resilient system here,
+
+169
+00:10:40.978 --> 00:10:44.726
+Speaker 1: what is the actual mechanical reality of moving project data into Dataverse?
+
+170
+00:10:44.726 --> 00:10:50.514
+Speaker 2: Well, the trap is thinking of Dataverse as just another SQL database sitting in the
+
+171
+00:10:50.514 --> 00:10:56.302
+Speaker 2: cloud. It's not. It is a really comprehensive, highly secure data foundation and application platform
+
+172
+00:10:56.302 --> 00:10:57.846
+Speaker 2: all rolled into one.
+
+173
+00:10:57.846 --> 00:10:58.783
+Speaker 1: Okay.
+
+174
+00:10:58.783 --> 00:11:05.342
+Speaker 2: When you instantiate a project inside Dataverse, you are operating within unified, relational data models.
+
+175
+00:11:05.342 --> 00:11:09.586
+Speaker 1: Meaning the system inherently understands the relationship between things. Like it knows a task is
+
+176
+00:11:09.586 --> 00:11:13.829
+Speaker 1: connected to a human resource, and it knows the cost of that resource and the
+
+177
+00:11:13.829 --> 00:11:18.073
+Speaker 1: calendar availability of that resource, all at the core data layer rather than trying to
+
+178
+00:11:18.073 --> 00:11:20.336
+Speaker 1: calculate it way up in the application layer.
+
+179
+00:11:20.336 --> 00:11:26.537
+Speaker 2: Precisely. And that relational awareness is governed by strict role-based access control, or RBAC, built
+
+180
+00:11:26.537 --> 00:11:32.739
+Speaker 2: directly into the foundation itself. It provides this level of enterprise governance that basic Planner
+
+181
+00:11:32.739 --> 00:11:34.393
+Speaker 2: simply cannot mathematically support.
+
+182
+00:11:34.393 --> 00:11:36.267
+Speaker 1: Right, because it's scattered everywhere.
+
+183
+00:11:36.267 --> 00:11:42.827
+Speaker 2: Exactly. Because the data in Dataverse is structured and relational, Planner Premium can actually execute
+
+184
+00:11:42.827 --> 00:11:49.386
+Speaker 2: advanced scheduling algorithms. It can manage complex, multi-tiered task dependencies—you know, where Task C has
+
+185
+00:11:49.386 --> 00:11:55.946
+Speaker 2: a finish-to-start relationship with Task A, but it has a start-to-start relationship with Task B.
+
+186
+00:11:55.946 --> 00:11:56.883
+Speaker 1: It can handle the math.
+
+187
+00:11:56.883 --> 00:12:02.154
+Speaker 2: Yes. It can render interactive timelines and integrate completely seamlessly with the Power Platform, so
+
+188
+00:12:02.154 --> 00:12:05.317
+Speaker 2: Power BI for reporting and Power Automate for logic.
+
+189
+00:12:05.317 --> 00:12:10.002
+Speaker 1: Which makes total sense for an enterprise upgrade. You want that robust, relational integrity. But
+
+190
+00:12:10.002 --> 00:12:14.688
+Speaker 1: this leads us to what I think is the most counterintuitive technical reality in the
+
+191
+00:12:14.688 --> 00:12:19.373
+Speaker 1: whole stack of source material, and it's something that is going to give procurement officers
+
+192
+00:12:19.373 --> 00:12:20.311
+Speaker 1: a massive headache.
+
+193
+00:12:20.311 --> 00:12:22.185
+Speaker 2: Ah, the scale paradox.
+
+194
+00:12:22.185 --> 00:12:28.745
+Speaker 1: The scale paradox. We just established that Planner Premium is the heavy-duty, Dataverse-backed powerhouse, and
+
+195
+00:12:28.745 --> 00:12:35.304
+Speaker 1: basic Planner is the lightweight, scattershot tool for marketing teams. Yet the engineering blog explicitly
+
+196
+00:12:35.304 --> 00:12:41.864
+Speaker 1: notes that basic Planner can hold up to 9,000 tasks per plan, but Planner Premium
+
+197
+00:12:41.864 --> 00:12:48.424
+Speaker 1: imposes a hard limit of 3,000 tasks, 300 resources, and 2,000 successor links per project.
+
+198
+00:12:48.424 --> 00:12:54.212
+Speaker 2: It is such a brilliant paradox to explore, honestly, because it forces an understanding of
+
+199
+00:12:54.212 --> 00:12:54.983
+Speaker 2: computational complexity.
+
+200
+00:12:54.983 --> 00:12:59.401
+Speaker 1: Because how do you explain to a CFO that they need to pay a premium
+
+201
+00:12:59.401 --> 00:13:03.819
+Speaker 1: licensing fee for a system that basically has one-third the raw storage capacity of the
+
+202
+00:13:03.819 --> 00:13:05.291
+Speaker 1: free version? That sounds insane.
+
+203
+00:13:05.291 --> 00:13:10.914
+Speaker 2: You explain the difference between storage and processing. Think about the mechanical nature of a
+
+204
+00:13:10.914 --> 00:13:16.537
+Speaker 2: task in basic Planner. Like we said, it is a flat, isolated record. Storing 9,000
+
+205
+00:13:16.537 --> 00:13:22.159
+Speaker 2: disconnected flat records in Azure requires almost zero computational overhead. There's no heavy lifting involved
+
+206
+00:13:22.159 --> 00:13:25.908
+Speaker 2: in just rendering a visual list of 9,000 isolated items.
+
+207
+00:13:25.908 --> 00:13:30.476
+Speaker 1: It's like having a massive warehouse floor. You can dump 9,000 cardboard boxes on the
+
+208
+00:13:30.476 --> 00:13:35.044
+Speaker 1: floor; it holds a ton of volume, but the boxes don't interact with each other.
+
+209
+00:13:35.044 --> 00:13:38.090
+Speaker 1: Box number one doesn't care what is inside box 8,999.
+
+210
+00:13:38.090 --> 00:13:44.429
+Speaker 2: That's a perfect analogy. Now apply relational logic to that warehouse. Planner Premium is not
+
+211
+00:13:44.429 --> 00:13:50.768
+Speaker 2: just storing the boxes; it is mathematically linking them together with bungee cords. When you
+
+212
+00:13:50.768 --> 00:13:57.108
+Speaker 2: have 3,000 tasks in Planner Premium, they are bound tightly by dependencies, resource allocations, calendar
+
+213
+00:13:57.108 --> 00:13:59.643
+Speaker 2: exceptions, and lead and lag times.
+
+214
+00:13:59.643 --> 00:14:04.162
+Speaker 1: So if a project manager shifts the due date of task number 12 by, say,
+
+215
+00:14:04.162 --> 00:14:08.077
+Speaker 1: two weeks, the system doesn't just quietly update one record in a database.
+
+216
+00:14:08.077 --> 00:14:13.444
+Speaker 2: No, it has to instantly calculate the cascading impact on tasks 13 through 3,000. It
+
+217
+00:14:13.444 --> 00:14:18.811
+Speaker 2: has to check the calendar availability of the 300 resources assigned to those downstream tasks.
+
+218
+00:14:18.811 --> 00:14:24.178
+Speaker 2: It has to identify any resource over-allocations, recalculate the entire critical path of the whole
+
+219
+00:14:24.178 --> 00:14:27.756
+Speaker 2: project, and then redraw the Gantt chart in real time.
+
+220
+00:14:27.756 --> 00:14:29.631
+Speaker 1: That's a huge amount of math happening in milliseconds.
+
+221
+00:14:29.631 --> 00:14:36.020
+Speaker 2: The relational processing power required to maintain the structural integrity of 3,000 interconnected nodes, along
+
+222
+00:14:36.020 --> 00:14:42.409
+Speaker 2: with 2,000 specific successor links, inside a highly governed Dataverse environment is just immense. That
+
+223
+00:14:42.409 --> 00:14:43.687
+Speaker 2: is the premium.
+
+224
+00:14:43.687 --> 00:14:44.624
+Speaker 1: Right. That makes total sense.
+
+225
+00:14:44.624 --> 00:14:49.159
+Speaker 2: You are paying for the structural integrity of the relational logic and the APIs that
+
+226
+00:14:49.159 --> 00:14:53.693
+Speaker 2: allow you to query that logic securely. You are not just paying for flat storage
+
+227
+00:14:53.693 --> 00:14:53.995
+Speaker 2: space.
+
+228
+00:14:53.995 --> 00:14:59.824
+Speaker 1: And that structural integrity is also what allows the Power Platform to interact with the
+
+229
+00:14:59.824 --> 00:15:05.652
+Speaker 1: project data safely, right? Which is a massive operational shift, because the source material explicitly
+
+230
+00:15:05.652 --> 00:15:09.926
+Speaker 1: calls out the death of legacy automation, specifically SharePoint 2013 workflows.
+
+231
+00:15:09.926 --> 00:15:15.653
+Speaker 2: Yes. Microsoft has entirely deprecated SharePoint 2013 workflows. And for over a decade, these workflows
+
+232
+00:15:15.653 --> 00:15:20.234
+Speaker 2: basically functioned as the central nervous system for thousands of enterprise PMOs.
+
+233
+00:15:20.234 --> 00:15:27.803
+Speaker 1: Oh, yeah. Organizations built incredibly elaborate, deeply nested approval processes, stage-gate routing rules, custom email
+
+234
+00:15:27.803 --> 00:15:33.354
+Speaker 1: alerts—all of it inside Project Online using this legacy SharePoint engine.
+
+235
+00:15:33.354 --> 00:15:38.341
+Speaker 2: IT departments spent literal millions of dollars consulting with developers to write these custom SharePoint
+
+236
+00:15:38.341 --> 00:15:43.329
+Speaker 2: workflows. It was the duct tape that kept complex business logic attached to the project
+
+237
+00:15:43.329 --> 00:15:43.662
+Speaker 2: data.
+
+238
+00:15:43.662 --> 00:15:47.410
+Speaker 1: And now that duct tape is chemically degrading. It is completely unsupported.
+
+239
+00:15:47.410 --> 00:15:53.434
+Speaker 2: It's gone. When you migrate away from Project Online, those legacy workflows simply do not
+
+240
+00:15:53.434 --> 00:15:59.459
+Speaker 2: translate. You cannot just export a SharePoint 2013 workflow and import it into Planner Premium.
+
+241
+00:15:59.459 --> 00:16:05.483
+Speaker 2: The new architecture is completely alien to it. Organizations are being forced to modernize their
+
+242
+00:16:05.483 --> 00:16:09.901
+Speaker 2: automation via Power Automate and the project scheduling APIs within Dataverse.
+
+243
+00:16:09.901 --> 00:16:14.074
+Speaker 1: So let's talk about those project scheduling APIs, because they seem crucial to this whole
+
+244
+00:16:14.074 --> 00:16:18.247
+Speaker 1: modernization effort. In the old SharePoint days, a workflow might just, you know, brute-force a
+
+245
+00:16:18.247 --> 00:16:22.420
+Speaker 1: change to a list item, like just overwrite the cell. But in Dataverse, you can't
+
+246
+00:16:22.420 --> 00:16:26.593
+Speaker 1: just overwrite a date field on a task if that task is part of a
+
+247
+00:16:26.593 --> 00:16:27.706
+Speaker 1: complex dependency chain, right?
+
+248
+00:16:27.706 --> 00:16:33.669
+Speaker 2: Precisely. If a Power Automate flow tries to independently change the date of a task
+
+249
+00:16:33.669 --> 00:16:39.632
+Speaker 2: in Dataverse without respecting the underlying scheduling logic, it would instantly corrupt the critical path
+
+250
+00:16:39.632 --> 00:16:40.825
+Speaker 2: of the project.
+
+251
+00:16:40.825 --> 00:16:41.225
+Speaker 1: It would break the math.
+
+252
+00:16:50.665 --> 00:16:53.166
+Speaker 2: Exactly. That is why Microsoft mandates the use of the project scheduling APIs. The automation
+
+253
+00:16:53.166 --> 00:16:55.668
+Speaker 2: has to hand the request to the API, like knocking on a door. Then the
+
+254
+00:16:55.668 --> 00:16:58.169
+Speaker 2: API runs the calculation through the central scheduling engine, and only if the logic holds—if
+
+255
+00:16:58.169 --> 00:17:00.504
+Speaker 2: it doesn't break the rules—does the API write the change to the Dataverse tables.
+
+256
+00:17:00.504 --> 00:17:05.580
+Speaker 1: It is a highly, highly regulated transaction, which means IT departments aren't just moving data
+
+257
+00:17:05.580 --> 00:17:10.656
+Speaker 1: from server A to server B; they are entirely rewriting their business logic to interact
+
+258
+00:17:10.656 --> 00:17:12.686
+Speaker 1: with a highly structured API gateway.
+
+259
+00:17:12.686 --> 00:17:19.301
+Speaker 2: It's a fundamental rebuild. And because Dataverse and Planner Premium are so aggressively engineered for
+
+260
+00:17:19.301 --> 00:17:25.916
+Speaker 2: modern, collaborative execution and these regulated workflows, they simply cannot handle the sheer, unregulated sprawl
+
+261
+00:17:25.916 --> 00:17:27.680
+Speaker 2: of legacy portfolio management.
+
+262
+00:17:27.680 --> 00:17:33.830
+Speaker 1: Right. Microsoft realized that they could not build a single, magical cloud platform that accommodates
+
+263
+00:17:33.830 --> 00:17:39.980
+Speaker 1: both modern, lightweight collaborative work and the massive, heavy-duty, highly customized portfolio structures of these
+
+264
+00:17:39.980 --> 00:17:40.799
+Speaker 1: legacy enterprises.
+
+265
+00:17:40.799 --> 00:17:43.611
+Speaker 2: The architectures are just fundamentally at odds with each other.
+
+266
+00:17:43.611 --> 00:17:49.233
+Speaker 1: Which is why the source documentation lays out three very distinct transition paths. I mean,
+
+267
+00:17:49.233 --> 00:17:54.856
+Speaker 1: they aren't telling every single Project Online customer to just move to Planner Premium. They've
+
+268
+00:17:54.856 --> 00:18:00.479
+Speaker 1: engineered this enterprise decision framework to essentially force organizations to categorize their actual operational realities.
+
+269
+00:18:00.479 --> 00:18:02.353
+Speaker 2: And thank goodness they did.
+
+270
+00:18:02.353 --> 00:18:06.678
+Speaker 1: Yeah, so let's dig into these three paths, because making the wrong choice here is
+
+271
+00:18:06.678 --> 00:18:09.850
+Speaker 1: going to be a multi-million-dollar mistake for a lot of companies.
+
+272
+00:18:09.850 --> 00:18:15.028
+Speaker 2: The framework outlined in the engineering blog is actually very pragmatic. It guides decision-makers through
+
+273
+00:18:15.028 --> 00:18:16.409
+Speaker 2: a pretty logical flow.
+
+274
+00:18:16.409 --> 00:18:17.346
+Speaker 1: Okay, walk us through it.
+
+275
+00:18:17.346 --> 00:18:22.859
+Speaker 2: Well, the first step is assessing your overall business need and the complexity of your
+
+276
+00:18:22.859 --> 00:18:28.371
+Speaker 2: actual projects. Then, the second step evaluates the size and the distribution of your teams.
+
+277
+00:18:28.371 --> 00:18:33.884
+Speaker 2: But the third step—this is the critical fork in the road—is asking, "Does your organization
+
+278
+00:18:33.884 --> 00:18:36.088
+Speaker 2: require advanced resource and financial management?"
+
+279
+00:18:36.088 --> 00:18:42.937
+Speaker 1: Okay, so let's start with path one, which we've been circling around: Planner Premium. The
+
+280
+00:18:42.937 --> 00:18:49.785
+Speaker 1: source defines this path for organizations focused on collaborative, organization-wide project execution, real-time planning, and
+
+281
+00:18:49.785 --> 00:18:53.893
+Speaker 1: portfolio visibility. This feels like the path for agility.
+
+282
+00:18:53.893 --> 00:19:00.570
+Speaker 2: It is. If an organization's primary objective is coordinating tasks across departments, managing dependencies within
+
+283
+00:19:00.570 --> 00:19:07.247
+Speaker 2: cross-functional teams, visualizing work on a modern timeline, and just deeply integrating with the Microsoft
+
+284
+00:19:07.247 --> 00:19:11.698
+Speaker 2: Teams communication layer, Planner Premium is the absolute optimal destination.
+
+285
+00:19:11.698 --> 00:19:12.635
+Speaker 1: It's sleek.
+
+286
+00:19:12.635 --> 00:19:17.501
+Speaker 2: Very sleek. The engineering blog assesses Planner Premium's capability for task management and collaboration as
+
+287
+00:19:17.501 --> 00:19:21.069
+Speaker 2: excellent. They give it a 9 or 10 out of 10.
+
+288
+00:19:21.069 --> 00:19:25.116
+Speaker 1: It is the undisputed king of getting the actual work done efficiently. But you know,
+
+289
+00:19:25.116 --> 00:19:29.163
+Speaker 1: the source material is also brutally honest about its limitations. It analyzes the gaps. For
+
+290
+00:19:29.163 --> 00:19:33.209
+Speaker 1: resource management, Planner Premium is rated only as moderate, like a 4 to 5 out
+
+291
+00:19:33.209 --> 00:19:37.256
+Speaker 1: of 10. And for financial management, it drops all the way down to basic, a
+
+292
+00:19:37.256 --> 00:19:38.874
+Speaker 1: 2 to 3 out of 10.
+
+293
+00:19:38.874 --> 00:19:45.660
+Speaker 2: And this is exactly why the migration requires brutal self-awareness from leadership. If an enterprise
+
+294
+00:19:45.660 --> 00:19:52.446
+Speaker 2: PMO relies on Project Online to maintain a centralized global resource pool of, say, 5,000
+
+295
+00:19:52.446 --> 00:19:59.232
+Speaker 2: engineers, track their fractional utilization down to the quarter hour, forecast capacity bottlenecks six months
+
+296
+00:19:59.232 --> 00:20:05.113
+Speaker 2: in advance, and manage multi-million-dollar project budgets with strict CapEx and OpEx segregation...
+
+297
+00:20:05.113 --> 00:20:05.513
+Speaker 1: Yeah.
+
+298
+00:20:07.924 --> 00:20:10.144
+Speaker 2: Planner Premium, out of the box, simply lacks the mechanical depth to execute those functions.
+
+299
+00:20:10.144 --> 00:20:10.736
+Speaker 2: It will fall over.
+
+300
+00:20:10.736 --> 00:20:15.756
+Speaker 1: So what happens to that enterprise PMO? I mean, Microsoft can't just abandon their biggest
+
+301
+00:20:15.756 --> 00:20:20.107
+Speaker 1: clients. That is where path two comes into play: Project Server Subscription Edition.
+
+302
+00:20:20.107 --> 00:20:20.507
+Speaker 2: Right.
+
+303
+00:20:26.667 --> 00:20:29.009
+Speaker 1: Let's rethink our analogy here for a second. Rather than trains or warehouses, let's think
+
+304
+00:20:29.009 --> 00:20:31.352
+Speaker 1: about this transition like a massive update to a city's power grid. In the legacy
+
+305
+00:20:31.352 --> 00:20:33.226
+Speaker 1: Project Online days, every company essentially had its own localized gas generator.
+
+306
+00:20:33.226 --> 00:20:34.163
+Speaker 2: Oh, I like this.
+
+307
+00:20:34.163 --> 00:20:39.292
+Speaker 1: Yeah. It was messy, you could customize the pipes however you wanted, and you could
+
+308
+00:20:39.292 --> 00:20:44.421
+Speaker 1: bolt on all sorts of weird custom machinery to make it run your specific factory.
+
+309
+00:20:44.421 --> 00:20:49.550
+Speaker 1: Now, Planner Premium is like plugging into the new, modern, highly regulated commercial power grid.
+
+310
+00:20:49.550 --> 00:20:54.678
+Speaker 1: It's clean, it's super efficient, it runs your modern office building perfectly, but you cannot
+
+311
+00:20:54.678 --> 00:20:59.465
+Speaker 1: attach your old, leaky, custom gas pipes to it. The grid will reject you.
+
+312
+00:20:59.465 --> 00:21:04.619
+Speaker 2: It will short-circuit. And Project Server Subscription Edition, which is path two, is for the
+
+313
+00:21:04.619 --> 00:21:09.773
+Speaker 2: organization that realizes they cannot move their massive legacy industrial plant onto the commercial grid.
+
+314
+00:21:09.773 --> 00:21:10.710
+Speaker 1: Right.
+
+315
+00:21:10.710 --> 00:21:18.520
+Speaker 2: The source explicitly positions Project Server for on-premises control, proven enterprise-grade PPM, deep customization, and
+
+316
+00:21:18.520 --> 00:21:20.081
+Speaker 2: strict data residency.
+
+317
+00:21:20.081 --> 00:21:25.704
+Speaker 1: It is the heavy-duty, isolated bunker. But I have to ask the obvious question here:
+
+318
+00:21:25.704 --> 00:21:31.327
+Speaker 1: we are operating in an era where Microsoft's entire corporate messaging is obsessively focused on
+
+319
+00:21:31.327 --> 00:21:33.201
+Speaker 1: cloud-native architecture and artificial intelligence...
+
+320
+00:21:33.201 --> 00:21:34.138
+Speaker 2: Cloud-first, mobile-first.
+
+321
+00:21:34.138 --> 00:21:40.033
+Speaker 1: Right. So why is Microsoft offering an on-premises subscription edition where you actually have to
+
+322
+00:21:40.033 --> 00:21:45.927
+Speaker 1: install the software on your own local bare-metal servers? Doesn't that entirely contradict their strategic
+
+323
+00:21:45.927 --> 00:21:46.320
+Speaker 1: vision?
+
+324
+00:21:46.320 --> 00:21:53.122
+Speaker 2: Well, it contradicts the marketing vision, sure. But it acknowledges the immovable realities of enterprise
+
+325
+00:21:53.122 --> 00:21:59.923
+Speaker 2: IT. Microsoft understands that there are two massive, concrete roadblocks to cloud adoption for certain
+
+326
+00:21:59.923 --> 00:22:00.377
+Speaker 2: sectors.
+
+327
+00:22:00.377 --> 00:22:01.314
+Speaker 1: Okay, what's the first one?
+
+328
+00:22:01.314 --> 00:22:05.999
+Speaker 2: The first is non-negotiable data residency and compliance mandates.
+
+329
+00:22:05.999 --> 00:22:11.622
+Speaker 1: Ah. So we're talking defense contractors, federal agencies, big healthcare conglomerates.
+
+330
+00:22:11.622 --> 00:22:18.211
+Speaker 2: Correct. You have organizations operating under ITAR compliance or really strict FedRAMP regulations, whose core
+
+331
+00:22:18.211 --> 00:22:24.800
+Speaker 2: project portfolio data contains classified operational details, or proprietary defense schematics, or just heavily regulated
+
+332
+00:22:24.800 --> 00:22:25.678
+Speaker 2: financial models.
+
+333
+00:22:25.678 --> 00:22:26.616
+Speaker 1: Stuff that cannot leak.
+
+334
+00:22:26.616 --> 00:22:32.444
+Speaker 2: Right. Their governance frameworks legally prohibit that data from resting in a multi-tenant public cloud
+
+335
+00:22:32.444 --> 00:22:38.272
+Speaker 2: environment, no matter how secure Dataverse claims to be. They physically require isolated, on-premises control
+
+336
+00:22:38.272 --> 00:22:42.546
+Speaker 2: over their data layer. It's not a preference; it's the law.
+
+337
+00:22:42.546 --> 00:22:44.421
+Speaker 1: That makes total sense. And what's the second roadblock?
+
+338
+00:22:44.421 --> 00:22:46.295
+Speaker 2: Crushing legacy technical debt.
+
+339
+00:22:46.295 --> 00:22:47.232
+Speaker 1: Of course.
+
+340
+00:22:47.232 --> 00:22:54.260
+Speaker 2: Over the past 15 years, massive global enterprises have integrated Project Online deeply into sprawling
+
+341
+00:22:54.260 --> 00:23:00.351
+Speaker 2: on-premises ERP systems, like SAP or Oracle, and these totally bespoke financial engines.
+
+342
+00:23:00.351 --> 00:23:01.288
+Speaker 1: Oh, I've seen those. They're monsters.
+
+343
+00:23:01.288 --> 00:23:06.560
+Speaker 2: They are. And these integrations are the central nervous system of their revenue recognition. Untangling
+
+344
+00:23:06.560 --> 00:23:11.831
+Speaker 2: a global ERP integration just to move the project management module to the cloud could
+
+345
+00:23:11.831 --> 00:23:15.345
+Speaker 2: take five years and cost hundreds of millions of dollars.
+
+346
+00:23:15.345 --> 00:23:18.156
+Speaker 1: It would just paralyze the business operations. They'd freeze.
+
+347
+00:23:18.156 --> 00:23:24.138
+Speaker 2: Exactly. So Project Server Subscription Edition acts as the vital lifeline here. It allows these
+
+348
+00:23:24.138 --> 00:23:30.119
+Speaker 2: highly complex, heavily regulated organizations to maintain their bespoke on-premises integrations while still receiving modern
+
+349
+00:23:30.119 --> 00:23:36.101
+Speaker 2: security updates and support from Microsoft. It essentially prevents a catastrophic disruption of their core
+
+350
+00:23:36.101 --> 00:23:36.898
+Speaker 2: operating model.
+
+351
+00:23:36.898 --> 00:23:43.288
+Speaker 1: Okay, so if Planner Premium is the modern commercial grid for agile teams, and Project
+
+352
+00:23:43.288 --> 00:23:49.677
+Speaker 1: Server is the isolated heavyweight bunker for legacy and compliance, what is path three: Dynamics
+
+353
+00:23:49.677 --> 00:23:50.955
+Speaker 1: 365 Project Operations?
+
+354
+00:23:50.955 --> 00:23:57.648
+Speaker 2: Dynamics 365 represents the most comprehensive evolution of work management in the entire Microsoft ecosystem
+
+355
+00:23:57.648 --> 00:24:04.342
+Speaker 2: right now. The source highlights this path specifically for end-to-end, project-centric business management. This is
+
+356
+00:24:04.342 --> 00:24:09.697
+Speaker 2: designed for organizations where the project itself is the core revenue-generating product.
+
+357
+00:24:09.697 --> 00:24:16.022
+Speaker 1: Okay, so we are talking about professional services, like global consulting firms, large-scale engineering contractors,
+
+358
+00:24:16.022 --> 00:24:18.131
+Speaker 1: IT service providers, architecture firms...
+
+359
+00:24:18.131 --> 00:24:22.212
+Speaker 2: Exactly. For these organizations, a project isn't just an internal initiative to, you know, update
+
+360
+00:24:22.212 --> 00:24:26.293
+Speaker 2: a website or launch a marketing campaign. The project is what they sell to a
+
+361
+00:24:26.293 --> 00:24:26.565
+Speaker 2: client.
+
+362
+00:24:26.565 --> 00:24:27.502
+Speaker 1: Right, it's the product.
+
+363
+00:24:27.502 --> 00:24:33.526
+Speaker 2: So Dynamics 365 Project Operations bridges that entire lifecycle. It starts at the CRM level
+
+364
+00:24:33.526 --> 00:24:35.936
+Speaker 2: with sales quoting and pipeline management...
+
+365
+00:24:35.936 --> 00:24:37.810
+Speaker 1: So before the project even starts?
+
+366
+00:24:37.810 --> 00:24:43.834
+Speaker 2: Yes. Then it handles the complex resource staffing, mapping consultant skills against project demands. It
+
+367
+00:24:43.834 --> 00:24:49.858
+Speaker 2: manages the actual task delivery, tracking every single billable hour and expense incurred by the
+
+368
+00:24:49.858 --> 00:24:55.883
+Speaker 2: delivery team on the road. And crucially, it feeds all of that directly into the
+
+369
+00:24:55.883 --> 00:25:01.907
+Speaker 2: financial engine to generate client invoices, recognize revenue based on completion milestones, and provide real-time
+
+370
+00:25:01.907 --> 00:25:03.112
+Speaker 2: profit margin analytics.
+
+371
+00:25:03.112 --> 00:25:08.132
+Speaker 1: Wow. So it's essentially a full-scale ERP system explicitly built for project-based economies. You aren't
+
+372
+00:25:08.132 --> 00:25:13.152
+Speaker 1: just tracking when a task is due; you are tracking the exact financial impact of
+
+373
+00:25:13.152 --> 00:25:17.168
+Speaker 1: that task being late on the overall profitability of the client contract.
+
+374
+00:25:17.168 --> 00:25:22.244
+Speaker 2: Precisely. When you look back at the decision flowchart in the source documentation, the logic
+
+375
+00:25:22.244 --> 00:25:27.320
+Speaker 2: becomes really clear. If you answered yes to needing advanced resource and financial management, you
+
+376
+00:25:27.320 --> 00:25:29.350
+Speaker 2: lean away from Planner Premium immediately.
+
+377
+00:25:29.350 --> 00:25:29.750
+Speaker 1: Right.
+
+378
+00:25:35.910 --> 00:25:38.570
+Speaker 2: If you just need to maintain massive internal portfolios, you look at Project Server. But
+
+379
+00:25:38.570 --> 00:25:41.229
+Speaker 2: if you answer yes plus we need end-to-end project business operations and billable revenue tracking,
+
+380
+00:25:41.229 --> 00:25:42.470
+Speaker 2: you absolutely must migrate to Dynamics 365.
+
+381
+00:25:42.470 --> 00:25:47.982
+Speaker 1: And this really exposes why the whole upgrade button myth is so lethal. If a
+
+382
+00:25:47.982 --> 00:25:53.495
+Speaker 1: 2,000-person consulting firm tries to run its entire resource utilization and revenue recognition pipeline through
+
+383
+00:25:53.495 --> 00:25:59.007
+Speaker 1: Planner Premium simply because they both feature nice-looking Gantt charts, they will literally lose the
+
+384
+00:25:59.007 --> 00:26:01.212
+Speaker 1: ability to bill their clients accurately.
+
+385
+00:26:01.212 --> 00:26:06.835
+Speaker 2: They'd go bankrupt. The tools are mechanically engineered for entirely different operational realities.
+
+386
+00:26:06.835 --> 00:26:11.754
+Speaker 1: But you know, identifying the correct path is merely the theoretical phase. The true crisis
+
+387
+00:26:11.754 --> 00:26:16.674
+Speaker 1: for enterprise IT departments begins when they actually attempt to pack up a decade of
+
+388
+00:26:16.674 --> 00:26:19.954
+Speaker 1: legacy data and physically move it to the new architecture.
+
+389
+00:26:19.954 --> 00:26:21.828
+Speaker 2: Yeah, that's where the theory meets the road.
+
+390
+00:26:21.828 --> 00:26:27.295
+Speaker 1: Which brings us to the most labor-intensive part of this deep dive. The engineering blog
+
+391
+00:26:27.295 --> 00:26:32.761
+Speaker 1: makes it abundantly clear: there is no native, one-click migration path to convert a legacy
+
+392
+00:26:32.761 --> 00:26:38.227
+Speaker 1: Project Web App project into a Planner Premium plan or a Dynamics 365 environment. You
+
+393
+00:26:38.227 --> 00:26:41.507
+Speaker 1: cannot just right-click and hit "Export to modern platform."
+
+394
+00:26:41.507 --> 00:26:47.657
+Speaker 2: Because, as we detailed with Dataverse earlier, you are moving data from a flat, visually
+
+395
+00:26:47.657 --> 00:26:53.807
+Speaker 2: aggregated architecture into a highly structured relational database that enforces strict mathematical rules on every
+
+396
+00:26:53.807 --> 00:26:54.627
+Speaker 2: single entry.
+
+397
+00:26:54.627 --> 00:26:55.564
+Speaker 1: Right.
+
+398
+00:26:55.564 --> 00:27:01.714
+Speaker 2: The legacy data structures are just fundamentally incompatible with the modern schema without really rigorous
+
+399
+00:27:01.714 --> 00:27:02.124
+Speaker 2: transformation.
+
+400
+00:27:02.124 --> 00:27:10.491
+Speaker 1: The source material actually outlines an eight-stage migration journey, and it is a punishing, deeply
+
+401
+00:27:10.491 --> 00:27:18.858
+Speaker 1: technical process. The stages are: Current Environment Assessment, Assessment Analysis, Data Analysis, Governance Review, Platform
+
+402
+00:27:18.858 --> 00:27:25.551
+Speaker 1: Selection, Migration Planning, Adoption and Change Management, and finally, the Modernized Environment.
+
+403
+00:27:25.551 --> 00:27:25.951
+Speaker 2: Yeah.
+
+404
+00:27:33.985 --> 00:27:36.860
+Speaker 1: It sounds like standard, boring corporate methodology, right? But the reality of executing this is
+
+405
+00:27:36.860 --> 00:27:39.735
+Speaker 1: a minefield of technical debt. Let's look at stage two: Assessment. In the real world,
+
+406
+00:27:39.735 --> 00:27:42.419
+Speaker 1: what happens when an enterprise architect actually starts assessing a 10-year-old Project Online environment?
+
+407
+00:27:42.419 --> 00:27:47.573
+Speaker 2: Oh, it's a nightmare. They almost always uncover a staggering amount of shadow IT and
+
+408
+00:27:47.573 --> 00:27:52.727
+Speaker 2: broken logic. Because an environment assessment is not just a simple inventory of active projects...
+
+409
+00:27:52.727 --> 00:27:53.664
+Speaker 1: Like counting rows in a spreadsheet.
+
+410
+00:27:53.664 --> 00:27:59.287
+Speaker 2: Right, it's not that simple. It requires a forensic audit of the entire legacy ecosystem.
+
+411
+00:27:59.287 --> 00:28:04.909
+Speaker 2: Architects have to dissect the custom project templates. They have to analyze every single custom
+
+412
+00:28:04.909 --> 00:28:08.658
+Speaker 2: enterprise field, every lookup table, and every resource pool configuration.
+
+413
+00:28:08.658 --> 00:28:10.532
+Speaker 1: They're basically hunting for the ghosts in the machine.
+
+414
+00:28:10.532 --> 00:28:15.592
+Speaker 2: They are. They're looking for legacy dependencies that will critically fail the moment they touch
+
+415
+00:28:15.592 --> 00:28:18.966
+Speaker 2: Dataverse. For example, they have to audit every OData feed.
+
+416
+00:28:18.966 --> 00:28:20.840
+Speaker 1: Oh, tell me about the OData feeds.
+
+417
+00:28:20.840 --> 00:28:26.159
+Speaker 2: So, many organizations have built highly complex Power BI dashboards that ingest data directly from
+
+418
+00:28:26.159 --> 00:28:31.478
+Speaker 2: Project Online via OData feeds. If you just migrate the project data over to Dataverse,
+
+419
+00:28:31.478 --> 00:28:33.960
+Speaker 2: those legacy OData feeds will instantly break.
+
+420
+00:28:33.960 --> 00:28:35.834
+Speaker 1: The dashboard just goes dark for the executive.
+
+421
+00:28:35.834 --> 00:28:41.622
+Speaker 2: Completely dark. The architect must map every single API connection, every third-party application tied into
+
+422
+00:28:41.622 --> 00:28:47.410
+Speaker 2: the tenant, and every legacy SharePoint workflow we talked about. Because all of it—100% of
+
+423
+00:28:47.410 --> 00:28:48.953
+Speaker 2: it—must be completely rebuilt.
+
+424
+00:28:48.953 --> 00:28:53.762
+Speaker 1: And then they hit stages three and four: Data Analysis and Governance Review. This is
+
+425
+00:28:53.762 --> 00:28:58.571
+Speaker 1: where the translation really gets difficult, doesn't it? Moving from the way SharePoint handled permissions
+
+426
+00:28:58.571 --> 00:29:01.136
+Speaker 1: to the way Dataverse handles role-based access control.
+
+427
+00:29:01.136 --> 00:29:03.010
+Speaker 2: It is a massive conceptual leap.
+
+428
+00:29:03.010 --> 00:29:03.947
+Speaker 1: Yeah.
+
+429
+00:29:03.947 --> 00:29:07.695
+Speaker 2: In the legacy environment, security was often managed at the SharePoint site level.
+
+430
+00:29:07.695 --> 00:29:08.095
+Speaker 1: Right.
+
+431
+00:29:09.569 --> 00:29:11.049
+Speaker 2: If you had access to the site, you generally just had access to all the
+
+432
+00:29:11.049 --> 00:29:11.444
+Speaker 2: project data within it.
+
+433
+00:29:11.444 --> 00:29:12.381
+Speaker 1: Very broad strokes.
+
+434
+00:29:12.381 --> 00:29:18.847
+Speaker 2: Very broad. Dataverse, on the other hand, enforces security at the entity and row level
+
+435
+00:29:18.847 --> 00:29:25.313
+Speaker 2: within the database itself, governed by highly granular security roles and business units. So mapping
+
+436
+00:29:25.313 --> 00:29:31.779
+Speaker 2: messy, decentralized SharePoint permissions into strict Dataverse security models requires a complete overhaul of the
+
+437
+00:29:31.779 --> 00:29:33.934
+Speaker 2: organization's entire data governance strategy.
+
+438
+00:29:33.934 --> 00:29:40.260
+Speaker 1: And the source material flashes a massive warning sign over this entire process. They explicitly
+
+439
+00:29:40.260 --> 00:29:42.368
+Speaker 1: warn against the lift-and-shift mentality.
+
+440
+00:29:42.368 --> 00:29:46.761
+Speaker 2: Yes. The lift-and-shift is the single most expensive mistake an organization can make during this
+
+441
+00:29:46.761 --> 00:29:47.054
+Speaker 2: transition.
+
+442
+00:29:47.054 --> 00:29:52.932
+Speaker 1: And the psychological friction here is just immense. I mean, think about it: an IT
+
+443
+00:29:52.932 --> 00:29:58.810
+Speaker 1: department has spent countless budget cycles meticulously customizing Project Online to execute highly specific, often
+
+444
+00:29:58.810 --> 00:30:04.688
+Speaker 1: overly complicated business processes. When faced with a migration, the intense human urge is to
+
+445
+00:30:04.688 --> 00:30:08.607
+Speaker 1: demand that the new system replicate the old system perfectly.
+
+446
+00:30:08.607 --> 00:30:09.544
+Speaker 2: They do it all the time.
+
+447
+00:30:09.544 --> 00:30:09.944
+Speaker 1: Yeah.
+
+448
+00:30:12.355 --> 00:30:14.575
+Speaker 2: They tell the developers, "I want Planner Premium to look and act exactly like our
+
+449
+00:30:14.575 --> 00:30:15.167
+Speaker 2: customized Project Online environment."
+
+450
+00:30:15.167 --> 00:30:19.445
+Speaker 1: They want to bring all their legacy baggage into the modern architecture. It's like buying
+
+451
+00:30:19.445 --> 00:30:23.723
+Speaker 1: a state-of-the-art electric vehicle, but insisting the mechanics rip out the battery and install the
+
+452
+00:30:23.723 --> 00:30:28.001
+Speaker 1: leaky gas engine from your old sedan just because you were comfortable with how it
+
+453
+00:30:28.001 --> 00:30:28.286
+Speaker 1: idles.
+
+454
+00:30:28.286 --> 00:30:29.223
+Speaker 2: It's crazy.
+
+455
+00:30:29.223 --> 00:30:31.097
+Speaker 1: You completely destroy the efficiency of the new machine.
+
+456
+00:30:31.097 --> 00:30:38.339
+Speaker 2: You really do. It actively degrades the performance and stability of the Dataverse environment. Forcing
+
+457
+00:30:38.339 --> 00:30:45.580
+Speaker 2: modern cloud-native platforms to execute inefficient legacy business logic through complex workarounds just creates a
+
+458
+00:30:45.580 --> 00:30:47.028
+Speaker 2: fragile, unmaintainable architecture.
+
+459
+00:30:47.028 --> 00:30:47.965
+Speaker 1: Yeah.
+
+460
+00:30:47.965 --> 00:30:53.503
+Speaker 2: The engineering source is blunt about this: redesign reporting instead of rebuilding old dashboards. You
+
+461
+00:30:53.503 --> 00:30:59.040
+Speaker 2: must simplify the operating model to align with the strengths of the new platform. Don't
+
+462
+00:30:59.040 --> 00:31:00.147
+Speaker 2: fight the platform.
+
+463
+00:31:00.147 --> 00:31:05.180
+Speaker 1: But, okay, I'm putting myself in the shoes of the IT director who actually has
+
+464
+00:31:05.180 --> 00:31:10.213
+Speaker 1: to sell this to the executive board. Telling the C-suite that you need a massive
+
+465
+00:31:10.213 --> 00:31:15.245
+Speaker 1: budget allocation to redesign everything from scratch just to replace a software platform that is
+
+466
+00:31:15.245 --> 00:31:20.278
+Speaker 1: being forcibly retired by the vendor—that sounds like a catastrophic disruption. How does an IT
+
+467
+00:31:20.278 --> 00:31:25.310
+Speaker 1: leader justify completely re-engineering their core operational processes when the board thinks they are just
+
+468
+00:31:25.310 --> 00:31:27.323
+Speaker 1: buying a new tasks management app?
+
+469
+00:31:27.323 --> 00:31:33.129
+Speaker 2: The justification lies in the broader market research cited in the source material. This isn't
+
+470
+00:31:33.129 --> 00:31:38.935
+Speaker 2: just Microsoft being difficult with a software update; this is an aggressive, industry-wide pivot. The
+
+471
+00:31:38.935 --> 00:31:44.741
+Speaker 2: article references insights from Gartner and Forrester that contextualize why this painful redesign is absolutely
+
+472
+00:31:44.741 --> 00:31:45.128
+Speaker 2: mandatory.
+
+473
+00:31:45.128 --> 00:31:46.065
+Speaker 1: Right, the divergence of the market.
+
+474
+00:31:46.065 --> 00:31:54.372
+Speaker 2: Exactly. Forrester highlights that collaborative work management—which is what Planner Premium exemplifies—is rapidly maturing and
+
+475
+00:31:54.372 --> 00:31:58.248
+Speaker 2: diverging entirely from traditional project portfolio management.
+
+476
+00:31:58.248 --> 00:31:59.185
+Speaker 1: They are two different beasts now.
+
+477
+00:31:59.185 --> 00:32:04.958
+Speaker 2: They are. The market itself has split into distinct operational philosophies. Attempting to force an
+
+478
+00:32:04.958 --> 00:32:10.731
+Speaker 2: organization into a hybrid legacy model is just a dead end. So the IT director
+
+479
+00:32:10.731 --> 00:32:16.505
+Speaker 2: justifies the redesign by explaining to the board that they aren't just replacing a tool;
+
+480
+00:32:16.505 --> 00:32:20.738
+Speaker 2: they are deciding the future operational agility of the entire company.
+
+481
+00:32:20.738 --> 00:32:24.838
+Speaker 1: You tell the C-suite, "We have to modernize the architecture now because the old way
+
+482
+00:32:24.838 --> 00:32:27.298
+Speaker 1: of working is mathematically incapable of supporting the future."
+
+483
+00:32:27.298 --> 00:32:32.569
+Speaker 2: And you validate the massive expense of the redesign by focusing on the ultimate return
+
+484
+00:32:32.569 --> 00:32:37.840
+Speaker 2: on investment. The C-suite is not interested in the nuances of task management software. They
+
+485
+00:32:37.840 --> 00:32:41.355
+Speaker 2: are intensely focused on one thing right now: artificial intelligence.
+
+486
+00:32:41.355 --> 00:32:42.292
+Speaker 1: AI, of course.
+
+487
+00:32:42.292 --> 00:32:47.733
+Speaker 2: The IT director's core argument is this: you must undergo this painful data modernization and
+
+488
+00:32:47.733 --> 00:32:53.174
+Speaker 2: migration to Dataverse today, or you will be permanently locked out of the AI revolution
+
+489
+00:32:53.174 --> 00:32:53.537
+Speaker 2: tomorrow.
+
+490
+00:32:53.537 --> 00:32:58.035
+Speaker 1: Which brings us to the true endgame of this entire transition. Microsoft isn't retiring Project
+
+491
+00:32:58.035 --> 00:33:01.034
+Speaker 1: Online just to, you know, tidy up their product catalog.
+
+492
+00:33:01.034 --> 00:33:01.971
+Speaker 2: No, not at all.
+
+493
+00:33:01.971 --> 00:33:06.105
+Speaker 1: They are doing it to pave the highway for AI, specifically Copilot and the new
+
+494
+00:33:06.105 --> 00:33:06.656
+Speaker 1: Planner agent.
+
+495
+00:33:06.656 --> 00:33:13.424
+Speaker 2: Artificial intelligence is the driving force behind this entire architectural shift to Dataverse. The source
+
+496
+00:33:13.424 --> 00:33:18.839
+Speaker 2: documentation outlines three massive, overarching themes for the future of work management.
+
+497
+00:33:18.839 --> 00:33:19.776
+Speaker 1: Let's hear them.
+
+498
+00:33:19.776 --> 00:33:28.210
+Speaker 2: One: AI-assisted project management becomes the default standard. Two: unified, integrated platforms completely replace standalone,
+
+499
+00:33:28.210 --> 00:33:36.644
+Speaker 2: siloed applications. And three: strict data governance becomes the absolute non-negotiable foundation for AI deployment.
+
+500
+00:33:36.644 --> 00:33:41.631
+Speaker 1: So let's look at the mechanical capabilities of the Planner agent integrated with Microsoft 365
+
+501
+00:33:41.631 --> 00:33:46.619
+Speaker 1: Copilot. What is this AI actually doing that makes the pain of this migration worth
+
+502
+00:33:46.619 --> 00:33:46.952
+Speaker 1: it?
+
+503
+00:33:46.952 --> 00:33:50.905
+Speaker 2: We are witnessing a transition from a system of record to a system of action.
+
+504
+00:33:50.905 --> 00:33:54.858
+Speaker 2: In legacy platforms, the software just recorded what a human typed into it, right? It
+
+505
+00:33:54.858 --> 00:33:55.386
+Speaker 2: was passive.
+
+506
+00:33:55.386 --> 00:33:57.260
+Speaker 1: Just a digital filing cabinet.
+
+507
+00:33:57.260 --> 00:34:02.882
+Speaker 2: Yeah, exactly. Copilot operates as an active intelligence layer. It can ingest a rough project
+
+508
+00:34:02.882 --> 00:34:06.631
+Speaker 2: charter document and automatically generate a comprehensive work breakdown structure.
+
+509
+00:34:06.631 --> 00:34:07.568
+Speaker 1: Wow.
+
+510
+00:34:07.568 --> 00:34:13.659
+Speaker 2: It can continuously analyze the real-time state of a project plan, cross-reference it with resource
+
+511
+00:34:13.659 --> 00:34:19.750
+Speaker 2: availability across the tenant, and automatically produce nuanced status reports. And crucially, it can identify
+
+512
+00:34:19.750 --> 00:34:25.841
+Speaker 2: subtle scheduling risks—like, say, a critical path dependency slipping by two days long before a
+
+513
+00:34:25.841 --> 00:34:31.933
+Speaker 2: human project manager would even notice it—and recommend specific, actionable steps to mitigate that risk.
+
+514
+00:34:31.933 --> 00:34:37.307
+Speaker 1: It is shifting from historical reporting to predictive navigation. But here's the critical connection back
+
+515
+00:34:37.307 --> 00:34:42.682
+Speaker 1: to the architecture we're discussing: none of that predictive navigation is possible on the old
+
+516
+00:34:42.682 --> 00:34:44.115
+Speaker 1: Project Online architecture, right?
+
+517
+00:34:44.115 --> 00:34:50.096
+Speaker 2: It is technically impossible. Think back to our discussion about the difference between flat files
+
+518
+00:34:50.096 --> 00:34:56.078
+Speaker 2: in Azure and relational structures in Dataverse. For an AI agent to accurately read a
+
+519
+00:34:56.078 --> 00:35:02.059
+Speaker 2: project's health, identify risks, and suggest viable actions, it requires highly structured, governed, and mathematically
+
+520
+00:35:02.059 --> 00:35:02.857
+Speaker 2: interconnected data.
+
+521
+00:35:02.857 --> 00:35:07.542
+Speaker 1: Right. If your project data is siloed in legacy databases, or your metadata is scattered
+
+522
+00:35:07.542 --> 00:35:12.228
+Speaker 1: across loosely governed SharePoint sites, the AI cannot piece together the true context of the
+
+523
+00:35:12.228 --> 00:35:16.913
+Speaker 1: project. It's like asking a GPS to calculate a route from New York to LA,
+
+524
+00:35:16.913 --> 00:35:21.599
+Speaker 1: but instead of a digital map, you just hand the system a shoebox full of
+
+525
+00:35:21.599 --> 00:35:23.473
+Speaker 1: loose Polaroids of different street corners.
+
+526
+00:35:23.473 --> 00:35:24.410
+Speaker 2: That's a great image.
+
+527
+00:35:24.410 --> 00:35:27.222
+Speaker 1: It has no idea how the data connects. It can't route you.
+
+528
+00:35:27.222 --> 00:35:33.915
+Speaker 2: It can't. And honestly, the risk profile of deploying AI on ungoverned data goes far
+
+529
+00:35:33.915 --> 00:35:40.609
+Speaker 2: beyond it simply failing to work. If an organization's permissions and data governance aren't flawlessly
+
+530
+00:35:40.609 --> 00:35:45.964
+Speaker 2: structured—which Dataverse inherently enforces through RBAC—the AI becomes a massive security vulnerability.
+
+531
+00:35:45.964 --> 00:35:49.980
+Speaker 1: Because the AI will just surface whatever data the user technically has access to, even
+
+532
+00:35:49.980 --> 00:35:51.586
+Speaker 1: if they really shouldn't see it.
+
+533
+00:35:51.586 --> 00:35:56.525
+Speaker 2: Exactly. If you point Copilot at a legacy ungoverned SharePoint architecture, and say a junior
+
+534
+00:35:56.525 --> 00:36:01.464
+Speaker 2: developer asks the chatbot, "Hey, what is the biggest financial risk to the Q4 release?",
+
+535
+00:36:01.464 --> 00:36:03.769
+Speaker 2: the AI will scour the entire tenant.
+
+536
+00:36:03.769 --> 00:36:04.169
+Speaker 1: Uh-oh.
+
+537
+00:36:07.048 --> 00:36:09.508
+Speaker 2: And if a project manager accidentally left a confidential budget cuts spreadsheet in an open
+
+538
+00:36:09.508 --> 00:36:10.328
+Speaker 2: SharePoint folder two years ago...
+
+539
+00:36:10.328 --> 00:36:11.265
+Speaker 1: The AI finds it.
+
+540
+00:36:11.265 --> 00:36:15.219
+Speaker 2: Copilot might pull that unstructured document and casually inform the junior developer that the biggest
+
+541
+00:36:15.219 --> 00:36:19.172
+Speaker 2: risk to the project is that half their team is scheduled to be laid off
+
+542
+00:36:19.172 --> 00:36:19.699
+Speaker 2: in November.
+
+543
+00:36:19.699 --> 00:36:24.385
+Speaker 1: That is a catastrophic data breach executed by your own productivity tool.
+
+544
+00:36:24.385 --> 00:36:30.103
+Speaker 2: And that is precisely why the source material emphasizes over and over that strict data
+
+545
+00:36:30.103 --> 00:36:35.821
+Speaker 2: governance is the prerequisite for AI. You cannot deploy intelligent, secure AI without a strictly
+
+546
+00:36:35.821 --> 00:36:41.539
+Speaker 2: governed data foundation. Dataverse provides that foundation. Project Online's legacy architecture simply could not support
+
+547
+00:36:41.539 --> 00:36:46.875
+Speaker 2: the security, the relational logic, and the scale required to run enterprise AI safely.
+
+548
+00:36:46.875 --> 00:36:52.301
+Speaker 1: So this migration is truly a forced evolution. Microsoft is tearing down the old infrastructure
+
+549
+00:36:52.301 --> 00:36:57.726
+Speaker 1: because it is quite literally a hazard to the AI future they are building. And
+
+550
+00:36:57.726 --> 00:37:03.151
+Speaker 1: the market data backs up this aggressive pivot. The source quotes IDC forecasting that the
+
+551
+00:37:03.151 --> 00:37:07.491
+Speaker 1: project and portfolio management software market will reach $13.6 billion by 2029.
+
+552
+00:37:07.491 --> 00:37:14.520
+Speaker 2: Yeah, that represents a 12.8% compound annual growth rate. That financial forecast clearly indicates that
+
+553
+00:37:14.520 --> 00:37:20.611
+Speaker 2: this cloud-native, AI-driven, highly integrated approach to work management is an industry-wide inevitability.
+
+554
+00:37:20.611 --> 00:37:21.548
+Speaker 1: You can't hide from it.
+
+555
+00:37:21.548 --> 00:37:27.937
+Speaker 2: You can't. Organizations that resist modernizing their data architecture now, clinging to legacy on-premises workflows,
+
+556
+00:37:27.937 --> 00:37:34.327
+Speaker 2: will simply be outmaneuvered and outcompeted by organizations whose delivery teams are augmented by AI.
+
+557
+00:37:34.327 --> 00:37:35.605
+Speaker 2: It's that simple.
+
+558
+00:37:35.605 --> 00:37:40.733
+Speaker 1: But this massive injection of AI raises a very real existential question for the people
+
+559
+00:37:40.733 --> 00:37:45.862
+Speaker 1: actually doing the work. I mean, if Copilot is generating the work breakdown structure, assigning
+
+560
+00:37:45.862 --> 00:37:50.991
+Speaker 1: the tasks based on capacity, monitoring the critical path for slippage, and automatically producing the
+
+561
+00:37:50.991 --> 00:37:56.119
+Speaker 1: weekly status reports for the executive steering committee... what is the human project manager actually
+
+562
+00:37:56.119 --> 00:38:00.906
+Speaker 1: doing? Are they just sitting there clicking "Approve" on the AI's suggestions all day?
+
+563
+00:38:00.906 --> 00:38:06.589
+Speaker 2: It is a very valid anxiety, but I think it misinterprets the function of the
+
+564
+00:38:06.589 --> 00:38:12.271
+Speaker 2: role. The role of the project manager isn't disappearing; it's being aggressively elevated. The fundamental
+
+565
+00:38:12.271 --> 00:38:17.954
+Speaker 2: shift is moving away from data entry and chasing status updates towards strategic governance and
+
+566
+00:38:17.954 --> 00:38:18.711
+Speaker 2: human alignment.
+
+567
+00:38:18.711 --> 00:38:23.397
+Speaker 1: Think about the day-to-day reality of a traditional project manager right now. They spend an
+
+568
+00:38:23.397 --> 00:38:28.082
+Speaker 1: absurd amount of their week just nagging developers for status updates on Slack, manually dragging
+
+569
+00:38:28.082 --> 00:38:32.768
+Speaker 1: bars on a Gantt chart when someone calls in sick, and, you know, formatting PowerPoint
+
+570
+00:38:32.768 --> 00:38:36.516
+Speaker 1: slides so the font sizes match for the Friday steering committee meeting.
+
+571
+00:38:36.516 --> 00:38:43.004
+Speaker 2: It's exhausting. And that is all operational friction. It is low-value administrative overhead. The AI
+
+572
+00:38:43.004 --> 00:38:49.491
+Speaker 2: handles the operational friction. By offloading the mechanical tracking and reporting to Copilot, the human
+
+573
+00:38:49.491 --> 00:38:53.384
+Speaker 2: project manager is freed to actually manage the strategy.
+
+574
+00:38:53.384 --> 00:38:54.321
+Speaker 1: They can do what humans are good at.
+
+575
+00:38:54.321 --> 00:39:01.349
+Speaker 2: Right. They can focus on negotiating with difficult stakeholders, managing the complex portfolio priorities, and
+
+576
+00:39:01.349 --> 00:39:08.378
+Speaker 2: navigating the nuanced, unquantifiable human elements of team dynamics and organizational politics that AI just
+
+577
+00:39:08.378 --> 00:39:09.315
+Speaker 2: cannot process.
+
+578
+00:39:09.315 --> 00:39:13.707
+Speaker 1: The human becomes the strategic pilot. You rely on the AI autopilot to handle the
+
+579
+00:39:13.707 --> 00:39:18.100
+Speaker 1: micro-adjustments of the wind and the altitude, so you can focus entirely on navigating the
+
+580
+00:39:18.100 --> 00:39:18.686
+Speaker 1: storm ahead.
+
+581
+00:39:18.686 --> 00:39:25.714
+Speaker 2: Exactly. The human manages the vision and the relationships; the AI manages the mechanical execution.
+
+582
+00:39:25.714 --> 00:39:32.742
+Speaker 2: But—and this is the key—that synergy only materializes if the underlying data foundation—the Dataverse architecture,
+
+583
+00:39:32.742 --> 00:39:39.302
+Speaker 2: the strict governance, the Power Platform integrations—is built correctly during this narrow migration window.
+
+584
+00:39:39.302 --> 00:39:54.636
+Speaker 1: This has been an incredibly dense, highly technical deep dive. Let's synthesize the absolute core
+
+585
+00:39:54.636 --> 00:40:01.792
+Speaker 1: takeaways for anyone staring down this transition:
+
+586
+00:40:01.792 --> 00:40:06.904
+Speaker 2: Absolutely. Do not expect Planner Premium to be a reskinned version of your legacy environment.
+
+587
+00:40:06.904 --> 00:40:12.015
+Speaker 2: You must understand the profound architectural shift from flat tasks storage to the relational, governed
+
+588
+00:40:12.015 --> 00:40:13.038
+Speaker 2: power of Dataverse.
+
+589
+00:40:13.038 --> 00:40:28.433
+Speaker 1: You have to choose your modernization path based on your actual operational reality, not just
+
+590
+00:40:28.433 --> 00:40:34.591
+Speaker 1: feature parity. Use the decision framework:
+
+591
+00:40:34.591 --> 00:40:40.838
+Speaker 2: And if you are running an end-to-end, billable professional services operation, you must adopt Dynamics
+
+592
+00:40:40.838 --> 00:40:42.088
+Speaker 2: 365 Project Operations.
+
+593
+00:40:42.088 --> 00:40:47.325
+Speaker 1: And above all, you must treat this transition as an opportunity to aggressively clean house.
+
+594
+00:40:47.325 --> 00:40:52.561
+Speaker 1: Do not succumb to the lift-and-shift mentality. Audit your environment, redesign your reporting, establish strict
+
+595
+00:40:52.561 --> 00:40:57.798
+Speaker 1: Dataverse governance, and shed the legacy technical debt. Don't try to plug your leaky gas
+
+596
+00:40:57.798 --> 00:40:59.893
+Speaker 1: pipes into the new smart grid.
+
+597
+00:40:59.893 --> 00:41:00.830
+Speaker 2: Very well said.
+
+598
+00:41:00.830 --> 00:41:06.009
+Speaker 1: I want to leave you with one final, provocative concept to mull over as you
+
+599
+00:41:06.009 --> 00:41:11.187
+Speaker 1: begin mapping out your new architecture today. We spent a lot of time discussing how
+
+600
+00:41:11.187 --> 00:41:16.366
+Speaker 1: Copilot reads the structured data in Dataverse—you know, the task durations, the dependencies, the resource
+
+601
+00:41:16.366 --> 00:41:21.545
+Speaker 1: costs—to predict a project's health. But if Microsoft's ecosystem is truly unifying all enterprise data
+
+602
+00:41:21.545 --> 00:41:26.723
+Speaker 1: under the Microsoft 365 umbrella, what happens when the AI starts factoring in the unstructured
+
+603
+00:41:26.723 --> 00:41:27.069
+Speaker 1: data?
+
+604
+00:41:27.069 --> 00:41:28.943
+Speaker 2: Oh, the behavioral layer.
+
+605
+00:41:28.943 --> 00:41:33.982
+Speaker 1: Exactly. What happens when Copilot is trained to factor in the tone of your development
+
+606
+00:41:33.982 --> 00:41:39.021
+Speaker 1: team's Teams chats? What happens when it analyzes the frequency of panicked emails sent after
+
+607
+00:41:39.021 --> 00:41:44.060
+Speaker 1: 10:00 PM, or the sudden increase in muted microphones during weekly standup meetings, and feeds
+
+608
+00:41:44.060 --> 00:41:46.748
+Speaker 1: that telemetry into a project's risk assessment algorithm?
+
+609
+00:41:46.748 --> 00:41:47.685
+Speaker 2: That changes everything.
+
+610
+00:41:47.685 --> 00:41:53.966
+Speaker 1: If the platform connects absolutely everything, are we rapidly moving toward a future where the
+
+611
+00:41:53.966 --> 00:42:00.246
+Speaker 1: health of a multi-million-dollar project is measured not just by whether the tasks are checked
+
+612
+00:42:00.246 --> 00:42:06.527
+Speaker 1: off, but by the digital behavioral footprint of the team executing it? If the AI
+
+613
+00:42:06.527 --> 00:42:12.807
+Speaker 1: senses the team's internal chat sentiment turning deeply negative and fragmented, does it automatically flag
+
+614
+00:42:12.807 --> 00:42:19.088
+Speaker 1: the project to the C-suite as "at risk," even if the Gantt chart is perfectly
+
+615
+00:42:19.088 --> 00:42:25.368
+Speaker 1: green? It is a fascinating, slightly terrifying frontier to consider as you build the foundation
+
+616
+00:42:25.368 --> 00:42:27.043
+Speaker 1: for this intelligence today.
+
+617
+00:42:27.043 --> 00:42:27.043
+Announcer: You've been listening to Support Engineering Weekly from the Support Engineering Blog. For the full
+
+618
+00:42:27.043 --> 00:42:27.043
+Announcer: articles, references, and technical resources from today's discussion, visit the URL blog.sadhan.ch.

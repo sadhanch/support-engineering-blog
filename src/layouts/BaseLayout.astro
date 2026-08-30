@@ -492,6 +492,9 @@ const structuredData = type === "article"
             initializeAnalyticsConsent
         } from "../scripts/analytics-consent";
 
+        import {
+            initializePodcastPlayers
+        } from "../scripts/podcast-player";
 
         initializeGlobalSearch();
 
@@ -502,6 +505,8 @@ const structuredData = type === "article"
         initializeCodeCopy();
 
         initializeAnalyticsConsent();
+
+        initializePodcastPlayers();
 
     </script>
 

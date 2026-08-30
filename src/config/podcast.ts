@@ -24,6 +24,32 @@ export const podcast = {
     rssFeed:
         "https://media.rss.com/support-engineering-weekly/feed.xml",
 
+    listen: {
+
+        live: [
+
+            {
+                name:
+                    "Spotify",
+
+                url:
+                    "https://open.spotify.com/show/0xJoVWcqcFdez7GR5uF9j9"
+
+            },
+
+            {
+                name:
+                    "Apple Podcasts",
+
+                url:
+                    "https://podcasts.apple.com/us/podcast/support-engineering-weekly/id6806487806"
+
+            }
+
+        ]
+
+    },
+
     blogUrl:
         "https://blog.sadhan.ch/",
 

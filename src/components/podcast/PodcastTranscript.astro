@@ -1,0 +1,216 @@
+---
+/**
+ * ==========================================================
+ * Support Engineering Weekly — Transcript
+ * ==========================================================
+ */
+
+import fs from "node:fs/promises";
+import path from "node:path";
+
+import {
+    parseVtt
+} from "../../lib/vtt";
+
+
+interface Props {
+
+    transcriptFile?: string;
+
+    externalUrl?: string;
+
+}
+
+const {
+
+    transcriptFile,
+
+    externalUrl
+
+} = Astro.props;
+
+
+let cues = [];
+
+
+if (transcriptFile) {
+
+    const transcriptPath =
+        path.resolve(
+            "src/content/podcast",
+            transcriptFile
+        );
+
+
+    try {
+
+        const source =
+            await fs.readFile(
+                transcriptPath,
+                "utf-8"
+            );
+
+
+        cues =
+            parseVtt(source);
+
+    }
+    catch (error) {
+
+        console.error(
+            `Unable to read podcast transcript: ${transcriptPath}`,
+            error
+        );
+
+    }
+
+}
+
+const formatTime = (
+    seconds: number
+): string => {
+
+    const safeSeconds =
+        Math.max(
+            0,
+            Math.floor(seconds)
+        );
+
+    const hours =
+        Math.floor(
+            safeSeconds / 3600
+        );
+
+    const minutes =
+        Math.floor(
+            (safeSeconds % 3600) / 60
+        );
+
+    const remainingSeconds =
+        safeSeconds % 60;
+
+
+    if (hours > 0) {
+
+        return `${String(hours).padStart(2, "0")}:${String(
+            minutes
+        ).padStart(2, "0")}:${String(
+            remainingSeconds
+        ).padStart(2, "0")}`;
+
+    }
+
+
+    return `${String(minutes).padStart(2, "0")}:${String(
+        remainingSeconds
+    ).padStart(2, "0")}`;
+
+};
+---
+
+<section class="podcast-transcript">
+
+    <div class="podcast-transcript__header">
+
+        <p class="podcast-section-label">
+            Transcript
+        </p>
+
+        <h2>
+            Read the conversation
+        </h2>
+
+        <p>
+            Follow the episode as a written conversation.
+            Transcript entries are synchronized with the
+            audio player.
+        </p>
+
+    </div>
+
+
+    {
+
+        cues.length > 0 ? (
+
+            <div
+                class="podcast-transcript__body"
+                data-podcast-transcript
+            >
+
+                {
+
+                    cues.map(
+                        (cue, index) => (
+
+                            <p
+                                class="podcast-transcript__cue"
+                                data-transcript-cue
+                                data-transcript-start={cue.start}
+                                data-transcript-end={cue.end}
+                                id={`transcript-cue-${index}`}
+                            >
+
+                                <button
+                                    type="button"
+                                    class="podcast-transcript__timestamp"
+                                    data-transcript-seek={cue.start}
+                                    aria-label={`Seek to ${formatTime(cue.start)}`}
+                                >
+
+                                    {formatTime(cue.start)}
+
+                                </button>
+
+
+                                <span class="podcast-transcript__text">
+
+                                    {cue.text}
+
+                                </span>
+
+                            </p>
+
+                        )
+                    )
+
+                }
+
+            </div>
+
+        ) : (
+
+            <p class="podcast-transcript__unavailable">
+
+                The transcript is currently unavailable.
+
+            </p>
+
+        )
+
+    }
+
+
+    {
+
+        externalUrl && (
+
+            <p class="podcast-transcript__source">
+
+                <a
+                    href={externalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+
+                    Open published transcript →
+
+                </a>
+
+            </p>
+
+        )
+
+    }
+
+</section>
