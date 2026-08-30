@@ -1,0 +1,270 @@
+---
+/**
+ * ==========================================================
+ * Support Engineering Weekly — Podcast Landing Page
+ * ==========================================================
+ *
+ * Purpose:
+ * Provides the public landing page for Support Engineering
+ * Weekly within the Support Engineering Blog.
+ * ==========================================================
+ */
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+import Container from "../../components/layout/Container.astro";
+import Section from "../../components/layout/Section.astro";
+import ListeningLinks from "../../components/podcast/ListeningLinks.astro";
+
+import PodcastIllustration from "../../components/podcast/PodcastIllustration.astro";
+import CharacterProfiles from "../../components/podcast/CharacterProfiles.astro";
+
+import {
+    getAllPodcastEpisodes,
+    getLatestPodcastEpisode
+} from "../../lib/podcast";
+
+import { podcast } from "../../config/podcast";
+
+
+const episodes =
+    await getAllPodcastEpisodes();
+
+const latestEpisode =
+    await getLatestPodcastEpisode();
+
+---
+
+<BaseLayout
+
+    title={`${podcast.title} — ${podcast.subtitle}`}
+
+    description={podcast.description}
+
+>
+
+    <main
+        id="main-content"
+        class="podcast-page"
+    >
+
+        <!-- ==================================================
+             Introduction
+             ================================================== -->
+
+        <Section>
+
+            <Container>
+
+                <header class="podcast-intro">
+
+                    <h1>
+
+                        Support Engineering
+                        <span aria-hidden="true"> | </span>
+                        Weekly
+
+                    </h1>
+
+                    <p class="podcast-intro__subtitle">
+
+                        {podcast.subtitle}
+
+                    </p>
+
+                    <p class="podcast-intro__description">
+
+                        {podcast.description}
+
+                    </p>
+
+                    <ListeningLinks />
+
+                </header>
+
+            </Container>
+
+        </Section>
+
+        <!-- ==================================================
+            Alex & Maya
+            ================================================== -->
+
+        <Section>
+
+            <Container>
+
+                <section class="podcast-identity">
+
+                    <div class="podcast-identity__illustration">
+
+                        <PodcastIllustration />
+
+                    </div>
+
+                    <CharacterProfiles />
+
+                </section>
+
+            </Container>
+
+        </Section>
+
+        <!-- ==================================================
+             Latest Episode
+             ================================================== -->
+
+        {
+
+            latestEpisode && (
+
+                <Section>
+
+                    <Container>
+
+                        <section class="podcast-latest">
+
+                            <p class="podcast-section-label">
+
+                                Latest Episode
+
+                            </p>
+
+                            <p>
+
+                                Episode {String(
+                                    latestEpisode.data.episodeNumber
+                                ).padStart(3, "0")}
+
+                            </p>
+
+                            <h2>
+
+                                {latestEpisode.data.title}
+
+                            </h2>
+
+                            <p>
+
+                                {latestEpisode.data.description}
+
+                            </p>
+
+                            <p>
+
+                                <a
+                                    href={`/podcast/${latestEpisode.id}/`}
+                                    class="button button--primary button--md"
+                                >
+
+                                    View Episode
+
+                                </a>
+
+                            </p>
+
+                        </section>
+
+                    </Container>
+
+                </Section>
+
+            )
+
+        }
+
+        <!-- ==================================================
+             Episode Archive
+             ================================================== -->
+
+        <Section>
+
+            <Container>
+
+                <section class="podcast-archive">
+
+                    <p class="podcast-section-label">
+
+                        All Episodes
+
+                    </p>
+
+                    <h2>
+
+                        Podcast Archive
+
+                    </h2>
+
+                    {
+
+                        episodes.length === 0 ? (
+
+                            <p>
+
+                                No episodes are currently available.
+
+                            </p>
+
+                        ) : (
+
+                            <div class="podcast-episode-list">
+
+                                {
+
+                                    episodes.map((episode) => (
+
+                                        <article
+                                            class="podcast-episode-item"
+                                        >
+
+                                            <p>
+
+                                                Episode {
+
+                                                    String(
+                                                        episode.data.episodeNumber
+                                                    ).padStart(3, "0")
+
+                                                }
+
+                                            </p>
+
+                                            <h3>
+
+                                                <a
+                                                    href={`/podcast/${episode.id}/`}
+                                                >
+
+                                                    {episode.data.title}
+
+                                                </a>
+
+                                            </h3>
+
+                                            <p>
+
+                                                {episode.data.description}
+
+                                            </p>
+
+                                        </article>
+
+                                    ))
+
+                                }
+
+                            </div>
+
+                        )
+
+                    }
+
+                </section>
+
+            </Container>
+
+        </Section>
+
+    </main>
+
+</BaseLayout>

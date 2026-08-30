@@ -1,0 +1,163 @@
+---
+/**
+ * ==========================================================
+ * Support Engineering Weekly — Episode Page
+ * ==========================================================
+ */
+
+import PodcastEpisodeLayout
+    from "../../layouts/PodcastEpisodeLayout.astro";
+
+import {
+    getAllPodcastEpisodes
+} from "../../lib/podcast";
+
+import {
+    getArticleBySlug
+} from "../../lib/articles";
+
+
+export async function getStaticPaths() {
+
+    const episodes =
+        await getAllPodcastEpisodes();
+
+    return Promise.all(
+
+        episodes.map(
+            async (episode) => {
+
+                const relatedArticles =
+                    await Promise.all(
+
+                        episode.data.relatedArticles.map(
+                            async (articleId) => {
+
+                                const article =
+                                    await getArticleBySlug(
+                                        articleId
+                                    );
+
+                                if (!article) {
+
+                                    throw new Error(
+                                        `Podcast episode "${episode.id}" references related article "${articleId}", but that article does not exist.`
+                                    );
+
+                                }
+
+                                return {
+
+                                    id:
+                                        article.id,
+
+                                    title:
+                                        article.data.title,
+
+                                    description:
+                                        article.data.description
+
+                                };
+
+                            }
+                        )
+
+                    );
+
+
+                return {
+
+                    params: {
+
+                        slug:
+                            episode.id
+
+                    },
+
+                    props: {
+
+                        episode,
+
+                        relatedArticles
+
+                    }
+
+                };
+
+            }
+        )
+
+    );
+
+}
+
+
+const {
+
+    episode,
+
+    relatedArticles
+
+} = Astro.props;
+
+---
+
+<PodcastEpisodeLayout
+
+    episodeNumber={
+        episode.data.episodeNumber
+    }
+
+    season={
+        episode.data.season
+    }
+
+    title={
+        episode.data.title
+    }
+
+    artwork={
+        episode.data.artwork
+    }
+
+    description={
+        episode.data.description
+    }
+
+    publishDate={
+        episode.data.publishDate
+    }
+
+    duration={
+        episode.data.audio.duration
+    }
+
+    audioUrl={
+        episode.data.audio.url
+    }
+
+    audioMimeType={
+        episode.data.audio.mimeType
+    }
+
+    chapters={
+        episode.data.chapters
+    }
+
+    relatedArticles={
+        relatedArticles
+    }
+
+    transcript={
+        episode.data.transcript
+    }
+
+    captions={
+        episode.data.captions
+    }
+
+    transcriptFile={
+        episode.data.transcriptFile
+    }
+
+/>

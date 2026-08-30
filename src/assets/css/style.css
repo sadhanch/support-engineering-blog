@@ -72,6 +72,7 @@
 @import "./components/work-management-journey.css";
 @import "./components/project-online-capability-gap-check.css";
 @import "./components/planner-premium-license-fit-check.css";
+@import "./components/podcast-player.css";
 
 /* ==========================================================
    Pages
@@ -87,3 +88,4 @@
 @import "./pages/learning-path.css";
 @import "./pages/about.css";
 @import "./pages/legal.css";
+@import "./pages/podcast.css";

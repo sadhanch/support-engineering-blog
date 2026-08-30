@@ -1,0 +1,33 @@
+---
+/**
+ * ==========================================================
+ * Support Engineering Weekly — Podcast Illustration
+ * ==========================================================
+ *
+ * Purpose:
+ * Renders the recurring Alex & Maya studio illustration
+ * used by the Support Engineering Weekly podcast landing page.
+ *
+ * The artwork itself contains no page-level semantic text.
+ * Supporting names, descriptions, and editorial copy remain
+ * accessible HTML content outside the image.
+ * ==========================================================
+ */
+
+import { Image } from "astro:assets";
+
+import studioIllustration from "../../assets/images/podcast/support-engineering-weekly-studio.png";
+---
+
+<figure class="podcast-illustration">
+
+    <Image
+        src={studioIllustration}
+        alt="Alex and Maya recording Support Engineering Weekly in a retro pixel-art podcast studio."
+        widths={[800, 1200, 1600, 2400]}
+        sizes="(max-width: 768px) 100vw, 1200px"
+        loading="eager"
+        decoding="async"
+    />
+
+</figure>

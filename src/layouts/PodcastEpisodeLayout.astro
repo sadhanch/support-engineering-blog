@@ -1,0 +1,370 @@
+---
+/**
+ * ==========================================================
+ * Support Engineering Weekly — Episode Layout
+ * ==========================================================
+ */
+
+import BaseLayout from "./BaseLayout.astro";
+import Container from "../components/layout/Container.astro";
+
+import PodcastPlayer from "../components/podcast/PodcastPlayer.astro";
+import PodcastTranscript from "../components/podcast/PodcastTranscript.astro";
+import { podcast } from "../config/podcast";
+
+
+interface Chapter {
+
+    start: number;
+
+    title: string;
+
+}
+
+
+interface Props {
+
+    episodeNumber: number;
+
+    season?: number;
+
+    title: string;
+
+    artwork?: string;
+
+    description: string;
+
+    publishDate: Date;
+
+    duration: number;
+
+    audioUrl: string;
+
+    audioMimeType: string;
+
+    chapters?: Chapter[];
+
+    relatedArticles?: {
+
+        id: string;
+
+        title: string;
+
+        description: string;
+
+    }[];
+
+    transcript?: string;
+
+    captions?: string;
+
+    transcriptFile?: string;
+
+}
+
+
+const {
+
+    episodeNumber,
+
+    season,
+
+    title,
+
+    artwork,
+
+    description,
+
+    publishDate,
+
+    duration,
+
+    audioUrl,
+
+    audioMimeType,
+
+    chapters = [],
+
+    relatedArticles = [],
+
+    transcript,
+
+    captions,
+    
+    transcriptFile
+
+} = Astro.props;
+
+
+/* ==========================================================
+   Presentation helpers
+   ========================================================== */
+
+const formattedDuration = (() => {
+
+    const minutes =
+        Math.floor(duration / 60);
+
+    const seconds =
+        duration % 60;
+
+    return `${minutes}:${String(seconds).padStart(2, "0")}`;
+
+})();
+
+
+const formattedPublishDate =
+    publishDate.toLocaleDateString(
+        "en-US",
+        {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        }
+    );
+
+const podcastArtwork =
+    podcast.artwork;
+---
+
+<BaseLayout
+
+    title={`${title} — Support Engineering Weekly`}
+
+    description={description}
+
+    type="article"
+
+    publishedTime={publishDate}
+
+>
+
+    <main
+        id="main-content"
+        class="podcast-episode-page"
+    >
+
+        <Container>
+
+            <!-- ==================================================
+                 Episode Header
+                 ================================================== -->
+
+            <header class="podcast-episode-header">
+
+                <div class="podcast-episode-header__artwork">
+
+                    <img
+                        src={artwork ?? podcastArtwork}
+                        alt=""
+                        loading="eager"
+                        decoding="async"
+                    />
+
+                </div>
+
+
+                <div class="podcast-episode-header__content">
+
+                    <p class="podcast-section-label">
+
+                        Support Engineering Weekly
+
+                    </p>
+
+
+                    <p class="podcast-episode-number">
+
+                        Episode {
+                            String(
+                                episodeNumber
+                            ).padStart(3, "0")
+                        }
+
+                    </p>
+
+
+                    <h1>
+
+                        {title}
+
+                    </h1>
+
+
+                    <p class="podcast-episode-description">
+
+                        {description}
+
+                    </p>
+
+
+                    <div class="podcast-episode-meta">
+
+                        {
+
+                            season && (
+
+                                <span>
+                                    Season {season}
+                                </span>
+
+                            )
+
+                        }
+
+
+                        <span>
+                            {formattedPublishDate}
+                        </span>
+
+
+                        <span>
+                            {formattedDuration}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- ==================================================
+                 Audio Player
+                 ================================================== -->
+
+            <section class="podcast-episode-player">
+
+                <PodcastPlayer
+
+                    audioUrl={audioUrl}
+
+                    audioMimeType={audioMimeType}
+
+                    duration={duration}
+
+                    chapters={chapters}
+
+                />
+
+            </section>
+
+
+            <!-- ==================================================
+                 Episode Content
+                 ================================================== -->
+
+            <div class="podcast-episode-content">
+
+                <!-- ==================================================
+                     Transcript
+                     ================================================== -->
+
+                {
+
+                    transcriptFile && (
+
+                        <PodcastTranscript
+
+                            transcriptFile={
+                                transcriptFile
+                            }
+
+                            externalUrl={
+                                transcript
+                            }
+
+                        />
+
+                    )
+
+                }
+
+                <!-- ==================================================
+                     Related Article
+                     ================================================== -->
+
+                {
+
+                    relatedArticles.length > 0 && (
+
+                        <section class="podcast-related-reading">
+
+                            <p class="podcast-section-label">
+                                Related Reading
+                            </p>
+
+                            <h2>
+                                Continue reading
+                            </h2>
+
+                            <p class="podcast-related-reading__intro">
+                                Explore the Support Engineering Blog articles
+                                connected to this episode.
+                            </p>
+
+
+                            <div class="podcast-related-reading__list">
+
+                                {
+
+                                    relatedArticles.map(
+                                        (article) => (
+
+                                            <article
+                                                class="podcast-related-reading__item"
+                                            >
+
+                                                <h3>
+
+                                                    <a
+                                                        href={
+                                                            `/articles/${article.id}/`
+                                                        }
+                                                    >
+
+                                                        {article.title}
+
+                                                    </a>
+
+                                                </h3>
+
+
+                                                <p>
+                                                    {article.description}
+                                                </p>
+
+
+                                                <a
+                                                    href={
+                                                        `/articles/${article.id}/`
+                                                    }
+                                                    class="podcast-related-reading__link"
+                                                >
+
+                                                    Read article →
+
+                                                </a>
+
+                                            </article>
+
+                                        )
+                                    )
+
+                                }
+
+                            </div>
+
+                        </section>
+
+                    )
+
+                }
+
+            </div>
+
+        </Container>
+
+    </main>
+
+</BaseLayout>
