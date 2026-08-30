@@ -55,6 +55,11 @@ export const site = {
         },
 
         {
+            label: "Podcast",
+            href: "/podcast"
+        },
+
+        {
             label: "About",
             href: "/about"
         }
@@ -78,6 +83,11 @@ export const site = {
             {
                 label: "Learning Paths",
                 href: "/learning-paths"
+            },
+
+            {
+                label: "Podcast",
+                href: "/podcast"
             },
 
             {
