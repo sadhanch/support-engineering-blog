@@ -5,6 +5,7 @@
    landing page.
    ========================================================== */
 
+
 /* ==========================================================
    Podcast Section Rhythm
    ----------------------------------------------------------
@@ -564,37 +565,6 @@
 
 
 /* ==========================================================
-   About
-   ========================================================== */
-
-.podcast-about {
-
-    max-width:
-        58rem;
-
-}
-
-
-.podcast-about h2 {
-
-    margin:
-        0 0 var(--space-3);
-
-}
-
-
-.podcast-about p {
-
-    max-width:
-        68ch;
-
-    color:
-        var(--text-secondary);
-
-}
-
-
-/* ==========================================================
    Desktop
    ========================================================== */
 
@@ -694,6 +664,7 @@
     }
 
 }
+
 
 /* ==========================================================
    Listening Links
@@ -825,6 +796,7 @@
 
 }
 
+
 /* ==========================================================
    Podcast Episode Page
    ========================================================== */
@@ -837,13 +809,86 @@
 }
 
 
+/* ==========================================================
+   Episode Header
+   ========================================================== */
+
 .podcast-episode-header {
 
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(14rem, 22rem)
+        minmax(0, 1fr);
+
+    gap:
+        var(--space-8);
+
+    align-items:
+        center;
+
     max-width:
-        68ch;
+        72rem;
 
     margin-bottom:
         var(--space-8);
+
+}
+
+
+.podcast-episode-header__artwork {
+
+    overflow:
+        hidden;
+
+    aspect-ratio:
+        1 / 1;
+
+    border:
+        1px solid var(--border-default);
+
+    border-radius:
+        var(--radius-lg);
+
+    background:
+        var(--surface-primary);
+
+    box-shadow:
+        var(--shadow-md);
+
+}
+
+
+.podcast-episode-header__artwork img {
+
+    display:
+        block;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        cover;
+
+}
+
+
+.podcast-episode-header__content {
+
+    min-width:
+        0;
+
+}
+
+
+.podcast-episode-header__content .podcast-section-label {
+
+    margin-bottom:
+        var(--space-3);
 
 }
 
@@ -925,6 +970,32 @@
 }
 
 
+@media (max-width: 767px) {
+
+    .podcast-episode-header {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            var(--space-5);
+
+    }
+
+
+    .podcast-episode-header__artwork {
+
+        width:
+            min(100%, 20rem);
+
+        margin-inline:
+            auto;
+
+    }
+
+}
+
+
 /* ==========================================================
    Audio
    ========================================================== */
@@ -964,29 +1035,36 @@
 
 
 /* ==========================================================
-   Episode Content
+   Episode Reading Content
+   ----------------------------------------------------------
+   Transcript, Related Reading, and Episode Navigation share
+   one readable column. The parent owns the width and is
+   centered within the page container.
    ========================================================== */
 
 .podcast-episode-content {
 
+    width:
+        min(
+            100%,
+            var(--content-width)
+        );
+
+    margin-inline:
+        auto;
+
+}
+
+
+.podcast-episode-content > .podcast-transcript,
+.podcast-episode-content > .podcast-related-reading,
+.podcast-episode-content > .podcast-episode-navigation {
+
+    width:
+        100%;
+
     max-width:
-        68ch;
-
-}
-
-
-.podcast-episode-content section {
-
-    margin-top:
-        var(--space-10);
-
-}
-
-
-.podcast-episode-content section:first-child {
-
-    margin-top:
-        0;
+        none;
 
 }
 
@@ -1084,49 +1162,14 @@
 }
 
 
-@media (max-width: 640px) {
-
-    .podcast-episode-page {
-
-        padding-block:
-            var(--space-8);
-
-    }
-
-
-    .podcast-episode-header {
-
-        margin-bottom:
-            var(--space-6);
-
-    }
-
-
-    .podcast-episode-description {
-
-        font-size:
-            var(--font-size-md);
-
-    }
-
-
-    .podcast-episode-player {
-
-        padding:
-            var(--space-4);
-
-    }
-
-}
-
 /* ==========================================================
    Related Reading
    ========================================================== */
 
 .podcast-related-reading {
 
-    max-width:
-        68rem;
+    margin-top:
+        var(--space-10);
 
 }
 
@@ -1150,6 +1193,9 @@
     display:
         grid;
 
+    width:
+        100%;
+
     gap:
         var(--space-4);
 
@@ -1157,6 +1203,9 @@
 
 
 .podcast-related-reading__item {
+
+    width:
+        100%;
 
     padding:
         var(--space-5);
@@ -1257,41 +1306,50 @@
 
 }
 
+
 /* ==========================================================
-   Episode Header
+   Episode Navigation
    ========================================================== */
 
-.podcast-episode-header {
+.podcast-episode-navigation {
 
     display:
-        grid;
+        flex;
 
-    grid-template-columns:
-        minmax(14rem, 22rem)
-        minmax(0, 1fr);
+    width:
+        100%;
+
+    justify-content:
+        space-between;
 
     gap:
+        var(--space-4);
+
+    margin-top:
+        var(--space-10);
+
+    padding-top:
         var(--space-8);
 
-    align-items:
-        center;
-
-    max-width:
-        72rem;
-
-    margin-bottom:
-        var(--space-8);
+    border-top:
+        1px solid var(--border-default);
 
 }
 
 
-.podcast-episode-header__artwork {
+.podcast-episode-navigation__item {
 
-    overflow:
-        hidden;
+    flex:
+        1 1 0;
 
-    aspect-ratio:
-        1 / 1;
+    max-width:
+        50%;
+
+    min-width:
+        0;
+
+    padding:
+        var(--space-5);
 
     border:
         1px solid var(--border-default);
@@ -1302,65 +1360,179 @@
     background:
         var(--surface-primary);
 
-    box-shadow:
-        var(--shadow-md);
+    text-decoration:
+        none;
+
+    transition:
+        border-color var(--transition-fast),
+        background-color var(--transition-fast),
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
 
 }
 
 
-.podcast-episode-header__artwork img {
+.podcast-episode-navigation__item:hover {
+
+    border-color:
+        var(--color-accent);
+
+    background:
+        var(--surface-secondary);
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        var(--shadow-sm);
+
+}
+
+
+.podcast-episode-navigation__item:focus-visible {
+
+    outline:
+        2px solid var(--color-accent);
+
+    outline-offset:
+        3px;
+
+}
+
+
+.podcast-episode-navigation__item--next {
+
+    margin-left:
+        auto;
+
+    text-align:
+        right;
+
+}
+
+
+.podcast-episode-navigation__label {
 
     display:
         block;
 
-    width:
-        100%;
-
-    height:
-        100%;
-
-    object-fit:
-        cover;
-
-}
-
-
-.podcast-episode-header__content {
-
-    min-width:
-        0;
-
-}
-
-
-.podcast-episode-header__content .podcast-section-label {
-
     margin-bottom:
         var(--space-3);
 
+    color:
+        var(--color-accent);
+
+    font-size:
+        var(--font-size-sm);
+
+    font-weight:
+        var(--font-weight-semibold);
+
 }
 
 
-@media (max-width: 767px) {
+.podcast-episode-navigation__number {
 
-    .podcast-episode-header {
+    display:
+        block;
 
-        grid-template-columns:
-            1fr;
+    margin-bottom:
+        var(--space-1);
 
-        gap:
-            var(--space-5);
+    color:
+        var(--text-tertiary);
+
+    font-family:
+        var(--font-family-code);
+
+    font-size:
+        var(--font-size-xs);
+
+}
+
+
+.podcast-episode-navigation strong {
+
+    display:
+        block;
+
+    color:
+        var(--text-primary);
+
+    font-size:
+        var(--font-size-lg);
+
+    line-height:
+        var(--line-height-tight);
+
+}
+
+
+@media (max-width: 640px) {
+
+    .podcast-episode-navigation {
+
+        flex-direction:
+            column;
 
     }
 
 
-    .podcast-episode-header__artwork {
+    .podcast-episode-navigation__item {
 
-        width:
-            min(100%, 20rem);
+        max-width:
+            none;
 
-        margin-inline:
-            auto;
+    }
+
+
+    .podcast-episode-navigation__item--next {
+
+        margin-left:
+            0;
+
+        text-align:
+            left;
+
+    }
+
+}
+
+
+/* ==========================================================
+   Episode Mobile Layout
+   ========================================================== */
+
+@media (max-width: 640px) {
+
+    .podcast-episode-page {
+
+        padding-block:
+            var(--space-8);
+
+    }
+
+
+    .podcast-episode-header {
+
+        margin-bottom:
+            var(--space-6);
+
+    }
+
+
+    .podcast-episode-description {
+
+        font-size:
+            var(--font-size-md);
+
+    }
+
+
+    .podcast-episode-player {
+
+        padding:
+            var(--space-4);
 
     }
 

@@ -22,6 +22,17 @@ interface Chapter {
 }
 
 
+interface EpisodeNavigation {
+
+    id: string;
+
+    episodeNumber: number;
+
+    title: string;
+
+}
+
+
 interface Props {
 
     episodeNumber: number;
@@ -60,6 +71,10 @@ interface Props {
 
     transcriptFile?: string;
 
+    previousEpisode?: EpisodeNavigation | null;
+
+    nextEpisode?: EpisodeNavigation | null;
+
 }
 
 
@@ -90,8 +105,12 @@ const {
     transcript,
 
     captions,
-    
-    transcriptFile
+
+    transcriptFile,
+
+    previousEpisode,
+
+    nextEpisode
 
 } = Astro.props;
 
@@ -123,9 +142,11 @@ const formattedPublishDate =
         }
     );
 
+
 const podcastArtwork =
     podcast.artwork;
 ---
+
 
 <BaseLayout
 
@@ -176,9 +197,14 @@ const podcastArtwork =
                     <p class="podcast-episode-number">
 
                         Episode {
+
                             String(
                                 episodeNumber
-                            ).padStart(3, "0")
+                            ).padStart(
+                                3,
+                                "0"
+                            )
+
                         }
 
                     </p>
@@ -205,7 +231,9 @@ const podcastArtwork =
                             season && (
 
                                 <span>
+
                                     Season {season}
+
                                 </span>
 
                             )
@@ -214,12 +242,16 @@ const podcastArtwork =
 
 
                         <span>
+
                             {formattedPublishDate}
+
                         </span>
 
 
                         <span>
+
                             {formattedDuration}
+
                         </span>
 
                     </div>
@@ -251,7 +283,7 @@ const podcastArtwork =
 
 
             <!-- ==================================================
-                 Episode Content
+                 Episode Reading Content
                  ================================================== -->
 
             <div class="podcast-episode-content">
@@ -280,8 +312,9 @@ const podcastArtwork =
 
                 }
 
+
                 <!-- ==================================================
-                     Related Article
+                     Related Reading
                      ================================================== -->
 
                 {
@@ -291,16 +324,24 @@ const podcastArtwork =
                         <section class="podcast-related-reading">
 
                             <p class="podcast-section-label">
+
                                 Related Reading
+
                             </p>
 
+
                             <h2>
+
                                 Continue reading
+
                             </h2>
 
+
                             <p class="podcast-related-reading__intro">
+
                                 Explore the Support Engineering Blog articles
                                 connected to this episode.
+
                             </p>
 
 
@@ -331,7 +372,9 @@ const podcastArtwork =
 
 
                                                 <p>
+
                                                     {article.description}
+
                                                 </p>
 
 
@@ -356,6 +399,123 @@ const podcastArtwork =
                             </div>
 
                         </section>
+
+                    )
+
+                }
+
+
+                <!-- ==================================================
+                     Episode Navigation
+                     ================================================== -->
+
+                {
+
+                    (previousEpisode || nextEpisode) && (
+
+                        <nav
+                            class="podcast-episode-navigation"
+                            aria-label="Episode navigation"
+                        >
+
+                            {
+
+                                previousEpisode && (
+
+                                    <a
+                                        href={`/podcast/${previousEpisode.id}/`}
+                                        class="podcast-episode-navigation__item podcast-episode-navigation__item--previous"
+                                    >
+
+                                        <span
+                                            class="podcast-episode-navigation__label"
+                                        >
+
+                                            ← Previous episode
+
+                                        </span>
+
+
+                                        <span
+                                            class="podcast-episode-navigation__number"
+                                        >
+
+                                            Episode {
+
+                                                String(
+                                                    previousEpisode.episodeNumber
+                                                ).padStart(
+                                                    3,
+                                                    "0"
+                                                )
+
+                                            }
+
+                                        </span>
+
+
+                                        <strong>
+
+                                            {previousEpisode.title}
+
+                                        </strong>
+
+                                    </a>
+
+                                )
+
+                            }
+
+
+                            {
+
+                                nextEpisode && (
+
+                                    <a
+                                        href={`/podcast/${nextEpisode.id}/`}
+                                        class="podcast-episode-navigation__item podcast-episode-navigation__item--next"
+                                    >
+
+                                        <span
+                                            class="podcast-episode-navigation__label"
+                                        >
+
+                                            Next episode →
+
+                                        </span>
+
+
+                                        <span
+                                            class="podcast-episode-navigation__number"
+                                        >
+
+                                            Episode {
+
+                                                String(
+                                                    nextEpisode.episodeNumber
+                                                ).padStart(
+                                                    3,
+                                                    "0"
+                                                )
+
+                                            }
+
+                                        </span>
+
+
+                                        <strong>
+
+                                            {nextEpisode.title}
+
+                                        </strong>
+
+                                    </a>
+
+                                )
+
+                            }
+
+                        </nav>
 
                     )
 

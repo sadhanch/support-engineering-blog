@@ -22,10 +22,76 @@ export async function getStaticPaths() {
     const episodes =
         await getAllPodcastEpisodes();
 
+    const orderedEpisodes =
+        [...episodes].sort(
+            (a, b) =>
+                (a.data.season ?? 1) -
+                (b.data.season ?? 1) ||
+                a.data.episodeNumber -
+                b.data.episodeNumber
+        );
+
     return Promise.all(
 
         episodes.map(
             async (episode) => {
+
+                const currentIndex =
+                    orderedEpisodes.findIndex(
+                        (item) =>
+                            item.id === episode.id
+                    );
+
+                const previousEntry =
+                    currentIndex > 0
+                        ? orderedEpisodes[
+                            currentIndex - 1
+                        ]
+                        : null;
+
+
+                const nextEntry =
+                    currentIndex >= 0 &&
+                    currentIndex <
+                        orderedEpisodes.length - 1
+                        ? orderedEpisodes[
+                            currentIndex + 1
+                        ]
+                        : null;
+
+
+                const previousEpisode =
+                    previousEntry
+                        ? {
+
+                            id:
+                                previousEntry.id,
+
+                            episodeNumber:
+                                previousEntry.data.episodeNumber,
+
+                            title:
+                                previousEntry.data.title
+
+                        }
+                        : null;
+
+
+                const nextEpisode =
+                    nextEntry
+                        ? {
+
+                            id:
+                                nextEntry.id,
+
+                            episodeNumber:
+                                nextEntry.data.episodeNumber,
+
+                            title:
+                                nextEntry.data.title
+
+                        }
+                        : null;
 
                 const relatedArticles =
                     await Promise.all(
@@ -78,7 +144,11 @@ export async function getStaticPaths() {
 
                         episode,
 
-                        relatedArticles
+                        relatedArticles,
+
+                        previousEpisode,
+
+                        nextEpisode
 
                     }
 
@@ -96,7 +166,11 @@ const {
 
     episode,
 
-    relatedArticles
+    relatedArticles,
+
+    previousEpisode,
+
+    nextEpisode
 
 } = Astro.props;
 
@@ -158,6 +232,14 @@ const {
 
     transcriptFile={
         episode.data.transcriptFile
+    }
+
+    previousEpisode={
+        previousEpisode
+    }
+
+    nextEpisode={
+        nextEpisode
     }
 
 />
