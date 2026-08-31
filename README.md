@@ -22,6 +22,7 @@ The Support Engineering Blog (SEB) is a static technical publication built with 
 - [Progressive Web App](docs/13-progressive-web-app.md)
 - [Scheduled Publishing](docs/14-scheduled-publishing.md)
 - [Content Quality, Health, Taxonomy, and Review](docs/15-content-quality-and-health.md)
+- [Podcast](docs/16-podcast.md)
 
 ## Technology
 
@@ -58,11 +59,13 @@ Articles live in:
 src/content/articles/
 ```
 
-The article collection is defined in:
+Content collections are defined in:
 
 ```text
 src/content.config.ts
 ```
+
+Articles live in `src/content/articles/`. Podcast episodes live in `src/content/podcast/` and are documented in [Podcast](docs/16-podcast.md).
 
 Both `.md` and `.mdx` files are supported.
 

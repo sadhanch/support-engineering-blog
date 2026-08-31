@@ -1,3 +1,11 @@
+/**
+ * ==========================================================
+ * Support Engineering Blog — Theme Controller
+ * File: theme.ts
+ * Purpose: Manages system, light, and dark theme preferences for the site shell.
+ * ==========================================================
+ */
+
 const STORAGE_KEY = "seb-theme";
 
 type Theme = "system" | "light" | "dark";

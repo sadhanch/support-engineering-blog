@@ -275,3 +275,38 @@ The project is structured as a static publication with:
 - Cloudflare Pages deployment
 
 The next changes should be driven by a concrete publishing, maintenance, accessibility, SEO, performance, or product requirement rather than continued structural experimentation.
+
+
+## Podcast audit
+
+The repository now contains a dedicated podcast content collection, show-level configuration, landing page, episode route, episode layout, reusable player, transcript renderer, chapter handling, and listening links.
+
+```text
+Podcast collection
+    -> src/content/podcast/
+
+Show configuration
+    -> src/config/podcast.ts
+
+Episode retrieval
+    -> src/lib/podcast.ts
+
+Landing page
+    -> src/pages/podcast/index.astro
+
+Episode pages
+    -> src/pages/podcast/[...slug].astro
+
+Episode layout
+    -> src/layouts/PodcastEpisodeLayout.astro
+
+Audio player
+    -> src/components/podcast/PodcastPlayer.astro
+    -> src/scripts/podcast-player.ts
+
+Transcript
+    -> src/components/podcast/PodcastTranscript.astro
+    -> src/lib/vtt.ts
+```
+
+The podcast uses the existing site shell and SEDS design system. Podcast distribution remains external through RSS.com and downstream listening platforms; the blog provides the editorial web experience. See [Podcast](16-podcast.md).

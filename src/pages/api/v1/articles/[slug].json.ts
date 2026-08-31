@@ -3,6 +3,7 @@
  * SEB — Mobile Article Detail API
  * ----------------------------------------------------------
  * GET /api/v1/articles/{slug}.json
+ * Purpose: Provides the JSON representation for a single published article in the mobile API.
  * ==========================================================
  */
 

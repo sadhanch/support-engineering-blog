@@ -1,3 +1,11 @@
+/**
+ * ==========================================================
+ * Support Engineering Blog — Code Copy
+ * File: code-copy.ts
+ * Purpose: Adds accessible copy controls and language labels to article code blocks.
+ * ==========================================================
+ */
+
 const COPY_RESET_DELAY = 2000;
 
 

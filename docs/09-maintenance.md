@@ -151,3 +151,25 @@ npm run content:health
 ```
 
 `content:check` should remain suitable for CI and should not be turned into a catch-all editorial linter. `content:health` is intentionally advisory.
+
+
+## Podcast maintenance
+
+For each published podcast episode, verify the published RSS.com record against the corresponding blog content entry. Check episode number, GUID, title, publication date, duration, audio URL, chapters, transcript, and related article references.
+
+The podcast implementation is documented in [Podcast](16-podcast.md). The primary podcast files are:
+
+```text
+src/config/podcast.ts
+src/content.config.ts
+src/content/podcast/
+src/lib/podcast.ts
+src/components/podcast/
+src/layouts/PodcastEpisodeLayout.astro
+src/pages/podcast/
+src/scripts/podcast-player.ts
+src/assets/css/components/podcast-player.css
+src/assets/css/pages/podcast.css
+```
+
+The website player uses the published RSS.com MP3. Do not copy the production audio master into the web repository.

@@ -15,14 +15,6 @@ html {
     scroll-padding-top: 6rem;
 }
 
-body {
-    background-color: var(--surface-secondary);
-    color: var(--text-primary);
-    font-family: var(--font-family-base);
-    line-height: var(--line-height-normal);
-}
-
-
 /* ----------------------------------------------------------
    Main Layout
 ---------------------------------------------------------- */

@@ -1,6 +1,8 @@
 /**
  * ==========================================================
  * Support Engineering Weekly — Podcast Configuration
+ * File: podcast.ts
+ * Purpose: Centralizes show-level podcast metadata, distribution links, and branding references.
  * ==========================================================
  */
 

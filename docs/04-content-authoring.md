@@ -247,3 +247,34 @@ The standard daily publication window is **09:07 Asia/Kolkata (IST)**. The times
 Do not add `publishAt` to historical articles unless their publication timing needs to change.
 
 The automated workflow checks once per day and triggers Cloudflare only when an approved, due article is still absent from production.
+
+
+## Podcast episodes
+
+Podcast episodes are authored separately from articles under:
+
+```text
+src/content/podcast/
+```
+
+The validated podcast collection is defined in `src/content.config.ts`. Episode metadata includes the published audio URL, duration, chapters, transcript references, and optional relationships to Support Engineering Blog articles.
+
+A typical workflow is:
+
+```text
+Published RSS.com episode
+        ↓
+Confirm final metadata
+        ↓
+Create episode MDX
+        ↓
+Add chapters and transcript resource
+        ↓
+Run content check
+        ↓
+Run build
+        ↓
+Review /podcast/ and episode page
+```
+
+Do not store the production audio master in the blog repository. Use the published distribution URL for the web player. Long-term production assets are maintained in the separate podcast archive. See [Podcast](16-podcast.md).

@@ -158,3 +158,12 @@ is accessible to Bing and indexable.
 ## Important distinction
 
 Search engine platform configuration lives outside this repository. The repository provides the site metadata, sitemap, robots file, canonical URLs, and structured data that those services consume.
+
+
+## Podcast pages and SEO
+
+Podcast pages use the same `BaseLayout.astro` document shell as the rest of the site. The podcast landing page and individual episode pages therefore inherit the canonical URL, Open Graph, X/Twitter, robots, and baseline structured-data behavior defined by the site shell.
+
+The podcast landing page is: `https://blog.sadhan.ch/podcast/`. Individual episodes use the `/podcast/<episode-slug>/` pattern.
+
+The podcast does not use the article RSS feed. Podcast distribution remains on the RSS.com podcast feed, while the blog provides the canonical editorial web destinations.

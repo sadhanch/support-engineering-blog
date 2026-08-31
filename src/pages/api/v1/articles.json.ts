@@ -3,6 +3,7 @@
  * SEB — Mobile Article Catalogue API
  * ----------------------------------------------------------
  * GET /api/v1/articles.json
+ * Purpose: Provides the JSON catalogue of published articles for the mobile API.
  * ==========================================================
  */
 

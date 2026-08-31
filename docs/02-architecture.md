@@ -30,9 +30,9 @@ src/
 ├── assets/css/          Global design system and page/component CSS
 ├── components/          Reusable Astro UI and content components
 ├── config/              Central site configuration
-├── content/             Article source files
+├── content/             Article and podcast source files
 ├── data/                Static navigation/content datasets
-├── layouts/             Base document and article layouts
+├── layouts/             Base document, article, and podcast episode layouts
 ├── lib/                 Content, taxonomy, search and relationship logic
 ├── pages/               Astro routes, including /offline/
 ├── scripts/             Maintenance tools and browser-side behavior
@@ -123,6 +123,30 @@ The route:
 - references
 - related articles
 - Pagefind body metadata
+
+
+## Podcast architecture
+
+The podcast is implemented as a first-class content area inside the existing static Astro application. Podcast episodes are separate from articles and are rendered through dedicated routes and a dedicated episode layout.
+
+```text
+src/content/podcast/*.mdx
+        ↓
+src/content.config.ts
+        ↓
+src/lib/podcast.ts
+        ↓
+┌──────────────────────────────┐
+│ /podcast/                    │
+│ /podcast/[...slug]/          │
+└──────────────────────────────┘
+        ↓
+PodcastEpisodeLayout.astro
+        ↓
+PodcastPlayer + Transcript + related reading
+```
+
+Show-level metadata and listening destinations are centralized in `src/config/podcast.ts`. The public player uses the published RSS.com audio enclosure URL rather than a third-party embedded player. See [Podcast](16-podcast.md) for the complete podcast content model and maintenance workflow.
 
 ## Site shell
 

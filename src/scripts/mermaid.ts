@@ -1,3 +1,11 @@
+/**
+ * ==========================================================
+ * Support Engineering Blog — Mermaid Runtime
+ * File: mermaid.ts
+ * Purpose: Lazily loads, configures, renders, and re-renders Mermaid diagrams.
+ * ==========================================================
+ */
+
 type MermaidModule = typeof import("mermaid");
 
 let mermaidInstance:

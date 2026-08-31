@@ -1,3 +1,9 @@
+/* ==========================================================
+   SEDS — Planner Premium License Fit Check
+   File: planner-premium-license-fit-check.css
+   Purpose: Styles the interactive Planner Premium licensing decision aid.
+   ========================================================== */
+
  .planner-premium-license-fit-check {
   --pplfc-bg: var(--surface-primary);
   --pplfc-surface-alt: var(--surface-secondary);

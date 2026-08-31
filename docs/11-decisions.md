@@ -133,3 +133,31 @@ The publication model is one article per day. A 15-minute always-on scheduler wa
 ## Decision: PWA remains lightweight
 
 The PWA intentionally remains an installable/offline layer over the static site. Richer mobile features remain scoped to the dedicated Android application rather than being duplicated in the web PWA.
+
+
+## Decision: podcast episodes use a separate content collection
+
+Podcast episodes are stored under `src/content/podcast/` and validated independently from the article collection.
+
+Reasoning:
+
+- Podcast episodes and articles have different metadata and presentation requirements.
+- The separation keeps the article content model stable.
+- Episodes can reference existing articles without duplicating their content.
+- A dedicated collection makes the weekly podcast scalable as the show grows.
+
+## Decision: use the published podcast audio for the web player
+
+The website's podcast player uses the public RSS.com MP3 enclosure URL. The production audio master remains in the separate podcast archive.
+
+Reasoning:
+
+- The blog should not duplicate large production assets.
+- RSS.com already provides the public distribution asset.
+- The web player remains consistent with the published podcast feed.
+
+## Decision: external podcast platforms are outbound destinations
+
+The podcast page currently exposes Spotify and Apple Podcasts as listener-facing destinations rather than embedding third-party players. The blog's own player provides on-site playback.
+
+Additional platforms should be added only after their canonical public URLs are confirmed.

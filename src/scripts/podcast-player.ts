@@ -1,6 +1,8 @@
 /**
  * ==========================================================
  * Support Engineering Weekly — Podcast Player
+ * File: podcast-player.ts
+ * Purpose: Provides client-side playback, seeking, chapter navigation, and transcript synchronization for podcast episodes.
  * ==========================================================
  */
 

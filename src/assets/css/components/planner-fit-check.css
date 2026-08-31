@@ -1,6 +1,14 @@
-/* =========================================================
-   Planner Fit Check
-   ========================================================= */
+/* ==========================================================
+   SEDS — Planner Fit Check
+   File: planner-fit-check.css
+   Purpose: Styles the interactive Planner Fit Check used in article content.
+   ========================================================== */
+
+/* ==========================================================
+   SEDS — Planner Fit Check
+   File: planner-fit-check.css
+   Purpose: Styles the interactive Planner Fit Check used in article content.
+   ========================================================== */
 
 .planner-fit-check {
   margin: var(--space-10, 2.5rem) 0;
