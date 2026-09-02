@@ -79,6 +79,19 @@ export const categories: Category[] = [
     },
 
     {
+        title: "Exchange",
+
+        description:
+            "Exchange Online, Exchange Server and Exchange PowerShell.",
+
+        slug: "exchange",
+
+        featured: true,
+
+        order: 4
+    },
+
+    {
 
         title: "Windows",
 
@@ -89,7 +102,7 @@ export const categories: Category[] = [
 
         featured: true,
 
-        order: 4
+        order: 5
 
     },
 
@@ -104,7 +117,7 @@ export const categories: Category[] = [
 
         featured: true,
 
-        order: 5
+        order: 6
     
     }
 
