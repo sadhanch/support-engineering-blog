@@ -1,0 +1,565 @@
+---
+/*
+ * PlannerPortfolioDashboardGuide.astro
+ *
+ * Interactive aid for selecting the appropriate Planner Premium
+ * dashboard scope by primary audience.
+ *
+ * This is a dashboard-design aid, not a Microsoft-defined reporting
+ * model or a substitute for tenant-specific KPI/governance decisions.
+ */
+---
+
+<section class="ppdg" data-ppdg aria-labelledby="ppdg-title">
+  <div class="ppdg__header">
+    <div>
+      <p class="ppdg__eyebrow">Portfolio dashboard guide</p>
+      <h3 id="ppdg-title">What should this dashboard focus on?</h3>
+      <p class="ppdg__intro">
+        Choose the primary audience. The guide identifies the main question,
+        information to show first, and the appropriate drill-down level.
+      </p>
+    </div>
+
+    <span class="ppdg__badge" data-badge aria-live="polite">
+      Choose an audience
+    </span>
+  </div>
+
+  <fieldset class="ppdg__choices">
+    <legend>Who is the primary audience?</legend>
+
+    <label class="ppdg__choice">
+      <input type="radio" name="ppdg-audience" value="team" />
+      <span class="ppdg__icon ppdg__icon--blue" aria-hidden="true">✓</span>
+      <span class="ppdg__choice-body">
+        <strong>Team</strong>
+        <span>People managing day-to-day work and task execution.</span>
+        <small>TASKS · OWNERS · DUE DATES · BLOCKERS</small>
+      </span>
+    </label>
+
+    <label class="ppdg__choice">
+      <input type="radio" name="ppdg-audience" value="project" />
+      <span class="ppdg__icon ppdg__icon--green" aria-hidden="true">◆</span>
+      <span class="ppdg__choice-body">
+        <strong>Project Manager / Sponsor</strong>
+        <span>People responsible for the health and delivery of one project.</span>
+        <small>SCHEDULE · MILESTONES · DEPENDENCIES · EFFORT</small>
+      </span>
+    </label>
+
+    <label class="ppdg__choice">
+      <input type="radio" name="ppdg-audience" value="pmo" />
+      <span class="ppdg__icon ppdg__icon--purple" aria-hidden="true">◈</span>
+      <span class="ppdg__choice-body">
+        <strong>PMO / Portfolio Manager</strong>
+        <span>People comparing projects, exceptions, resources, and trends.</span>
+        <small>PORTFOLIO HEALTH · RISK · RESOURCES · TRENDS</small>
+      </span>
+    </label>
+
+    <label class="ppdg__choice">
+      <input type="radio" name="ppdg-audience" value="executive" />
+      <span class="ppdg__icon ppdg__icon--gold" aria-hidden="true">★</span>
+      <span class="ppdg__choice-body">
+        <strong>Executive</strong>
+        <span>Leaders deciding where attention, intervention, or funding is required.</span>
+        <small>HEALTH · STRATEGIC RISK · MILESTONES · ACTION</small>
+      </span>
+    </label>
+  </fieldset>
+
+  <div class="ppdg__result" aria-live="polite" aria-atomic="true">
+    <div class="ppdg__result-head">
+      <div>
+        <span class="ppdg__result-kicker">Recommended dashboard scope</span>
+        <h4 data-title>Choose an audience above.</h4>
+      </div>
+      <span class="ppdg__result-level" data-level>Awaiting selection</span>
+    </div>
+
+    <p class="ppdg__result-description" data-description>
+      The guide will show the primary question, recommended information, and
+      appropriate drill-down level.
+    </p>
+
+    <div class="ppdg__result-grid">
+      <div class="ppdg__result-card">
+        <span>Primary question</span>
+        <strong data-question>—</strong>
+      </div>
+      <div class="ppdg__result-card">
+        <span>Show first</span>
+        <strong data-show>—</strong>
+      </div>
+      <div class="ppdg__result-card">
+        <span>Drill-down</span>
+        <strong data-drill>—</strong>
+      </div>
+    </div>
+
+    <div class="ppdg__focus">
+      <span>Recommended focus</span>
+      <div class="ppdg__focus-list" data-focus>
+        <span>Choose an audience</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ppdg__principle">
+    <span class="ppdg__principle-mark" aria-hidden="true">→</span>
+    <p>
+      <strong>Summary first, detail second.</strong>
+      Broader audiences need exceptions, trends, and decisions before
+      operational detail.
+    </p>
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>("[data-ppdg]");
+
+  roots.forEach((root) => {
+    if (root.dataset.initialized === "true") return;
+    root.dataset.initialized = "true";
+
+    const badge = root.querySelector<HTMLElement>("[data-badge]");
+    const title = root.querySelector<HTMLElement>("[data-title]");
+    const level = root.querySelector<HTMLElement>("[data-level]");
+    const description = root.querySelector<HTMLElement>("[data-description]");
+    const question = root.querySelector<HTMLElement>("[data-question]");
+    const show = root.querySelector<HTMLElement>("[data-show]");
+    const drill = root.querySelector<HTMLElement>("[data-drill]");
+    const focus = root.querySelector<HTMLElement>("[data-focus]");
+
+    if (!badge || !title || !level || !description || !question || !show || !drill || !focus) {
+      return;
+    }
+
+    const recommendations = {
+      team: {
+        badge: "TEAM",
+        level: "Operational",
+        title: "Build the dashboard around today's work.",
+        description: "Focus on immediate task execution and the work that needs attention.",
+        question: "What work needs attention today?",
+        show: "Task status, owners, buckets, due dates, late work, and blockers",
+        drill: "Task / Assignment",
+        focus: ["Current task status", "Ownership", "Due dates", "Late or blocked work"]
+      },
+      project: {
+        badge: "PROJECT",
+        level: "Delivery",
+        title: "Build the dashboard around project health.",
+        description: "Give the project manager or sponsor enough delivery context to understand whether the project is on track.",
+        question: "Is this project on track?",
+        show: "Schedule, milestones, dependencies, effort, project health, and risks",
+        drill: "Milestone / Risk → Task / Assignment",
+        focus: ["Schedule position", "Milestones", "Dependencies", "Effort and progress", "Project risks"]
+      },
+      pmo: {
+        badge: "PMO / PORTFOLIO",
+        level: "Portfolio",
+        title: "Build the dashboard around cross-project visibility.",
+        description: "Compare projects, identify exceptions, understand resource pressure, and see delivery trends across the portfolio.",
+        question: "Which projects need attention across the portfolio?",
+        show: "Portfolio health, project risk, milestones, resource pressure, and delivery trends",
+        drill: "Project → Milestone / Risk → Task / Assignment",
+        focus: ["Portfolio health", "Project exceptions", "Milestone risk", "Resource demand", "Delivery trends"]
+      },
+      executive: {
+        badge: "EXECUTIVE",
+        level: "Decision support",
+        title: "Build the dashboard around decisions and exceptions.",
+        description: "Surface where intervention, funding, or leadership attention may be required.",
+        question: "Which initiatives need action or funding decisions?",
+        show: "Portfolio health, strategic milestones, resource pressure, delivery trends, and top exceptions",
+        drill: "Portfolio → Project → Milestone / Risk",
+        focus: ["Portfolio health", "Strategic milestone risk", "Resource pressure", "Delivery trends", "Intervention points"]
+      }
+    };
+
+    function update(value?: keyof typeof recommendations) {
+      if (!value) {
+        root.dataset.state = "incomplete";
+        badge.textContent = "CHOOSE AN AUDIENCE";
+        title.textContent = "Choose an audience above.";
+        level.textContent = "Awaiting selection";
+        description.textContent = "The guide will show the primary question, recommended information, and appropriate drill-down level.";
+        question.textContent = "—";
+        show.textContent = "—";
+        drill.textContent = "—";
+        focus.replaceChildren(Object.assign(document.createElement("span"), { textContent: "Choose an audience" }));
+        return;
+      }
+
+      const result = recommendations[value];
+      root.dataset.state = value;
+
+      badge.textContent = result.badge;
+      title.textContent = result.title;
+      level.textContent = result.level;
+      description.textContent = result.description;
+      question.textContent = result.question;
+      show.textContent = result.show;
+      drill.textContent = result.drill;
+
+      focus.replaceChildren();
+      result.focus.forEach((item) => {
+        const chip = document.createElement("span");
+        chip.textContent = item;
+        focus.append(chip);
+      });
+    }
+
+    root.querySelectorAll<HTMLInputElement>('input[name="ppdg-audience"]')
+      .forEach((input) => {
+        input.addEventListener("change", () => update(input.value as keyof typeof recommendations));
+      });
+
+    update();
+  });
+</script>
+
+<style>
+  .ppdg {
+    --ppdg-surface: var(--surface-primary, #ffffff);
+    --ppdg-surface-soft: var(--surface-secondary, #f8fafc);
+    --ppdg-text: var(--text-primary, #0f172a);
+    --ppdg-text-secondary: var(--text-secondary, #475569);
+    --ppdg-text-tertiary: var(--text-tertiary, #64748b);
+    --ppdg-border: var(--border-default, #dbe3ec);
+    --ppdg-border-soft: var(--border-subtle, #e7edf4);
+    --ppdg-accent: var(--color-accent, #4ea1e0);
+    --ppdg-state: var(--ppdg-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--ppdg-text);
+    background: var(--ppdg-surface);
+    border: 1px solid var(--ppdg-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .ppdg[data-state="team"] { --ppdg-state: #2563eb; }
+  .ppdg[data-state="project"] { --ppdg-state: #15803d; }
+  .ppdg[data-state="pmo"] { --ppdg-state: #7c3aed; }
+  .ppdg[data-state="executive"] { --ppdg-state: #b45309; }
+
+  .ppdg__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .ppdg__eyebrow {
+    margin: 0 0 0.3rem;
+    color: var(--ppdg-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ppdg h3,
+  .ppdg h4,
+  .ppdg p {
+    margin-top: 0;
+  }
+
+  .ppdg h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .ppdg__intro {
+    max-width: 74ch;
+    margin-bottom: 0;
+    color: var(--ppdg-text-secondary);
+    line-height: 1.6;
+  }
+
+  .ppdg__badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 0.45rem 0.75rem;
+    color: var(--ppdg-state);
+    background: color-mix(in srgb, var(--ppdg-state) 8%, var(--ppdg-surface));
+    border: 1px solid color-mix(in srgb, var(--ppdg-state) 30%, var(--ppdg-border));
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .ppdg__choices {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .ppdg__choices legend {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    color: var(--ppdg-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+  }
+
+  .ppdg__choice {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: flex-start;
+    gap: 0.75rem;
+    min-height: 100%;
+    padding: 1rem;
+    background: var(--ppdg-surface-soft);
+    border: 1px solid var(--ppdg-border);
+    border-radius: var(--radius-md, 0.65rem);
+    cursor: pointer;
+    transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  }
+
+  .ppdg__choice:hover {
+    transform: translateY(-1px);
+    border-color: var(--ppdg-accent);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .ppdg__choice:has(input:focus-visible) {
+    outline: 2px solid var(--ppdg-accent);
+    outline-offset: 2px;
+  }
+
+  .ppdg__choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .ppdg__choice:has(input:checked) {
+    border-color: var(--ppdg-state);
+    background: color-mix(in srgb, var(--ppdg-state) 7%, var(--ppdg-surface));
+    box-shadow: inset 0 0 0 1px var(--ppdg-state);
+  }
+
+  .ppdg__icon {
+    display: grid;
+    place-items: center;
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 0.7rem;
+    font-size: 1rem;
+    font-weight: 800;
+    border: 1px solid currentColor;
+  }
+
+  .ppdg__icon--blue { color: #2563eb; background: rgb(37 99 235 / 0.07); }
+  .ppdg__icon--green { color: #15803d; background: rgb(21 128 61 / 0.07); }
+  .ppdg__icon--purple { color: #7c3aed; background: rgb(124 58 237 / 0.07); }
+  .ppdg__icon--gold { color: #b45309; background: rgb(180 83 9 / 0.07); }
+
+  .ppdg__choice-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .ppdg__choice-body strong {
+    color: var(--ppdg-text);
+    line-height: 1.3;
+  }
+
+  .ppdg__choice-body > span {
+    color: var(--ppdg-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.5;
+  }
+
+  .ppdg__choice-body small {
+    color: var(--ppdg-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .ppdg__result {
+    margin-top: 1.25rem;
+    padding: 1.2rem;
+    background: var(--ppdg-surface-soft);
+    border: 1px solid var(--ppdg-border);
+    border-left: 4px solid var(--ppdg-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .ppdg__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .ppdg__result-kicker {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--ppdg-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .ppdg__result h4 {
+    margin-bottom: 0;
+    color: var(--ppdg-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .ppdg__result-level {
+    flex: 0 0 auto;
+    color: var(--ppdg-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .ppdg__result-description {
+    max-width: 74ch;
+    margin: 0.65rem 0 0;
+    color: var(--ppdg-text-secondary);
+    line-height: 1.6;
+  }
+
+  .ppdg__result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .ppdg__result-card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: var(--ppdg-surface);
+    border: 1px solid var(--ppdg-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .ppdg__result-card span,
+  .ppdg__focus > span {
+    color: var(--ppdg-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .ppdg__result-card strong {
+    color: var(--ppdg-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .ppdg__focus {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+    padding: 0.9rem;
+    background: var(--ppdg-surface);
+    border: 1px solid var(--ppdg-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .ppdg__focus-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .ppdg__focus-list span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.35rem 0.7rem;
+    color: var(--ppdg-state);
+    background: color-mix(in srgb, var(--ppdg-state) 8%, var(--ppdg-surface));
+    border: 1px solid color-mix(in srgb, var(--ppdg-state) 22%, var(--ppdg-border));
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+  }
+
+  .ppdg__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--ppdg-surface);
+    border: 1px solid var(--ppdg-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .ppdg__principle-mark {
+    flex: 0 0 auto;
+    color: var(--ppdg-accent);
+    font-weight: 800;
+  }
+
+  .ppdg__principle p {
+    margin: 0;
+    color: var(--ppdg-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .ppdg__principle strong {
+    color: var(--ppdg-text);
+  }
+
+  @media (max-width: 820px) {
+    .ppdg__choices,
+    .ppdg__result-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ppdg {
+      padding: 1rem;
+    }
+
+    .ppdg__header,
+    .ppdg__result-head {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .ppdg__badge {
+      align-self: flex-start;
+    }
+
+    .ppdg__result-level {
+      text-align: left;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ppdg__choice {
+      transition: none;
+    }
+  }
+</style>

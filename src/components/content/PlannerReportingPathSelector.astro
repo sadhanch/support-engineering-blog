@@ -1,0 +1,864 @@
+---
+/*
+ * PlannerReportingPathSelector.astro
+ *
+ * Purpose:
+ * Helps readers choose a practical Planner reporting path based on the
+ * planner model and reporting requirement.
+ *
+ * Source-aligned choices:
+ *   Standard / Basic → Excel, Power Automate, or Microsoft Graph
+ *   Premium         → Project Power BI template, Dataverse + Power BI,
+ *                      or Dataverse → Fabric / OneLake → Power BI
+ *
+ * This is an architecture decision aid, not a licensing calculator or
+ * Microsoft-prescribed decision engine.
+ */
+---
+
+<section
+  class="prps"
+  data-prps
+  aria-labelledby="prps-title"
+>
+  <div class="prps__header">
+    <div>
+      <p class="prps__eyebrow">Reporting path selector</p>
+
+      <h3 id="prps-title">
+        Which Planner reporting path fits the requirement?
+      </h3>
+
+      <p class="prps__intro">
+        Start with the plan type, then classify how the report will be used.
+        The selector recommends a practical path and the design concerns to
+        review before implementation.
+      </p>
+    </div>
+
+    <span
+      class="prps__badge"
+      data-badge
+      aria-live="polite"
+    >
+      Choose a plan type
+    </span>
+  </div>
+
+  <fieldset class="prps__questions">
+    <legend>Classify the reporting requirement</legend>
+
+    <div class="prps__question prps__question--wide">
+      <span class="prps__question-title">
+        1. Which Planner model are you reporting from?
+      </span>
+
+      <div class="prps__options">
+        <label>
+          <input
+            type="radio"
+            name="prps-plan-type"
+            value="standard"
+          />
+          <span>Planner Standard / Basic</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="prps-plan-type"
+            value="premium"
+          />
+          <span>Planner Premium</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="prps__question">
+      <span class="prps__question-title">
+        2. What is the primary reporting need?
+      </span>
+
+      <div class="prps__options">
+        <label>
+          <input
+            type="radio"
+            name="prps-use-case"
+            value="adhoc"
+          />
+          <span>Ad hoc / departmental</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="prps-use-case"
+            value="operational"
+          />
+          <span>Recurring operational</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="prps-use-case"
+            value="portfolio"
+          />
+          <span>Portfolio / project</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="prps__question">
+      <span class="prps__question-title">
+        3. How broad is the reporting scope?
+      </span>
+
+      <div class="prps__options">
+        <label>
+          <input
+            type="radio"
+            name="prps-scope"
+            value="single"
+          />
+          <span>Single plan</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="prps-scope"
+            value="multi"
+          />
+          <span>Multiple plans</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="prps-scope"
+            value="enterprise"
+          />
+          <span>Cross-system / enterprise</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="prps__question">
+      <span class="prps__question-title">
+        4. Do you need richer project-management information?
+      </span>
+
+      <div class="prps__options">
+        <label>
+          <input
+            type="radio"
+            name="prps-project-data"
+            value="no"
+          />
+          <span>No</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="prps-project-data"
+            value="yes"
+          />
+          <span>Yes</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="prps__question">
+      <span class="prps__question-title">
+        5. Do you need a broader analytical layer?
+      </span>
+
+      <div class="prps__options">
+        <label>
+          <input
+            type="radio"
+            name="prps-analytics"
+            value="no"
+          />
+          <span>No</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="prps-analytics"
+            value="yes"
+          />
+          <span>Yes</span>
+        </label>
+      </div>
+    </div>
+  </fieldset>
+
+  <div
+    class="prps__result"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="prps__result-head">
+      <div>
+        <span class="prps__result-kicker">
+          Recommended reporting path
+        </span>
+
+        <h4 data-title>
+          Complete the classification.
+        </h4>
+      </div>
+
+      <span
+        class="prps__result-level"
+        data-level
+      >
+        Awaiting input
+      </span>
+    </div>
+
+    <p
+      class="prps__result-description"
+      data-description
+    >
+      The selector will identify the reporting path that best matches the
+      selected Planner model and reporting requirement.
+    </p>
+
+    <div class="prps__meter" aria-hidden="true">
+      <span data-meter></span>
+    </div>
+
+    <div class="prps__cards">
+      <div class="prps__card">
+        <span>Recommended path</span>
+        <strong data-path>—</strong>
+      </div>
+
+      <div class="prps__card">
+        <span>Best fit</span>
+        <strong data-fit>—</strong>
+      </div>
+
+      <div class="prps__card">
+        <span>Review next</span>
+        <strong data-review>—</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="prps__principle">
+    <span
+      class="prps__principle-mark"
+      aria-hidden="true"
+    >
+      →
+    </span>
+
+    <p>
+      <strong>Choose the simplest supported path that meets the reporting need.</strong>
+      Standard reporting generally needs an extraction step; Premium reporting can
+      start from its Dataverse-backed project data.
+    </p>
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>(
+    "[data-prps]"
+  );
+
+  roots.forEach((root) => {
+    if (root.dataset.initialized === "true") {
+      return;
+    }
+
+    root.dataset.initialized = "true";
+
+    const badge =
+      root.querySelector<HTMLElement>("[data-badge]");
+
+    const title =
+      root.querySelector<HTMLElement>("[data-title]");
+
+    const level =
+      root.querySelector<HTMLElement>("[data-level]");
+
+    const description =
+      root.querySelector<HTMLElement>("[data-description]");
+
+    const meter =
+      root.querySelector<HTMLElement>("[data-meter]");
+
+    const path =
+      root.querySelector<HTMLElement>("[data-path]");
+
+    const fit =
+      root.querySelector<HTMLElement>("[data-fit]");
+
+    const review =
+      root.querySelector<HTMLElement>("[data-review]");
+
+    if (
+      !badge ||
+      !title ||
+      !level ||
+      !description ||
+      !meter ||
+      !path ||
+      !fit ||
+      !review
+    ) {
+      return;
+    }
+
+    const getValue = (name: string) =>
+      root.querySelector<HTMLInputElement>(
+        `input[name="${name}"]:checked`
+      )?.value;
+
+    function setIncomplete(selected: number) {
+      root.dataset.state = "incomplete";
+
+      badge.textContent = "COMPLETE CLASSIFICATION";
+      title.textContent = `${selected} of 5 areas classified`;
+      level.textContent = `${5 - selected} remaining`;
+
+      description.textContent =
+        "Complete the classification to receive a reporting-path recommendation.";
+
+      meter.style.width =
+        `${Math.round((selected / 5) * 100)}%`;
+
+      path.textContent = "Complete the classification";
+      fit.textContent = "Complete the classification";
+      review.textContent = "Complete the classification";
+    }
+
+    function setResult(
+      state: string,
+      badgeText: string,
+      levelText: string,
+      resultTitle: string,
+      resultDescription: string,
+      resultPath: string,
+      resultFit: string,
+      resultReview: string,
+      width: string
+    ) {
+      root.dataset.state = state;
+
+      badge.textContent = badgeText;
+      level.textContent = levelText;
+      title.textContent = resultTitle;
+      description.textContent = resultDescription;
+      path.textContent = resultPath;
+      fit.textContent = resultFit;
+      review.textContent = resultReview;
+      meter.style.width = width;
+    }
+
+    function updateAssessment() {
+      const planType = getValue("prps-plan-type");
+      const useCase = getValue("prps-use-case");
+      const scope = getValue("prps-scope");
+      const projectData = getValue("prps-project-data");
+      const analytics = getValue("prps-analytics");
+
+      const selected = [
+        planType,
+        useCase,
+        scope,
+        projectData,
+        analytics
+      ].filter(Boolean).length;
+
+      if (selected < 5) {
+        setIncomplete(selected);
+        return;
+      }
+
+      /*
+       * Standard / Basic:
+       *   - Excel → ad hoc analysis
+       *   - Power Automate → low-code recurring extraction
+       *   - Microsoft Graph → automated multi-plan reporting
+       *
+       * Premium:
+       *   - Project Power BI template → fast portfolio reporting
+       *   - Dataverse + Power BI → custom analytical model
+       *   - Dataverse → Fabric / OneLake → Power BI → enterprise analytics
+       */
+
+      if (planType === "standard") {
+        if (scope === "enterprise") {
+          setResult(
+            "standard-graph",
+            "STANDARD / GRAPH",
+            "Automated extraction",
+            "Use Microsoft Graph with a durable reporting layer.",
+            "The requirement is broader than a lightweight plan report, so a programmatic extraction path provides more control than manual export.",
+            "Planner Standard → Microsoft Graph → Reporting Store → Power BI",
+            "Automated multi-plan or broader Standard reporting.",
+            "Graph permissions, pagination, persistence, refresh, security, and API/service limits.",
+            "85%"
+          );
+          return;
+        }
+
+        if (useCase === "adhoc" || scope === "single") {
+          setResult(
+            "standard-excel",
+            "STANDARD / EXCEL",
+            "Lightweight reporting",
+            "Use Excel export for simple, ad hoc analysis.",
+            "The requirement is lightweight enough that a manual export can be a practical starting point.",
+            "Planner Standard → Excel → Power BI / analysis",
+            "One-off or departmental reporting with limited governance needs.",
+            "File storage, replacement/refresh behavior, and the point at which the report needs an automated path.",
+            "45%"
+          );
+          return;
+        }
+
+        setResult(
+          "standard-automate",
+          "STANDARD / AUTOMATE",
+          "Low-code recurring",
+          "Use Power Automate for recurring extraction into a reporting store.",
+          "A recurring Standard-plan report benefits from low-code orchestration without requiring a full custom API extraction service.",
+          "Planner Standard → Power Automate → Reporting Store → Power BI",
+          "Recurring, low-code operational reporting.",
+          "Connector scope, throttling, durable storage, refresh, credentials, and flow ownership.",
+          "65%"
+        );
+
+        return;
+      }
+
+      /*
+       * Premium recommendations.
+       * The enterprise path wins when a separate analytical layer is explicitly
+       * required, the reporting spans systems, or enterprise-scale analytics
+       * is the stated requirement.
+       */
+      if (analytics === "yes" || scope === "enterprise") {
+        setResult(
+          "premium-fabric",
+          "PREMIUM / FABRIC",
+          "Enterprise analytics",
+          "Use Dataverse as the source and add Fabric / OneLake for broader analytics.",
+          "The requirement calls for a broader analytical layer, cross-system reporting, or enterprise-scale reuse.",
+          "Planner Premium → Dataverse → Fabric / OneLake → Power BI",
+          "Cross-system, reusable, or enterprise analytical reporting.",
+          "Data engineering, conformed models, history, governance, capacity, security, and operational ownership.",
+          "100%"
+        );
+        return;
+      }
+
+      if (useCase === "portfolio" || projectData === "yes") {
+        setResult(
+          "premium-dataverse",
+          "PREMIUM / DATAVERSE",
+          "Project analytics",
+          "Use Dataverse with Power BI for custom project analytics.",
+          "The reporting need depends on richer project information such as schedules, dependencies, milestones, resources, or custom fields.",
+          "Planner Premium → Dataverse → Power BI",
+          "Custom project or portfolio analytics.",
+          "Dataverse permissions, semantic-model design, KPI definitions, security, refresh, and performance.",
+          "78%"
+        );
+        return;
+      }
+
+      setResult(
+        "premium-template",
+        "PREMIUM / TEMPLATE",
+        "Fast starting point",
+        "Start with the Microsoft Project Power BI template.",
+        "The requirement is project-oriented but does not yet indicate a need for a broader custom analytical platform.",
+        "Planner Premium → Project Power BI template → Power BI",
+        "Fast portfolio-style reporting and initial exploration.",
+        "Template fit, current licensing, customization needs, and transition to a governed custom model.",
+        "60%"
+      );
+    }
+
+    root
+      .querySelectorAll<HTMLInputElement>(
+        '.prps__options input[type="radio"]'
+      )
+      .forEach((input) => {
+        input.addEventListener("change", updateAssessment);
+      });
+
+    updateAssessment();
+  });
+</script>
+
+<style>
+  .prps {
+    --prps-surface: var(--surface-primary, #ffffff);
+    --prps-surface-soft: var(--surface-secondary, #f8fafc);
+    --prps-text: var(--text-primary, #0f172a);
+    --prps-text-secondary: var(--text-secondary, #475569);
+    --prps-text-tertiary: var(--text-tertiary, #64748b);
+    --prps-border: var(--border-default, #dbe3ec);
+    --prps-border-soft: var(--border-subtle, #e7edf4);
+    --prps-accent: var(--color-accent, #4ea1e0);
+    --prps-state: var(--prps-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--prps-text);
+    background: var(--prps-surface);
+    border: 1px solid var(--prps-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .prps[data-state="standard-excel"] {
+    --prps-state: #b45309;
+  }
+
+  .prps[data-state="standard-automate"] {
+    --prps-state: #2563eb;
+  }
+
+  .prps[data-state="standard-graph"] {
+    --prps-state: #1d4ed8;
+  }
+
+  .prps[data-state="premium-template"] {
+    --prps-state: #15803d;
+  }
+
+  .prps[data-state="premium-dataverse"] {
+    --prps-state: #0f766e;
+  }
+
+  .prps[data-state="premium-fabric"] {
+    --prps-state: #7c3aed;
+  }
+
+  .prps__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .prps__eyebrow {
+    margin: 0 0 0.3rem;
+    color: var(--prps-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .prps h3,
+  .prps h4,
+  .prps p {
+    margin-top: 0;
+  }
+
+  .prps h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .prps__intro {
+    max-width: 74ch;
+    margin-bottom: 0;
+    color: var(--prps-text-secondary);
+    line-height: 1.6;
+  }
+
+  .prps__badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 0.45rem 0.75rem;
+    color: var(--prps-state);
+    background: color-mix(
+      in srgb,
+      var(--prps-state) 8%,
+      var(--prps-surface)
+    );
+    border: 1px solid color-mix(
+      in srgb,
+      var(--prps-state) 30%,
+      var(--prps-border)
+    );
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .prps__questions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .prps__questions legend {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    color: var(--prps-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+  }
+
+  .prps__question--wide {
+    grid-column: 1 / -1;
+  }
+
+  .prps__question {
+    padding: 1rem;
+    background: var(--prps-surface-soft);
+    border: 1px solid var(--prps-border);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .prps__question-title {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--prps-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .prps__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .prps__options label {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .prps__options input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .prps__options label span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.25rem;
+    padding: 0.45rem 0.8rem;
+    color: var(--prps-text-secondary);
+    background: var(--prps-surface);
+    border: 1px solid var(--prps-border);
+    border-radius: 999px;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+    line-height: 1.35;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .prps__options label:hover span {
+    border-color: var(--prps-accent);
+  }
+
+  .prps__options label:has(input:focus-visible) span {
+    outline: 2px solid var(--prps-accent);
+    outline-offset: 2px;
+  }
+
+  .prps__options label:has(input:checked) span {
+    color: var(--prps-state);
+    background: color-mix(
+      in srgb,
+      var(--prps-state) 8%,
+      var(--prps-surface)
+    );
+    border-color: var(--prps-state);
+  }
+
+  .prps__result {
+    margin-top: 1.25rem;
+    padding: 1.2rem;
+    background: var(--prps-surface-soft);
+    border: 1px solid var(--prps-border);
+    border-left: 4px solid var(--prps-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .prps__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .prps__result-kicker {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--prps-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .prps__result h4 {
+    margin-bottom: 0;
+    color: var(--prps-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .prps__result-level {
+    flex: 0 0 auto;
+    color: var(--prps-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .prps__result-description {
+    max-width: 74ch;
+    margin: 0.65rem 0 0;
+    color: var(--prps-text-secondary);
+    line-height: 1.6;
+  }
+
+  .prps__meter {
+    width: 100%;
+    height: 0.45rem;
+    margin-top: 1rem;
+    overflow: hidden;
+    background: var(--prps-border-soft);
+    border-radius: 999px;
+  }
+
+  .prps__meter span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--prps-state);
+    border-radius: inherit;
+    transition:
+      width 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .prps__cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .prps__card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: var(--prps-surface);
+    border: 1px solid var(--prps-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .prps__card span {
+    color: var(--prps-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .prps__card strong {
+    color: var(--prps-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .prps__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--prps-surface);
+    border: 1px solid var(--prps-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .prps__principle-mark {
+    flex: 0 0 auto;
+    color: var(--prps-accent);
+    font-weight: 800;
+  }
+
+  .prps__principle p {
+    margin: 0;
+    color: var(--prps-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .prps__principle strong {
+    color: var(--prps-text);
+  }
+
+  @media (max-width: 900px) {
+    .prps__questions,
+    .prps__cards {
+      grid-template-columns: 1fr;
+    }
+
+    .prps__question--wide {
+      grid-column: auto;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .prps {
+      padding: 1rem;
+    }
+
+    .prps__header,
+    .prps__result-head {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .prps__badge {
+      align-self: flex-start;
+    }
+
+    .prps__result-level {
+      text-align: left;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .prps__meter span,
+    .prps__options label span {
+      transition: none;
+    }
+  }
+</style>

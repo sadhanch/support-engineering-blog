@@ -1,0 +1,559 @@
+---
+interface GuideItem {
+  id: string;
+  title: string;
+  description: string;
+  startWith: string[];
+  notes: string[];
+}
+
+const guideItems: GuideItem[] = [
+  {
+    id: "discover",
+    title: "Find the right command",
+    description:
+      "You know what you want to accomplish, but you are not sure which Exchange cmdlet is the right starting point.",
+    startWith: [
+      "Get-Command *Mailbox*",
+      "Get-Command *Transport*",
+      "Get-Command -Verb Get -Noun *Recipient*",
+      "Get-ExCommand *Mailbox*",
+    ],
+    notes: [
+      "Use the verb and noun to narrow the search instead of guessing a complete cmdlet name.",
+      "Treat discovery as the first step, not as a last resort after a command fails.",
+    ],
+  },
+  {
+    id: "syntax",
+    title: "Understand a cmdlet",
+    description:
+      "You found a likely cmdlet and now need to understand its syntax, parameters, examples, or supported combinations.",
+    startWith: [
+      "Get-Help Set-Mailbox -Detailed",
+      "Get-Help Set-Mailbox -Examples",
+      "Get-Help Set-Mailbox -Parameter Identity",
+      "(Get-Command Set-Mailbox).ParameterSets",
+    ],
+    notes: [
+      "Parameter sets explain which combinations of parameters belong to different operations.",
+      "When PowerShell cannot resolve a parameter set, step back and identify the operation you actually intended.",
+    ],
+  },
+  {
+    id: "object",
+    title: "Understand the returned object",
+    description:
+      "The command runs, but you need to know what properties are actually available before building the next part of the pipeline.",
+    startWith: [
+      "$Mailbox | Get-Member",
+      "$Mailbox.DisplayName",
+      "$Mailbox.PrimarySmtpAddress",
+    ],
+    notes: [
+      "PowerShell passes objects through the pipeline rather than simply passing screen text.",
+      "Select-Object shapes data for downstream use; Format-Table and Format-List are for presentation.",
+    ],
+  },
+  {
+    id: "target",
+    title: "Target the right object",
+    description:
+      "You are ready to work with a specific recipient or mailbox and want to avoid relying on an ambiguous display name.",
+    startWith: [
+      "Get-EXOMailbox -Identity user@contoso.com",
+      "Get-EXOMailbox -Identity user@contoso.com -Properties ExternalDirectoryObjectId",
+    ],
+    notes: [
+      "Resolve the object before changing it.",
+      "Prefer a stable, validated identity when the operation will be repeated or automated.",
+    ],
+  },
+  {
+    id: "filter",
+    title: "Filter a population",
+    description:
+      "You have many objects and need to narrow the population before reporting or making a change.",
+    startWith: [
+      "Get-Mailbox -Filter \"Department -eq 'Sales'\"",
+      "Get-EXOMailbox -Properties Department, Office",
+      "Where-Object { $_.Department -eq 'Sales' }",
+    ],
+    notes: [
+      "Use service-side filtering where the cmdlet and scenario support it.",
+      "With Get-EXO* cmdlets, remember that properties not retrieved cannot be recovered later with Select-Object.",
+    ],
+  },
+  {
+    id: "safe-change",
+    title: "Prepare a change",
+    description:
+      "You know what needs to change and want to make the operation predictable before touching the service.",
+    startWith: [
+      "Set-Mailbox -Identity user@contoso.com -Office 'London' -WhatIf",
+      "Set-Mailbox -Identity user@contoso.com -Office 'London' -Verbose",
+      "Set-Mailbox -Identity user@contoso.com -Office 'London' -ErrorAction Stop",
+    ],
+    notes: [
+      "Use WhatIf where supported to inspect the intended operation before execution.",
+      "For broader changes, establish the target set and capture the before-state before removing the safety net.",
+    ],
+  },
+  {
+    id: "rbac",
+    title: "Investigate access or a missing parameter",
+    description:
+      "A command or parameter works for another administrator but is unavailable in your session.",
+    startWith: [
+      "Get-ManagementRole -Cmdlet Set-Mailbox",
+      "Get-ManagementRoleEntry '*\\Set-Mailbox'",
+      "Get-ManagementRoleAssignment -RoleAssignee admin@contoso.com",
+    ],
+    notes: [
+      "Exchange RBAC can affect the commands and parameters exposed to an administrator.",
+      "A missing parameter is not automatically a module problem.",
+    ],
+  },
+  {
+    id: "report",
+    title: "Build structured output",
+    description:
+      "You need an inventory or report that can be reviewed, retained, or processed later.",
+    startWith: [
+      "Get-EXOMailbox -ResultSize Unlimited",
+      "Select-Object DisplayName, PrimarySmtpAddress, RecipientTypeDetails",
+      "Export-Csv .\\MailboxInventory.csv -NoTypeInformation",
+    ],
+    notes: [
+      "Keep reporting pipelines object-oriented until the output boundary.",
+      "Retrieve only the properties the report actually needs.",
+    ],
+  },
+];
+
+const defaultId = guideItems[0].id;
+---
+
+<section class="command-guide" aria-labelledby="command-guide-title">
+  <div class="command-guide__header">
+    <div>
+      <p class="command-guide__eyebrow">Exchange PowerShell field guide</p>
+      <h2 id="command-guide-title">What are you trying to do?</h2>
+      <p class="command-guide__intro">
+        Start with the task rather than the cmdlet. Choose the situation that
+        best matches what is in front of you, and use the suggested commands
+        as a starting point for investigation.
+      </p>
+    </div>
+  </div>
+
+  <div class="command-guide__layout">
+    <nav class="command-guide__choices" aria-label="Exchange PowerShell tasks">
+      {guideItems.map((item, index) => (
+        <button
+          type="button"
+          class:list={["command-guide__choice", { "is-active": item.id === defaultId }]}
+          data-guide-choice={item.id}
+          aria-controls={`guide-panel-${item.id}`}
+          aria-selected={item.id === defaultId}
+          role="tab"
+          tabindex={item.id === defaultId ? 0 : -1}
+        >
+          <span class="command-guide__number">{String(index + 1).padStart(2, "0")}</span>
+          <span>
+            <strong>{item.title}</strong>
+            <small>{item.description}</small>
+          </span>
+        </button>
+      ))}
+    </nav>
+
+    <div class="command-guide__panels">
+      {guideItems.map((item) => (
+        <article
+          id={`guide-panel-${item.id}`}
+          class:list={["command-guide__panel", { "is-active": item.id === defaultId }]}
+          data-guide-panel={item.id}
+          role="tabpanel"
+          aria-labelledby={item.id}
+          hidden={item.id !== defaultId}
+        >
+          <div class="command-guide__panel-heading">
+            <span class="command-guide__panel-kicker">Start here</span>
+            <h3>{item.title}</h3>
+            <p>{item.description}</p>
+          </div>
+
+          <div class="command-guide__section">
+            <h4>Commands to investigate</h4>
+            <div class="command-guide__commands">
+              {item.startWith.map((command) => (
+                <code>{command}</code>
+              ))}
+            </div>
+          </div>
+
+          <div class="command-guide__section">
+            <h4>Keep in mind</h4>
+            <ul>
+              {item.notes.map((note) => <li>{note}</li>)}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <div class="command-guide__footer">
+    <strong>One habit to keep:</strong>
+    discover the command, inspect what it returns, and understand the target
+    before you make the change.
+  </div>
+</section>
+
+<script>
+  const initialiseCommandGuides = () => {
+    document.querySelectorAll<HTMLElement>(".command-guide").forEach((guide) => {
+      const choices = Array.from(
+        guide.querySelectorAll<HTMLButtonElement>("[data-guide-choice]")
+      );
+      const panels = Array.from(
+        guide.querySelectorAll<HTMLElement>("[data-guide-panel]")
+      );
+
+      const activate = (id: string, moveFocus = false) => {
+        choices.forEach((choice) => {
+          const active = choice.dataset.guideChoice === id;
+          choice.classList.toggle("is-active", active);
+          choice.setAttribute("aria-selected", String(active));
+          choice.tabIndex = active ? 0 : -1;
+        });
+
+        panels.forEach((panel) => {
+          const active = panel.dataset.guidePanel === id;
+          panel.classList.toggle("is-active", active);
+          panel.hidden = !active;
+        });
+
+        if (moveFocus) {
+          choices.find((choice) => choice.dataset.guideChoice === id)?.focus();
+        }
+      };
+
+      choices.forEach((choice, index) => {
+        choice.addEventListener("click", () => {
+          activate(choice.dataset.guideChoice ?? "");
+        });
+
+        choice.addEventListener("keydown", (event) => {
+          if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+
+          event.preventDefault();
+
+          let nextIndex = index;
+
+          if (event.key === "ArrowDown") nextIndex = (index + 1) % choices.length;
+          if (event.key === "ArrowUp") nextIndex = (index - 1 + choices.length) % choices.length;
+          if (event.key === "Home") nextIndex = 0;
+          if (event.key === "End") nextIndex = choices.length - 1;
+
+          const nextId = choices[nextIndex].dataset.guideChoice ?? "";
+          activate(nextId, true);
+        });
+      });
+    });
+  };
+
+  initialiseCommandGuides();
+  document.addEventListener("astro:page-load", initialiseCommandGuides);
+</script>
+
+<style>
+  .command-guide {
+    /*
+     * Consume SEDS semantic tokens so the component follows both
+     * light and dark themes without maintaining a second palette.
+     */
+    --guide-border: var(--border-default);
+    --guide-border-soft: var(--border-subtle);
+    --guide-text: var(--text-primary);
+    --guide-muted: var(--text-secondary);
+    --guide-accent: var(--color-accent);
+    --guide-surface: var(--surface-primary);
+    --guide-surface-soft: var(--surface-secondary);
+    --guide-surface-active: color-mix(
+      in srgb,
+      var(--guide-accent) 10%,
+      var(--guide-surface-soft)
+    );
+    --guide-code: var(--surface-tertiary);
+
+    width: 100%;
+    margin: var(--space-10) 0;
+
+    border: 1px solid var(--guide-border);
+    border-radius: var(--radius-lg);
+
+    background: var(--guide-surface);
+    color: var(--guide-text);
+
+    overflow: hidden;
+
+    box-shadow: var(--shadow-sm);
+  }
+
+  .command-guide__header {
+    padding: var(--space-6) var(--space-6) var(--space-5);
+
+    border-bottom: 1px solid var(--guide-border);
+
+    background: var(--guide-surface);
+  }
+
+  .command-guide__eyebrow,
+  .command-guide__panel-kicker {
+    margin: 0 0 var(--space-1);
+
+    color: var(--guide-accent);
+
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .command-guide h2 {
+    margin: 0;
+
+    color: var(--guide-text);
+
+    font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+  }
+
+  .command-guide__intro {
+    max-width: 70rem;
+    margin: var(--space-2) 0 0;
+
+    color: var(--guide-muted);
+
+    line-height: var(--line-height-normal);
+  }
+
+  .command-guide__layout {
+    display: grid;
+    grid-template-columns: minmax(15rem, 0.8fr) minmax(0, 1.6fr);
+  }
+
+  .command-guide__choices {
+    display: flex;
+    flex-direction: column;
+
+    border-right: 1px solid var(--guide-border);
+
+    background: var(--guide-surface-soft);
+  }
+
+  .command-guide__choice {
+    display: grid;
+    grid-template-columns: 2.15rem minmax(0, 1fr);
+    gap: var(--space-3);
+
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+
+    border: 0;
+    border-bottom: 1px solid var(--guide-border-soft);
+
+    background: transparent;
+    color: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+      background var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .command-guide__choice:hover,
+  .command-guide__choice:focus-visible {
+    background: var(--guide-surface-active);
+    outline: none;
+  }
+
+  .command-guide__choice.is-active {
+    background: var(--guide-surface-active);
+    box-shadow: inset 3px 0 0 var(--guide-accent);
+  }
+
+  .command-guide__number {
+    padding-top: 0.12rem;
+
+    color: var(--guide-accent);
+
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.04em;
+  }
+
+  .command-guide__choice strong {
+    display: block;
+
+    color: var(--guide-text);
+
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+  }
+
+  .command-guide__choice small {
+    display: block;
+    margin-top: var(--space-1);
+
+    color: var(--guide-muted);
+
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-normal);
+  }
+
+  .command-guide__panels {
+    min-width: 0;
+
+    background: var(--guide-surface);
+  }
+
+  .command-guide__panel {
+    padding: var(--space-6);
+  }
+
+  .command-guide__panel-heading h3 {
+    margin: 0;
+
+    color: var(--guide-text);
+
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+  }
+
+  .command-guide__panel-heading p {
+    margin: var(--space-2) 0 0;
+
+    color: var(--guide-muted);
+
+    line-height: var(--line-height-normal);
+  }
+
+  .command-guide__section {
+    margin-top: var(--space-5);
+  }
+
+  .command-guide__section h4 {
+    margin: 0 0 var(--space-2);
+
+    color: var(--guide-text);
+
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+  }
+
+  .command-guide__commands {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .command-guide__commands code {
+    display: block;
+
+    min-width: 0;
+
+    padding: 0.68rem 0.8rem;
+
+    border: 1px solid var(--guide-border);
+    border-radius: var(--radius-sm);
+
+    background: var(--guide-code);
+    color: var(--guide-text);
+
+    font-family: var(--font-family-code);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-normal);
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .command-guide__section ul {
+    margin: 0;
+    padding-left: var(--space-5);
+  }
+
+  .command-guide__section li {
+    margin: var(--space-2) 0;
+
+    color: var(--guide-muted);
+
+    line-height: var(--line-height-normal);
+  }
+
+  .command-guide__footer {
+    padding: var(--space-3) var(--space-6);
+
+    border-top: 1px solid var(--guide-border);
+
+    background: var(--guide-surface-soft);
+    color: var(--guide-muted);
+
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+  }
+
+  .command-guide__footer strong {
+    color: var(--guide-text);
+  }
+
+  @media (max-width: 760px) {
+    .command-guide__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .command-guide__choices {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      border-right: 0;
+      border-bottom: 1px solid var(--guide-border);
+    }
+
+    .command-guide__choice {
+      grid-template-columns: 1.7rem minmax(0, 1fr);
+      padding: var(--space-3);
+    }
+
+    .command-guide__choice small {
+      display: none;
+    }
+
+    .command-guide__panel {
+      padding: var(--space-5);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .command-guide__choices {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .command-guide__choice {
+      transition: none;
+    }
+  }
+</style>

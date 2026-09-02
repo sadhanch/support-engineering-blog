@@ -5,25 +5,48 @@
 
 .article-content pre {
 
+    position: relative;
+
     margin: var(--space-8) 0;
 
     padding: var(--space-5);
 
-    overflow-x: auto;
+    overflow-x: hidden;
+    overflow-y: hidden;
 
     border: 1px solid var(--border-default);
 
     border-radius: var(--radius-lg);
 
-    background: var(--surface-code);
+    /*
+     * Code surface intentionally matches the component
+     * border so the code area reads as one cohesive surface.
+     */
+    background: var(--border-default);
 
     color: var(--text-code);
+
+    white-space: pre-wrap;
+
+    overflow-wrap: anywhere;
+
+    word-break: normal;
+
+    tab-size: 4;
 
 }
 
 .article-content pre code {
 
     display: block;
+
+    min-width: 0;
+
+    margin: 0;
+
+    padding: 0;
+
+    background: transparent;
 
     color: inherit;
 
@@ -38,7 +61,13 @@
 
     line-height: 1.7;
 
-    tab-size: 4;
+    white-space: inherit;
+
+    overflow-wrap: inherit;
+
+    word-break: inherit;
+
+    tab-size: inherit;
 
 }
 
@@ -69,10 +98,27 @@
    Shiki Theme Integration
    ========================================================== */
 
-.article-content pre.astro-code,
+.article-content pre.astro-code {
+
+    background: var(--border-default) !important;
+
+    white-space: pre-wrap !important;
+
+    overflow-wrap: anywhere;
+
+    word-break: normal;
+
+}
+
 .article-content pre.astro-code code {
 
-    background: var(--surface-code) !important;
+    background: transparent !important;
+
+    white-space: pre-wrap !important;
+
+    overflow-wrap: anywhere;
+
+    word-break: normal;
 
 }
 
@@ -103,6 +149,7 @@
     background-color: transparent !important;
 
 }
+
 
 /* ==========================================================
    Code Block Toolbar

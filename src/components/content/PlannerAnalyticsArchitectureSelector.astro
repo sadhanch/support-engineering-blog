@@ -1,0 +1,794 @@
+---
+/*
+ * PlannerAnalyticsArchitectureSelector.astro
+ *
+ * Purpose:
+ * Helps readers choose a practical analytical path for Planner Premium
+ * reporting based on portfolio scale, historical needs, source-system
+ * breadth, and transformation requirements.
+ *
+ * This is an architecture decision aid, not a licensing calculator,
+ * capacity estimator, or Microsoft-prescribed architecture.
+ */
+---
+
+<section
+  class="paas"
+  data-paas
+  aria-labelledby="paas-title"
+>
+  <div class="paas__header">
+    <div>
+      <p class="paas__eyebrow">Analytics architecture selector</p>
+
+      <h3 id="paas-title">
+        Which reporting architecture fits the workload?
+      </h3>
+
+      <p class="paas__intro">
+        Classify the reporting requirement by size, history, transformation,
+        and source-system breadth. The selector suggests a natural starting
+        architecture and the design concerns to review next.
+      </p>
+    </div>
+
+    <span
+      class="paas__badge"
+      data-badge
+      aria-live="polite"
+    >
+      Choose your workload
+    </span>
+  </div>
+
+  <fieldset class="paas__questions">
+    <legend>Classify the analytics requirement</legend>
+
+    <div class="paas__question">
+      <span class="paas__question-title">
+        1. What portfolio scale are you expecting?
+      </span>
+
+      <div class="paas__options">
+        <label>
+          <input
+            type="radio"
+            name="paas-scale"
+            value="moderate"
+          />
+          <span>Moderate portfolio</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="paas-scale"
+            value="large"
+          />
+          <span>Large portfolio</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="paas-scale"
+            value="enterprise"
+          />
+          <span>Enterprise / high scale</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="paas__question">
+      <span class="paas__question-title">
+        2. Do you need historical trends across reporting periods?
+      </span>
+
+      <div class="paas__options">
+        <label>
+          <input
+            type="radio"
+            name="paas-history"
+            value="no"
+          />
+          <span>No / current state</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="paas-history"
+            value="yes"
+          />
+          <span>Yes / historical trend</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="paas__question">
+      <span class="paas__question-title">
+        3. Will the reporting combine Planner Premium with other source systems?
+      </span>
+
+      <div class="paas__options">
+        <label>
+          <input
+            type="radio"
+            name="paas-sources"
+            value="planner"
+          />
+          <span>Planner / Dataverse only</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="paas-sources"
+            value="multi"
+          />
+          <span>Multiple business systems</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="paas__question">
+      <span class="paas__question-title">
+        4. Do multiple reports need the same cleansing and transformation logic?
+      </span>
+
+      <div class="paas__options">
+        <label>
+          <input
+            type="radio"
+            name="paas-transform"
+            value="no"
+          />
+          <span>No / limited transformation</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="paas-transform"
+            value="yes"
+          />
+          <span>Yes / reusable transformation</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="paas__question">
+      <span class="paas__question-title">
+        5. Do you need a separate analytical store from operational Dataverse?
+      </span>
+
+      <div class="paas__options">
+        <label>
+          <input
+            type="radio"
+            name="paas-analytical"
+            value="no"
+          />
+          <span>No / direct reporting</span>
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            name="paas-analytical"
+            value="yes"
+          />
+          <span>Yes / analytical separation</span>
+        </label>
+      </div>
+    </div>
+  </fieldset>
+
+  <div
+    class="paas__result"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <div class="paas__result-head">
+      <div>
+        <span class="paas__result-kicker">
+          Suggested architecture
+        </span>
+
+        <h4 data-title>
+          Complete the classification.
+        </h4>
+      </div>
+
+      <span
+        class="paas__result-level"
+        data-level
+      >
+        Awaiting input
+      </span>
+    </div>
+
+    <p
+      class="paas__result-description"
+      data-description
+    >
+      The selector will recommend a practical reporting path and identify the
+      architectural concerns worth reviewing.
+    </p>
+
+    <div class="paas__meter" aria-hidden="true">
+      <span data-meter></span>
+    </div>
+
+    <div class="paas__cards">
+      <div class="paas__card">
+        <span>Recommended path</span>
+        <strong data-primary>—</strong>
+      </div>
+
+      <div class="paas__card">
+        <span>Why it fits</span>
+        <strong data-fit>—</strong>
+      </div>
+
+      <div class="paas__card">
+        <span>Review next</span>
+        <strong data-review>—</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="paas__principle">
+    <span
+      class="paas__principle-mark"
+      aria-hidden="true"
+    >
+      →
+    </span>
+
+    <p>
+      <strong>Choose the simplest architecture that satisfies the requirement.</strong>
+      Move from direct Dataverse reporting toward reusable transformation or a
+      dedicated analytical layer only when the workload actually needs it.
+    </p>
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>(
+    "[data-paas]"
+  );
+
+  roots.forEach((root) => {
+    if (root.dataset.initialized === "true") {
+      return;
+    }
+
+    root.dataset.initialized = "true";
+
+    const badge =
+      root.querySelector<HTMLElement>("[data-badge]");
+
+    const title =
+      root.querySelector<HTMLElement>("[data-title]");
+
+    const level =
+      root.querySelector<HTMLElement>("[data-level]");
+
+    const description =
+      root.querySelector<HTMLElement>("[data-description]");
+
+    const meter =
+      root.querySelector<HTMLElement>("[data-meter]");
+
+    const primary =
+      root.querySelector<HTMLElement>("[data-primary]");
+
+    const fit =
+      root.querySelector<HTMLElement>("[data-fit]");
+
+    const review =
+      root.querySelector<HTMLElement>("[data-review]");
+
+    const inputs = Array.from(
+      root.querySelectorAll<HTMLInputElement>(
+        '.paas__options input[type="radio"]'
+      )
+    );
+
+    if (
+      !badge ||
+      !title ||
+      !level ||
+      !description ||
+      !meter ||
+      !primary ||
+      !fit ||
+      !review
+    ) {
+      return;
+    }
+
+    const getValue = (name: string) =>
+      root.querySelector<HTMLInputElement>(
+        `input[name="${name}"]:checked`
+      )?.value;
+
+    function updateAssessment() {
+      const scale = getValue("paas-scale");
+      const history = getValue("paas-history");
+      const sources = getValue("paas-sources");
+      const transform = getValue("paas-transform");
+      const analytical = getValue("paas-analytical");
+
+      const selected = [
+        scale,
+        history,
+        sources,
+        transform,
+        analytical
+      ].filter(Boolean).length;
+
+      if (selected < 5) {
+        root.dataset.state = "incomplete";
+
+        badge.textContent = "CLASSIFY WORKLOAD";
+        title.textContent = `${selected} of 5 areas classified`;
+        level.textContent = `${5 - selected} remaining`;
+
+        description.textContent =
+          "Complete the classification to receive a reporting-architecture recommendation.";
+
+        meter.style.width =
+          `${Math.round((selected / 5) * 100)}%`;
+
+        primary.textContent = "Complete the classification";
+        fit.textContent = "Complete the classification";
+        review.textContent = "Complete the classification";
+
+        return;
+      }
+
+      /*
+       * The source material supports a progression from:
+       *   - Power BI + Dataverse for moderate/direct reporting
+       *   - Dataflows for repeated transformation
+       *   - Analytical replication for large history or cross-system needs
+       *   - Fabric/Azure for enterprise analytical scale
+       *
+       * This component intentionally recommends a path rather than a score.
+       */
+
+      if (scale === "enterprise" || analytical === "yes" || sources === "multi") {
+        root.dataset.state = "analytical";
+
+        badge.textContent = "ANALYTICAL LAYER";
+        level.textContent = "Enterprise / cross-system";
+
+        title.textContent =
+          "Use an analytical consolidation layer before Power BI.";
+
+        description.textContent =
+          "The combination of scale, cross-system reporting, or analytical separation points toward a dedicated analytical platform rather than embedding every source directly in each report.";
+
+        meter.style.width = "100%";
+
+        primary.textContent =
+          "Dataverse → analytical replication / Fabric or Azure → Power BI";
+
+        fit.textContent =
+          "Large history, multiple departments, multiple source systems, or a need to separate reporting from operational access.";
+
+        review.textContent =
+          "Data engineering, history, conformed dimensions, governance, platform operations, refresh, security, and cost.";
+
+        return;
+      }
+
+      if (history === "yes" && scale !== "moderate") {
+        root.dataset.state = "analytical";
+
+        badge.textContent = "ANALYTICAL LAYER";
+        level.textContent = "History + scale";
+
+        title.textContent =
+          "Plan for a separate analytical layer.";
+
+        description.textContent =
+          "Historical reporting at larger scale is a strong signal to persist and serve analytical history separately from current operational data.";
+
+        meter.style.width = "85%";
+
+        primary.textContent =
+          "Dataverse → snapshots / analytical replication → Power BI";
+
+        fit.textContent =
+          "Trend reporting needs persisted history, while portfolio size makes direct operational reporting less attractive.";
+
+        review.textContent =
+          "Snapshot design, storage strategy, model performance, refresh, retention, and reconciliation.";
+
+        return;
+      }
+
+      if (transform === "yes") {
+        root.dataset.state = "dataflows";
+
+        badge.textContent = "DATAFLOWS";
+        level.textContent = "Reusable transformation";
+
+        title.textContent =
+          "Add a governed transformation layer.";
+
+        description.textContent =
+          "Multiple reports need the same cleansing or transformation logic, so centralizing that work can improve consistency and reuse.";
+
+        meter.style.width = "65%";
+
+        primary.textContent =
+          "Dataverse → Power Query dataflows → Power BI";
+
+        fit.textContent =
+          "Repeated transformations, reusable cleansing, or conformed preparation across reports.";
+
+        review.textContent =
+          "Refresh dependencies, transformation ownership, data quality, lifecycle, and downstream semantic models.";
+
+        return;
+      }
+
+      root.dataset.state = "direct";
+
+      badge.textContent = "DIRECT DATAVERSE";
+      level.textContent = "Moderate / straightforward";
+
+      title.textContent =
+        "Start with Power BI and the Dataverse connector.";
+
+      description.textContent =
+        "The workload is moderate, primarily Planner Premium/Dataverse-based, and does not yet require a separate analytical platform.";
+
+      meter.style.width = "40%";
+
+      primary.textContent =
+        "Dataverse → Power BI Dataverse connector → curated semantic model";
+
+      fit.textContent =
+        "Straightforward reporting with moderate data volume and limited cross-system analytical requirements.";
+
+      review.textContent =
+        "Query reduction, selected columns, Import mode where appropriate, semantic-model design, security, and refresh.";
+    }
+
+    inputs.forEach((input) => {
+      input.addEventListener("change", updateAssessment);
+    });
+
+    updateAssessment();
+  });
+</script>
+
+<style>
+  .paas {
+    --paas-surface: var(--surface-primary, #ffffff);
+    --paas-surface-soft: var(--surface-secondary, #f8fafc);
+    --paas-text: var(--text-primary, #0f172a);
+    --paas-text-secondary: var(--text-secondary, #475569);
+    --paas-text-tertiary: var(--text-tertiary, #64748b);
+    --paas-border: var(--border-default, #dbe3ec);
+    --paas-border-soft: var(--border-subtle, #e7edf4);
+    --paas-accent: var(--color-accent, #4ea1e0);
+    --paas-state: var(--paas-accent);
+
+    width: 100%;
+    margin-block: var(--space-10, 2.5rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--paas-text);
+    background: var(--paas-surface);
+    border: 1px solid var(--paas-border);
+    border-radius: var(--radius-lg, 0.875rem);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgb(15 23 42 / 0.06));
+  }
+
+  .paas[data-state="direct"] {
+    --paas-state: #2563eb;
+  }
+
+  .paas[data-state="dataflows"] {
+    --paas-state: #15803d;
+  }
+
+  .paas[data-state="analytical"] {
+    --paas-state: #7c3aed;
+  }
+
+  .paas__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-6, 1.5rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .paas__eyebrow {
+    margin: 0 0 0.3rem;
+    color: var(--paas-state);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .paas h3,
+  .paas h4,
+  .paas p {
+    margin-top: 0;
+  }
+
+  .paas h3 {
+    margin-bottom: 0.5rem;
+    font-size: clamp(1.3rem, 2vw, 1.6rem);
+    line-height: 1.2;
+  }
+
+  .paas__intro {
+    max-width: 74ch;
+    margin-bottom: 0;
+    color: var(--paas-text-secondary);
+    line-height: 1.6;
+  }
+
+  .paas__badge {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    padding: 0.45rem 0.75rem;
+    color: var(--paas-state);
+    background: color-mix(in srgb, var(--paas-state) 8%, var(--paas-surface));
+    border: 1px solid color-mix(in srgb, var(--paas-state) 30%, var(--paas-border));
+    border-radius: 999px;
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .paas__questions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .paas__questions legend {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    color: var(--paas-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+  }
+
+  .paas__question {
+    padding: 1rem;
+    background: var(--paas-surface-soft);
+    border: 1px solid var(--paas-border);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .paas__question-title {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--paas-text);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .paas__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .paas__options label {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .paas__options input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .paas__options label span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.25rem;
+    padding: 0.45rem 0.8rem;
+    color: var(--paas-text-secondary);
+    background: var(--paas-surface);
+    border: 1px solid var(--paas-border);
+    border-radius: 999px;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 600;
+    line-height: 1.35;
+    transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+  }
+
+  .paas__options label:hover span {
+    border-color: var(--paas-accent);
+  }
+
+  .paas__options label:has(input:focus-visible) span {
+    outline: 2px solid var(--paas-accent);
+    outline-offset: 2px;
+  }
+
+  .paas__options label:has(input:checked) span {
+    color: var(--paas-state);
+    background: color-mix(in srgb, var(--paas-state) 8%, var(--paas-surface));
+    border-color: var(--paas-state);
+  }
+
+  .paas__result {
+    margin-top: 1.25rem;
+    padding: 1.2rem;
+    background: var(--paas-surface-soft);
+    border: 1px solid var(--paas-border);
+    border-left: 4px solid var(--paas-state);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .paas__result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .paas__result-kicker {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--paas-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .paas__result h4 {
+    margin-bottom: 0;
+    color: var(--paas-text);
+    font-size: var(--font-size-lg, 1.1rem);
+    line-height: 1.3;
+  }
+
+  .paas__result-level {
+    flex: 0 0 auto;
+    color: var(--paas-state);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .paas__result-description {
+    max-width: 74ch;
+    margin: 0.65rem 0 0;
+    color: var(--paas-text-secondary);
+    line-height: 1.6;
+  }
+
+  .paas__meter {
+    width: 100%;
+    height: 0.45rem;
+    margin-top: 1rem;
+    overflow: hidden;
+    background: var(--paas-border-soft);
+    border-radius: 999px;
+  }
+
+  .paas__meter span {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--paas-state);
+    border-radius: inherit;
+    transition: width 180ms ease, background-color 180ms ease;
+  }
+
+  .paas__cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .paas__card {
+    display: grid;
+    gap: 0.35rem;
+    padding: 0.9rem;
+    background: var(--paas-surface);
+    border: 1px solid var(--paas-border-soft);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  .paas__card span {
+    color: var(--paas-text-tertiary);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .paas__card strong {
+    color: var(--paas-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .paas__principle {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: var(--paas-surface);
+    border: 1px solid var(--paas-border-soft);
+    border-radius: var(--radius-md, 0.65rem);
+  }
+
+  .paas__principle-mark {
+    flex: 0 0 auto;
+    color: var(--paas-accent);
+    font-weight: 800;
+  }
+
+  .paas__principle p {
+    margin: 0;
+    color: var(--paas-text-secondary);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: 1.55;
+  }
+
+  .paas__principle strong {
+    color: var(--paas-text);
+  }
+
+  @media (max-width: 900px) {
+    .paas__questions,
+    .paas__cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .paas {
+      padding: 1rem;
+    }
+
+    .paas__header,
+    .paas__result-head {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .paas__badge {
+      align-self: flex-start;
+    }
+
+    .paas__result-level {
+      text-align: left;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .paas__meter span,
+    .paas__options label span {
+      transition: none;
+    }
+  }
+</style>
