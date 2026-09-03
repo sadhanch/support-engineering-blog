@@ -1,0 +1,770 @@
+---
+interface LabMetric {
+    label: string;
+    description: string;
+}
+
+interface Trial {
+    id: string;
+    title: string;
+    command: string;
+    purpose: string;
+    checks: string[];
+    metrics: string[];
+}
+
+const metrics: LabMetric[] = [
+    {
+        label: "Elapsed time",
+        description: "Compare the wall-clock duration across repeated runs."
+    },
+    {
+        label: "Object count",
+        description: "Confirm both patterns return the expected population."
+    },
+    {
+        label: "Property count",
+        description: "Check property existence, not only non-null values."
+    },
+    {
+        label: "Memory",
+        description: "Capture private bytes and working-set behavior where practical."
+    },
+    {
+        label: "Size proxy",
+        description: "Use a consistent serialized sample as a local comparison aid."
+    },
+    {
+        label: "Errors",
+        description: "Record terminating and non-terminating failures."
+    },
+    {
+        label: "Correctness",
+        description: "Compare stable identifiers and required values before discussing speed."
+    }
+];
+
+const trials: Trial[] = [
+    {
+        id: "minimum",
+        title: "Path A · Minimum schema",
+        command: "Get-EXOMailbox -ResultSize Unlimited",
+        purpose:
+            "Measure the optimized retrieval using its documented minimum property set.",
+        checks: [
+            "Record the number of returned objects.",
+            "Inspect the first object and a representative sample.",
+            "Retain the output when the downstream workload normally consumes it."
+        ],
+        metrics: ["Elapsed time", "Object count", "Property count", "Memory", "Errors", "Correctness"]
+    },
+    {
+        id: "expanded",
+        title: "Path B · Minimum + properties",
+        command:
+            "Get-EXOMailbox -ResultSize Unlimited -Properties Department,Office",
+        purpose:
+            "Measure the same retrieval after explicitly requesting additional properties.",
+        checks: [
+            "Confirm Department and Office are actually present.",
+            "Compare the returned population with Path A.",
+            "Measure the same metrics under the same environment."
+        ],
+        metrics: [
+            "Elapsed time",
+            "Object count",
+            "Property count",
+            "Memory",
+            "Size proxy",
+            "Errors",
+            "Correctness"
+        ]
+    }
+];
+
+const protocol = [
+    {
+        number: "01",
+        title: "Control the environment",
+        detail:
+            "Keep tenant data, host, PowerShell, ExchangeOnlineManagement version, authentication, connection settings, and query conditions consistent."
+    },
+    {
+        number: "02",
+        title: "Warm the workload",
+        detail:
+            "Run a small warm-up when the experiment is intended to measure steady-state retrieval rather than first-use overhead."
+    },
+    {
+        number: "03",
+        title: "Alternate the paths",
+        detail:
+            "Run A/B and B/A rather than letting one pattern always run first."
+    },
+    {
+        number: "04",
+        title: "Repeat the trials",
+        detail:
+            "Use multiple runs so a single slow or fast result does not become the conclusion."
+    },
+    {
+        number: "05",
+        title: "Capture context",
+        detail:
+            "Record timestamps, module/runtime versions, connection configuration, errors, throttling, and observable service conditions."
+    },
+    {
+        number: "06",
+        title: "Compare distributions",
+        detail:
+            "Use median and percentile behavior where the sample count supports it; investigate outliers instead of silently deleting them."
+    }
+];
+
+const defaultTrial = trials[0].id;
+---
+
+<section class="exo-performance-lab" aria-labelledby="exo-performance-lab-title">
+    <header class="exo-performance-lab__header">
+        <p class="exo-performance-lab__eyebrow">Performance laboratory</p>
+        <h2 id="exo-performance-lab-title">Measure the workload, not the assumption</h2>
+        <p class="exo-performance-lab__intro">
+            Use this guide to compare valid Exchange Online PowerShell retrieval
+            patterns under controlled conditions. It is a laboratory model, not a
+            claim that one query is universally faster.
+        </p>
+    </header>
+
+    <div class="exo-performance-lab__top">
+        <div class="exo-performance-lab__protocol">
+            <div class="exo-performance-lab__section-heading">
+                <span class="exo-performance-lab__kicker">Experimental protocol</span>
+                <h3>Keep the comparison fair</h3>
+            </div>
+
+            <div class="exo-performance-lab__protocol-grid">
+                {protocol.map((item) => (
+                    <article class="exo-performance-lab__protocol-card">
+                        <span class="exo-performance-lab__protocol-number">
+                            {item.number}
+                        </span>
+                        <div>
+                            <h4>{item.title}</h4>
+                            <p>{item.detail}</p>
+                        </div>
+                    </article>
+                ))}
+            </div>
+        </div>
+
+        <aside class="exo-performance-lab__truth">
+            <span class="exo-performance-lab__truth-icon" aria-hidden="true">!</span>
+            <div>
+                <strong>Benchmark rule</strong>
+                <p>
+                    A single <code>Measure-Command</code> result is not a
+                    performance conclusion. Warm-up, service load, retries,
+                    paging, garbage collection, and downstream buffering can all
+                    influence the observation.
+                </p>
+            </div>
+        </aside>
+    </div>
+
+    <div class="exo-performance-lab__comparison">
+        <div class="exo-performance-lab__section-heading">
+            <span class="exo-performance-lab__kicker">Test paths</span>
+            <h3>What are you comparing?</h3>
+        </div>
+
+        <div class="exo-performance-lab__tabs" role="tablist" aria-label="Benchmark test paths">
+            {trials.map((trial) => (
+                <button
+                    type="button"
+                    class:list={[
+                        "exo-performance-lab__tab",
+                        { "is-active": trial.id === defaultTrial }
+                    ]}
+                    data-trial-choice={trial.id}
+                    aria-controls={`exo-performance-trial-${trial.id}`}
+                    aria-selected={trial.id === defaultTrial}
+                    role="tab"
+                    tabindex={trial.id === defaultTrial ? 0 : -1}
+                >
+                    <span class="exo-performance-lab__tab-title">{trial.title}</span>
+                    <code>{trial.command}</code>
+                </button>
+            ))}
+        </div>
+
+        <div class="exo-performance-lab__panels">
+            {trials.map((trial) => (
+                <article
+                    id={`exo-performance-trial-${trial.id}`}
+                    class:list={[
+                        "exo-performance-lab__panel",
+                        { "is-active": trial.id === defaultTrial }
+                    ]}
+                    data-trial-panel={trial.id}
+                    role="tabpanel"
+                    hidden={trial.id !== defaultTrial}
+                >
+                    <div class="exo-performance-lab__panel-copy">
+                        <span class="exo-performance-lab__panel-kicker">
+                            {trial.title}
+                        </span>
+                        <h4>What this run tells you</h4>
+                        <p>{trial.purpose}</p>
+
+                        <div class="exo-performance-lab__checks">
+                            <h5>Validate</h5>
+                            <ul>
+                                {trial.checks.map((check) => <li>{check}</li>)}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="exo-performance-lab__metrics">
+                        <h4>Measure</h4>
+
+                        <div class="exo-performance-lab__metric-list">
+                            {metrics
+                                .filter((metric) => trial.metrics.includes(metric.label))
+                                .map((metric) => (
+                                    <div class="exo-performance-lab__metric">
+                                        <strong>{metric.label}</strong>
+                                        <span>{metric.description}</span>
+                                    </div>
+                                ))}
+                        </div>
+                    </div>
+                </article>
+            ))}
+        </div>
+    </div>
+
+    <div class="exo-performance-lab__workflow">
+        <div>
+            <span class="exo-performance-lab__kicker">Interpretation</span>
+            <h3>When the numbers arrive</h3>
+            <p>
+                Start with correctness. Then compare the distribution of results
+                and the operational cost around them. Keep the conclusion tied to
+                the tenant, test window, runtime, module, connection, and query
+                that produced it.
+            </p>
+        </div>
+
+        <div class="exo-performance-lab__outcomes" aria-label="Interpretation sequence">
+            <span>Collect</span>
+            <b aria-hidden="true">→</b>
+            <span>Validate</span>
+            <b aria-hidden="true">→</b>
+            <span>Compare</span>
+            <b aria-hidden="true">→</b>
+            <span>Document</span>
+            <b aria-hidden="true">→</b>
+            <span>Re-test</span>
+        </div>
+    </div>
+
+    <footer class="exo-performance-lab__footer">
+        <strong>Use evidence before declaring a winner.</strong>
+        Performance findings are observations from a defined environment, not
+        permanent properties of Exchange Online PowerShell.
+    </footer>
+</section>
+
+<script>
+    const initialisePerformanceLabs = () => {
+        document
+            .querySelectorAll<HTMLElement>(".exo-performance-lab")
+            .forEach((lab) => {
+                const tabs = Array.from(
+                    lab.querySelectorAll<HTMLButtonElement>(
+                        "[data-trial-choice]"
+                    )
+                );
+
+                const panels = Array.from(
+                    lab.querySelectorAll<HTMLElement>("[data-trial-panel]")
+                );
+
+                const activate = (id: string, moveFocus = false) => {
+                    tabs.forEach((tab) => {
+                        const active = tab.dataset.trialChoice === id;
+                        tab.classList.toggle("is-active", active);
+                        tab.setAttribute("aria-selected", String(active));
+                        tab.tabIndex = active ? 0 : -1;
+                    });
+
+                    panels.forEach((panel) => {
+                        const active = panel.dataset.trialPanel === id;
+                        panel.classList.toggle("is-active", active);
+                        panel.hidden = !active;
+                    });
+
+                    if (moveFocus) {
+                        tabs
+                            .find(
+                                (tab) =>
+                                    tab.dataset.trialChoice === id
+                            )
+                            ?.focus();
+                    }
+                };
+
+                tabs.forEach((tab, index) => {
+                    tab.addEventListener("click", () => {
+                        activate(tab.dataset.trialChoice ?? "");
+                    });
+
+                    tab.addEventListener("keydown", (event) => {
+                        if (
+                            ![
+                                "ArrowRight",
+                                "ArrowLeft",
+                                "Home",
+                                "End"
+                            ].includes(event.key)
+                        ) {
+                            return;
+                        }
+
+                        event.preventDefault();
+
+                        let nextIndex = index;
+
+                        if (event.key === "ArrowRight") {
+                            nextIndex = (index + 1) % tabs.length;
+                        }
+
+                        if (event.key === "ArrowLeft") {
+                            nextIndex =
+                                (index - 1 + tabs.length) %
+                                tabs.length;
+                        }
+
+                        if (event.key === "Home") nextIndex = 0;
+                        if (event.key === "End") {
+                            nextIndex = tabs.length - 1;
+                        }
+
+                        activate(
+                            tabs[nextIndex].dataset.trialChoice ?? "",
+                            true
+                        );
+                    });
+                });
+            });
+    };
+
+    initialisePerformanceLabs();
+    document.addEventListener("astro:page-load", initialisePerformanceLabs);
+</script>
+
+<style>
+    .exo-performance-lab {
+        --lab-border: var(--border-default);
+        --lab-border-soft: var(--border-subtle);
+        --lab-text: var(--text-primary);
+        --lab-muted: var(--text-secondary);
+        --lab-accent: var(--color-accent);
+        --lab-surface: var(--surface-primary);
+        --lab-surface-soft: var(--surface-secondary);
+        --lab-surface-active: color-mix(
+            in srgb,
+            var(--lab-accent) 9%,
+            var(--lab-surface-soft)
+        );
+        --lab-code: var(--surface-tertiary);
+
+        width: 100%;
+        margin: var(--space-10) 0;
+        border: 1px solid var(--lab-border);
+        border-radius: var(--radius-lg);
+        background: var(--lab-surface);
+        color: var(--lab-text);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .exo-performance-lab__header {
+        padding: var(--space-6);
+        border-bottom: 1px solid var(--lab-border);
+    }
+
+    .exo-performance-lab__eyebrow,
+    .exo-performance-lab__kicker,
+    .exo-performance-lab__panel-kicker {
+        margin: 0 0 var(--space-1);
+        color: var(--lab-accent);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-bold);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .exo-performance-lab h2 {
+        margin: 0;
+        color: var(--lab-text);
+        font-size: clamp(1.45rem, 2.6vw, 1.95rem);
+        line-height: var(--line-height-tight);
+    }
+
+    .exo-performance-lab__intro {
+        max-width: 760px;
+        margin: var(--space-3) 0 0;
+        color: var(--lab-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exo-performance-lab__top {
+        display: grid;
+        grid-template-columns: minmax(0, 1.75fr) minmax(16rem, 0.75fr);
+        gap: 0;
+        border-bottom: 1px solid var(--lab-border);
+    }
+
+    .exo-performance-lab__protocol {
+        padding: var(--space-6);
+        border-right: 1px solid var(--lab-border);
+    }
+
+    .exo-performance-lab__section-heading h3 {
+        margin: 0;
+        color: var(--lab-text);
+        font-size: var(--font-heading-md);
+        line-height: var(--line-height-tight);
+    }
+
+    .exo-performance-lab__protocol-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-3);
+        margin-top: var(--space-5);
+    }
+
+    .exo-performance-lab__protocol-card {
+        display: grid;
+        grid-template-columns: 2rem minmax(0, 1fr);
+        gap: var(--space-3);
+        padding: var(--space-3);
+        border: 1px solid var(--lab-border-soft);
+        border-radius: var(--radius-md);
+        background: var(--lab-surface-soft);
+    }
+
+    .exo-performance-lab__protocol-number {
+        color: var(--lab-accent);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-bold);
+    }
+
+    .exo-performance-lab__protocol-card h4 {
+        margin: 0;
+        color: var(--lab-text);
+        font-size: var(--font-body-lg);
+        line-height: var(--line-height-tight);
+    }
+
+    .exo-performance-lab__protocol-card p {
+        margin: var(--space-2) 0 0;
+        color: var(--lab-muted);
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-normal);
+    }
+
+    .exo-performance-lab__truth {
+        display: flex;
+        gap: var(--space-3);
+        align-items: flex-start;
+        padding: var(--space-6);
+        background: var(--lab-surface-soft);
+    }
+
+    .exo-performance-lab__truth-icon {
+        display: grid;
+        flex: 0 0 auto;
+        width: 2rem;
+        height: 2rem;
+        place-items: center;
+        border: 1px solid var(--lab-border);
+        border-radius: 50%;
+        color: var(--lab-accent);
+        font-weight: var(--font-weight-bold);
+    }
+
+    .exo-performance-lab__truth strong {
+        color: var(--lab-text);
+    }
+
+    .exo-performance-lab__truth p {
+        margin: var(--space-2) 0 0;
+        color: var(--lab-muted);
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exo-performance-lab__comparison {
+        padding: var(--space-6);
+        border-bottom: 1px solid var(--lab-border);
+    }
+
+    .exo-performance-lab__tabs {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-3);
+        margin-top: var(--space-5);
+    }
+
+    .exo-performance-lab__tab {
+        display: block;
+        width: 100%;
+        padding: var(--space-4);
+        border: 1px solid var(--lab-border);
+        border-radius: var(--radius-md);
+        background: var(--lab-surface);
+        color: var(--lab-text);
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+        transition:
+            background-color var(--transition-fast),
+            border-color var(--transition-fast),
+            box-shadow var(--transition-fast);
+    }
+
+    .exo-performance-lab__tab:hover {
+        background: var(--lab-surface-active);
+    }
+
+    .exo-performance-lab__tab:focus-visible {
+        outline: 3px solid color-mix(
+            in srgb,
+            var(--lab-accent) 35%,
+            transparent
+        );
+        outline-offset: 2px;
+    }
+
+    .exo-performance-lab__tab.is-active {
+        border-color: var(--lab-accent);
+        background: var(--lab-surface-active);
+        box-shadow: inset 3px 0 0 var(--lab-accent);
+    }
+
+    .exo-performance-lab__tab-title {
+        display: block;
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .exo-performance-lab__tab code {
+        display: block;
+        margin-top: var(--space-2);
+        padding: var(--space-2);
+        border: 1px solid var(--lab-border-soft);
+        border-radius: var(--radius-sm);
+        background: var(--lab-code);
+        color: var(--lab-text);
+        font-size: var(--font-size-xs);
+        line-height: 1.5;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .exo-performance-lab__panel {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+        gap: var(--space-6);
+        margin-top: var(--space-5);
+        padding: var(--space-5);
+        border: 1px solid var(--lab-border);
+        border-radius: var(--radius-md);
+        background: var(--lab-surface);
+    }
+
+    .exo-performance-lab__panel-copy h4,
+    .exo-performance-lab__metrics h4 {
+        margin: 0;
+        color: var(--lab-text);
+        font-size: var(--font-body-lg);
+    }
+
+    .exo-performance-lab__panel-copy > p {
+        margin: var(--space-2) 0 0;
+        color: var(--lab-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exo-performance-lab__checks {
+        margin-top: var(--space-5);
+    }
+
+    .exo-performance-lab__checks h5 {
+        margin: 0;
+        color: var(--lab-text);
+        font-size: var(--font-size-sm);
+    }
+
+    .exo-performance-lab__checks ul {
+        margin: var(--space-2) 0 0;
+        padding-left: 1.2rem;
+    }
+
+    .exo-performance-lab__checks li {
+        margin: var(--space-2) 0;
+        color: var(--lab-muted);
+        line-height: var(--line-height-normal);
+    }
+
+    .exo-performance-lab__metrics {
+        padding-left: var(--space-5);
+        border-left: 1px solid var(--lab-border-soft);
+    }
+
+    .exo-performance-lab__metric-list {
+        display: grid;
+        gap: var(--space-2);
+        margin-top: var(--space-3);
+    }
+
+    .exo-performance-lab__metric {
+        display: grid;
+        grid-template-columns: 8rem minmax(0, 1fr);
+        gap: var(--space-3);
+        padding-bottom: var(--space-2);
+        border-bottom: 1px solid var(--lab-border-soft);
+    }
+
+    .exo-performance-lab__metric:last-child {
+        border-bottom: 0;
+    }
+
+    .exo-performance-lab__metric strong {
+        color: var(--lab-text);
+        font-size: var(--font-size-sm);
+    }
+
+    .exo-performance-lab__metric span {
+        color: var(--lab-muted);
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-normal);
+    }
+
+    .exo-performance-lab__workflow {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(20rem, 1fr);
+        gap: var(--space-6);
+        align-items: center;
+        padding: var(--space-6);
+        border-bottom: 1px solid var(--lab-border);
+    }
+
+    .exo-performance-lab__workflow h3 {
+        margin: 0;
+        color: var(--lab-text);
+        font-size: var(--font-heading-md);
+        line-height: var(--line-height-tight);
+    }
+
+    .exo-performance-lab__workflow p {
+        margin: var(--space-2) 0 0;
+        color: var(--lab-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exo-performance-lab__outcomes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .exo-performance-lab__outcomes span {
+        padding: var(--space-2) var(--space-3);
+        border: 1px solid var(--lab-border);
+        border-radius: var(--radius-pill);
+        background: var(--lab-surface-soft);
+        color: var(--lab-text);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .exo-performance-lab__outcomes b {
+        color: var(--lab-muted);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .exo-performance-lab__footer {
+        padding: var(--space-4) var(--space-6);
+        background: var(--lab-surface-soft);
+        color: var(--lab-muted);
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exo-performance-lab__footer strong {
+        color: var(--lab-text);
+    }
+
+    @media (max-width: 900px) {
+        .exo-performance-lab__top {
+            grid-template-columns: 1fr;
+        }
+
+        .exo-performance-lab__protocol {
+            border-right: 0;
+            border-bottom: 1px solid var(--lab-border);
+        }
+
+        .exo-performance-lab__panel,
+        .exo-performance-lab__workflow {
+            grid-template-columns: 1fr;
+        }
+
+        .exo-performance-lab__metrics {
+            padding-top: var(--space-5);
+            padding-left: 0;
+            border-top: 1px solid var(--lab-border-soft);
+            border-left: 0;
+        }
+
+        .exo-performance-lab__outcomes {
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .exo-performance-lab__protocol-grid,
+        .exo-performance-lab__tabs {
+            grid-template-columns: 1fr;
+        }
+
+        .exo-performance-lab__header,
+        .exo-performance-lab__protocol,
+        .exo-performance-lab__truth,
+        .exo-performance-lab__comparison,
+        .exo-performance-lab__workflow,
+        .exo-performance-lab__footer {
+            padding-left: var(--space-4);
+            padding-right: var(--space-4);
+        }
+
+        .exo-performance-lab__panel {
+            padding: var(--space-4);
+        }
+
+        .exo-performance-lab__metric {
+            grid-template-columns: 1fr;
+            gap: var(--space-1);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .exo-performance-lab__tab {
+            transition: none;
+        }
+    }
+</style>

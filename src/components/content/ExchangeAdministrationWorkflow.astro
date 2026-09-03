@@ -1,0 +1,526 @@
+---
+/* ==========================================================
+   Support Engineering Blog — Exchange Administration Workflow
+   Purpose: Interactive operating model for practical Exchange administration
+   ========================================================== */
+
+interface WorkflowStep {
+  id: string;
+  number: string;
+  title: string;
+  question: string;
+  description: string;
+  actions: string[];
+}
+
+const steps: WorkflowStep[] = [
+  {
+    id: "plane",
+    number: "01",
+    title: "Management Plane",
+    question: "Where does this change belong?",
+    description:
+      "Choose the correct management plane before touching the object or configuration.",
+    actions: [
+      "Identify whether the task belongs to Exchange Online, Exchange Server, Microsoft Purview, or a hybrid boundary.",
+      "Determine the source of authority for the object or property.",
+      "Confirm the session, tenant, forest, and applicable permissions.",
+    ],
+  },
+  {
+    id: "discover",
+    number: "02",
+    title: "Discover State",
+    question: "What exists right now?",
+    description:
+      "Inspect the actual object, identity, dependencies, and current values before deciding what to change.",
+    actions: [
+      "Confirm object type and stable identity.",
+      "Inspect the properties relevant to the requested change.",
+      "Check dependencies, synchronization state, and applicable policies.",
+    ],
+  },
+  {
+    id: "baseline",
+    number: "03",
+    title: "Export Baseline",
+    question: "What was the before-state?",
+    description:
+      "Preserve enough information to compare the result and support rollback if the change needs to be reversed.",
+    actions: [
+      "Export the relevant current configuration or object state.",
+      "Record a change or run identifier and timestamp.",
+      "Keep the baseline with the rest of the operational evidence.",
+    ],
+  },
+  {
+    id: "scope",
+    number: "04",
+    title: "Scope Target",
+    question: "Exactly what will change?",
+    description:
+      "Reduce the target set to the smallest group that satisfies the request and validate the count before writing.",
+    actions: [
+      "Use stable identities and deliberate filters.",
+      "Count and inspect the target set before execution.",
+      "Separate discovery or reporting logic from write operations.",
+    ],
+  },
+  {
+    id: "preview",
+    number: "05",
+    title: "Preview / Pilot",
+    question: "Can the change be tested safely?",
+    description:
+      "Use WhatIf where supported or validate the operation against a low-risk pilot before broad execution.",
+    actions: [
+      "Preview the intended operation when the cmdlet supports it.",
+      "Pilot on a representative object or limited scope when practical.",
+      "Review expected impact before proceeding.",
+    ],
+  },
+  {
+    id: "change",
+    number: "06",
+    title: "Apply Change",
+    question: "How will the write be controlled?",
+    description:
+      "Execute the smallest necessary change with appropriate permissions, error handling, and logging.",
+    actions: [
+      "Use the minimum required permissions for the task.",
+      "Handle errors explicitly and capture useful output.",
+      "Batch or throttle operations when scale requires it.",
+    ],
+  },
+  {
+    id: "verify",
+    number: "07",
+    title: "Verify Outcome",
+    question: "Did the service actually reach the intended state?",
+    description:
+      "Do not treat command completion as proof of success. Validate the resulting Exchange behavior.",
+    actions: [
+      "Re-read the changed state with an appropriate Get/Test command.",
+      "Validate service behavior from the relevant operational or end-user perspective.",
+      "Check for side effects and unexpected differences from the baseline.",
+    ],
+  },
+  {
+    id: "evidence",
+    number: "08",
+    title: "Preserve Evidence",
+    question: "Can another engineer prove what happened?",
+    description:
+      "Retain the evidence needed for support, audit, troubleshooting, and future comparison.",
+    actions: [
+      "Save command output, verification results, errors, and timestamps.",
+      "Record what changed, when, by whom, and why.",
+      "Keep the evidence associated with the change or incident record.",
+    ],
+  },
+  {
+    id: "rollback",
+    number: "09",
+    title: "Rollback if Required",
+    question: "How will the previous state be restored?",
+    description:
+      "If the result is not acceptable, use the preserved baseline and documented rollback path rather than improvising.",
+    actions: [
+      "Compare the verified result with the intended state and baseline.",
+      "Restore the documented previous values when rollback is required.",
+      "Verify the restored service behavior and preserve the rollback evidence.",
+    ],
+  },
+];
+
+const defaultId = steps[0].id;
+---
+
+<section class="exchange-workflow" aria-labelledby="exchange-workflow-title">
+  <header class="exchange-workflow__header">
+    <p class="exchange-workflow__eyebrow">Exchange administration field guide</p>
+    <h2 id="exchange-workflow-title">The operating model</h2>
+    <p class="exchange-workflow__intro">
+      Use the same evidence-driven sequence for a single recipient change or a
+      larger production operation: know where to act, establish the current
+      state, control the change, and prove the result.
+    </p>
+  </header>
+
+  <div class="exchange-workflow__layout">
+    <div
+      class="exchange-workflow__steps"
+      role="tablist"
+      aria-label="Exchange administration workflow steps"
+      aria-orientation="vertical"
+    >
+      {steps.map((step, index) => (
+        <button
+          type="button"
+          id={`exchange-workflow-tab-${step.id}`}
+          class:list={[
+            "exchange-workflow__step",
+            { "is-active": step.id === defaultId },
+          ]}
+          role="tab"
+          aria-selected={step.id === defaultId}
+          aria-controls={`exchange-workflow-panel-${step.id}`}
+          tabindex={step.id === defaultId ? 0 : -1}
+          data-workflow-step={step.id}
+        >
+          <span class="exchange-workflow__number">{step.number}</span>
+          <span class="exchange-workflow__step-copy">
+            <strong>{step.title}</strong>
+            <small>{step.question}</small>
+          </span>
+        </button>
+      ))}
+    </div>
+
+    <div class="exchange-workflow__panels">
+      {steps.map((step, index) => (
+        <article
+          id={`exchange-workflow-panel-${step.id}`}
+          class:list={[
+            "exchange-workflow__panel",
+            { "is-active": step.id === defaultId },
+          ]}
+          role="tabpanel"
+          aria-labelledby={`exchange-workflow-tab-${step.id}`}
+          tabindex="0"
+          data-workflow-panel={step.id}
+          hidden={step.id !== defaultId}
+        >
+          <div class="exchange-workflow__panel-heading">
+            <span class="exchange-workflow__panel-kicker">Step {step.number}</span>
+            <h3>{step.title}</h3>
+            <p>{step.description}</p>
+          </div>
+
+          <div class="exchange-workflow__actions">
+            <h4>What to do</h4>
+            <ul>
+              {step.actions.map((action) => <li>{action}</li>)}
+            </ul>
+          </div>
+
+          <div class="exchange-workflow__progress" aria-label={`Step ${index + 1} of ${steps.length}`}>
+            <span>{index + 1} of {steps.length}</span>
+            <span class="exchange-workflow__progress-track" aria-hidden="true">
+              <span style={`width: ${((index + 1) / steps.length) * 100}%`}></span>
+            </span>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <footer class="exchange-workflow__footer">
+    <strong>Core principle:</strong>
+    successful command execution is not the same as successful administration.
+    Verify the resulting service behavior and preserve the evidence that proves it.
+  </footer>
+</section>
+
+<script>
+  const initialiseExchangeWorkflows = () => {
+    document.querySelectorAll<HTMLElement>(".exchange-workflow").forEach((workflow) => {
+      if (workflow.dataset.initialised === "true") return;
+      workflow.dataset.initialised = "true";
+
+      const tabs = Array.from(
+        workflow.querySelectorAll<HTMLButtonElement>("[data-workflow-step]")
+      );
+      const panels = Array.from(
+        workflow.querySelectorAll<HTMLElement>("[data-workflow-panel]")
+      );
+
+      const activate = (id: string, moveFocus = false) => {
+        tabs.forEach((tab) => {
+          const active = tab.dataset.workflowStep === id;
+          tab.classList.toggle("is-active", active);
+          tab.setAttribute("aria-selected", String(active));
+          tab.tabIndex = active ? 0 : -1;
+        });
+
+        panels.forEach((panel) => {
+          const active = panel.dataset.workflowPanel === id;
+          panel.classList.toggle("is-active", active);
+          panel.hidden = !active;
+        });
+
+        if (moveFocus) {
+          tabs.find((tab) => tab.dataset.workflowStep === id)?.focus();
+        }
+      };
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => {
+          activate(tab.dataset.workflowStep ?? "");
+        });
+
+        tab.addEventListener("keydown", (event) => {
+          if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+
+          event.preventDefault();
+
+          let nextIndex = index;
+          if (event.key === "ArrowDown") nextIndex = (index + 1) % tabs.length;
+          if (event.key === "ArrowUp") nextIndex = (index - 1 + tabs.length) % tabs.length;
+          if (event.key === "Home") nextIndex = 0;
+          if (event.key === "End") nextIndex = tabs.length - 1;
+
+          activate(tabs[nextIndex].dataset.workflowStep ?? "", true);
+        });
+      });
+    });
+  };
+
+  initialiseExchangeWorkflows();
+  document.addEventListener("astro:page-load", initialiseExchangeWorkflows);
+</script>
+
+<style>
+  .exchange-workflow {
+    width: 100%;
+    margin-block: var(--space-10);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    background: var(--surface-primary);
+    color: var(--text-primary);
+    overflow: hidden;
+  }
+
+  .exchange-workflow__header {
+    padding: var(--space-8);
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  .exchange-workflow__eyebrow,
+  .exchange-workflow__panel-kicker {
+    margin: 0 0 var(--space-2);
+    color: var(--color-accent);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .exchange-workflow__header h2,
+  .exchange-workflow__panel h3 {
+    margin: 0;
+    color: var(--text-heading, var(--text-primary));
+  }
+
+  .exchange-workflow__header h2 {
+    font-size: clamp(1.4rem, 2.4vw, 1.85rem);
+    line-height: var(--line-height-tight);
+  }
+
+  .exchange-workflow__intro {
+    max-width: 72ch;
+    margin: var(--space-3) 0 0;
+    color: var(--text-secondary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .exchange-workflow__layout {
+    display: grid;
+    grid-template-columns: minmax(15rem, 0.85fr) minmax(0, 1.65fr);
+    min-height: 28rem;
+  }
+
+  .exchange-workflow__steps {
+    display: grid;
+    align-content: start;
+    gap: 1px;
+    padding: var(--space-3);
+    border-right: 1px solid var(--border-default);
+    background: var(--surface-secondary);
+  }
+
+  .exchange-workflow__step {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: center;
+    width: 100%;
+    padding: var(--space-3);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  .exchange-workflow__step:hover {
+    border-color: var(--border-accent);
+    background: var(--surface-primary);
+  }
+
+  .exchange-workflow__step:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--focus-ring) 35%, transparent);
+    outline-offset: 2px;
+  }
+
+  .exchange-workflow__step.is-active {
+    border-color: var(--border-accent);
+    background: var(--surface-primary);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+  }
+
+  .exchange-workflow__number {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--border-accent);
+    border-radius: var(--radius-round);
+    color: var(--color-accent);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .exchange-workflow__step-copy {
+    min-width: 0;
+  }
+
+  .exchange-workflow__step-copy strong {
+    display: block;
+    color: var(--text-primary);
+    font-size: var(--font-body-sm);
+  }
+
+  .exchange-workflow__step-copy small {
+    display: block;
+    margin-top: var(--space-1);
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-normal);
+  }
+
+  .exchange-workflow__panels {
+    min-width: 0;
+  }
+
+  .exchange-workflow__panel {
+    min-height: 100%;
+    padding: var(--space-8);
+  }
+
+  .exchange-workflow__panel-heading p {
+    max-width: 68ch;
+    margin: var(--space-3) 0 0;
+    color: var(--text-secondary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .exchange-workflow__actions {
+    margin-top: var(--space-8);
+  }
+
+  .exchange-workflow__actions h4 {
+    margin: 0 0 var(--space-3);
+    color: var(--text-heading, var(--text-primary));
+    font-size: var(--font-body-lg);
+  }
+
+  .exchange-workflow__actions ul {
+    max-width: 68ch;
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  .exchange-workflow__actions li {
+    margin-block: var(--space-3);
+    color: var(--text-secondary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .exchange-workflow__progress {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+    color: var(--text-tertiary);
+    font-size: var(--font-size-xs);
+  }
+
+  .exchange-workflow__progress-track {
+    flex: 1;
+    height: 0.35rem;
+    max-width: 18rem;
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    background: var(--surface-tertiary, var(--border-subtle));
+  }
+
+  .exchange-workflow__progress-track span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-accent);
+  }
+
+  .exchange-workflow__footer {
+    padding: var(--space-5) var(--space-8);
+    border-top: 1px solid var(--border-default);
+    background: var(--surface-secondary);
+    color: var(--text-secondary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .exchange-workflow__footer strong {
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 768px) {
+    .exchange-workflow__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .exchange-workflow__steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-right: 0;
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .exchange-workflow__step {
+      grid-template-columns: 1.8rem minmax(0, 1fr);
+      gap: var(--space-2);
+      padding: var(--space-3);
+    }
+
+    .exchange-workflow__number {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+
+    .exchange-workflow__step-copy small {
+      display: none;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .exchange-workflow__header,
+    .exchange-workflow__panel,
+    .exchange-workflow__footer {
+      padding: var(--space-6);
+    }
+
+    .exchange-workflow__steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .exchange-workflow__step {
+      transition: none;
+    }
+  }
+</style>

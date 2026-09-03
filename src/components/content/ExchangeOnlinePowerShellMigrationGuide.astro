@@ -1,0 +1,685 @@
+---
+interface MigrationScenario {
+    id: string;
+    number: string;
+    title: string;
+    question: string;
+    summary: string;
+    stages: Array<{
+        label: string;
+        title: string;
+        detail: string;
+        checks: string[];
+    }>;
+}
+
+const scenarios: MigrationScenario[] = [
+    {
+        id: "legacy-rps",
+        number: "01",
+        title: "Legacy RPS script",
+        question: "Are you moving an older Remote PowerShell workflow?",
+        summary:
+            "Start by finding the assumptions that only made sense when Exchange Online used a remote PowerShell session.",
+        stages: [
+            {
+                label: "Discover",
+                title: "Find the RPS assumptions",
+                detail:
+                    "Inventory the old connection and execution model before changing commands.",
+                checks: [
+                    "Search for New-PSSession, Import-PSSession, Connect-EXOPSSession, Get-PSSession, Remove-PSSession, and Invoke-Command.",
+                    "Look for -UseRPSSession and WSMan configuration.",
+                    "Record filters, parameters, properties, formatting, exports, retry loops, and error-text parsing."
+                ]
+            },
+            {
+                label: "Redesign",
+                title: "Move control into the local process",
+                detail:
+                    "Replace remote script blocks with direct Exchange Online cmdlet calls and an explicit connection model.",
+                checks: [
+                    "Use Connect-ExchangeOnline and inspect the resulting connection with Get-ConnectionInformation.",
+                    "Remove assumptions about a remote runspace or PSSession.",
+                    "Revisit batching, request boundaries, and N+1 queries created by the old script."
+                ]
+            },
+            {
+                label: "Normalize",
+                title: "Make the output yours",
+                detail:
+                    "Do not let the Exchange module's object shape become the application's contract.",
+                checks: [
+                    "Request every property consumed by the script.",
+                    "Normalize Exchange results into an application-owned PSCustomObject or typed schema.",
+                    "Regression-test types, nulls, collections, identifiers, and exports."
+                ]
+            },
+            {
+                label: "Prove",
+                title: "Validate before declaring success",
+                detail:
+                    "A script that runs is not necessarily a script that migrated correctly.",
+                checks: [
+                    "Compare expected populations and stable identifiers.",
+                    "Test error handling, resilience, performance, and security.",
+                    "Run a canary workload before broader promotion."
+                ]
+            }
+        ]
+    },
+    {
+        id: "existing-exo",
+        number: "02",
+        title: "Existing EXO script",
+        question: "Is the script already using modern Exchange Online PowerShell?",
+        summary:
+            "Modern does not automatically mean efficient or type-safe. Inspect the retrieval contract before changing the implementation.",
+        stages: [
+            {
+                label: "Inspect",
+                title: "Understand what the script actually retrieves",
+                detail:
+                    "Look for properties that are used later but are never explicitly requested.",
+                checks: [
+                    "Compare Get-EXO* usage with every downstream property reference.",
+                    "Inspect PSObject.Properties and PSTypeNames on representative objects.",
+                    "Identify broad property sets, client-side filters, buffering, and repeated lookups."
+                ]
+            },
+            {
+                label: "Refine",
+                title: "Tighten the retrieval contract",
+                detail:
+                    "Ask Exchange for the data the workload needs, and no more.",
+                checks: [
+                    "Use -Properties for specific additions.",
+                    "Use documented -PropertySets when the grouping matches the workload.",
+                    "Separate Exchange retrieval objects from published report or application objects."
+                ]
+            },
+            {
+                label: "Measure",
+                title: "Test the real pipeline",
+                detail:
+                    "Measure the complete workload rather than only the first cmdlet in it.",
+                checks: [
+                    "Compare server-side and client-side filtering where both are supported.",
+                    "Include sorting, grouping, joins, exports, and other buffering stages.",
+                    "Record timing, object counts, memory, errors, and throttling."
+                ]
+            }
+        ]
+    },
+    {
+        id: "new-automation",
+        number: "03",
+        title: "New automation",
+        question: "Are you designing the workload from scratch?",
+        summary:
+            "Build the connection, schema, error, and verification boundaries before the first production run.",
+        stages: [
+            {
+                label: "Design",
+                title: "Define the workload contract",
+                detail:
+                    "Decide what the automation needs to read or change before writing the execution code.",
+                checks: [
+                    "Choose interactive, certificate-based app-only, managed identity, or another supported authentication pattern.",
+                    "Define the target population and required properties.",
+                    "Decide what the postcondition should look like."
+                ]
+            },
+            {
+                label: "Harden",
+                title: "Make failure observable",
+                detail:
+                    "Treat errors, retries, and partial progress as normal engineering concerns.",
+                checks: [
+                    "Capture structured ErrorRecord information.",
+                    "Use bounded retry for appropriate transient failures.",
+                    "Make writes idempotent where possible and verify the postcondition."
+                ]
+            },
+            {
+                label: "Operate",
+                title: "Leave evidence behind",
+                detail:
+                    "A production job should explain what it did without exposing secrets.",
+                checks: [
+                    "Log tenant, identity, runtime, module version, and connection metadata.",
+                    "Keep baseline, result, and verification artifacts.",
+                    "Avoid access tokens, private keys, and full authorization headers in logs."
+                ]
+            }
+        ]
+    },
+    {
+        id: "reporting",
+        number: "04",
+        title: "High-volume reporting",
+        question: "Is the workload primarily a large read or inventory job?",
+        summary:
+            "Optimize the retrieval path, but keep correctness and schema compatibility ahead of a stopwatch result.",
+        stages: [
+            {
+                label: "Shape",
+                title: "Ask for the right data",
+                detail:
+                    "Use Get-EXO* deliberately and request only the properties the report consumes.",
+                checks: [
+                    "Avoid -PropertySets All unless the workload genuinely needs it.",
+                    "Do not use Select-Object as a substitute for retrieval.",
+                    "Keep the report schema explicit and stable."
+                ]
+            },
+            {
+                label: "Scale",
+                title: "Control volume and memory",
+                detail:
+                    "Large datasets can be affected by paging, buffering, and downstream consumers.",
+                checks: [
+                    "Treat -ResultSize Unlimited as an output-count setting, not infinite execution.",
+                    "Inspect page size and client-side buffering.",
+                    "Avoid N+1 remote lookups; retrieve a usable dataset and work locally."
+                ]
+            },
+            {
+                label: "Benchmark",
+                title: "Measure distributions",
+                detail:
+                    "One fast run is not enough to establish a performance rule.",
+                checks: [
+                    "Warm up the workload and alternate test order.",
+                    "Repeat trials under controlled environment conditions.",
+                    "Measure elapsed time, object count, property count, memory, size proxy, errors, and failures."
+                ]
+            }
+        ]
+    },
+    {
+        id: "multitenant",
+        number: "05",
+        title: "Multitenant automation",
+        question: "Will one process work with more than one Exchange Online tenant?",
+        summary:
+            "Make connection identity and command routing explicit so a valid command cannot silently reach the wrong tenant.",
+        stages: [
+            {
+                label: "Identify",
+                title: "Know every active connection",
+                detail:
+                    "Connection state becomes part of your application state when several tenants are involved.",
+                checks: [
+                    "Inspect Get-ConnectionInformation before each tenant-specific phase.",
+                    "Record TenantID, ConnectionId, ModulePrefix, and relevant connection state.",
+                    "Do not infer routing from Get-PSSession."
+                ]
+            },
+            {
+                label: "Route",
+                title: "Use explicit tenant boundaries",
+                detail:
+                    "Prefer predictable routing over clever connection juggling.",
+                checks: [
+                    "Use prefixes for standard commands when appropriate.",
+                    "For Get-EXO* operations, validate the intended built-in-cmdlet connection.",
+                    "Consider separate PowerShell processes when tenant isolation is more important than process reuse."
+                ]
+            },
+            {
+                label: "Verify",
+                title: "Prove the destination",
+                detail:
+                    "A successful command can still be operationally wrong if it executed against the wrong tenant.",
+                checks: [
+                    "Validate tenant identity before high-impact phases.",
+                    "Keep per-tenant evidence and output paths separate.",
+                    "Make tenant routing part of the job log and failure diagnostics."
+                ]
+            }
+        ]
+    }
+];
+
+const defaultId = scenarios[0].id;
+---
+
+<section class="exo-migration-guide" aria-labelledby="exo-migration-guide-title">
+    <header class="exo-migration-guide__header">
+        <p class="exo-migration-guide__eyebrow">Modernization field guide</p>
+        <h2 id="exo-migration-guide-title">Where are you starting from?</h2>
+        <p class="exo-migration-guide__intro">
+            Choose the situation that looks most like your workload. The guide
+            focuses on the decisions that matter when moving toward a modern,
+            supportable Exchange Online PowerShell design.
+        </p>
+    </header>
+
+    <div class="exo-migration-guide__layout">
+        <nav
+            class="exo-migration-guide__choices"
+            aria-label="Exchange Online PowerShell modernization scenarios"
+            role="tablist"
+        >
+            {scenarios.map((scenario, index) => (
+                <button
+                    type="button"
+                    class:list={[
+                        "exo-migration-guide__choice",
+                        { "is-active": scenario.id === defaultId }
+                    ]}
+                    data-scenario-choice={scenario.id}
+                    aria-controls={`exo-migration-panel-${scenario.id}`}
+                    aria-selected={scenario.id === defaultId}
+                    role="tab"
+                    tabindex={scenario.id === defaultId ? 0 : -1}
+                >
+                    <span class="exo-migration-guide__number">{scenario.number}</span>
+                    <span class="exo-migration-guide__choice-body">
+                        <strong>{scenario.title}</strong>
+                        <small>{scenario.question}</small>
+                    </span>
+                </button>
+            ))}
+        </nav>
+
+        <div class="exo-migration-guide__content">
+            {scenarios.map((scenario) => (
+                <article
+                    id={`exo-migration-panel-${scenario.id}`}
+                    class:list={[
+                        "exo-migration-guide__panel",
+                        { "is-active": scenario.id === defaultId }
+                    ]}
+                    data-scenario-panel={scenario.id}
+                    role="tabpanel"
+                    hidden={scenario.id !== defaultId}
+                >
+                    <div class="exo-migration-guide__panel-header">
+                        <span class="exo-migration-guide__panel-kicker">
+                            {scenario.number} · {scenario.title}
+                        </span>
+                        <h3>{scenario.question}</h3>
+                        <p>{scenario.summary}</p>
+                    </div>
+
+                    <div class="exo-migration-guide__stages">
+                        {scenario.stages.map((stage, stageIndex) => (
+                            <div class="exo-migration-guide__stage">
+                                <div class="exo-migration-guide__stage-index">
+                                    {String(stageIndex + 1).padStart(2, "0")}
+                                </div>
+
+                                <div class="exo-migration-guide__stage-body">
+                                    <span class="exo-migration-guide__stage-label">
+                                        {stage.label}
+                                    </span>
+                                    <h4>{stage.title}</h4>
+                                    <p>{stage.detail}</p>
+
+                                    <ul>
+                                        {stage.checks.map((check) => <li>{check}</li>)}
+                                    </ul>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div class="exo-migration-guide__principle">
+                        <strong>Migration principle:</strong>
+                        Preserve the behavior your application needs, but redesign
+                        the assumptions that belonged to the old execution model.
+                    </div>
+                </article>
+            ))}
+        </div>
+    </div>
+</section>
+
+<script>
+    const initialiseMigrationGuides = () => {
+        document
+            .querySelectorAll<HTMLElement>(".exo-migration-guide")
+            .forEach((guide) => {
+                const choices = Array.from(
+                    guide.querySelectorAll<HTMLButtonElement>(
+                        "[data-scenario-choice]"
+                    )
+                );
+
+                const panels = Array.from(
+                    guide.querySelectorAll<HTMLElement>(
+                        "[data-scenario-panel]"
+                    )
+                );
+
+                const activate = (id: string, moveFocus = false) => {
+                    choices.forEach((choice) => {
+                        const active = choice.dataset.scenarioChoice === id;
+                        choice.classList.toggle("is-active", active);
+                        choice.setAttribute("aria-selected", String(active));
+                        choice.tabIndex = active ? 0 : -1;
+                    });
+
+                    panels.forEach((panel) => {
+                        const active = panel.dataset.scenarioPanel === id;
+                        panel.classList.toggle("is-active", active);
+                        panel.hidden = !active;
+                    });
+
+                    if (moveFocus) {
+                        choices
+                            .find(
+                                (choice) =>
+                                    choice.dataset.scenarioChoice === id
+                            )
+                            ?.focus();
+                    }
+                };
+
+                choices.forEach((choice, index) => {
+                    choice.addEventListener("click", () => {
+                        activate(choice.dataset.scenarioChoice ?? "");
+                    });
+
+                    choice.addEventListener("keydown", (event) => {
+                        if (
+                            ![
+                                "ArrowDown",
+                                "ArrowUp",
+                                "Home",
+                                "End"
+                            ].includes(event.key)
+                        ) {
+                            return;
+                        }
+
+                        event.preventDefault();
+
+                        let nextIndex = index;
+
+                        if (event.key === "ArrowDown") {
+                            nextIndex = (index + 1) % choices.length;
+                        }
+
+                        if (event.key === "ArrowUp") {
+                            nextIndex =
+                                (index - 1 + choices.length) %
+                                choices.length;
+                        }
+
+                        if (event.key === "Home") nextIndex = 0;
+                        if (event.key === "End") {
+                            nextIndex = choices.length - 1;
+                        }
+
+                        activate(
+                            choices[nextIndex].dataset.scenarioChoice ?? "",
+                            true
+                        );
+                    });
+                });
+            });
+    };
+
+    initialiseMigrationGuides();
+    document.addEventListener("astro:page-load", initialiseMigrationGuides);
+</script>
+
+<style>
+    .exo-migration-guide {
+        --guide-border: var(--border-default);
+        --guide-border-soft: var(--border-subtle);
+        --guide-text: var(--text-primary);
+        --guide-muted: var(--text-secondary);
+        --guide-accent: var(--color-accent);
+        --guide-surface: var(--surface-primary);
+        --guide-surface-soft: var(--surface-secondary);
+        --guide-surface-active: color-mix(
+            in srgb,
+            var(--guide-accent) 8%,
+            var(--guide-surface-soft)
+        );
+
+        width: 100%;
+        margin: var(--space-10) 0;
+        border: 1px solid var(--guide-border);
+        border-radius: var(--radius-lg);
+        background: var(--guide-surface);
+        color: var(--guide-text);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .exo-migration-guide__header {
+        padding: var(--space-6);
+        border-bottom: 1px solid var(--guide-border);
+    }
+
+    .exo-migration-guide__eyebrow,
+    .exo-migration-guide__panel-kicker,
+    .exo-migration-guide__stage-label {
+        margin: 0 0 var(--space-1);
+        color: var(--guide-accent);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-bold);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .exo-migration-guide h2 {
+        margin: 0;
+        color: var(--guide-text);
+        font-size: clamp(1.45rem, 2.5vw, 1.9rem);
+        line-height: var(--line-height-tight);
+    }
+
+    .exo-migration-guide__intro {
+        max-width: 760px;
+        margin: var(--space-3) 0 0;
+        color: var(--guide-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exo-migration-guide__layout {
+        display: grid;
+        grid-template-columns: minmax(15rem, 0.72fr) minmax(0, 1.7fr);
+        min-width: 0;
+    }
+
+    .exo-migration-guide__choices {
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid var(--guide-border);
+        background: var(--guide-surface-soft);
+    }
+
+    .exo-migration-guide__choice {
+        display: grid;
+        grid-template-columns: 2.15rem 1fr;
+        gap: var(--space-3);
+        width: 100%;
+        padding: var(--space-4);
+        border: 0;
+        border-bottom: 1px solid var(--guide-border-soft);
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+        transition:
+            background-color var(--transition-fast),
+            box-shadow var(--transition-fast);
+    }
+
+    .exo-migration-guide__choice:hover {
+        background: var(--guide-surface-active);
+    }
+
+    .exo-migration-guide__choice:focus-visible {
+        outline: 3px solid color-mix(
+            in srgb,
+            var(--guide-accent) 35%,
+            transparent
+        );
+        outline-offset: -3px;
+    }
+
+    .exo-migration-guide__choice.is-active {
+        background: var(--guide-surface-active);
+        box-shadow: inset 3px 0 0 var(--guide-accent);
+    }
+
+    .exo-migration-guide__number {
+        color: var(--guide-accent);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-bold);
+        line-height: 1.4;
+    }
+
+    .exo-migration-guide__choice-body strong {
+        display: block;
+        color: var(--guide-text);
+        font-weight: var(--font-weight-semibold);
+        line-height: 1.35;
+    }
+
+    .exo-migration-guide__choice-body small {
+        display: block;
+        margin-top: var(--space-2);
+        color: var(--guide-muted);
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-normal);
+    }
+
+    .exo-migration-guide__content {
+        min-width: 0;
+    }
+
+    .exo-migration-guide__panel {
+        padding: var(--space-6);
+    }
+
+    .exo-migration-guide__panel-header h3 {
+        margin: 0;
+        color: var(--guide-text);
+        font-size: var(--font-heading-md);
+        line-height: var(--line-height-tight);
+    }
+
+    .exo-migration-guide__panel-header p {
+        max-width: 780px;
+        margin: var(--space-2) 0 0;
+        color: var(--guide-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exo-migration-guide__stages {
+        display: grid;
+        gap: var(--space-4);
+        margin-top: var(--space-6);
+    }
+
+    .exo-migration-guide__stage {
+        display: grid;
+        grid-template-columns: 2.5rem minmax(0, 1fr);
+        gap: var(--space-4);
+        padding-bottom: var(--space-4);
+        border-bottom: 1px solid var(--guide-border-soft);
+    }
+
+    .exo-migration-guide__stage:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+
+    .exo-migration-guide__stage-index {
+        display: grid;
+        width: 2.25rem;
+        height: 2.25rem;
+        place-items: center;
+        border: 1px solid var(--guide-border);
+        border-radius: 50%;
+        background: var(--guide-surface-soft);
+        color: var(--guide-accent);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-bold);
+    }
+
+    .exo-migration-guide__stage-body h4 {
+        margin: 0;
+        color: var(--guide-text);
+        font-size: var(--font-body-lg);
+        line-height: var(--line-height-tight);
+    }
+
+    .exo-migration-guide__stage-body > p {
+        margin: var(--space-2) 0 0;
+        color: var(--guide-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exo-migration-guide__stage-body ul {
+        margin: var(--space-3) 0 0;
+        padding-left: 1.2rem;
+    }
+
+    .exo-migration-guide__stage-body li {
+        margin: var(--space-2) 0;
+        color: var(--guide-muted);
+        line-height: var(--line-height-normal);
+    }
+
+    .exo-migration-guide__principle {
+        margin-top: var(--space-6);
+        padding: var(--space-4);
+        border: 1px solid var(--guide-border);
+        border-radius: var(--radius-md);
+        background: var(--guide-surface-soft);
+        color: var(--guide-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exo-migration-guide__principle strong {
+        color: var(--guide-text);
+    }
+
+    @media (max-width: 760px) {
+        .exo-migration-guide__layout {
+            grid-template-columns: 1fr;
+        }
+
+        .exo-migration-guide__choices {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            border-right: 0;
+            border-bottom: 1px solid var(--guide-border);
+        }
+
+        .exo-migration-guide__choice {
+            min-height: 100%;
+            padding: var(--space-3);
+        }
+
+        .exo-migration-guide__choice-body small {
+            display: none;
+        }
+
+        .exo-migration-guide__panel {
+            padding: var(--space-5);
+        }
+    }
+
+    @media (max-width: 500px) {
+        .exo-migration-guide__choices {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .exo-migration-guide__choice {
+            transition: none;
+        }
+    }
+</style>

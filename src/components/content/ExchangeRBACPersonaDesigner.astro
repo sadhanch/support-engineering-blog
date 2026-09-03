@@ -1,0 +1,554 @@
+---
+interface Persona {
+    id: string;
+    number: string;
+    name: string;
+    subtitle: string;
+    outcome: string;
+    roleStrategy: string;
+    scopeStrategy: string;
+    excluded: string[];
+    tests: string[];
+}
+
+const personas: Persona[] = [
+    {
+        id: "tier1",
+        number: "01",
+        name: "Tier 1 Help Desk",
+        subtitle: "Routine, reversible mailbox support",
+        outcome:
+            "Handle common recipient and mailbox tasks without exposing destructive or privilege-changing operations.",
+        roleStrategy:
+            "Start from a supported parent role, retain only the cmdlets and parameters required by approved support procedures, and deliver the role through a governed role group.",
+        scopeStrategy:
+            "Use the intended recipient boundary. For regional or departmental support, make the boundary explicit instead of granting organization-wide reach.",
+        excluded: [
+            "Destructive mailbox operations",
+            "Privilege-changing operations",
+            "Transport and connector administration",
+            "Unrelated compliance or export capabilities"
+        ],
+        tests: [
+            "Approved operation on an in-scope mailbox → Allow",
+            "Removed parameter on an in-scope mailbox → Deny",
+            "Approved operation on an out-of-scope mailbox → Deny",
+            "Tier 2/3 escalation → Verify separate role and approval"
+        ]
+    },
+    {
+        id: "tier2",
+        number: "02",
+        name: "Tier 2 Support",
+        subtitle: "Broader diagnostics and recovery",
+        outcome:
+            "Give support staff enough authority to investigate and recover incidents without making the role a general Exchange administrator.",
+        roleStrategy:
+            "Add only the diagnostic and recovery capabilities used by the support runbooks. Keep sensitive configuration and privilege-management entries outside the role unless explicitly required.",
+        scopeStrategy:
+            "Preserve the service-desk population boundary. Keep recipient administration separate from broader service configuration where practical.",
+        excluded: [
+            "Unneeded organization-wide configuration",
+            "Role-definition and privilege-management operations",
+            "Broad transport changes",
+            "Emergency-access mechanisms"
+        ],
+        tests: [
+            "Required diagnostic command on an in-scope target → Allow",
+            "Unrelated configuration command → Deny",
+            "Out-of-scope recipient → Deny",
+            "Escalation to Tier 3 → Verify separate access"
+        ]
+    },
+    {
+        id: "regional",
+        number: "03",
+        name: "Regional Administrator",
+        subtitle: "Business-unit or geographic delegation",
+        outcome:
+            "Allow mailbox administration for a defined business population without creating organization-wide Exchange access.",
+        roleStrategy:
+            "Use a custom role when the built-in role is broader than the regional job requires. Keep retained cmdlets and parameters tied to the approved procedures.",
+        scopeStrategy:
+            "Use a governed recipient filter or supported resource boundary. Treat the attributes that determine scope membership as part of the authorization system.",
+        excluded: [
+            "Recipients outside the assigned population",
+            "Global organization configuration",
+            "Unrelated regional boundaries",
+            "Self-expansion of the scope through boundary attributes"
+        ],
+        tests: [
+            "In-scope recipient → Allow",
+            "Out-of-scope recipient → Deny",
+            "Scope-attribute change → Verify whether the role can alter its own boundary",
+            "Broader assignment → Detect additive access"
+        ]
+    },
+    {
+        id: "messaging",
+        number: "04",
+        name: "Messaging Administrator",
+        subtitle: "Service-level Exchange operations",
+        outcome:
+            "Manage broader messaging configuration when the job genuinely requires it, while keeping recipient delegation separate.",
+        roleStrategy:
+            "Use a built-in role when it accurately matches the responsibility. Create a custom role when only a subset of configuration capabilities is required.",
+        scopeStrategy:
+            "Use supported configuration scopes and keep service configuration separate from recipient-level administration.",
+        excluded: [
+            "Unrelated recipient self-service",
+            "Unneeded user-level administration",
+            "Application identity management",
+            "Emergency-access custody"
+        ],
+        tests: [
+            "Approved configuration change → Allow",
+            "Unrelated recipient operation → Deny",
+            "Configuration object outside scope → Deny",
+            "Separation-of-duties case → Verify independent approval"
+        ]
+    },
+    {
+        id: "protected",
+        number: "05",
+        name: "Protected-Resource Administrator",
+        subtitle: "Executive, legal, or regulated population",
+        outcome:
+            "Provide narrowly controlled administration for high-risk recipients without allowing ordinary broad paths to bypass the boundary.",
+        roleStrategy:
+            "Use a deliberately narrow role and tightly governed membership. Keep role design, privileged membership, and audit review separate where practical.",
+        scopeStrategy:
+            "Use a protected or exclusive scope for supported human-administration scenarios, and establish the recovery path before applying the boundary.",
+        excluded: [
+            "Routine broad-access administration",
+            "Self-managed scope expansion",
+            "Unreviewed direct assignments",
+            "Uncontrolled emergency-account use"
+        ],
+        tests: [
+            "Protected target with matching authority → Allow",
+            "Protected target through a broad non-matching assignment → Verify Deny behavior",
+            "Recovery assignment → Verify independently",
+            "Unauthorized scope expansion → Deny and alert"
+        ]
+    }
+];
+
+const defaultId = personas[0].id;
+---
+
+<section class="exchange-rbac-persona-designer" aria-labelledby="exchange-rbac-persona-designer-title">
+    <header class="exchange-rbac-persona-designer__header">
+        <p class="exchange-rbac-persona-designer__eyebrow">Delegation design lab</p>
+        <h2 id="exchange-rbac-persona-designer-title">Start with the job, then design the access</h2>
+        <p class="exchange-rbac-persona-designer__intro">
+            Choose the administrative persona that most closely matches the job.
+            Then look at the capability, resource boundary, exclusions, and tests
+            that keep the delegation deliberate.
+        </p>
+    </header>
+
+    <div class="exchange-rbac-persona-designer__layout">
+        <nav
+            class="exchange-rbac-persona-designer__choices"
+            aria-label="Exchange administrative personas"
+            role="tablist"
+        >
+            {personas.map((persona) => (
+                <button
+                    type="button"
+                    class:list={[
+                        "exchange-rbac-persona-designer__choice",
+                        { "is-active": persona.id === defaultId }
+                    ]}
+                    data-persona-choice={persona.id}
+                    aria-controls={`exchange-rbac-persona-panel-${persona.id}`}
+                    aria-selected={persona.id === defaultId}
+                    role="tab"
+                    tabindex={persona.id === defaultId ? 0 : -1}
+                >
+                    <span class="exchange-rbac-persona-designer__number">{persona.number}</span>
+                    <span class="exchange-rbac-persona-designer__choice-copy">
+                        <strong>{persona.name}</strong>
+                        <small>{persona.subtitle}</small>
+                    </span>
+                </button>
+            ))}
+        </nav>
+
+        <div class="exchange-rbac-persona-designer__content">
+            {personas.map((persona) => (
+                <article
+                    id={`exchange-rbac-persona-panel-${persona.id}`}
+                    class:list={[
+                        "exchange-rbac-persona-designer__panel",
+                        { "is-active": persona.id === defaultId }
+                    ]}
+                    data-persona-panel={persona.id}
+                    role="tabpanel"
+                    hidden={persona.id !== defaultId}
+                >
+                    <div class="exchange-rbac-persona-designer__panel-heading">
+                        <span class="exchange-rbac-persona-designer__panel-kicker">
+                            {persona.number} · {persona.name}
+                        </span>
+                        <h3>{persona.subtitle}</h3>
+                        <p>{persona.outcome}</p>
+                    </div>
+
+                    <div class="exchange-rbac-persona-designer__grid">
+                        <section class="exchange-rbac-persona-designer__card">
+                            <span class="exchange-rbac-persona-designer__card-label">WHAT · Capability</span>
+                            <h4>Role strategy</h4>
+                            <p>{persona.roleStrategy}</p>
+                        </section>
+
+                        <section class="exchange-rbac-persona-designer__card">
+                            <span class="exchange-rbac-persona-designer__card-label">WHERE · Resource boundary</span>
+                            <h4>Scope strategy</h4>
+                            <p>{persona.scopeStrategy}</p>
+                        </section>
+                    </div>
+
+                    <div class="exchange-rbac-persona-designer__lower-grid">
+                        <section class="exchange-rbac-persona-designer__list-card">
+                            <span class="exchange-rbac-persona-designer__card-label">Deliberately excluded</span>
+                            <ul>
+                                {persona.excluded.map((item) => <li>{item}</li>)}
+                            </ul>
+                        </section>
+
+                        <section class="exchange-rbac-persona-designer__list-card">
+                            <span class="exchange-rbac-persona-designer__card-label">Prove the boundary</span>
+                            <ul>
+                                {persona.tests.map((item) => <li>{item}</li>)}
+                            </ul>
+                        </section>
+                    </div>
+
+                    <div class="exchange-rbac-persona-designer__principle">
+                        <strong>Design rule:</strong>
+                        map the business outcome to the smallest supported capability,
+                        then apply the narrowest justified resource boundary.
+                    </div>
+                </article>
+            ))}
+        </div>
+    </div>
+</section>
+
+<script>
+    const initialisePersonaDesigners = () => {
+        document
+            .querySelectorAll<HTMLElement>(".exchange-rbac-persona-designer")
+            .forEach((designer) => {
+                const choices = Array.from(
+                    designer.querySelectorAll<HTMLButtonElement>("[data-persona-choice]")
+                );
+                const panels = Array.from(
+                    designer.querySelectorAll<HTMLElement>("[data-persona-panel]")
+                );
+
+                if (!choices.length || !panels.length) return;
+
+                const activate = (id: string, moveFocus = false) => {
+                    choices.forEach((choice) => {
+                        const active = choice.dataset.personaChoice === id;
+                        choice.classList.toggle("is-active", active);
+                        choice.setAttribute("aria-selected", String(active));
+                        choice.tabIndex = active ? 0 : -1;
+                    });
+
+                    panels.forEach((panel) => {
+                        const active = panel.dataset.personaPanel === id;
+                        panel.classList.toggle("is-active", active);
+                        panel.hidden = !active;
+                    });
+
+                    if (moveFocus) {
+                        choices.find(
+                            (choice) => choice.dataset.personaChoice === id
+                        )?.focus();
+                    }
+                };
+
+                choices.forEach((choice, index) => {
+                    choice.addEventListener("click", () => {
+                        activate(choice.dataset.personaChoice ?? "");
+                    });
+
+                    choice.addEventListener("keydown", (event) => {
+                        if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+
+                        event.preventDefault();
+
+                        let nextIndex = index;
+                        if (event.key === "ArrowDown") nextIndex = (index + 1) % choices.length;
+                        if (event.key === "ArrowUp") nextIndex = (index - 1 + choices.length) % choices.length;
+                        if (event.key === "Home") nextIndex = 0;
+                        if (event.key === "End") nextIndex = choices.length - 1;
+
+                        activate(
+                            choices[nextIndex].dataset.personaChoice ?? "",
+                            true
+                        );
+                    });
+                });
+            });
+    };
+
+    initialisePersonaDesigners();
+    document.addEventListener("astro:page-load", initialisePersonaDesigners);
+</script>
+
+<style>
+    .exchange-rbac-persona-designer {
+        --persona-border: var(--border-default);
+        --persona-border-soft: var(--border-subtle);
+        --persona-text: var(--text-primary);
+        --persona-muted: var(--text-secondary);
+        --persona-accent: var(--color-accent);
+        --persona-surface: var(--surface-primary);
+        --persona-surface-soft: var(--surface-secondary);
+        --persona-surface-active: color-mix(
+            in srgb,
+            var(--persona-accent) 9%,
+            var(--persona-surface-soft)
+        );
+
+        width: 100%;
+        margin: var(--space-10) 0;
+        border: 1px solid var(--persona-border);
+        border-radius: var(--radius-lg);
+        background: var(--persona-surface);
+        color: var(--persona-text);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .exchange-rbac-persona-designer__header {
+        padding: var(--space-6);
+        border-bottom: 1px solid var(--persona-border);
+    }
+
+    .exchange-rbac-persona-designer__eyebrow,
+    .exchange-rbac-persona-designer__panel-kicker,
+    .exchange-rbac-persona-designer__card-label {
+        margin: 0 0 var(--space-1);
+        color: var(--persona-accent);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-bold);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .exchange-rbac-persona-designer h2 {
+        margin: 0;
+        color: var(--persona-text);
+        font-size: clamp(1.45rem, 2.6vw, 1.95rem);
+        line-height: var(--line-height-tight);
+    }
+
+    .exchange-rbac-persona-designer__intro {
+        max-width: 760px;
+        margin: var(--space-3) 0 0;
+        color: var(--persona-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exchange-rbac-persona-designer__layout {
+        display: grid;
+        grid-template-columns: minmax(15rem, 0.72fr) minmax(0, 1.8fr);
+        min-width: 0;
+    }
+
+    .exchange-rbac-persona-designer__choices {
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid var(--persona-border);
+        background: var(--persona-surface-soft);
+    }
+
+    .exchange-rbac-persona-designer__choice {
+        display: grid;
+        grid-template-columns: 2.25rem minmax(0, 1fr);
+        gap: var(--space-3);
+        width: 100%;
+        padding: var(--space-4);
+        border: 0;
+        border-bottom: 1px solid var(--persona-border-soft);
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+        transition:
+            background-color var(--transition-fast),
+            box-shadow var(--transition-fast);
+    }
+
+    .exchange-rbac-persona-designer__choice:hover {
+        background: var(--persona-surface-active);
+    }
+
+    .exchange-rbac-persona-designer__choice:focus-visible {
+        outline: 3px solid color-mix(
+            in srgb,
+            var(--persona-accent) 35%,
+            transparent
+        );
+        outline-offset: -3px;
+    }
+
+    .exchange-rbac-persona-designer__choice.is-active {
+        background: var(--persona-surface-active);
+        box-shadow: inset 3px 0 0 var(--persona-accent);
+    }
+
+    .exchange-rbac-persona-designer__number {
+        color: var(--persona-accent);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-bold);
+        line-height: 1.4;
+    }
+
+    .exchange-rbac-persona-designer__choice-copy strong {
+        display: block;
+        color: var(--persona-text);
+        font-weight: var(--font-weight-semibold);
+        line-height: 1.35;
+    }
+
+    .exchange-rbac-persona-designer__choice-copy small {
+        display: block;
+        margin-top: var(--space-2);
+        color: var(--persona-muted);
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-normal);
+    }
+
+    .exchange-rbac-persona-designer__content {
+        min-width: 0;
+    }
+
+    .exchange-rbac-persona-designer__panel {
+        padding: var(--space-6);
+    }
+
+    .exchange-rbac-persona-designer__panel-heading h3 {
+        margin: 0;
+        color: var(--persona-text);
+        font-size: var(--font-heading-md);
+        line-height: var(--line-height-tight);
+    }
+
+    .exchange-rbac-persona-designer__panel-heading p {
+        max-width: 780px;
+        margin: var(--space-2) 0 0;
+        color: var(--persona-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exchange-rbac-persona-designer__grid,
+    .exchange-rbac-persona-designer__lower-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-4);
+        margin-top: var(--space-6);
+    }
+
+    .exchange-rbac-persona-designer__card,
+    .exchange-rbac-persona-designer__list-card {
+        min-width: 0;
+        padding: var(--space-5);
+        border: 1px solid var(--persona-border-soft);
+        border-radius: var(--radius-md);
+        background: var(--persona-surface-soft);
+    }
+
+    .exchange-rbac-persona-designer__card h4 {
+        margin: 0;
+        color: var(--persona-text);
+        font-size: var(--font-body-lg);
+        line-height: var(--line-height-tight);
+    }
+
+    .exchange-rbac-persona-designer__card p {
+        margin: var(--space-2) 0 0;
+        color: var(--persona-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exchange-rbac-persona-designer__list-card ul {
+        margin: var(--space-2) 0 0;
+        padding-left: 1.2rem;
+    }
+
+    .exchange-rbac-persona-designer__list-card li {
+        margin: var(--space-2) 0;
+        color: var(--persona-muted);
+        line-height: var(--line-height-normal);
+    }
+
+    .exchange-rbac-persona-designer__principle {
+        margin-top: var(--space-6);
+        padding: var(--space-4);
+        border: 1px solid var(--persona-border);
+        border-radius: var(--radius-md);
+        background: var(--persona-surface-soft);
+        color: var(--persona-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exchange-rbac-persona-designer__principle strong {
+        color: var(--persona-text);
+    }
+
+    @media (max-width: 820px) {
+        .exchange-rbac-persona-designer__layout {
+            grid-template-columns: 1fr;
+        }
+
+        .exchange-rbac-persona-designer__choices {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            border-right: 0;
+            border-bottom: 1px solid var(--persona-border);
+        }
+
+        .exchange-rbac-persona-designer__choice {
+            min-height: 100%;
+            padding: var(--space-3);
+        }
+
+        .exchange-rbac-persona-designer__choice-copy small {
+            display: none;
+        }
+    }
+
+    @media (max-width: 620px) {
+        .exchange-rbac-persona-designer__choices,
+        .exchange-rbac-persona-designer__grid,
+        .exchange-rbac-persona-designer__lower-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .exchange-rbac-persona-designer__panel {
+            padding: var(--space-4);
+        }
+
+        .exchange-rbac-persona-designer__header {
+            padding: var(--space-5) var(--space-4);
+        }
+
+        .exchange-rbac-persona-designer__choice-copy small {
+            display: block;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .exchange-rbac-persona-designer__choice {
+            transition: none;
+        }
+    }
+</style>

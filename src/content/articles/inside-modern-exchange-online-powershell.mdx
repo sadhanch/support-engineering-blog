@@ -1,0 +1,1034 @@
+---
+title: "Inside Modern Exchange Online PowerShell: REST, Performance, Objects, and Migration"
+description: "Understand the modern Exchange Online PowerShell architecture, REST-backed cmdlets, property retrieval, performance, object behavior, and migration from Remote PowerShell."
+excerpt: "Go beneath the familiar cmdlet surface to understand REST-backed Exchange Online PowerShell, retrieval contracts, performance engineering, and safe RPS migration."
+socialImage: "/social/inside-modern-exchange-online-powershell.png"
+
+summary:
+  - Understand how modern Exchange Online PowerShell differs from legacy Remote PowerShell.
+  - Distinguish connection state, authentication, authorization, and command routing.
+  - Choose between standard REST-backed cmdlets and optimized Get-EXO* retrieval commands.
+  - Treat properties, object types, paging, filtering, and retries as part of workload design.
+  - Migrate RPS scripts by redesigning assumptions and validating the result.
+
+category: "Exchange"
+technology:
+  - Exchange Online
+  - Exchange PowerShell
+  - PowerShell
+  - Microsoft 365
+tags:
+  - Exchange Online
+  - Exchange PowerShell
+  - PowerShell
+  - REST
+  - Remote PowerShell
+  - Get-EXO
+  - ExchangeOnlineManagement
+  - Performance
+  - Automation
+  - Migration
+publishDate: 2026-08-29
+updatedDate: 2026-08-29
+
+featured: false
+draft: false
+author: "Sadhan Chandra"
+
+references:
+  - title: "Exchange Online PowerShell documentation"
+    url: "https://learn.microsoft.com/en-us/powershell/exchange/"
+    description: "Microsoft documentation for Exchange Online PowerShell, supported cmdlets, connection models, and administration."
+  - title: "Connect to Exchange Online PowerShell"
+    url: "https://learn.microsoft.com/en-us/powershell/exchange/connect-to-exchange-online-powershell?view=exchange-ps"
+    description: "Microsoft guidance for modern Exchange Online PowerShell connections and authentication."
+  - title: "Get-EXOMailbox"
+    url: "https://learn.microsoft.com/en-us/powershell/module/exchangepowershell/get-exomailbox?view=exchange-ps"
+    description: "Microsoft reference for optimized Exchange Online mailbox retrieval and property selection."
+  - title: "Get-ConnectionInformation"
+    url: "https://learn.microsoft.com/en-us/powershell/module/exchangeonlinemanagement/get-connectioninformation?view=exchange-ps"
+    description: "Microsoft reference for inspecting Exchange Online PowerShell connection information."
+  - title: "PowerShell remoting"
+    url: "https://learn.microsoft.com/en-us/powershell/scripting/learn/remoting/overview?view=powershell-7.5"
+    description: "Microsoft documentation for PowerShell remoting and PSSession concepts."
+---
+
+import ComparisonTable from "../../components/content/ComparisonTable.astro";
+import Callout from "../../components/ui/Callout.astro";
+import ArticleImageLightbox from "../../components/article/widgets/ArticleImageLightbox.astro";
+import ExchangeOnlinePowerShellMigrationGuide from "../../components/content/ExchangeOnlinePowerShellMigrationGuide.astro";
+import ExchangeOnlinePowerShellPerformanceLab from "../../components/content/ExchangeOnlinePowerShellPerformanceLab.astro";
+
+import exchangeOnlinePowerShellRpsVsRest from "../../assets/images/articles/exchange-powershell/exchange-online-powershell-rps-vs-rest.png";
+import exchangeOnlinePowerShellPropertyRetrievalModel from "../../assets/images/articles/exchange-powershell/exchange-online-powershell-property-retrieval-model.png";
+import exchangeOnlinePowerShellPerformanceBenchmarkModel from "../../assets/images/articles/exchange-powershell/exchange-online-powershell-performance-benchmark-model.png";
+
+# Inside Modern Exchange Online PowerShell: REST, Performance, Objects, and Migration
+
+Modern Exchange Online PowerShell looks familiar.
+
+That is intentional.
+
+You still connect with `Connect-ExchangeOnline`. You still run familiar Exchange cmdlets. You still receive PowerShell objects and send them through pipelines.
+
+But underneath that familiar surface, the architecture has changed.
+
+Modern Exchange Online PowerShell uses a token-authenticated, REST-backed command model with locally tracked connection metadata. It is **not a traditional PowerShell remoting session**.
+
+That distinction changes several assumptions that older Exchange scripts quietly relied on.
+
+`Get-PSSession` is no longer the right way to inspect an Exchange Online connection.
+
+`Invoke-Command` cannot target an Exchange Online REST connection because there is no remote PowerShell runspace behind it.
+
+The optimized `Get-EXO*` family deliberately controls which properties are returned.
+
+And performance is not a property of a cmdlet name alone. It depends on the tenant, query, host, module version, PowerShell runtime, connection configuration, and service conditions.
+
+This article looks beneath the familiar cmdlet surface so that existing scripts can be modernized deliberately instead of being rewritten by simple search-and-replace.
+
+<ArticleImageLightbox
+  src={exchangeOnlinePowerShellRpsVsRest.src}
+  alt="Comparison of legacy Exchange Online Remote PowerShell and the modern REST-backed model, showing the PSSession and WinRM remoting path versus the ExchangeOnlineManagement REST request path and their different connection and object-handling models."
+/>
+
+## 1. From Remote PowerShell to REST
+
+### The model that came before
+
+Legacy Exchange Online administration was based on PowerShell remoting.
+
+The client created a `PSSession`, imported commands, and sent them to a remote runspace. Returned data crossed a serialization boundary, which often produced `Deserialized.*` objects and removed methods that existed on the original server-side objects.
+
+That model also brought session lifecycle, WinRM configuration, remoting quotas, remote runspace state, and connection recovery into the script's design.
+
+```powershell
+Get-PSSession
+
+Invoke-Command -Session $Session -ScriptBlock {
+    Get-Mailbox -ResultSize 10
+}
+```
+
+### The modern model
+
+Modern Exchange Online PowerShell replaces that remoting path with REST-backed administrative requests.
+
+A useful mental model is:
+
+**PowerShell process → ExchangeOnlineManagement → REST-backed Exchange request → Exchange service → PowerShell object**
+
+There is no Exchange Online `PSSession` representing that connection.
+
+So this:
+
+```powershell
+Get-PSSession
+```
+
+should not be your connection-health test.
+
+Use:
+
+```powershell
+Get-ConnectionInformation
+```
+
+And this:
+
+```powershell
+Invoke-Command
+```
+
+does not become the REST equivalent of remote execution. There is no remote Exchange PowerShell runspace for it to target.
+
+<Callout type="important" title="REST-backed Exchange PowerShell is not Microsoft Graph">
+Exchange Online PowerShell and Microsoft Graph expose different services, permissions, command models, and data contracts. REST is the transport style; it does not make the two interfaces interchangeable.
+</Callout>
+
+### Why the change matters
+
+A script migrated from RPS may still contain assumptions about:
+
+- **persistent remote sessions**
+- **remote script blocks**
+- **`Get-PSSession`**
+- **`Invoke-Command`**
+- **serialized objects**
+- **old RPS-specific switches**
+- **broad implicit property availability**
+
+Modernization therefore requires more than replacing one connection command with another.
+
+## 2. Understanding `Connect-ExchangeOnline`
+
+A beginner can reasonably look at:
+
+```powershell
+Connect-ExchangeOnline -UserPrincipalName admin@contoso.com
+```
+
+and think, "I connected to a remote PowerShell session."
+
+That is no longer the best way to think about it.
+
+The connection process establishes authentication and Exchange context, creates local connection metadata, imports the authorized command surface, and prepares the process to invoke Exchange operations through the modern service path.
+
+Inspect that state with:
+
+```powershell
+Get-ConnectionInformation |
+    Select-Object ConnectionId,
+                  State,
+                  TenantID,
+                  UserPrincipalName,
+                  TokenStatus,
+                  TokenExpiryTime,
+                  ModulePrefix,
+                  PageSize
+```
+
+The exact information exposed can vary by module version, so applications should inspect the installed object rather than assume that every version produces an identical schema.
+
+### Authentication is only the first gate
+
+A successful connection proves that authentication succeeded.
+
+It does not prove that every Exchange operation is authorized.
+
+A later failure can come from:
+
+- **Exchange RBAC**
+- **parameter authorization**
+- **tenant routing**
+- **backend execution**
+- **paging**
+- **local object conversion**
+
+That distinction becomes especially important in unattended automation.
+
+### Modern authentication patterns
+
+Interactive administration might use:
+
+```powershell
+Connect-ExchangeOnline `
+    -UserPrincipalName admin@contoso.com `
+    -ShowBanner:$false
+```
+
+Supported unattended scenarios can use certificate-based app-only authentication or managed identity:
+
+```powershell
+Connect-ExchangeOnline `
+    -AppId $AppId `
+    -CertificateThumbprint $Thumbprint `
+    -Organization 'contoso.onmicrosoft.com' `
+    -ShowBanner:$false
+```
+
+```powershell
+Connect-ExchangeOnline `
+    -ManagedIdentity `
+    -Organization 'contoso.onmicrosoft.com' `
+    -ShowBanner:$false
+```
+
+The important engineering point is that authentication method, Exchange authorization, and workload identity lifecycle are separate concerns.
+
+<Callout type="warning" title="Keep connection diagnostics useful, not sensitive">
+Record non-secret metadata such as tenant, identity, module version, PowerShell version, authentication mode, and connection ID. Do not put access tokens, private keys, or full authorization headers into ordinary logs.
+</Callout>
+
+## 3. Standard Cmdlets and `Get-EXO*` Have Different Jobs
+
+Modernization often starts with a tempting replacement:
+
+```powershell
+Get-Mailbox
+```
+
+becomes:
+
+```powershell
+Get-EXOMailbox
+```
+
+That is not enough.
+
+The two command families serve different purposes.
+
+### Standard REST-backed cmdlets
+
+These preserve much of the familiar Exchange administrative surface.
+
+They can be the better choice when you need a parameter or operation that the optimized family does not provide, or when the existing workflow depends on broader administrative behavior.
+
+### Optimized `Get-EXO*` cmdlets
+
+The optimized family is focused on retrieval, especially bulk retrieval.
+
+Examples include:
+
+```powershell
+Get-EXOMailbox
+Get-EXORecipient
+Get-EXOCasMailbox
+Get-EXOMailboxPermission
+Get-EXORecipientPermission
+Get-EXOMailboxStatistics
+Get-EXOMailboxFolderStatistics
+Get-EXOMailboxFolderPermission
+```
+
+The difference is not cosmetic. The optimized family gives you more deliberate control over properties, paging, and retrieval behavior.
+
+<ComparisonTable
+  caption="Choosing between standard REST-backed cmdlets and Get-EXO*"
+  columns={[
+    { label: "Need" },
+    { label: "Standard REST-backed cmdlet" },
+    { label: "Get-EXO* optimized cmdlet" }
+  ]}
+  rows={[
+    {
+      label: "Administrative breadth",
+      cells: ["Broad, familiar Exchange administration surface", "Primarily optimized for retrieval"]
+    },
+    {
+      label: "High-volume reads",
+      cells: ["Possible, but retrieval cost should be measured", "Designed with bulk retrieval and paging in mind"]
+    },
+    {
+      label: "Property control",
+      cells: ["Broader/traditional output may be available", "Minimum schema plus `-Properties` / `-PropertySets`"]
+    },
+    {
+      label: "Migration",
+      cells: ["Useful when existing semantics must be preserved", "Useful when a reporting or inventory workload can adopt an explicit schema"]
+    }
+  ]}
+/>
+
+The right question is:
+
+> **Which supported command gives this workload the behavior and data contract it actually needs?**
+
+## 4. The Property Model Is Part of the Query
+
+This is one of the most important differences for anyone moving from older Exchange scripts.
+
+Consider:
+
+```powershell
+$mailbox = Get-EXOMailbox -Identity alex@contoso.com
+```
+
+Later:
+
+```powershell
+$mailbox.Department
+```
+
+The second statement does not cause Exchange to fetch `Department`.
+
+If you need it, request it:
+
+```powershell
+Get-EXOMailbox `
+    -Identity alex@contoso.com `
+    -Properties Department,Office
+```
+
+Or use a documented property set:
+
+```powershell
+Get-EXOMailbox `
+    -Identity alex@contoso.com `
+    -PropertySets Archive
+```
+
+`-Properties` and `-PropertySets` influence retrieval. `Select-Object` only works with properties already present in the returned object.
+
+<ArticleImageLightbox
+  src={exchangeOnlinePowerShellPropertyRetrievalModel.src}
+  alt="Exchange Online PowerShell property retrieval model showing the minimum Get-EXO* property set expanded with -Properties or -PropertySets, contrasted with Select-Object, which reshapes only properties already returned."
+/>
+
+<Callout type="important" title="Missing is not the same as null">
+Before treating a property as null, confirm that the property was actually returned. An absent property and a returned property whose value happens to be null are different conditions.
+</Callout>
+
+```powershell
+$m = Get-EXOMailbox `
+    -ResultSize 1 `
+    -Properties Department,Office
+
+$hasDepartment = $null -ne $m.PSObject.Properties['Department']
+$valueIsNull   = $null -eq $m.Department
+```
+
+### Why property breadth matters
+
+A requested property can affect:
+
+- **service-side processing**
+- **response size**
+- **network transfer**
+- **object materialization**
+- **PowerShell memory**
+- **serialization or export**
+
+A small scalar and a large multivalued property can therefore have very different consequences.
+
+Request the properties the workload needs, use documented property sets when they genuinely fit, and avoid `-PropertySets All` as a convenience shortcut.
+
+## 5. Filtering and Paging at Scale
+
+Filtering is where retrieval architecture starts to become a performance issue.
+
+A server-side filter:
+
+```powershell
+Get-EXOMailbox `
+    -Filter "Department -eq 'Research'" `
+    -Properties Department
+```
+
+allows the service to evaluate the predicate when the cmdlet and property support it.
+
+A client-side filter:
+
+```powershell
+Get-EXOMailbox `
+    -ResultSize Unlimited `
+    -Properties Department |
+    Where-Object Department -eq 'Research'
+```
+
+retrieves a broader population before filtering locally.
+
+That does not mean server-side filtering is universally faster.
+
+Supported operators, property behavior, selectivity, tenant size, module version, and service conditions all matter.
+
+<Callout type="best-practice" title="Benchmark the workload, not the folklore">
+A meaningful performance result belongs to a specific tenant, query, host, PowerShell runtime, module version, and service condition. Measure the workload you actually care about.
+</Callout>
+
+### `-ResultSize Unlimited`
+
+Consider:
+
+```powershell
+Get-EXOMailbox -ResultSize Unlimited
+```
+
+`Unlimited` removes the result-count limit.
+
+It does not mean:
+
+- **one response**
+- **no pagination**
+- **no throttling**
+- **unlimited memory**
+
+Exchange Online retrieval is paged.
+
+You can inspect page size:
+
+```powershell
+Get-ConnectionInformation |
+    Select-Object ConnectionId,PageSize,State
+```
+
+and configure it when connecting:
+
+```powershell
+Connect-ExchangeOnline `
+    -PageSize 1000 `
+    -ShowBanner:$false
+```
+
+Larger pages may reduce request overhead while increasing latency or memory pressure. Smaller pages can make progress more incremental while increasing request count.
+
+Treat page size as a tuning variable.
+
+### Pipelines are not automatically memory-light
+
+A pipeline can look streaming while later stages retain large portions of the result.
+
+`Sort-Object`, `Group-Object`, joins, assignment to variables, exports, and other consumers can buffer data.
+
+A script that behaves perfectly with a few hundred objects can behave very differently when the result set grows by two orders of magnitude.
+
+## 6. REST Changed the Serialization Boundary, Not the Need for Type Testing
+
+Legacy RPS exposed serialization through `Deserialized.*` objects.
+
+Modern REST-backed PowerShell removes that specific PowerShell-remoting boundary, but the module still converts service data into PowerShell objects.
+
+Scripts should therefore continue to care about:
+
+- **PSTypeNames**
+- **CLR types**
+- **null semantics**
+- **arrays and collections**
+- **multivalued properties**
+- **nested values**
+- **dates**
+- **quotas**
+- **export behavior**
+
+A value that looks identical in the console can still behave differently in code.
+
+Inspect the object:
+
+```powershell
+$m = Get-EXOMailbox `
+    -ResultSize 1 `
+    -Properties Department,Office
+
+$m.PSTypeNames
+
+$m.PSObject.Properties |
+    Sort-Object Name |
+    Select-Object Name,
+                  TypeNameOfValue,
+                  IsGettable,
+                  IsSettable
+```
+
+### Create an application-owned schema
+
+Rather than allowing raw Exchange objects to become your application's contract:
+
+```powershell
+Get-EXOMailbox `
+    -ResultSize Unlimited `
+    -Properties Department,Office |
+    ForEach-Object {
+        [pscustomobject]@{
+            ExternalDirectoryObjectId = [string]$_.ExternalDirectoryObjectId
+            UserPrincipalName         = [string]$_.UserPrincipalName
+            PrimarySmtpAddress        = [string]$_.PrimarySmtpAddress
+            Department                = [string]$_.Department
+            Office                    = [string]$_.Office
+            EmailAddresses            = [string[]]$_.EmailAddresses
+        }
+    }
+```
+
+Now the application depends on a schema you control.
+
+That creates a useful boundary between **Exchange's representation** and **your application's data contract**.
+
+## 7. Errors and Retries Need More Than a `catch` Block
+
+A fragile script often starts by matching exception text:
+
+```powershell
+catch {
+    if ($_.Exception.Message -match 'does not exist') {
+        # ...
+    }
+}
+```
+
+Human-readable messages are useful to people, but they are a poor foundation for application logic.
+
+Capture structured error information instead:
+
+```powershell
+try {
+    Set-Mailbox `
+        -Identity $Identity `
+        -Office $Office `
+        -ErrorAction Stop
+}
+catch {
+    [pscustomobject]@{
+        Identity      = $Identity
+        ExceptionType = $_.Exception.GetType().FullName
+        ErrorId       = $_.FullyQualifiedErrorId
+        Category      = $_.CategoryInfo.Category
+        Target        = $_.TargetObject
+        Message       = $_.Exception.Message
+    }
+}
+```
+
+Modern Exchange Online PowerShell also provides built-in handling for some transient failures.
+
+That is useful, but application retry still needs a policy.
+
+A safe retry design should consider:
+
+- **what failed**
+- **whether the operation can safely be repeated**
+- **whether throttling is occurring**
+- **how many attempts are acceptable**
+- **how much delay to introduce**
+- **whether a write may already have succeeded**
+- **how the final state will be verified**
+
+Reads are usually easier to retry than writes. A lost response after a successful write is precisely the case where blindly repeating the operation can be unsafe.
+
+## 8. Multiple Connections Require Explicit Routing
+
+A single connection is easy to understand.
+
+Multiple tenants or identities are not.
+
+Inspect:
+
+```powershell
+Get-ConnectionInformation
+```
+
+and pay attention to:
+
+- **TenantID**
+- **ConnectionId**
+- **ModulePrefix**
+- **State**
+- **ConnectionUsedForInbuiltCmdlets**
+
+For standard commands, explicit prefixes can help separate tenants.
+
+For optimized `Get-EXO*` operations, validate the intended connection before the relevant phase.
+
+For independent or high-value workloads, a separate PowerShell process can sometimes be simpler than maintaining complex shared connection state.
+
+The goal is straightforward:
+
+> **Make it difficult for a valid Exchange command to reach the wrong tenant.**
+
+## 9. `-CommandName` and Session Memory
+
+A large automation job may need only a small portion of the Exchange command surface.
+
+You can limit imported commands:
+
+```powershell
+$needed = @(
+    'Get-Mailbox',
+    'Set-Mailbox',
+    'Get-Recipient'
+)
+
+Connect-ExchangeOnline `
+    -CommandName $needed `
+    -SkipLoadingFormatData `
+    -ShowBanner:$false
+```
+
+This can reduce command-import and memory overhead.
+
+But command discovery should happen before narrowing the command set. Dynamic command construction can make static analysis incomplete.
+
+Likewise, disconnecting does not guarantee that every allocated byte immediately disappears from the process.
+
+For serious memory benchmarking, process isolation gives much cleaner results.
+
+## 10. Runtime and Module Version Are Part of the Script
+
+The Exchange cmdlet is only one component of the execution environment.
+
+Compatibility can depend on:
+
+- **ExchangeOnlineManagement**
+- **Windows PowerShell vs. PowerShell 7**
+- **.NET**
+- **operating system**
+- **authentication flow**
+
+Capture that environment:
+
+```powershell
+$module = Get-Module ExchangeOnlineManagement -ListAvailable |
+    Sort-Object Version -Descending |
+    Select-Object -First 1
+
+[pscustomobject]@{
+    PowerShell = $PSVersionTable.PSVersion.ToString()
+    Edition    = $PSVersionTable.PSEdition
+    OS         = $PSVersionTable.OS
+    EXOModule  = $module.Version.ToString()
+}
+```
+
+For production automation, use controlled module versions, upgrade canaries, regression tests, and a rollback path rather than blindly accepting every module update.
+
+## 11. Measure Performance Like an Engineer
+
+Performance discussions often become unreliable because the experiment is too small.
+
+For example:
+
+```powershell
+Measure-Command {
+    Get-EXOMailbox -ResultSize Unlimited
+}
+```
+
+and:
+
+```powershell
+Measure-Command {
+    Get-EXOMailbox `
+        -ResultSize Unlimited `
+        -Properties Department,Office
+}
+```
+
+Running each once does not establish a general rule.
+
+The benchmark model should instead repeat the tests, alternate execution order, record the environment, and check correctness alongside timing.
+
+Useful measurements include:
+
+- **elapsed-time distribution**
+- **object count**
+- **property count**
+- **memory**
+- **serialized sample-size proxy**
+- **errors**
+- **failures**
+- **module and PowerShell versions**
+
+<ArticleImageLightbox
+  src={exchangeOnlinePowerShellPerformanceBenchmarkModel.src}
+  alt="Exchange Online PowerShell performance benchmark model comparing minimum mailbox retrieval with retrieval that includes additional properties, using controlled conditions and measurements for timing, object count, property count, memory, size, errors, and correctness."
+/>
+
+<ExchangeOnlinePowerShellPerformanceLab />
+
+### Reproduce the benchmark
+
+[Download the benchmark harness](/downloadable/exchange/modern-exchange-online-powershell/Exchange-Online-PowerShell-Benchmark.ps1)
+
+A small benchmark can begin with:
+
+```powershell
+$tests = [ordered]@{
+    Minimum = {
+        Get-EXOMailbox -ResultSize Unlimited
+    }
+
+    DepartmentOffice = {
+        Get-EXOMailbox `
+            -ResultSize Unlimited `
+            -Properties Department,Office
+    }
+}
+```
+
+Then repeat each pattern, alternate the order, and retain the results.
+
+<Callout type="important" title="Do not turn one benchmark into a universal rule">
+A meaningful conclusion belongs to the tenant, query, host, module, runtime, connection configuration, and test window in which it was measured. Compare distributions, not one stopwatch value.
+</Callout>
+
+Correctness must be measured alongside speed.
+
+A faster query that returns the wrong population, misses properties, creates duplicates, or produces incompatible types is not an optimization.
+
+## 12. Migrating RPS Scripts
+
+This is where the earlier sections come together.
+
+A migration should begin with an inventory of old assumptions.
+
+Search for:
+
+```text
+New-PSSession
+Import-PSSession
+Connect-EXOPSSession
+Get-PSSession
+Remove-PSSession
+Invoke-Command
+-UseRPSSession
+WSMan configuration
+```
+
+Then inspect the script itself.
+
+Look for:
+
+- **cmdlets**
+- **parameter sets**
+- **filters**
+- **implicit defaults**
+- **output properties**
+- **object methods**
+- **formatting**
+- **exports**
+- **error-message parsing**
+- **authentication**
+- **parallelism**
+- **retry behavior**
+- **multitenant routing**
+
+The point is to discover what the old architecture allowed the script to assume.
+
+<ExchangeOnlinePowerShellMigrationGuide />
+
+### Put the migration plan into practice
+
+[Download the RPS → REST migration checklist](/downloadable/exchange/modern-exchange-online-powershell/Exchange-Online-PowerShell-RPS-Migration-Checklist.pdf)
+
+[Download the modernization worksheet](/downloadable/exchange/modern-exchange-online-powershell/Exchange-Online-PowerShell-Modernization-Worksheet.pdf)
+
+### Replace the connection model
+
+A modern connection helper can validate its resulting connection:
+
+```powershell
+function Connect-WorkloadExchange {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$Organization,
+
+        [Parameter(Mandatory)]
+        [string[]]$CommandName
+    )
+
+    Connect-ExchangeOnline `
+        -Organization $Organization `
+        -ManagedIdentity `
+        -CommandName $CommandName `
+        -ShowBanner:$false `
+        -ErrorAction Stop
+
+    $connection = Get-ConnectionInformation |
+        Where-Object ConnectionUsedForInbuiltCmdlets |
+        Select-Object -First 1
+
+    if (-not $connection -or
+        $connection.State -notmatch 'Connected') {
+        throw 'Exchange Online connection validation failed.'
+    }
+
+    $connection
+}
+```
+
+The exact `State` values should be validated against the installed module rather than treated as a permanent undocumented contract.
+
+### Replace remote script blocks
+
+A legacy pattern like:
+
+```powershell
+Invoke-Command -Session $Session -ScriptBlock {
+    Get-Mailbox ...
+    Get-Recipient ...
+}
+```
+
+should be redesigned as local orchestration.
+
+That means revisiting batching, request boundaries, N+1 queries, checkpointing, retries, and write verification.
+
+### Normalize the output
+
+Do not let the Exchange module's raw object shape become the long-term contract of your application.
+
+Define the fields you actually need.
+
+Request them explicitly.
+
+Normalize them.
+
+Test them.
+
+Then let the rest of the application depend on that stable representation.
+
+## 13. Migration Is Not Complete Until It Passes Validation
+
+A migrated script should satisfy more than:
+
+> "The commands ran."
+
+<ComparisonTable
+  caption="Exchange Online PowerShell migration acceptance"
+  columns={[
+    { label: "Area" },
+    { label: "What to prove" }
+  ]}
+  rows={[
+    {
+      label: "Function",
+      cells: ["Required commands, parameters, scopes, and recipient types behave correctly."]
+    },
+    {
+      label: "Data",
+      cells: ["Object counts and stable identifiers match the expected population."]
+    },
+    {
+      label: "Schema",
+      cells: ["Required properties exist and null/collection semantics are understood."]
+    },
+    {
+      label: "Types",
+      cells: ["Important runtime types and exports satisfy the application's contract."]
+    },
+    {
+      label: "Errors",
+      cells: ["Failures are captured and classified through structured error information."]
+    },
+    {
+      label: "Resilience",
+      cells: ["Retry and write-postcondition behavior has been tested."]
+    },
+    {
+      label: "Performance",
+      cells: ["Observed performance distribution is acceptable under representative conditions."]
+    },
+    {
+      label: "Security",
+      cells: ["Identity, Exchange authorization, and secret handling follow the intended design."]
+    },
+    {
+      label: "Operations",
+      cells: ["Runtime/module versions, upgrade testing, and rollback are documented."]
+    }
+  ]}
+/>
+
+That is much closer to what "migration complete" should mean.
+
+## 14. The Patterns Worth Keeping
+
+By now, the modern Exchange Online PowerShell model can be reduced to a handful of habits.
+
+**Inspect the connection instead of guessing at it.**
+
+**Choose the command family deliberately.**
+
+**Request the properties the workload actually consumes.**
+
+**Treat object types as part of the application contract.**
+
+**Filter with both correctness and performance in mind.**
+
+**Do not confuse `Unlimited` with unbounded execution.**
+
+**Treat retries as an engineering decision.**
+
+**Make tenant routing explicit.**
+
+**Control runtime and module dependencies.**
+
+**Measure performance rather than repeating folklore.**
+
+**Migrate old assumptions, not just old command names.**
+
+## 15. Troubleshooting the Modern Model
+
+When a connection fails, start with the environment:
+
+```powershell
+$PSVersionTable
+
+Get-Module ExchangeOnlineManagement -ListAvailable |
+    Sort-Object Version -Descending |
+    Select-Object -First 1 Name,Version
+
+Get-ConnectionInformation
+```
+
+Then separate the failure into the appropriate layer.
+
+### Authentication problem
+
+Investigate the chosen authentication flow, system time, browser/WAM prerequisites, certificate access, managed-identity availability, proxy behavior, TLS inspection, or cloud endpoint requirements.
+
+### Wrong tenant or wrong connection
+
+Compare:
+
+- **TenantID**
+- **identity**
+- **ModulePrefix**
+- **ConnectionId**
+- **ConnectionUsedForInbuiltCmdlets**
+
+Do not infer REST routing from `Get-PSSession`.
+
+### Slow retrieval
+
+Record:
+
+- **object count**
+- **requested properties**
+- **filter type**
+- **page size**
+- **sorting/grouping**
+- **export behavior**
+- **memory**
+- **retry/throttling**
+- **number of remote calls**
+
+Then benchmark again under controlled conditions.
+
+### Missing or changed properties
+
+Inspect:
+
+```powershell
+$m.PSObject.Properties
+$m.PSTypeNames
+```
+
+Determine whether the property is:
+
+- **not retrieved**
+- **null**
+- **empty**
+- **a collection**
+- **a different runtime type**
+- **different for the recipient subtype**
+- **different in the newer module version**
+
+That is much more useful than comparing formatted console output.
+
+## Conclusion
+
+Modern Exchange Online PowerShell still looks like PowerShell.
+
+That familiar surface is useful, but it can hide a very different execution model underneath.
+
+A REST-backed connection is not a `PSSession`.
+
+`Invoke-Command` is not its replacement.
+
+`Get-ConnectionInformation` is the connection-state view.
+
+`Get-EXO*` is not merely a renamed `Get-Mailbox`.
+
+`Select-Object` cannot retrieve a property that was never returned.
+
+`-ResultSize Unlimited` does not eliminate paging, throttling, or memory constraints.
+
+A successful command does not automatically prove a compatible result.
+
+A retry does not automatically make a write safe.
+
+And one benchmark run does not establish a universal performance truth.
+
+The practical discipline is straightforward:
+
+**Understand the connection, choose the right retrieval model, request the data you need, test the object contract, measure the workload, and migrate old assumptions—not just old command names.**
+
+That is what turns the modern Exchange Online PowerShell model from something merely familiar into something you can engineer with confidence.
+
+## Downloadable Resources
+
+- [Download the benchmark harness](/downloadable/exchange/modern-exchange-online-powershell/Exchange-Online-PowerShell-Benchmark.ps1)
+- [Download the RPS → REST migration checklist](/downloadable/exchange/modern-exchange-online-powershell/Exchange-Online-PowerShell-RPS-Migration-Checklist.pdf)
+- [Download the modernization worksheet](/downloadable/exchange/modern-exchange-online-powershell/Exchange-Online-PowerShell-Modernization-Worksheet.pdf)
+- [Download the modernization glossary](/downloadable/exchange/modern-exchange-online-powershell/Exchange-Online-PowerShell-Modernization-Glossary.pdf)

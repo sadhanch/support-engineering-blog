@@ -1,0 +1,445 @@
+---
+const steps = [
+  {
+    id: "define",
+    number: "01",
+    title: "Define the workload",
+    question: "What must the application actually do?",
+    detail: "Start with the business operation, not the permission catalogue. Separate read, write, send, and other capabilities and document the outcome the workload must achieve."
+  },
+  {
+    id: "role",
+    number: "02",
+    title: "Choose the capability",
+    question: "Which Exchange Application role is actually required?",
+    detail: "Select the smallest supported Exchange application role that provides the required operation. Avoid bundling unrelated capabilities simply because they are available."
+  },
+  {
+    id: "boundary",
+    number: "03",
+    title: "Define the resource boundary",
+    question: "Which Exchange resources should the app reach?",
+    detail: "Choose a supported recipient-filter scope or administrative-unit resource scope. Give the boundary an owner, a membership source, and a way to prove whether a target belongs inside it."
+  },
+  {
+    id: "identity",
+    number: "04",
+    title: "Register the identity",
+    question: "Which service principal represents the workload?",
+    detail: "Create the Exchange-side representation of the existing Microsoft Entra service principal. Record both the application client ID and the service-principal object ID."
+  },
+  {
+    id: "assign",
+    number: "05",
+    title: "Create the assignment",
+    question: "How do capability and boundary connect?",
+    detail: "Create one assignment for each meaningful role-and-boundary combination. Descriptive assignment names make review, troubleshooting, and rollback easier."
+  },
+  {
+    id: "crossplane",
+    number: "06",
+    title: "Check other grants",
+    question: "Could another control plane still provide access?",
+    detail: "Review Microsoft Entra API permissions and other Exchange assignments together. A scoped Exchange assignment does not subtract a broader permission granted elsewhere."
+  },
+  {
+    id: "validate",
+    number: "07",
+    title: "Prove the boundary",
+    question: "Can the app do exactly what it should—and nothing more?",
+    detail: "Test an in-scope resource, an out-of-scope resource, and an intentionally denied operation. Then validate with a real API request using the application identity."
+  },
+  {
+    id: "lifecycle",
+    number: "08",
+    title: "Design the lifecycle",
+    question: "How will this access be governed later?",
+    detail: "Assign owners, review dates, credential controls, monitoring, and rollback. Treat the application identity and its Exchange assignments as managed production assets."
+  }
+];
+
+const defaultStep = steps[0].id;
+---
+
+<section class="exchange-application-rbac-planner" aria-labelledby="exchange-application-rbac-planner-title">
+  <header class="exchange-application-rbac-planner__header">
+    <p class="exchange-application-rbac-planner__eyebrow">Application RBAC planner</p>
+    <h2 id="exchange-application-rbac-planner-title">Design the access path before you create it</h2>
+    <p class="exchange-application-rbac-planner__intro">
+      Walk through the eight decisions behind a scoped Exchange Online workload
+      identity. The goal is not simply to make an app work; it is to make its
+      effective access explainable, testable, and recoverable.
+    </p>
+  </header>
+
+  <div class="exchange-application-rbac-planner__layout">
+    <nav class="exchange-application-rbac-planner__steps" aria-label="Application RBAC design steps" role="tablist">
+      {steps.map((step) => (
+        <button
+          type="button"
+          class:list={[
+            "exchange-application-rbac-planner__step",
+            { "is-active": step.id === defaultStep }
+          ]}
+          data-step-choice={step.id}
+          aria-controls={`exchange-application-rbac-planner-panel-${step.id}`}
+          aria-selected={step.id === defaultStep}
+          role="tab"
+          tabindex={step.id === defaultStep ? 0 : -1}
+        >
+          <span class="exchange-application-rbac-planner__step-number">{step.number}</span>
+          <span>
+            <strong>{step.title}</strong>
+            <small>{step.question}</small>
+          </span>
+        </button>
+      ))}
+    </nav>
+
+    <div class="exchange-application-rbac-planner__content">
+      {steps.map((step) => (
+        <article
+          id={`exchange-application-rbac-planner-panel-${step.id}`}
+          class:list={[
+            "exchange-application-rbac-planner__panel",
+            { "is-active": step.id === defaultStep }
+          ]}
+          data-step-panel={step.id}
+          role="tabpanel"
+          hidden={step.id !== defaultStep}
+        >
+          <div class="exchange-application-rbac-planner__panel-heading">
+            <span class="exchange-application-rbac-planner__kicker">{step.number} · {step.title}</span>
+            <h3>{step.question}</h3>
+            <p>{step.detail}</p>
+          </div>
+
+          <div class="exchange-application-rbac-planner__model">
+            <span class="exchange-application-rbac-planner__model-chip">WHO</span>
+            <span>Service principal / workload identity</span>
+            <b aria-hidden="true">→</b>
+            <span class="exchange-application-rbac-planner__model-chip">WHAT</span>
+            <span>Exchange Application role</span>
+            <b aria-hidden="true">→</b>
+            <span class="exchange-application-rbac-planner__model-chip">WHERE</span>
+            <span>Resource scope</span>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+
+  <div class="exchange-application-rbac-planner__tests">
+    <div>
+      <span class="exchange-application-rbac-planner__kicker">Minimum validation</span>
+      <h3>Three tests should always be planned</h3>
+    </div>
+    <div class="exchange-application-rbac-planner__test-grid">
+      <div class="exchange-application-rbac-planner__test"><strong>In-scope</strong><span>Expected → Allow</span></div>
+      <div class="exchange-application-rbac-planner__test"><strong>Out-of-scope</strong><span>Expected → Deny</span></div>
+      <div class="exchange-application-rbac-planner__test"><strong>Unapproved operation</strong><span>Expected → Deny</span></div>
+    </div>
+  </div>
+
+  <footer class="exchange-application-rbac-planner__footer">
+    <strong>Least-privilege check:</strong>
+    A scoped Exchange Application RBAC assignment is not enough on its own.
+    Review every Exchange assignment and every broader Microsoft Entra grant
+    that can provide another authorization path.
+  </footer>
+</section>
+
+<script>
+  const initialisePlanners = () => {
+    document.querySelectorAll(".exchange-application-rbac-planner").forEach((planner) => {
+      const choices = Array.from(planner.querySelectorAll("[data-step-choice]"));
+      const panels = Array.from(planner.querySelectorAll("[data-step-panel]"));
+      if (!choices.length || !panels.length) return;
+
+      const activate = (id, moveFocus = false) => {
+        choices.forEach((choice) => {
+          const active = choice.dataset.stepChoice === id;
+          choice.classList.toggle("is-active", active);
+          choice.setAttribute("aria-selected", String(active));
+          choice.tabIndex = active ? 0 : -1;
+        });
+
+        panels.forEach((panel) => {
+          const active = panel.dataset.stepPanel === id;
+          panel.classList.toggle("is-active", active);
+          panel.hidden = !active;
+        });
+
+        if (moveFocus) {
+          choices.find((choice) => choice.dataset.stepChoice === id)?.focus();
+        }
+      };
+
+      choices.forEach((choice, index) => {
+        choice.addEventListener("click", () => activate(choice.dataset.stepChoice || ""));
+        choice.addEventListener("keydown", (event) => {
+          if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+          event.preventDefault();
+
+          let nextIndex = index;
+          if (event.key === "ArrowDown") nextIndex = (index + 1) % choices.length;
+          if (event.key === "ArrowUp") nextIndex = (index - 1 + choices.length) % choices.length;
+          if (event.key === "Home") nextIndex = 0;
+          if (event.key === "End") nextIndex = choices.length - 1;
+
+          activate(choices[nextIndex].dataset.stepChoice || "", true);
+        });
+      });
+    });
+  };
+
+  initialisePlanners();
+  document.addEventListener("astro:page-load", initialisePlanners);
+</script>
+
+<style>
+  .exchange-application-rbac-planner {
+    --planner-border: var(--border-default);
+    --planner-border-soft: var(--border-subtle);
+    --planner-text: var(--text-primary);
+    --planner-muted: var(--text-secondary);
+    --planner-accent: var(--color-accent);
+    --planner-surface: var(--surface-primary);
+    --planner-surface-soft: var(--surface-secondary);
+    --planner-surface-active: color-mix(in srgb, var(--planner-accent) 9%, var(--planner-surface-soft));
+
+    width: 100%;
+    margin: var(--space-10) 0;
+    border: 1px solid var(--planner-border);
+    border-radius: var(--radius-lg);
+    background: var(--planner-surface);
+    color: var(--planner-text);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .exchange-application-rbac-planner__header {
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--planner-border);
+  }
+
+  .exchange-application-rbac-planner__eyebrow,
+  .exchange-application-rbac-planner__kicker {
+    margin: 0 0 var(--space-1);
+    color: var(--planner-accent);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .exchange-application-rbac-planner h2 {
+    margin: 0;
+    font-size: clamp(1.45rem, 2.6vw, 1.95rem);
+    line-height: var(--line-height-tight);
+  }
+
+  .exchange-application-rbac-planner__intro {
+    max-width: 780px;
+    margin: var(--space-3) 0 0;
+    color: var(--planner-muted);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .exchange-application-rbac-planner__layout {
+    display: grid;
+    grid-template-columns: minmax(15rem, 0.7fr) minmax(0, 1.8fr);
+  }
+
+  .exchange-application-rbac-planner__steps {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--planner-border);
+    background: var(--planner-surface-soft);
+  }
+
+  .exchange-application-rbac-planner__step {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-4);
+    border: 0;
+    border-bottom: 1px solid var(--planner-border-soft);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .exchange-application-rbac-planner__step:hover,
+  .exchange-application-rbac-planner__step.is-active {
+    background: var(--planner-surface-active);
+  }
+
+  .exchange-application-rbac-planner__step.is-active {
+    box-shadow: inset 3px 0 0 var(--planner-accent);
+  }
+
+  .exchange-application-rbac-planner__step:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--planner-accent) 35%, transparent);
+    outline-offset: -3px;
+  }
+
+  .exchange-application-rbac-planner__step-number {
+    color: var(--planner-accent);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .exchange-application-rbac-planner__step strong {
+    display: block;
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .exchange-application-rbac-planner__step small {
+    display: block;
+    margin-top: var(--space-2);
+    color: var(--planner-muted);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+  }
+
+  .exchange-application-rbac-planner__panel {
+    padding: var(--space-6);
+  }
+
+  .exchange-application-rbac-planner__panel-heading h3 {
+    margin: 0;
+    font-size: var(--font-heading-md);
+    line-height: var(--line-height-tight);
+  }
+
+  .exchange-application-rbac-planner__panel-heading p {
+    max-width: 780px;
+    margin: var(--space-2) 0 0;
+    color: var(--planner-muted);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .exchange-application-rbac-planner__model {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-6);
+    padding: var(--space-4);
+    border: 1px solid var(--planner-border);
+    border-radius: var(--radius-md);
+    background: var(--planner-surface-soft);
+  }
+
+  .exchange-application-rbac-planner__model-chip {
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--planner-border);
+    border-radius: var(--radius-pill);
+    color: var(--planner-accent);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .exchange-application-rbac-planner__model-text {
+    color: var(--planner-text);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .exchange-application-rbac-planner__tests {
+    display: grid;
+    grid-template-columns: minmax(12rem, 0.65fr) minmax(0, 1.8fr);
+    gap: var(--space-6);
+    padding: var(--space-6);
+    border-top: 1px solid var(--planner-border);
+    background: var(--planner-surface-soft);
+  }
+
+  .exchange-application-rbac-planner__tests h3 {
+    margin: 0;
+    font-size: var(--font-heading-md);
+    line-height: var(--line-height-tight);
+  }
+
+  .exchange-application-rbac-planner__test-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  .exchange-application-rbac-planner__test {
+    padding: var(--space-3);
+    border: 1px solid var(--planner-border);
+    border-radius: var(--radius-md);
+    background: var(--planner-surface);
+  }
+
+  .exchange-application-rbac-planner__test strong {
+    display: block;
+  }
+
+  .exchange-application-rbac-planner__test span {
+    display: block;
+    margin-top: var(--space-2);
+    color: var(--planner-muted);
+    font-size: var(--font-size-sm);
+  }
+
+  .exchange-application-rbac-planner__footer {
+    padding: var(--space-4) var(--space-6);
+    color: var(--planner-muted);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .exchange-application-rbac-planner__footer strong {
+    color: var(--planner-text);
+  }
+
+  @media (max-width: 900px) {
+    .exchange-application-rbac-planner__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .exchange-application-rbac-planner__steps {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-right: 0;
+      border-bottom: 1px solid var(--planner-border);
+    }
+
+    .exchange-application-rbac-planner__tests {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .exchange-application-rbac-planner__steps,
+    .exchange-application-rbac-planner__test-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .exchange-application-rbac-planner__header,
+    .exchange-application-rbac-planner__panel,
+    .exchange-application-rbac-planner__tests,
+    .exchange-application-rbac-planner__footer {
+      padding-left: var(--space-4);
+      padding-right: var(--space-4);
+    }
+
+    .exchange-application-rbac-planner__model {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .exchange-application-rbac-planner__step {
+      transition: none;
+    }
+  }
+</style>
