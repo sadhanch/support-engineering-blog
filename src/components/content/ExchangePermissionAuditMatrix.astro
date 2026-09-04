@@ -1,0 +1,656 @@
+---
+/* ==========================================================
+   Support Engineering Blog
+   Component: ExchangePermissionAuditMatrix
+   Purpose: Interactive audit-domain reference for Exchange
+   permission auditing.
+   ========================================================== */
+
+interface AuditDomain {
+    id: string;
+    number: string;
+    name: string;
+    capability: string;
+    evidence: string;
+    collection: string[];
+    normalized: string;
+    risk: string;
+    review: string;
+}
+
+interface Props {
+    id?: string;
+}
+
+const { id = "exchange-permission-audit-matrix" } = Astro.props;
+
+const domains: AuditDomain[] = [
+    {
+        id: "full-access",
+        number: "01",
+        name: "Full Access",
+        capability: "Open, read, and manage mailbox content; it does not grant sending rights.",
+        evidence: "Mailbox permission ACEs",
+        collection: [
+            "Get-MailboxPermission",
+            "Get-EXOMailbox for mailbox inventory"
+        ],
+        normalized: "PermissionType = FullAccess; preserve IsInherited and Deny; retain group-grant lineage.",
+        risk: "Excessive content access, broad groups, direct access to sensitive mailboxes, or misunderstood inherited/denied entries.",
+        review: "Confirm business purpose and owner; review broad principals, nested groups, privileged targets, and group-mediated access."
+    },
+    {
+        id: "send-as",
+        number: "02",
+        name: "Send As",
+        capability: "Send as the target mailbox or group so the recipient sees the target identity as the sender.",
+        evidence: "Recipient permission / extended-right data",
+        collection: [
+            "Get-RecipientPermission",
+            "Get-ADPermission where applicable"
+        ],
+        normalized: "PermissionType = SendAs; preserve trustee identity and source context.",
+        risk: "Impersonation, fraud, executive or brand abuse, and reduced non-repudiation.",
+        review: "Certify separately from Full Access and prioritize executive, finance, legal, payroll, and shared-brand targets."
+    },
+    {
+        id: "send-on-behalf",
+        number: "03",
+        name: "Send on Behalf",
+        capability: "Send using the target mailbox or group while representing the delegate separately as acting on behalf of it.",
+        evidence: "GrantSendOnBehalfTo recipient attribute",
+        collection: [
+            "Get-EXOMailbox -Properties GrantSendOnBehalfTo",
+            "Get-Mailbox or recipient properties where applicable"
+        ],
+        normalized: "PermissionType = SendOnBehalf; create one trustee row per delegate.",
+        risk: "Untracked authority delegation, brand misuse, or inappropriate correspondence authority.",
+        review: "Review independently from Send As and correlate with message or audit evidence when investigating actual use."
+    },
+    {
+        id: "folder-calendar",
+        number: "04",
+        name: "Folder / Calendar",
+        capability: "Grant role-based or granular access to mailbox folders, calendars, and other folder-level content.",
+        evidence: "Mailbox folder ACLs",
+        collection: [
+            "Get-MailboxFolderStatistics",
+            "Get-MailboxFolderPermission"
+        ],
+        normalized: "PermissionType = displayed role or canonical folder right; preserve folder path and sharing flags in Scope/extensions.",
+        risk: "Sensitive-folder exposure, unintended calendar editing, or incomplete enumeration caused by localized or renamed folders.",
+        review: "Treat Default and Anonymous as real trustees; prioritize Inbox, Calendar, Contacts, Sent Items, Recoverable Items where accessible, and sensitive business folders."
+    },
+    {
+        id: "public-folder",
+        number: "05",
+        name: "Public Folders",
+        capability: "Provide client access to public-folder content through folder-level permissions.",
+        evidence: "Public-folder client ACLs",
+        collection: [
+            "Get-PublicFolder -Recurse -ResultSize Unlimited",
+            "Get-PublicFolderClientPermission"
+        ],
+        normalized: "Target = public-folder path; PermissionType = client right; retain path and content-mailbox context.",
+        risk: "Broad exposure, excessive Owner/PublishingEditor rights, or Default/Anonymous access beyond policy.",
+        review: "Separate client permissions from public-folder administrative RBAC and compare Default/Anonymous rights with the approved baseline."
+    },
+    {
+        id: "group-ownership",
+        number: "06",
+        name: "Group Ownership",
+        capability: "Manage distribution-group or applicable Microsoft 365 group settings and membership through ownership relationships.",
+        evidence: "ManagedBy / ownership relationship",
+        collection: [
+            "Get-DistributionGroup",
+            "Get-UnifiedGroup as applicable"
+        ],
+        normalized: "PermissionType = Owner or ManagedBy; preserve owner relationship and group context in Scope.",
+        risk: "Unauthorized membership changes, broad distribution reach, or critical groups left with inactive or unsuitable owners.",
+        review: "Require accountable ownership for critical groups and flag disabled, deleted, guest, or service identities as sole owners."
+    },
+    {
+        id: "exchange-rbac",
+        number: "07",
+        name: "Exchange RBAC",
+        capability: "Provide administrative capability through management roles, role groups, assignments, and write scopes.",
+        evidence: "Role-group membership and management-role assignments",
+        collection: [
+            "Get-RoleGroupMember",
+            "Get-ManagementRoleAssignment -GetEffectiveUsers"
+        ],
+        normalized: "Preserve RoleGroupMember and ManagementRoleAssignment as related records; retain recipient/configuration write scope.",
+        risk: "Privilege escalation, excessive write scope, indirect privilege through groups, and standing high-power access.",
+        review: "Analyze role → assignee → assignment → scope, not just role-group membership; prioritize high-power administrative roles."
+    },
+    {
+        id: "application",
+        number: "08",
+        name: "Application / Service Principal",
+        capability: "Provide token-based mailbox or protocol access through application permissions, Exchange service-principal registration, and supported scoping controls.",
+        evidence: "Entra / OAuth grants plus Exchange service-principal and authorization data",
+        collection: [
+            "Microsoft Graph: servicePrincipals, appRoleAssignments, oauth2PermissionGrants",
+            "Get-ServicePrincipal",
+            "Test-ServicePrincipalAuthorization"
+        ],
+        normalized: "TrusteeType = ServicePrincipal or Application; PermissionType = app role/protocol scope; Scope records consent and mailbox boundaries.",
+        risk: "Tenant-wide non-user access, unknown mailbox scope, unmanaged credentials, or service principals without accountable owners.",
+        review: "Inventory owners, consent, credentials, scope, and effective mailbox coverage; test authorization against representative resources."
+    },
+    {
+        id: "telemetry",
+        number: "09",
+        name: "Audit / Telemetry",
+        capability: "Provide evidence about permission changes and activity rather than functioning as the entitlement inventory itself.",
+        evidence: "Purview Audit, mailbox audit, admin audit/change events, sign-in and application activity",
+        collection: [
+            "Purview Audit searches",
+            "Mailbox and administrative audit evidence"
+        ],
+        normalized: "Treat as change/usage evidence linked to entitlement snapshots, not as a replacement for configured permission records.",
+        risk: "False conclusions when activity evidence is treated as proof of current entitlement or when retention/coverage is incomplete.",
+        review: "Correlate with snapshots for chronology and usage questions; retain search criteria, evidence dates, and known coverage limitations."
+    }
+];
+
+const defaultDomain = domains[0].id;
+---
+
+<section
+    id={id}
+    class="exchange-permission-audit-matrix"
+    aria-labelledby={`${id}-title`}
+>
+    <header class="exchange-permission-audit-matrix__header">
+        <div>
+            <p class="exchange-permission-audit-matrix__eyebrow">Audit domain reference</p>
+            <h2 id={`${id}-title`}>What should an Exchange permission audit collect?</h2>
+            <p class="exchange-permission-audit-matrix__intro">
+                Exchange authorization is distributed across several control planes.
+                Select a domain to see what it represents, where its evidence comes
+                from, how it should be normalized, and what deserves review.
+            </p>
+        </div>
+
+        <span
+            class="exchange-permission-audit-matrix__status"
+            data-status
+            aria-live="polite"
+        >
+            Full Access selected
+        </span>
+    </header>
+
+    <div class="exchange-permission-audit-matrix__layout">
+        <nav
+            class="exchange-permission-audit-matrix__tabs"
+            aria-label="Exchange permission audit domains"
+            role="tablist"
+            aria-orientation="vertical"
+        >
+            {domains.map((domain) => (
+                <button
+                    type="button"
+                    class:list={[
+                        "exchange-permission-audit-matrix__tab",
+                        { "is-active": domain.id === defaultDomain }
+                    ]}
+                    id={`${id}-tab-${domain.id}`}
+                    data-domain-tab={domain.id}
+                    aria-controls={`${id}-panel-${domain.id}`}
+                    aria-selected={domain.id === defaultDomain}
+                    role="tab"
+                    tabindex={domain.id === defaultDomain ? 0 : -1}
+                >
+                    <span class="exchange-permission-audit-matrix__number">{domain.number}</span>
+                    <span class="exchange-permission-audit-matrix__tab-copy">
+                        <strong>{domain.name}</strong>
+                        <small>{domain.evidence}</small>
+                    </span>
+                </button>
+            ))}
+        </nav>
+
+        <div class="exchange-permission-audit-matrix__content">
+            {domains.map((domain) => (
+                <article
+                    id={`${id}-panel-${domain.id}`}
+                    class:list={[
+                        "exchange-permission-audit-matrix__panel",
+                        { "is-active": domain.id === defaultDomain }
+                    ]}
+                    data-domain-panel={domain.id}
+                    role="tabpanel"
+                    aria-labelledby={`${id}-tab-${domain.id}`}
+                    hidden={domain.id !== defaultDomain}
+                    tabindex="0"
+                >
+                    <div class="exchange-permission-audit-matrix__panel-heading">
+                        <span class="exchange-permission-audit-matrix__panel-kicker">
+                            {domain.number} · {domain.name}
+                        </span>
+                        <h3>{domain.capability}</h3>
+                    </div>
+
+                    <div class="exchange-permission-audit-matrix__facts">
+                        <section class="exchange-permission-audit-matrix__fact">
+                            <span class="exchange-permission-audit-matrix__label">Evidence source</span>
+                            <p>{domain.evidence}</p>
+                        </section>
+
+                        <section class="exchange-permission-audit-matrix__fact">
+                            <span class="exchange-permission-audit-matrix__label">Primary collection</span>
+                            <ul class="exchange-permission-audit-matrix__commands">
+                                {domain.collection.map((command) => (
+                                    <li><code>{command}</code></li>
+                                ))}
+                            </ul>
+                        </section>
+
+                        <section class="exchange-permission-audit-matrix__fact">
+                            <span class="exchange-permission-audit-matrix__label">Normalize</span>
+                            <p>{domain.normalized}</p>
+                        </section>
+
+                        <section class="exchange-permission-audit-matrix__fact">
+                            <span class="exchange-permission-audit-matrix__label">Primary risk</span>
+                            <p>{domain.risk}</p>
+                        </section>
+                    </div>
+
+                    <div class="exchange-permission-audit-matrix__review">
+                        <span class="exchange-permission-audit-matrix__label">Review focus</span>
+                        <p>{domain.review}</p>
+                    </div>
+                </article>
+            ))}
+        </div>
+    </div>
+
+    <footer class="exchange-permission-audit-matrix__footer">
+        <strong>Audit principle:</strong>
+        Keep configured entitlement evidence separate from derived effective access
+        and from change or usage telemetry.
+    </footer>
+</section>
+
+<script>
+    const initialiseExchangePermissionAuditMatrices = () => {
+        document
+            .querySelectorAll<HTMLElement>(".exchange-permission-audit-matrix")
+            .forEach((matrix) => {
+                if (matrix.dataset.initialised === "true") return;
+                matrix.dataset.initialised = "true";
+
+                const tabs = Array.from(
+                    matrix.querySelectorAll<HTMLButtonElement>("[data-domain-tab]")
+                );
+                const panels = Array.from(
+                    matrix.querySelectorAll<HTMLElement>("[data-domain-panel]")
+                );
+                const status = matrix.querySelector<HTMLElement>("[data-status]");
+
+                if (!tabs.length || !panels.length) return;
+
+                const activate = (id: string, moveFocus = false) => {
+                    const activeTab = tabs.find(
+                        (tab) => tab.dataset.domainTab === id
+                    );
+
+                    tabs.forEach((tab) => {
+                        const active = tab === activeTab;
+                        tab.classList.toggle("is-active", active);
+                        tab.setAttribute("aria-selected", String(active));
+                        tab.tabIndex = active ? 0 : -1;
+                    });
+
+                    panels.forEach((panel) => {
+                        const active = panel.dataset.domainPanel === id;
+                        panel.classList.toggle("is-active", active);
+                        panel.hidden = !active;
+                    });
+
+                    if (activeTab && status) {
+                        const name = activeTab.querySelector("strong")?.textContent?.trim();
+                        status.textContent = `${name ?? "Domain"} selected`;
+                    }
+
+                    if (moveFocus) activeTab?.focus();
+                };
+
+                tabs.forEach((tab, index) => {
+                    tab.addEventListener("click", () => {
+                        activate(tab.dataset.domainTab ?? "");
+                    });
+
+                    tab.addEventListener("keydown", (event) => {
+                        if (![
+                            "ArrowDown",
+                            "ArrowUp",
+                            "ArrowRight",
+                            "ArrowLeft",
+                            "Home",
+                            "End"
+                        ].includes(event.key)) return;
+
+                        event.preventDefault();
+
+                        let nextIndex = index;
+                        const forward = event.key === "ArrowDown" || event.key === "ArrowRight";
+                        const backward = event.key === "ArrowUp" || event.key === "ArrowLeft";
+
+                        if (forward) nextIndex = (index + 1) % tabs.length;
+                        if (backward) nextIndex = (index - 1 + tabs.length) % tabs.length;
+                        if (event.key === "Home") nextIndex = 0;
+                        if (event.key === "End") nextIndex = tabs.length - 1;
+
+                        activate(tabs[nextIndex].dataset.domainTab ?? "", true);
+                    });
+                });
+            });
+    };
+
+    initialiseExchangePermissionAuditMatrices();
+    document.addEventListener("astro:page-load", initialiseExchangePermissionAuditMatrices);
+</script>
+
+<style>
+    .exchange-permission-audit-matrix {
+        --matrix-border: var(--border-default);
+        --matrix-border-soft: var(--border-subtle);
+        --matrix-text: var(--text-primary);
+        --matrix-muted: var(--text-secondary);
+        --matrix-accent: var(--color-accent);
+        --matrix-surface: var(--surface-primary);
+        --matrix-surface-soft: var(--surface-secondary);
+        --matrix-surface-active: color-mix(
+            in srgb,
+            var(--matrix-accent) 9%,
+            var(--matrix-surface-soft)
+        );
+        --matrix-code-surface: var(--surface-code);
+        --matrix-code-text: var(--text-primary);
+
+        width: 100%;
+        margin: var(--space-10) 0;
+        border: 1px solid var(--matrix-border);
+        border-radius: var(--radius-lg);
+        background: var(--matrix-surface);
+        color: var(--matrix-text);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .exchange-permission-audit-matrix__header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: var(--space-6);
+        padding: var(--space-6);
+        border-bottom: 1px solid var(--matrix-border);
+    }
+
+    .exchange-permission-audit-matrix__eyebrow,
+    .exchange-permission-audit-matrix__panel-kicker,
+    .exchange-permission-audit-matrix__label {
+        margin: 0 0 var(--space-1);
+        color: var(--matrix-accent);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-bold);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .exchange-permission-audit-matrix h2 {
+        margin: 0;
+        color: var(--matrix-text);
+        font-size: clamp(1.45rem, 2.6vw, 1.95rem);
+        line-height: var(--line-height-tight);
+    }
+
+    .exchange-permission-audit-matrix__intro {
+        max-width: 800px;
+        margin: var(--space-3) 0 0;
+        color: var(--matrix-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exchange-permission-audit-matrix__status {
+        flex: 0 0 auto;
+        padding: var(--space-2) var(--space-3);
+        border: 1px solid var(--matrix-border-soft);
+        border-radius: var(--radius-pill);
+        background: var(--matrix-surface-soft);
+        color: var(--matrix-muted);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+        white-space: nowrap;
+    }
+
+    .exchange-permission-audit-matrix__layout {
+        display: grid;
+        grid-template-columns: minmax(15rem, 0.72fr) minmax(0, 1.8fr);
+        min-width: 0;
+    }
+
+    .exchange-permission-audit-matrix__tabs {
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid var(--matrix-border);
+        background: var(--matrix-surface-soft);
+    }
+
+    .exchange-permission-audit-matrix__tab {
+        display: grid;
+        grid-template-columns: 2.4rem minmax(0, 1fr);
+        gap: var(--space-3);
+        width: 100%;
+        padding: var(--space-4);
+        border: 0;
+        border-bottom: 1px solid var(--matrix-border-soft);
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+        transition:
+            background-color var(--transition-fast),
+            box-shadow var(--transition-fast);
+    }
+
+    .exchange-permission-audit-matrix__tab:hover {
+        background: var(--matrix-surface-active);
+    }
+
+    .exchange-permission-audit-matrix__tab:focus-visible {
+        outline: 3px solid color-mix(
+            in srgb,
+            var(--matrix-accent) 35%,
+            transparent
+        );
+        outline-offset: -3px;
+    }
+
+    .exchange-permission-audit-matrix__tab.is-active {
+        background: var(--matrix-surface-active);
+        box-shadow: inset 3px 0 0 var(--matrix-accent);
+    }
+
+    .exchange-permission-audit-matrix__number {
+        color: var(--matrix-accent);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-bold);
+        line-height: 1.4;
+    }
+
+    .exchange-permission-audit-matrix__tab-copy strong {
+        display: block;
+        color: var(--matrix-text);
+        font-weight: var(--font-weight-semibold);
+        line-height: 1.35;
+    }
+
+    .exchange-permission-audit-matrix__tab-copy small {
+        display: block;
+        margin-top: var(--space-2);
+        color: var(--matrix-muted);
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-normal);
+    }
+
+    .exchange-permission-audit-matrix__content {
+        min-width: 0;
+    }
+
+    .exchange-permission-audit-matrix__panel {
+        padding: var(--space-6);
+    }
+
+    .exchange-permission-audit-matrix__panel:focus-visible {
+        outline: 3px solid color-mix(
+            in srgb,
+            var(--matrix-accent) 35%,
+            transparent
+        );
+        outline-offset: -3px;
+    }
+
+    .exchange-permission-audit-matrix__panel-heading h3 {
+        margin: 0;
+        max-width: 820px;
+        color: var(--matrix-text);
+        font-size: var(--font-h3);
+        line-height: var(--line-height-tight);
+    }
+
+    .exchange-permission-audit-matrix__facts {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-4);
+        margin-top: var(--space-6);
+    }
+
+    .exchange-permission-audit-matrix__fact {
+        min-width: 0;
+        padding: var(--space-5);
+        border: 1px solid var(--matrix-border-soft);
+        border-radius: var(--radius-md);
+        background: var(--matrix-surface-soft);
+    }
+
+    .exchange-permission-audit-matrix__fact p {
+        margin: var(--space-2) 0 0;
+        color: var(--matrix-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exchange-permission-audit-matrix__commands {
+        margin: var(--space-2) 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .exchange-permission-audit-matrix__commands li + li {
+        margin-top: var(--space-2);
+    }
+
+    .exchange-permission-audit-matrix code {
+        display: block;
+        padding: var(--space-2) var(--space-3);
+        border: 1px solid var(--matrix-border-soft);
+        border-radius: var(--radius-sm);
+        background: var(--matrix-code-surface);
+        color: var(--matrix-code-text) !important;
+        font-family: var(--font-family-code);
+        font-size: var(--font-size-xs);
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+    }
+
+    .exchange-permission-audit-matrix__review {
+        margin-top: var(--space-4);
+        padding: var(--space-5);
+        border: 1px solid var(--matrix-border);
+        border-radius: var(--radius-md);
+        background: var(--matrix-surface);
+    }
+
+    .exchange-permission-audit-matrix__review p {
+        margin: var(--space-2) 0 0;
+        color: var(--matrix-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exchange-permission-audit-matrix__footer {
+        padding: var(--space-4) var(--space-6);
+        border-top: 1px solid var(--matrix-border);
+        background: var(--matrix-surface-soft);
+        color: var(--matrix-muted);
+        line-height: var(--line-height-relaxed);
+    }
+
+    .exchange-permission-audit-matrix__footer strong {
+        color: var(--matrix-text);
+    }
+
+    @media (max-width: 820px) {
+        .exchange-permission-audit-matrix__header {
+            flex-direction: column;
+        }
+
+        .exchange-permission-audit-matrix__layout {
+            grid-template-columns: 1fr;
+        }
+
+        .exchange-permission-audit-matrix__tabs {
+            flex-direction: row;
+            overflow-x: auto;
+            border-right: 0;
+            border-bottom: 1px solid var(--matrix-border);
+            scrollbar-width: thin;
+        }
+
+        .exchange-permission-audit-matrix__tab {
+            flex: 0 0 auto;
+            min-width: 11rem;
+            grid-template-columns: 2rem minmax(0, 1fr);
+            border-right: 1px solid var(--matrix-border-soft);
+            border-bottom: 0;
+        }
+
+        .exchange-permission-audit-matrix__tab.is-active {
+            box-shadow: inset 0 -3px 0 var(--matrix-accent);
+        }
+    }
+
+    @media (max-width: 620px) {
+        .exchange-permission-audit-matrix__header,
+        .exchange-permission-audit-matrix__panel {
+            padding: var(--space-4);
+        }
+
+        .exchange-permission-audit-matrix__facts {
+            grid-template-columns: 1fr;
+        }
+
+        .exchange-permission-audit-matrix__tab {
+            min-width: 10rem;
+            padding: var(--space-3);
+        }
+
+        .exchange-permission-audit-matrix__tab-copy small {
+            display: none;
+        }
+
+        .exchange-permission-audit-matrix__footer {
+            padding: var(--space-4);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .exchange-permission-audit-matrix__tab {
+            transition: none;
+        }
+    }
+</style>

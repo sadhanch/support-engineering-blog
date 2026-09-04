@@ -1,0 +1,553 @@
+---
+export interface Props {
+  id?: string;
+}
+
+const { id = "exchange-permission-review-workflow" } = Astro.props;
+
+const stages = [
+  {
+    id: "unreviewed",
+    label: "Unreviewed",
+    tone: "neutral",
+    meaning: "Evidence has been collected but no accountable reviewer has made a decision.",
+    action: "Route the finding to the appropriate control owner with enough context to review it.",
+    evidence: "Normalized entitlement, source reference, evidence date, target and trustee identity.",
+  },
+  {
+    id: "pending-owner",
+    label: "Pending Owner",
+    tone: "info",
+    meaning: "The business or resource owner needs to confirm whether the access is required.",
+    action: "Obtain a documented business-purpose decision and identify the accountable owner.",
+    evidence: "Owner, decision reason, ticket or review record, and supporting entitlement evidence.",
+  },
+  {
+    id: "approved",
+    label: "Approved",
+    tone: "success",
+    meaning: "The entitlement is justified and accepted within the current control boundary.",
+    action: "Retain the decision and establish the next review date.",
+    evidence: "Reviewer, decision date, reason, owner, evidence links, and next review date.",
+  },
+  {
+    id: "exception",
+    label: "Approved Exception",
+    tone: "warning",
+    meaning: "The access remains outside the preferred baseline but has documented compensating controls and an expiry.",
+    action: "Record the exception, controls, owner and expiry; review it before the exception expires.",
+    evidence: "Exception reference, compensating controls, approval, expiry date and next review date.",
+  },
+  {
+    id: "remediate",
+    label: "Remediate",
+    tone: "danger",
+    meaning: "The review decision requires the entitlement or its scope to change.",
+    action: "Remove, narrow, expire, resolve or otherwise correct the access through an authorized change.",
+    evidence: "Decision, remediation ticket, approved change, before-state evidence and planned action.",
+  },
+  {
+    id: "in-progress",
+    label: "Remediation In Progress",
+    tone: "warning",
+    meaning: "An approved access change is actively being performed or automated.",
+    action: "Track the change to completion and do not treat the finding as closed yet.",
+    evidence: "Change record, operator or automation identity, timestamps, and execution result.",
+  },
+  {
+    id: "removed",
+    label: "Removed",
+    tone: "success",
+    meaning: "Post-change evidence confirms that the unwanted entitlement is no longer present.",
+    action: "Retain before/after evidence and close the finding when validation is complete.",
+    evidence: "Post-change collection, before/after comparison, validation timestamp and closure decision.",
+  },
+  {
+    id: "rejected",
+    label: "Rejected",
+    tone: "danger",
+    meaning: "The access is not approved, or the evidence supplied is insufficient to justify it.",
+    action: "Resolve the evidence gap or proceed through the remediation path according to policy.",
+    evidence: "Reviewer decision, reason, evidence gap or remediation reference.",
+  },
+  {
+    id: "unresolved",
+    label: "Unresolved",
+    tone: "warning",
+    meaning: "Identity, scope or evidence is not yet sufficient to establish a defensible decision.",
+    action: "Preserve the raw identifier, investigate identity and scope, and document the resolution state.",
+    evidence: "Raw trustee identifier, resolution attempts, target sensitivity, inheritance or Deny context.",
+  },
+  {
+    id: "expired",
+    label: "Expired",
+    tone: "danger",
+    meaning: "A previous approval or exception is no longer valid.",
+    action: "Re-review the entitlement; do not allow an expired decision to become an implicit approval.",
+    evidence: "Previous decision, expiry date, current entitlement and new review outcome.",
+  },
+];
+
+const statusById = Object.fromEntries(stages.map((stage) => [stage.id, stage]));
+---
+
+<section
+  class="review-workflow"
+  id={id}
+  aria-labelledby={`${id}-title`}
+>
+  <div class="review-workflow__header">
+    <div>
+      <p class="review-workflow__eyebrow">Review lifecycle</p>
+      <h3 id={`${id}-title`}>Turn findings into accountable decisions</h3>
+      <p class="review-workflow__intro">
+        Select a review state to see what it means, what action follows, and
+        what evidence should support the decision.
+      </p>
+    </div>
+  </div>
+
+  <div class="review-workflow__layout">
+    <nav class="review-workflow__states" aria-label="Permission review states">
+      <div class="review-workflow__state-list" role="tablist" aria-orientation="vertical">
+        {
+          stages.map((stage, index) => (
+            <button
+              type="button"
+              class:list={[
+                "review-workflow__state",
+                `review-workflow__state--${stage.tone}`,
+                { "is-active": index === 0 },
+              ]}
+              id={`${id}-tab-${stage.id}`}
+              role="tab"
+              aria-selected={index === 0 ? "true" : "false"}
+              aria-controls={`${id}-panel-${stage.id}`}
+              tabindex={index === 0 ? "0" : "-1"}
+              data-state={stage.id}
+            >
+              <span class="review-workflow__state-marker" aria-hidden="true"></span>
+              <span class="review-workflow__state-label">{stage.label}</span>
+            </button>
+          ))
+        }
+      </div>
+    </nav>
+
+    <div class="review-workflow__detail">
+      {
+        stages.map((stage, index) => (
+          <article
+            class:list={[
+              "review-workflow__panel",
+              { "is-active": index === 0 },
+            ]}
+            id={`${id}-panel-${stage.id}`}
+            role="tabpanel"
+            aria-labelledby={`${id}-tab-${stage.id}`}
+            tabindex="0"
+            hidden={index !== 0}
+            data-panel={stage.id}
+          >
+            <div class="review-workflow__panel-heading">
+              <span class:list={["review-workflow__badge", `review-workflow__badge--${stage.tone}`]}>
+                {stage.label}
+              </span>
+              <span class="review-workflow__step">
+                {String(index + 1).padStart(2, "0")} / {String(stages.length).padStart(2, "0")}
+              </span>
+            </div>
+
+            <div class="review-workflow__content">
+              <div>
+                <h4>What it means</h4>
+                <p>{stage.meaning}</p>
+              </div>
+
+              <div>
+                <h4>Next action</h4>
+                <p>{stage.action}</p>
+              </div>
+
+              <div>
+                <h4>Evidence to retain</h4>
+                <p>{stage.evidence}</p>
+              </div>
+            </div>
+
+            <div class="review-workflow__principle">
+              <strong>Control principle</strong>
+              <span>
+                A review state is not complete until the decision and its
+                supporting evidence can be traced back to the entitlement.
+              </span>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="review-workflow__footer">
+    <div class="review-workflow__loop" aria-label="Remediation closes only after post-change validation">
+      <span>Decision</span>
+      <span aria-hidden="true">→</span>
+      <span>Authorized change</span>
+      <span aria-hidden="true">→</span>
+      <span>Re-collect</span>
+      <span aria-hidden="true">→</span>
+      <span>Validate</span>
+      <span aria-hidden="true">→</span>
+      <span>Retain evidence</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>(".review-workflow");
+
+  roots.forEach((root) => {
+    const tabs = Array.from(
+      root.querySelectorAll<HTMLButtonElement>('[role="tab"]')
+    );
+    const panels = Array.from(
+      root.querySelectorAll<HTMLElement>('[role="tabpanel"]')
+    );
+
+    const activate = (index: number, moveFocus = false) => {
+      tabs.forEach((tab, tabIndex) => {
+        const active = tabIndex === index;
+        tab.classList.toggle("is-active", active);
+        tab.setAttribute("aria-selected", String(active));
+        tab.tabIndex = active ? 0 : -1;
+      });
+
+      panels.forEach((panel, panelIndex) => {
+        const active = panelIndex === index;
+        panel.classList.toggle("is-active", active);
+        panel.hidden = !active;
+      });
+
+      if (moveFocus) {
+        tabs[index]?.focus();
+      }
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => activate(index));
+
+      tab.addEventListener("keydown", (event) => {
+        let nextIndex = index;
+
+        if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+          nextIndex = (index + 1) % tabs.length;
+        } else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+          nextIndex = (index - 1 + tabs.length) % tabs.length;
+        } else if (event.key === "Home") {
+          nextIndex = 0;
+        } else if (event.key === "End") {
+          nextIndex = tabs.length - 1;
+        } else {
+          return;
+        }
+
+        event.preventDefault();
+        activate(nextIndex, true);
+      });
+    });
+  });
+</script>
+
+<style>
+  .review-workflow {
+    --review-border: var(--border-subtle);
+    --review-surface: var(--surface-secondary);
+    --review-surface-raised: var(--surface-primary);
+    --review-text: var(--text-primary);
+    --review-muted: var(--text-secondary);
+    --review-accent: var(--color-accent);
+
+    margin-block: var(--space-7);
+    padding: var(--space-6);
+    border: 1px solid var(--review-border);
+    border-radius: var(--radius-lg);
+    background: var(--review-surface);
+  }
+
+  .review-workflow__header {
+    margin-block-end: var(--space-5);
+  }
+
+  .review-workflow__eyebrow {
+    margin: 0 0 var(--space-2);
+    color: var(--review-accent);
+    font-size: var(--font-overline);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .review-workflow h3 {
+    margin: 0;
+    color: var(--text-heading);
+    font-size: var(--font-h3);
+    line-height: var(--line-height-tight);
+  }
+
+  .review-workflow__intro {
+    max-width: var(--measure-content);
+    margin: var(--space-3) 0 0;
+    color: var(--review-muted);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .review-workflow__layout {
+    display: grid;
+    grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+
+  .review-workflow__states {
+    min-width: 0;
+  }
+
+  .review-workflow__state-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .review-workflow__state {
+    display: grid;
+    grid-template-columns: 0.5rem minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: 2.75rem;
+    padding: var(--space-3) var(--space-3);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--review-muted);
+    font: inherit;
+    font-size: var(--font-caption);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-tight);
+    text-align: start;
+    cursor: pointer;
+    transition:
+      background var(--transition-fast),
+      border-color var(--transition-fast),
+      color var(--transition-fast);
+  }
+
+  .review-workflow__state:hover {
+    border-color: var(--review-border);
+    background: var(--review-surface-raised);
+    color: var(--review-text);
+  }
+
+  .review-workflow__state:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--focus-ring) 30%, transparent);
+    outline-offset: 2px;
+  }
+
+  .review-workflow__state.is-active {
+    border-color: var(--border-accent);
+    background: var(--surface-accent-subtle);
+    color: var(--review-text);
+  }
+
+  .review-workflow__state-marker {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: var(--radius-round);
+    background: var(--text-tertiary);
+  }
+
+  .review-workflow__state--info .review-workflow__state-marker {
+    background: var(--color-accent);
+  }
+
+  .review-workflow__state--success .review-workflow__state-marker {
+    background: var(--color-success);
+  }
+
+  .review-workflow__state--warning .review-workflow__state-marker {
+    background: var(--color-warning);
+  }
+
+  .review-workflow__state--danger .review-workflow__state-marker {
+    background: var(--color-danger);
+  }
+
+  .review-workflow__detail {
+    min-width: 0;
+  }
+
+  .review-workflow__panel {
+    min-height: 100%;
+    padding: var(--space-6);
+    border: 1px solid var(--review-border);
+    border-radius: var(--radius-lg);
+    background: var(--review-surface-raised);
+  }
+
+  .review-workflow__panel:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--focus-ring) 30%, transparent);
+    outline-offset: 3px;
+  }
+
+  .review-workflow__panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-block-end: var(--space-5);
+  }
+
+  .review-workflow__badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.75rem;
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--review-border);
+    border-radius: var(--radius-pill);
+    color: var(--review-text);
+    font-size: var(--font-overline);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .review-workflow__badge--info {
+    border-color: var(--border-accent);
+  }
+
+  .review-workflow__badge--success {
+    border-color: var(--color-success);
+  }
+
+  .review-workflow__badge--warning {
+    border-color: var(--color-warning);
+  }
+
+  .review-workflow__badge--danger {
+    border-color: var(--color-danger);
+  }
+
+  .review-workflow__step {
+    color: var(--text-tertiary);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-overline);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .review-workflow__content {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .review-workflow__content > div {
+    padding-block-end: var(--space-5);
+    border-block-end: 1px solid var(--review-border);
+  }
+
+  .review-workflow__content > div:last-child {
+    padding-block-end: 0;
+    border-block-end: 0;
+  }
+
+  .review-workflow h4 {
+    margin: 0 0 var(--space-2);
+    color: var(--text-heading);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+  }
+
+  .review-workflow__content p {
+    margin: 0;
+    color: var(--review-muted);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .review-workflow__principle {
+    display: grid;
+    gap: var(--space-2);
+    margin-block-start: var(--space-5);
+    padding: var(--space-4);
+    border-inline-start: 3px solid var(--border-accent);
+    background: var(--surface-accent-subtle);
+    color: var(--review-muted);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .review-workflow__principle strong {
+    color: var(--review-text);
+    font-size: var(--font-caption);
+  }
+
+  .review-workflow__footer {
+    margin-block-start: var(--space-5);
+    overflow-x: auto;
+  }
+
+  .review-workflow__loop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    min-width: max-content;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--review-border);
+    border-radius: var(--radius-md);
+    color: var(--review-muted);
+    font-size: var(--font-overline);
+    white-space: nowrap;
+  }
+
+  .review-workflow__loop span:nth-child(even) {
+    color: var(--review-accent);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  @media (max-width: 768px) {
+    .review-workflow {
+      padding: var(--space-5);
+    }
+
+    .review-workflow__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .review-workflow__state-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-2);
+    }
+
+    .review-workflow__state {
+      min-height: 3rem;
+    }
+
+    .review-workflow__panel {
+      padding: var(--space-5);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .review-workflow__state-list {
+      grid-template-columns: 1fr;
+    }
+
+    .review-workflow__panel-heading {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .review-workflow__state {
+      transition: none;
+    }
+  }
+</style>

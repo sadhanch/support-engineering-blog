@@ -1,0 +1,780 @@
+---
+/* ==========================================================
+   Support Engineering Blog — Exchange Permission Normalization Viewer
+   Purpose:
+   Demonstrates how a source permission record becomes a canonical
+   entitlement, then an enriched/effective view without discarding
+   the authoritative source grant.
+   ========================================================== */
+
+interface Props {
+  id?: string;
+}
+
+const { id = "exchange-permission-normalization" } = Astro.props;
+
+const views = [
+  {
+    id: "raw",
+    label: "Raw Evidence",
+    shortLabel: "Raw",
+    description: "Preserve the source object exactly as collected.",
+  },
+  {
+    id: "canonical",
+    label: "Canonical Record",
+    shortLabel: "Canonical",
+    description: "Map the source into one atomic entitlement row.",
+  },
+  {
+    id: "effective",
+    label: "Effective Access",
+    shortLabel: "Effective",
+    description: "Derive access through group membership and context.",
+  },
+  {
+    id: "review",
+    label: "Review View",
+    shortLabel: "Review",
+    description: "Turn the evidence into an accountable review record.",
+  },
+];
+---
+
+<section
+  class="epnv"
+  id={id}
+  data-epnv
+  aria-labelledby={`${id}-title`}
+>
+  <header class="epnv__header">
+    <div>
+      <p class="epnv__eyebrow">Permission normalization</p>
+      <h3 id={`${id}-title`}>From source evidence to an auditable access view</h3>
+      <p class="epnv__intro">
+        Follow one Exchange permission through collection, normalization,
+        identity enrichment, effective-access analysis, and review. The
+        original grant remains authoritative throughout the process.
+      </p>
+    </div>
+    <span class="epnv__badge" aria-live="polite" data-current-label>
+      Raw Evidence
+    </span>
+  </header>
+
+  <div class="epnv__tabs" role="tablist" aria-label="Normalization stages">
+    {views.map((view, index) => (
+      <button
+        type="button"
+        class="epnv__tab"
+        id={`${id}-tab-${view.id}`}
+        role="tab"
+        aria-selected={index === 0 ? "true" : "false"}
+        aria-controls={`${id}-panel-${view.id}`}
+        tabindex={index === 0 ? 0 : -1}
+        data-view={view.id}
+      >
+        <span class="epnv__tab-number" aria-hidden="true">{index + 1}</span>
+        <span>
+          <strong>{view.label}</strong>
+          <small>{view.description}</small>
+        </span>
+      </button>
+    ))}
+  </div>
+
+  <div class="epnv__content">
+    <div
+      class="epnv__panel"
+      id={`${id}-panel-raw`}
+      role="tabpanel"
+      aria-labelledby={`${id}-tab-raw`}
+      tabindex="0"
+      data-panel="raw"
+    >
+      <div class="epnv__panel-heading">
+        <div>
+          <p class="epnv__overline">Authoritative source</p>
+          <h4>Raw <code>Get-MailboxPermission</code> record</h4>
+        </div>
+        <span class="epnv__source">MailboxPermission</span>
+      </div>
+
+      <div class="epnv__grid epnv__grid--raw">
+        <pre class="epnv__code" aria-label="Example raw mailbox permission record"><code>{`{
+  "Identity": "finance@contoso.com",
+  "User": "CONTOSO\\Finance Operators",
+  "AccessRights": ["FullAccess"],
+  "IsInherited": false,
+  "Deny": false,
+  "InheritanceType": "All",
+  "ObjectType": "Group"
+}`}</code></pre>
+
+        <div class="epnv__notes">
+          <article>
+            <strong>Do not normalize away</strong>
+            <p>Inheritance, Deny, source identifiers, and source-specific semantics remain available for later analysis.</p>
+          </article>
+          <article>
+            <strong>Keep lineage</strong>
+            <p>The source record must remain traceable to its collection run, command, timestamp, and raw evidence.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="epnv__panel"
+      id={`${id}-panel-canonical`}
+      role="tabpanel"
+      aria-labelledby={`${id}-tab-canonical`}
+      tabindex="0"
+      data-panel="canonical"
+      hidden
+    >
+      <div class="epnv__panel-heading">
+        <div>
+          <p class="epnv__overline">Analysis layer</p>
+          <h4>One atomic canonical entitlement</h4>
+        </div>
+        <span class="epnv__source">Canonical model</span>
+      </div>
+
+      <div class="epnv__grid epnv__grid--canonical">
+        <div class="epnv__record" aria-label="Canonical permission record">
+          <div class="epnv__record-row"><span>Target</span><strong>finance@contoso.com</strong></div>
+          <div class="epnv__record-row"><span>TargetType</span><strong>Mailbox</strong></div>
+          <div class="epnv__record-row"><span>PermissionType</span><strong>FullAccess</strong></div>
+          <div class="epnv__record-row"><span>Trustee</span><strong>Finance Operators</strong></div>
+          <div class="epnv__record-row"><span>TrusteeType</span><strong>Group</strong></div>
+          <div class="epnv__record-row"><span>Inherited</span><strong>False</strong></div>
+          <div class="epnv__record-row"><span>Deny</span><strong>False</strong></div>
+          <div class="epnv__record-row"><span>Source</span><strong>MailboxPermission</strong></div>
+          <div class="epnv__record-row"><span>Scope</span><strong>Direct grant</strong></div>
+          <div class="epnv__record-row"><span>ReviewStatus</span><strong>Unreviewed</strong></div>
+          <div class="epnv__record-row"><span>EvidenceDate</span><strong>2026-08-28</strong></div>
+        </div>
+
+        <div class="epnv__notes">
+          <article class="epnv__principle">
+            <strong>One source record can produce one or more atomic rows.</strong>
+            <p>The canonical model is an interchange and analysis layer, not a replacement for the raw source.</p>
+          </article>
+          <article>
+            <strong>Source semantics stay visible</strong>
+            <p>Use <code>Source</code>, <code>Inherited</code>, <code>Deny</code>, and extension data to preserve distinctions that do not fit a universal permission field.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="epnv__panel"
+      id={`${id}-panel-effective`}
+      role="tabpanel"
+      aria-labelledby={`${id}-tab-effective`}
+      tabindex="0"
+      data-panel="effective"
+      hidden
+    >
+      <div class="epnv__panel-heading">
+        <div>
+          <p class="epnv__overline">Derived view</p>
+          <h4>Configured grant → effective access</h4>
+        </div>
+        <span class="epnv__source">Computed view</span>
+      </div>
+
+      <div class="epnv__effective-flow">
+        <div class="epnv__effective-card">
+          <span class="epnv__label">Configured entitlement</span>
+          <strong>Finance Operators</strong>
+          <small>FullAccess → finance@contoso.com</small>
+        </div>
+        <span class="epnv__arrow" aria-hidden="true">→</span>
+        <div class="epnv__effective-card">
+          <span class="epnv__label">Identity enrichment</span>
+          <strong>Group membership</strong>
+          <small>Resolve current members and retain group lineage</small>
+        </div>
+        <span class="epnv__arrow" aria-hidden="true">→</span>
+        <div class="epnv__effective-card epnv__effective-card--result">
+          <span class="epnv__label">Effective view</span>
+          <strong>Alex Wilber</strong>
+          <small>FullAccess via Finance Operators</small>
+        </div>
+      </div>
+
+      <div class="epnv__warning">
+        <strong>Configured access is still the authoritative grant.</strong>
+        <span>
+          Derived member rows explain effective access; they must not replace the original group assignment. Effective results should also retain computation date and ruleset because membership, inheritance, Deny, and scope can change.
+        </span>
+      </div>
+    </div>
+
+    <div
+      class="epnv__panel"
+      id={`${id}-panel-review`}
+      role="tabpanel"
+      aria-labelledby={`${id}-tab-review`}
+      tabindex="0"
+      data-panel="review"
+      hidden
+    >
+      <div class="epnv__panel-heading">
+        <div>
+          <p class="epnv__overline">Governance view</p>
+          <h4>Evidence becomes a reviewable finding</h4>
+        </div>
+        <span class="epnv__source">Review record</span>
+      </div>
+
+      <div class="epnv__review-grid">
+        <div class="epnv__review-main">
+          <div class="epnv__finding-header">
+            <div>
+              <span class="epnv__label">Finding</span>
+              <strong>Full Access to finance@contoso.com</strong>
+            </div>
+            <span class="epnv__status">Pending Owner</span>
+          </div>
+          <dl>
+            <div><dt>Trustee</dt><dd>Finance Operators (Group)</dd></div>
+            <div><dt>Source</dt><dd>MailboxPermission</dd></div>
+            <div><dt>Effective access</dt><dd>Derived from group membership</dd></div>
+            <div><dt>Evidence</dt><dd>Raw record + normalized row + identity lineage</dd></div>
+          </dl>
+        </div>
+        <div class="epnv__review-side">
+          <strong>Next evidence</strong>
+          <ul>
+            <li>Owner decision and reason</li>
+            <li>Ticket or exception reference</li>
+            <li>Expiry / next review date</li>
+            <li>Post-change collection if remediated</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="epnv__footer">
+    <strong>Audit principle</strong>
+    <span>Normalize for analysis. Preserve raw evidence. Keep configured and effective access distinct.</span>
+  </footer>
+</section>
+
+<script define:vars={{ id }}>
+  const root = document.getElementById(id);
+
+  if (root) {
+    const tabs = Array.from(root.querySelectorAll('[role="tab"]'));
+    const panels = Array.from(root.querySelectorAll('[role="tabpanel"]'));
+    const currentLabel = root.querySelector('[data-current-label]');
+
+    const activate = (tab, moveFocus = false) => {
+      const view = tab.dataset.view;
+
+      tabs.forEach((item) => {
+        const selected = item === tab;
+        item.setAttribute('aria-selected', String(selected));
+        item.tabIndex = selected ? 0 : -1;
+      });
+
+      panels.forEach((panel) => {
+        const active = panel.dataset.panel === view;
+        panel.hidden = !active;
+      });
+
+      if (currentLabel) {
+        currentLabel.textContent = tab.querySelector('strong')?.textContent || '';
+      }
+
+      if (moveFocus) tab.focus();
+    };
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => activate(tab));
+
+      tab.addEventListener('keydown', (event) => {
+        let nextIndex = index;
+
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+          nextIndex = (index + 1) % tabs.length;
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+          nextIndex = (index - 1 + tabs.length) % tabs.length;
+        } else if (event.key === 'Home') {
+          nextIndex = 0;
+        } else if (event.key === 'End') {
+          nextIndex = tabs.length - 1;
+        } else {
+          return;
+        }
+
+        event.preventDefault();
+        activate(tabs[nextIndex], true);
+      });
+    });
+  }
+</script>
+
+<style>
+  .epnv {
+    --epnv-panel-padding: var(--space-5);
+    --epnv-gap: var(--space-4);
+    --epnv-control-surface: var(--surface-accent-subtle);
+    --epnv-control-surface-active: var(--surface-accent-muted);
+    --epnv-control-border: var(--border-default);
+    --epnv-control-border-active: var(--border-accent);
+
+    margin-block: var(--space-7);
+    padding: var(--space-6);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    background: var(--surface-primary);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .epnv__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-5);
+    margin-bottom: var(--space-5);
+  }
+
+  .epnv__eyebrow,
+  .epnv__overline,
+  .epnv__label {
+    margin: 0 0 var(--space-2);
+    color: var(--text-secondary);
+    font-size: var(--font-overline);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .epnv h3,
+  .epnv h4 {
+    margin: 0;
+    color: var(--text-heading);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+  }
+
+  .epnv h3 {
+    font-size: var(--font-h3);
+  }
+
+  .epnv h4 {
+    font-size: var(--font-size-lg);
+  }
+
+  .epnv__intro {
+    max-width: var(--measure-wide);
+    margin: var(--space-3) 0 0;
+    color: var(--text-secondary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .epnv__badge,
+  .epnv__source,
+  .epnv__status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border-accent);
+    border-radius: var(--radius-pill);
+    background: var(--surface-accent-subtle);
+    color: var(--text-heading);
+    font-size: var(--font-caption);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .epnv__tabs {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .epnv__tab {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    min-width: 0;
+    padding: var(--space-3);
+    border: 1px solid var(--epnv-control-border);
+    border-radius: var(--radius-md);
+    background: var(--surface-secondary);
+    color: var(--text-primary);
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background var(--transition-fast),
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  .epnv__tab:hover {
+    border-color: var(--epnv-control-border-active);
+    background: var(--epnv-control-surface);
+  }
+
+  .epnv__tab[aria-selected="true"] {
+    border-color: var(--epnv-control-border-active);
+    background: var(--epnv-control-surface-active);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .epnv__tab:focus-visible,
+  .epnv__panel:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+
+  .epnv__tab-number {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--radius-round);
+    background: var(--surface-primary);
+    border: 1px solid var(--border-default);
+    color: var(--text-heading);
+    font-size: var(--font-caption);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .epnv__tab strong {
+    display: block;
+    color: var(--text-primary);
+    font-size: var(--font-caption);
+    line-height: var(--line-height-tight);
+  }
+
+  .epnv__tab small {
+    display: block;
+    margin-top: var(--space-1);
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .epnv__content {
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    background: var(--surface-secondary);
+    overflow: hidden;
+  }
+
+  .epnv__panel {
+    padding: var(--epnv-panel-padding);
+  }
+
+  .epnv__panel-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .epnv__grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .epnv__grid--raw,
+  .epnv__grid--canonical {
+    grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.65fr);
+  }
+
+  .epnv__code {
+    min-width: 0;
+    margin: 0;
+    padding: var(--space-4);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    background: var(--surface-code);
+    color: var(--text-code);
+    overflow-x: auto;
+    font-family: var(--font-family-code);
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .epnv__code code {
+    font-family: inherit;
+  }
+
+  .epnv__notes {
+    display: grid;
+    align-content: start;
+    gap: var(--space-3);
+  }
+
+  .epnv__notes article {
+    padding: var(--space-4);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    background: var(--surface-primary);
+  }
+
+  .epnv__notes strong,
+  .epnv__review-main strong,
+  .epnv__review-side strong,
+  .epnv__effective-card strong {
+    color: var(--text-heading);
+  }
+
+  .epnv__notes p {
+    margin: var(--space-2) 0 0;
+    color: var(--text-secondary);
+    font-size: var(--font-caption);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .epnv__notes code,
+  .epnv__record code {
+    font-family: var(--font-family-code);
+  }
+
+  .epnv__principle {
+    border-inline-start: 4px solid var(--border-accent) !important;
+  }
+
+  .epnv__record {
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    background: var(--surface-primary);
+    overflow: hidden;
+  }
+
+  .epnv__record-row {
+    display: grid;
+    grid-template-columns: minmax(7rem, 0.55fr) minmax(0, 1fr);
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .epnv__record-row:last-child {
+    border-bottom: 0;
+  }
+
+  .epnv__record-row span {
+    color: var(--text-secondary);
+    font-family: var(--font-family-code);
+    font-size: var(--font-size-xs);
+  }
+
+  .epnv__record-row strong {
+    color: var(--text-primary);
+    font-family: var(--font-family-code);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    overflow-wrap: anywhere;
+  }
+
+  .epnv__effective-flow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .epnv__effective-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    padding: var(--space-4);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    background: var(--surface-primary);
+  }
+
+  .epnv__effective-card--result {
+    border-color: var(--border-accent);
+    background: var(--surface-accent-subtle);
+  }
+
+  .epnv__effective-card small {
+    margin-top: var(--space-2);
+    color: var(--text-secondary);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .epnv__arrow {
+    align-self: center;
+    color: var(--text-tertiary);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .epnv__warning {
+    display: grid;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    padding: var(--space-4);
+    border-inline-start: 4px solid var(--border-accent);
+    border-radius: var(--radius-sm);
+    background: var(--surface-primary);
+  }
+
+  .epnv__warning span {
+    color: var(--text-secondary);
+    font-size: var(--font-caption);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .epnv__review-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 0.6fr);
+    gap: var(--space-4);
+  }
+
+  .epnv__review-main,
+  .epnv__review-side {
+    padding: var(--space-4);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    background: var(--surface-primary);
+  }
+
+  .epnv__finding-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .epnv__finding-header strong {
+    display: block;
+  }
+
+  .epnv__status {
+    border-color: var(--border-default);
+    background: var(--surface-secondary);
+    color: var(--text-secondary);
+  }
+
+  .epnv__review-main dl {
+    display: grid;
+    gap: 0;
+    margin: var(--space-3) 0 0;
+  }
+
+  .epnv__review-main dl > div {
+    display: grid;
+    grid-template-columns: minmax(8rem, 0.45fr) minmax(0, 1fr);
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .epnv__review-main dl > div:last-child {
+    border-bottom: 0;
+  }
+
+  .epnv__review-main dt {
+    color: var(--text-secondary);
+    font-size: var(--font-caption);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .epnv__review-main dd {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: var(--font-caption);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .epnv__review-side ul {
+    display: grid;
+    gap: var(--space-2);
+    margin: var(--space-3) 0 0;
+    padding-inline-start: var(--space-5);
+    color: var(--text-secondary);
+    font-size: var(--font-caption);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .epnv__footer {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-default);
+    color: var(--text-secondary);
+    font-size: var(--font-caption);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .epnv__footer strong {
+    color: var(--text-heading);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 1024px) {
+    .epnv__tabs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .epnv__grid--raw,
+    .epnv__grid--canonical,
+    .epnv__review-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .epnv {
+      padding: var(--space-5);
+    }
+
+    .epnv__header,
+    .epnv__panel-heading,
+    .epnv__finding-header,
+    .epnv__footer {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .epnv__tabs {
+      display: flex;
+      overflow-x: auto;
+      gap: var(--space-2);
+      padding-bottom: var(--space-2);
+      scrollbar-width: thin;
+    }
+
+    .epnv__tab {
+      flex: 0 0 min(15rem, 78vw);
+    }
+
+    .epnv__effective-flow {
+      grid-template-columns: 1fr;
+    }
+
+    .epnv__arrow {
+      justify-self: center;
+      transform: rotate(90deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .epnv__tab {
+      transition: none;
+    }
+  }
+</style>
