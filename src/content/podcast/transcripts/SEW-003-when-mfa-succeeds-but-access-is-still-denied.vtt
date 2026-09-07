@@ -1,0 +1,1803 @@
+WEBVTT
+
+00:00:00.270 --> 00:00:03.600
+You are listening to
+Support Engineering Weekly.
+
+00:00:05.060 --> 00:00:08.959
+So start with a scenario that,
+you know, pretty much every IT
+
+00:00:09.329 --> 00:00:12.549
+administrator listening to this has
+probably faced at least once this week.
+
+00:00:12.629 --> 00:00:14.439
+Oh yeah, the dreaded all caps ticket.
+
+00:00:14.479 --> 00:00:15.159
+Exactly.
+
+00:00:15.329 --> 00:00:18.020
+You open your ticketing queue,
+and there's this high priority
+
+00:00:18.020 --> 00:00:19.409
+ticket just staring at you.
+
+00:00:19.950 --> 00:00:25.010
+The user is practically shouting,
+insisting like, "My MFA worked. I hit
+
+00:00:25.010 --> 00:00:28.580
+approve on my phone. I saw the green
+check mark." But then you pull up the
+
+00:00:28.580 --> 00:00:30.589
+Microsoft Entra sign-in logs, right?
+
+00:00:30.590 --> 00:00:30.760
+Right.
+
+00:00:30.789 --> 00:00:33.699
+And the system is just staring
+right back at you with this giant
+
+00:00:33.950 --> 00:00:36.480
+uncompromising red access denied.
+
+00:00:36.740 --> 00:00:40.159
+Which is just the worst because
+you assume the user is either
+
+00:00:40.159 --> 00:00:42.470
+lying or, well, deeply confused.
+
+00:00:42.509 --> 00:00:45.429
+And the user assumes IT
+is just completely broken.
+
+00:00:45.489 --> 00:00:45.769
+Yeah.
+
+00:00:46.229 --> 00:00:49.959
+But the wild part of this entire
+standoff is that, uh, both of you are
+
+00:00:49.959 --> 00:00:51.479
+actually telling the absolute truth.
+
+00:00:51.619 --> 00:00:53.519
+It's the ultimate IT stalemate.
+
+00:00:53.589 --> 00:00:56.930
+The user genuinely did complete
+the multi-factor authentication
+
+00:00:56.939 --> 00:01:00.469
+challenge, and the system genuinely
+did slam the door in their face.
+
+00:01:00.569 --> 00:01:04.159
+There's zero contradiction there,
+even though it like structurally
+
+00:01:04.159 --> 00:01:05.789
+feels like reality is bending.
+
+00:01:06.260 --> 00:01:06.590
+Yeah.
+
+00:01:06.590 --> 00:01:11.630
+And we see this mismatch drive
+help desks absolutely crazy, mostly
+
+00:01:11.630 --> 00:01:15.079
+because they're operating under a
+fundamental misunderstanding of what
+
+00:01:15.089 --> 00:01:17.339
+that MFA prompt actually represents.
+
+00:01:17.760 --> 00:01:18.840
+By the way, I'm Alex.
+
+00:01:18.849 --> 00:01:19.559
+And I'm Maya.
+
+00:01:19.709 --> 00:01:23.009
+And we wanna explicitly thank you
+for joining us on this deep dive.
+
+00:01:23.159 --> 00:01:28.310
+Today, we are tearing into the Microsoft
+Entra conditional access architecture.
+
+00:01:28.669 --> 00:01:33.190
+We really need to unpack exactly
+why MFA success is emphatically
+
+00:01:33.190 --> 00:01:35.170
+not the final access decision.
+
+00:01:35.199 --> 00:01:35.509
+Right.
+
+00:01:35.519 --> 00:01:39.580
+So our mission today is to equip you with
+an evidence-first troubleshooting model.
+
+00:01:40.059 --> 00:01:43.630
+We want you to stop guessing,
+identify the exact failing requirement
+
+00:01:43.639 --> 00:01:46.839
+in your logs, and, you know,
+avoid accidentally weakening your
+
+00:01:46.839 --> 00:01:48.489
+organization's security posture.
+
+00:01:48.499 --> 00:01:50.429
+Just to get a loud VIP off your back.
+
+00:01:50.439 --> 00:01:52.159
+Which is a temptation
+we've all felt, right?
+
+00:01:52.449 --> 00:01:56.029
+The pressure mounts, the user is locked
+out, and the admin just temporarily
+
+00:01:56.029 --> 00:01:57.509
+disables the security policy.
+
+00:01:57.619 --> 00:02:02.309
+Because they misdiagnose the problem as
+a broken MFA issue, when in reality the
+
+00:02:02.309 --> 00:02:05.999
+root cause is usually something entirely
+disconnected from the authentication app.
+
+00:02:06.189 --> 00:02:10.909
+So to untangle this, we have to completely
+dismantle the core misconception that
+
+00:02:10.910 --> 00:02:12.900
+causes the confusion in the first place.
+
+00:02:13.169 --> 00:02:13.489
+Right.
+
+00:02:13.520 --> 00:02:17.700
+This deeply ingrained idea that
+MFA is the finish line of a login.
+
+00:02:17.789 --> 00:02:18.209
+Yes.
+
+00:02:19.031 --> 00:02:21.941
+Well, I like to visualize
+this whole architecture, uh,
+
+00:02:21.941 --> 00:02:23.161
+kind of like airport security.
+
+00:02:23.212 --> 00:02:24.512
+Oh, that's a great analogy.
+
+00:02:24.661 --> 00:02:24.922
+Yeah.
+
+00:02:24.922 --> 00:02:28.811
+So successfully showing your driver's
+license and your boarding pass to
+
+00:02:28.811 --> 00:02:32.672
+that first agent at the podium, that
+is your multi-factor authentication.
+
+00:02:32.811 --> 00:02:35.272
+You've proven who you are, and
+you've proven you hold the ticket.
+
+00:02:35.391 --> 00:02:39.281
+But walking past that podium does not mean
+you get to bypass the luggage scanner.
+
+00:02:39.432 --> 00:02:43.111
+Or the metal detector or the
+random explosive swab test.
+
+00:02:43.321 --> 00:02:45.751
+Those secondary security
+checkpoints, those are your
+
+00:02:45.751 --> 00:02:47.202
+conditional access requirements.
+
+00:02:47.262 --> 00:02:48.061
+Exactly.
+
+00:02:48.321 --> 00:02:51.442
+The fact that the ID check
+succeeded does not guarantee
+
+00:02:51.442 --> 00:02:53.402
+you a seat on the actual plane.
+
+00:02:53.421 --> 00:02:54.941
+It just gets you to the next line.
+
+00:02:55.272 --> 00:02:59.751
+That airport visualization maps perfectly
+to the technical flow of Entra's
+
+00:02:59.772 --> 00:03:04.561
+architecture, actually, because MFA is
+simply one isolated component of a much
+
+00:03:04.561 --> 00:03:06.991
+larger authentication and access pipeline.
+
+00:03:07.241 --> 00:03:10.931
+Completing it just provides evidence
+that one specific requirement was met.
+
+00:03:11.112 --> 00:03:11.591
+Right.
+
+00:03:11.721 --> 00:03:14.421
+Microsoft Entra doesn't just
+stop processing the moment you
+
+00:03:14.421 --> 00:03:16.152
+approve that push notification.
+
+00:03:16.561 --> 00:03:20.381
+It takes that MFA successful
+token and carries it forward into
+
+00:03:20.381 --> 00:03:22.212
+this complex evaluation engine.
+
+00:03:22.331 --> 00:03:25.522
+So it's running down a whole sequence
+of other potential requirements.
+
+00:03:25.522 --> 00:03:26.152
+Exactly.
+
+00:03:26.181 --> 00:03:30.152
+Checking the network location, looking
+at device compliance, assessing
+
+00:03:30.161 --> 00:03:34.201
+user risk, all before it ever
+calculates a final access decision.
+
+00:03:34.341 --> 00:03:37.772
+So the architecture physically
+separates the act of authenticating
+
+00:03:38.251 --> 00:03:40.091
+from the act of granting access.
+
+00:03:40.471 --> 00:03:44.661
+You have the user signing in and
+completing MFA in step two, and then
+
+00:03:44.661 --> 00:03:47.911
+conditional access steps in to look
+at the broader contextual picture
+
+00:03:48.161 --> 00:03:49.612
+in step three, four, and five.
+
+00:03:49.731 --> 00:03:50.441
+Precisely.
+
+00:03:50.551 --> 00:03:52.671
+The telemetry flow is strictly sequential.
+
+00:03:52.781 --> 00:03:56.451
+So you have primary authentication,
+then MFA completion, followed by
+
+00:03:56.452 --> 00:03:57.962
+conditional access evaluation.
+
+00:03:57.971 --> 00:03:59.621
+Checking all those
+supplemental requirements.
+
+00:03:59.632 --> 00:04:00.022
+Yeah.
+
+00:04:00.022 --> 00:04:03.211
+And only at the very end of that
+gauntlet do you get an access decision.
+
+00:04:03.272 --> 00:04:07.341
+So when a user submits a ticket saying,
+"My MFA worked," they are accurately
+
+00:04:07.341 --> 00:04:08.992
+describing the success of step two.
+
+00:04:09.111 --> 00:04:12.721
+But when the administrator looks at the
+dashboard and says, "Conditional access
+
+00:04:12.721 --> 00:04:16.991
+denied the request," they're looking
+at the final verdict in step five.
+
+00:04:17.051 --> 00:04:19.881
+Which means the single biggest
+mistake you can make in your
+
+00:04:19.891 --> 00:04:23.651
+troubleshooting process is treating
+step two as if it were step five.
+
+00:04:23.661 --> 00:04:26.841
+Which fundamentally changes the
+operational question we should be asking.
+
+00:04:27.311 --> 00:04:28.701
+Because I'm methodical by nature.
+
+00:04:28.712 --> 00:04:28.732
+Yeah.
+
+00:04:28.732 --> 00:04:30.481
+I'm always asking, you know, what changed?
+
+00:04:30.481 --> 00:04:30.781
+Right.
+
+00:04:30.941 --> 00:04:36.522
+So if we abandon the premise of why
+did MFA fail- Yeah Since we know it
+
+00:04:36.522 --> 00:04:39.382
+actually succeeded, we have- Exactly.
+
+00:04:39.402 --> 00:04:43.472
+Let's say we agree MFA isn't the
+final decision, but what if the MFA
+
+00:04:43.482 --> 00:04:48.142
+the user performed was successful
+but just, you know, wasn't muscular
+
+00:04:48.142 --> 00:04:50.802
+enough for the specific application
+they are trying to access?
+
+00:04:50.871 --> 00:04:54.841
+We have to draw a hard line between
+simply performing multi-factor
+
+00:04:54.842 --> 00:04:58.582
+authentication and meeting an
+authentication strength requirement.
+
+00:04:58.652 --> 00:05:03.551
+This specific nuance is a massive pitfall
+for support engineers because you open
+
+00:05:03.552 --> 00:05:07.592
+the sign-in logs, you look at the basic
+summary tab, and you see this reassuring
+
+00:05:07.592 --> 00:05:10.251
+message that says, "MFA completed."
+
+00:05:10.272 --> 00:05:14.211
+And human nature dictates that you check
+that box in your head and assume the
+
+00:05:14.211 --> 00:05:16.412
+authentication method was fully satisfied.
+
+00:05:16.561 --> 00:05:18.312
+But conditional access has evolved.
+
+00:05:18.662 --> 00:05:21.082
+It can now demand a particular
+authentication strength
+
+00:05:21.092 --> 00:05:22.411
+based on the target resource.
+
+00:05:22.421 --> 00:05:22.691
+Right.
+
+00:05:22.691 --> 00:05:26.162
+So that could be your standard
+authenticator app push- Yeah
+
+00:05:26.191 --> 00:05:28.221
+or passwordless MFA.
+
+00:05:28.281 --> 00:05:32.312
+Or it might require the highest
+tier, like phishing-resistant MFA,
+
+00:05:32.322 --> 00:05:36.541
+which would be a FIDO2 security
+key or Windows Hello for Business.
+
+00:05:36.842 --> 00:05:39.812
+Let's run this through the worked
+example from our source material because
+
+00:05:39.841 --> 00:05:41.001
+the mechanics here are fascinating.
+
+00:05:41.011 --> 00:05:41.842
+Yeah, let's do it.
+
+00:05:41.951 --> 00:05:44.792
+Imagine you are securing a
+highly privileged application.
+
+00:05:45.542 --> 00:05:47.971
+Let's say it's the financial
+system that handles global payroll.
+
+00:05:48.021 --> 00:05:48.401
+Okay.
+
+00:05:48.441 --> 00:05:49.102
+High stakes.
+
+00:05:49.362 --> 00:05:49.762
+Very.
+
+00:05:50.332 --> 00:05:53.911
+And the conditional access policy
+for this specific app mandates
+
+00:05:53.921 --> 00:05:59.732
+phishing-resistant MFA Now, a user
+tries to log in, and they authenticate
+
+00:05:59.782 --> 00:06:03.512
+using a standard authenticator app
+push notification on their smartphone.
+
+00:06:03.592 --> 00:06:04.742
+They hit Approve.
+
+00:06:04.802 --> 00:06:05.632
+Right, they hit Approve.
+
+00:06:05.651 --> 00:06:05.881
+Oh.
+
+00:06:05.941 --> 00:06:09.352
+The Entra sign-in logs will
+literally record that MFA completed
+
+00:06:09.352 --> 00:06:13.722
+successfully, but the final resulting
+decision is a hard access denied.
+
+00:06:13.771 --> 00:06:14.401
+Yeah.
+
+00:06:14.542 --> 00:06:18.602
+I have to admit, if I'm an admin looking
+at that dashboard, this feels like
+
+00:06:18.602 --> 00:06:20.831
+the system is actively gaslighting me.
+
+00:06:20.941 --> 00:06:21.332
+I know.
+
+00:06:21.332 --> 00:06:22.082
+It really does.
+
+00:06:22.091 --> 00:06:25.112
+So I have to ask, why are these treated
+as separate concepts in the logs?
+
+00:06:25.122 --> 00:06:28.991
+Like, why doesn't the system
+just throw an MFA failed error if
+
+00:06:28.991 --> 00:06:30.141
+the strength wasn't high enough?
+
+00:06:30.232 --> 00:06:32.622
+I completely understand the
+frustration there, but the system
+
+00:06:32.622 --> 00:06:36.252
+is actually doing you a massive
+favor by being technically precise.
+
+00:06:36.802 --> 00:06:40.402
+As engineers, we require that
+precision to isolate the variable.
+
+00:06:40.482 --> 00:06:41.281
+Okay, how so?
+
+00:06:41.431 --> 00:06:44.152
+Well, think about the mechanical
+truth of what just happened.
+
+00:06:44.502 --> 00:06:47.061
+The multi-factor authentication did occur.
+
+00:06:47.421 --> 00:06:50.511
+The user's credentials were
+valid, and their secondary
+
+00:06:50.511 --> 00:06:52.091
+device responded correctly.
+
+00:06:52.331 --> 00:06:54.281
+So the mechanism itself is flawless.
+
+00:06:54.351 --> 00:06:55.171
+Exactly.
+
+00:06:55.251 --> 00:07:00.411
+If the system lazily logged MFA
+failed, your immediate troubleshooting
+
+00:07:00.421 --> 00:07:01.912
+step would be completely wrong.
+
+00:07:02.251 --> 00:07:05.832
+You'd assume the user's phone
+is broken or their authenticator
+
+00:07:05.832 --> 00:07:07.351
+app lost its sync token.
+
+00:07:07.441 --> 00:07:09.401
+Or they're typing in a
+wrong one-time passcode.
+
+00:07:09.421 --> 00:07:09.931
+Right.
+
+00:07:10.011 --> 00:07:14.111
+You would spend three hours on a screen
+share trying to re-register their device.
+
+00:07:14.191 --> 00:07:14.741
+Oh, wow.
+
+00:07:14.772 --> 00:07:15.991
+Okay, that makes total sense.
+
+00:07:16.541 --> 00:07:20.451
+By logging MFA completed alongside
+a failure in the authentication
+
+00:07:20.461 --> 00:07:24.422
+strengths requirement, the system
+is handing you the exact diagnosis.
+
+00:07:24.441 --> 00:07:24.701
+Yep.
+
+00:07:24.941 --> 00:07:27.861
+It's telling you the mechanism
+works perfectly, but the user
+
+00:07:27.861 --> 00:07:29.121
+brought a knife to a gunfight.
+
+00:07:29.761 --> 00:07:31.741
+They just chose the
+wrong tool for the job.
+
+00:07:31.851 --> 00:07:32.801
+Exactly that.
+
+00:07:33.171 --> 00:07:36.071
+The authentication was valid,
+but it wasn't strong enough.
+
+00:07:36.482 --> 00:07:40.402
+But to spot this, you cannot rely
+on the high-level summary view.
+
+00:07:40.431 --> 00:07:43.501
+You have to actively click into the
+Authentication Details tab, right?
+
+00:07:43.711 --> 00:07:44.061
+Yes.
+
+00:07:44.092 --> 00:07:49.601
+In the Microsoft Entra sign-in logs,
+if you stop at MFA completed, you will
+
+00:07:49.601 --> 00:07:51.811
+completely miss the strength mismatch.
+
+00:07:52.398 --> 00:07:54.928
+You have to compare the recorded
+authentication method that was
+
+00:07:54.928 --> 00:07:58.868
+actually used against the policy's
+required authentication strength.
+
+00:07:59.028 --> 00:08:01.057
+All right, so we've solved the
+authentication strength hurdle.
+
+00:08:01.408 --> 00:08:04.168
+Let's say the user's educated,
+they use their physical
+
+00:08:04.168 --> 00:08:07.998
+phishing-resistant hardware key, and
+the authentication side is flawless.
+
+00:08:08.018 --> 00:08:09.267
+But they still get blocked.
+
+00:08:09.287 --> 00:08:09.697
+Right.
+
+00:08:10.068 --> 00:08:14.027
+This pulls us into what I like to
+call the multi-requirement minefield.
+
+00:08:14.517 --> 00:08:17.797
+We need to talk about how conditional
+access stacks multiple requirements
+
+00:08:17.798 --> 00:08:20.288
+together using combined grant controls.
+
+00:08:20.388 --> 00:08:23.408
+Because real-world conditional
+access architecture is rarely
+
+00:08:23.408 --> 00:08:25.438
+built on single isolated rules.
+
+00:08:25.977 --> 00:08:29.308
+It relies on a compounding
+strategy of grant controls tied
+
+00:08:29.308 --> 00:08:31.717
+together with absolute AND logic.
+
+00:08:31.828 --> 00:08:34.768
+So a standard corporate policy
+doesn't just ask for one thing.
+
+00:08:34.817 --> 00:08:38.247
+No, it usually dictates that you
+need MFA, AND you must be on a
+
+00:08:38.247 --> 00:08:42.277
+compliant device, AND you must be
+using an approved client application.
+
+00:08:42.398 --> 00:08:46.847
+The source material provides a great look
+at this with a SharePoint access scenario.
+
+00:08:47.197 --> 00:08:49.847
+Let's say an employee is trying to
+access SharePoint over the weekend.
+
+00:08:50.078 --> 00:08:50.618
+Okay.
+
+00:08:50.687 --> 00:08:55.258
+Policy A in your environment says
+require MFA for all cloud apps.
+
+00:08:55.718 --> 00:08:59.607
+Policy B says require a
+compliant device for SharePoint.
+
+00:08:59.828 --> 00:09:04.247
+So they log in from their couch
+using their personal unmanaged iPad.
+
+00:09:04.277 --> 00:09:04.837
+Exactly.
+
+00:09:05.008 --> 00:09:07.058
+They execute their MFA perfectly.
+
+00:09:07.548 --> 00:09:12.787
+Policy A evaluates the session, sees the
+MFA claim, and marks it as a success.
+
+00:09:13.057 --> 00:09:18.068
+But policy B evaluates the device
+state, realizes this iPad is completely
+
+00:09:18.087 --> 00:09:22.138
+unknown to your mobile device management
+system, and fails the requirement.
+
+00:09:22.167 --> 00:09:25.717
+And this brings us to the cardinal
+rule of conditional access evaluation,
+
+00:09:26.177 --> 00:09:29.157
+which is that one successful
+control does not mathematically
+
+00:09:29.157 --> 00:09:31.257
+compensate for another unmet control.
+
+00:09:31.317 --> 00:09:34.967
+The success in policy A does not
+bank any goodwill that cancels out
+
+00:09:34.968 --> 00:09:38.687
+the failure in policy B. Because
+they operate on strict AD logic.
+
+00:09:38.697 --> 00:09:38.987
+Right.
+
+00:09:38.987 --> 00:09:42.047
+So the overall evaluation for
+that session is gonna collapse
+
+00:09:42.047 --> 00:09:43.497
+into an access denied state.
+
+00:09:43.527 --> 00:09:46.257
+As someone whose brain
+automatically jumps to what
+
+00:09:46.258 --> 00:09:47.668
+changed in the environment- Mm-hmm.
+
+00:09:47.747 --> 00:09:49.607
+This scenario is just
+the ultimate wildcard.
+
+00:09:49.648 --> 00:09:50.367
+Oh, totally.
+
+00:09:50.367 --> 00:09:53.788
+An employee will submit a ticket saying,
+"I used to get into SharePoint on my
+
+00:09:53.788 --> 00:09:58.118
+iPad every day, and today I can't, so
+your MFA system is clearly broken." Yeah,
+
+00:09:58.118 --> 00:10:02.028
+because they're experiencing a single
+access denied error on their screen.
+
+00:10:02.067 --> 00:10:06.057
+But behind the scenes, multiple
+overlapping policies are battling it out.
+
+00:10:06.258 --> 00:10:08.977
+How do we untangle that
+knot when everything just
+
+00:10:08.978 --> 00:10:10.328
+looks like a generic block?
+
+00:10:10.448 --> 00:10:14.207
+That untangling is the crucial
+pivot point in any investigation.
+
+00:10:14.437 --> 00:10:18.427
+When you navigate to the conditional
+access tab within those sign-in logs,
+
+00:10:18.707 --> 00:10:22.818
+you must interrogate the data with
+three highly specific questions.
+
+00:10:22.917 --> 00:10:23.918
+Okay, what's the first one?
+
+00:10:24.118 --> 00:10:28.257
+First, you ask which policies
+actually applied to the sign-in.
+
+00:10:29.038 --> 00:10:32.548
+If a policy wasn't applied,
+maybe it only targets the finance
+
+00:10:32.548 --> 00:10:35.648
+department, and this user is in
+marketing, you completely ignore it.
+
+00:10:35.678 --> 00:10:37.108
+It didn't contribute to the decision.
+
+00:10:37.137 --> 00:10:37.727
+Exactly.
+
+00:10:37.967 --> 00:10:42.377
+Second, you look at the applied policies
+and ask which requirements succeeded.
+
+00:10:42.398 --> 00:10:43.618
+And third… The goldmine.
+
+00:10:44.018 --> 00:10:46.257
+Which specific requirement failed?
+
+00:10:46.347 --> 00:10:50.388
+In your iPad scenario, the diagnosis you
+put in the ticket notes isn't MFA failed.
+
+00:10:50.638 --> 00:10:54.537
+The highly accurate diagnosis is
+MFA succeeded, but the compliant
+
+00:10:54.548 --> 00:10:55.907
+device requirement failed.
+
+00:10:56.038 --> 00:10:56.567
+Nailed it.
+
+00:10:56.718 --> 00:10:59.548
+So far, we've been operating under
+the assumption that the user is being
+
+00:10:59.548 --> 00:11:02.568
+blocked the front door, like they
+try to launch the app, and they get
+
+00:11:02.637 --> 00:11:04.187
+tackled by the bouncer immediately.
+
+00:11:04.227 --> 00:11:04.667
+Right.
+
+00:11:04.757 --> 00:11:08.138
+But what happens when the user does
+get in, everything seems fine, and then
+
+00:11:08.138 --> 00:11:12.017
+they suddenly get blocked or restricted
+twenty minutes into their workflow?
+
+00:11:12.058 --> 00:11:15.178
+This introduces us to the hidden
+tripwires of the architecture,
+
+00:11:15.347 --> 00:11:18.647
+which are authentication context
+and session restrictions.
+
+00:11:18.718 --> 00:11:21.877
+These scenarios are fascinating
+from an engineering perspective,
+
+00:11:22.167 --> 00:11:25.967
+but they look entirely foreign
+compared to a normal sign-in failure.
+
+00:11:26.018 --> 00:11:30.457
+And they absolutely drive end users
+crazy because they feel so random.
+
+00:11:31.128 --> 00:11:33.247
+Let's break down
+authentication context first.
+
+00:11:33.247 --> 00:11:33.497
+Okay.
+
+00:11:33.868 --> 00:11:37.898
+This feature allows administrators to
+apply conditional access requirements,
+
+00:11:37.907 --> 00:11:43.258
+not just to an application as a monolithic
+block, but to a specific, highly
+
+00:11:43.258 --> 00:11:45.757
+sensitive action inside the application.
+
+00:11:45.817 --> 00:11:47.407
+I love comparing this to a casino.
+
+00:11:47.557 --> 00:11:48.377
+Oh, let's hear it.
+
+00:11:48.828 --> 00:11:52.157
+The bouncer at the front doors
+of the casino checks your ID and
+
+00:11:52.157 --> 00:11:53.547
+lets you onto the gaming floor.
+
+00:11:53.707 --> 00:11:57.147
+That is your normal
+login and standard MFA.
+
+00:11:57.237 --> 00:11:57.627
+Okay.
+
+00:11:57.667 --> 00:11:58.217
+Makes sense.
+
+00:11:58.477 --> 00:12:02.517
+But if you try to walk into the
+exclusive high roller room to drop
+
+00:12:02.517 --> 00:12:07.027
+fifty thousand dollars on a single
+hand of blackjack, the pit boss at
+
+00:12:07.027 --> 00:12:12.437
+that specific door is going to demand a
+secondary, much stricter verification.
+
+00:12:12.667 --> 00:12:14.117
+That is a brilliant analogy.
+
+00:12:14.597 --> 00:12:18.087
+The user authenticates normally,
+they open their corporate app, and
+
+00:12:18.087 --> 00:12:19.588
+they start doing their daily tasks.
+
+00:12:19.937 --> 00:12:21.208
+Everything is green.
+
+00:12:21.387 --> 00:12:24.778
+But then they attempt to perform
+a highly privileged action.
+
+00:12:24.788 --> 00:12:25.208
+Right.
+
+00:12:25.218 --> 00:12:28.987
+Maybe they try to initiate a
+massive wire transfer, or they click
+
+00:12:28.987 --> 00:12:33.047
+the button to export the entire
+customer database to a CSV file.
+
+00:12:33.097 --> 00:12:37.168
+And the application is programmed
+to recognize that specific action as
+
+00:12:37.168 --> 00:12:38.967
+an authentication context trigger.
+
+00:12:39.027 --> 00:12:43.167
+The moment they click that button, the
+application pauses the action and forces
+
+00:12:43.167 --> 00:12:47.547
+a step-up authentication requirement,
+demanding a stronger verification method.
+
+00:12:47.898 --> 00:12:49.588
+But think about the user experience there.
+
+00:12:49.817 --> 00:12:53.107
+To a user, a blocked sensitive
+action doesn't feel like a
+
+00:12:53.118 --> 00:12:54.697
+sophisticated security checkpoint.
+
+00:12:54.788 --> 00:12:57.727
+No, it just feels like the website
+crashed or their login broke.
+
+00:12:57.898 --> 00:13:00.418
+They were gonna submit a ticket
+saying like, "The app kicked me
+
+00:13:00.418 --> 00:13:05.124
+out," or, "My session died." So how
+does a support engineer tell the
+
+00:13:05.124 --> 00:13:08.624
+difference between a real front door
+access denial and an authentication
+
+00:13:08.624 --> 00:13:10.694
+context failure deep inside the app?
+
+00:13:10.934 --> 00:13:13.934
+The secret is once again
+buried in the telemetry.
+
+00:13:14.034 --> 00:13:17.213
+You have to look at the logs to
+see if an authentication context
+
+00:13:17.434 --> 00:13:21.043
+was explicitly requested by the
+application during that session.
+
+00:13:21.054 --> 00:13:25.463
+So you check if a conditional access
+policy targeted that specific context.
+
+00:13:25.563 --> 00:13:28.504
+And finally, you check if the
+user actually satisfied that
+
+00:13:28.504 --> 00:13:30.064
+resulting step-up requirement.
+
+00:13:30.343 --> 00:13:34.694
+You absolutely cannot treat a sensitive
+action failure as a general broad
+
+00:13:34.694 --> 00:13:36.203
+strokes authentication problem.
+
+00:13:36.214 --> 00:13:38.923
+Because the front door is fine, it's
+the vault door that denied them.
+
+00:13:39.074 --> 00:13:39.974
+Beautifully put.
+
+00:13:40.383 --> 00:13:43.313
+And that leads us to the other
+side of this hidden tripwire
+
+00:13:43.313 --> 00:13:45.363
+concept, session restrictions.
+
+00:13:45.514 --> 00:13:47.833
+This is arguably the most
+confusing scenario of all
+
+00:13:47.833 --> 00:13:49.324
+because the access is actually…
+
+00:13:49.473 --> 00:13:53.243
+Granted, it's not denied, but the
+session itself is fundamentally limited.
+
+00:13:53.464 --> 00:13:53.754
+Right.
+
+00:13:54.584 --> 00:13:55.524
+Let's trace the flow.
+
+00:13:56.123 --> 00:13:59.003
+The user logs in, they
+pass the MFA challenge.
+
+00:13:59.133 --> 00:14:01.814
+Conditional access evaluates all
+the policies, everything comes
+
+00:14:01.814 --> 00:14:05.904
+back as a success, and the final
+decision is access granted.
+
+00:14:06.404 --> 00:14:10.123
+But an additional session
+control is applied to that grant.
+
+00:14:10.184 --> 00:14:14.873
+This means the architecture intercepts
+the traffic and enforces limitations.
+
+00:14:15.314 --> 00:14:18.973
+So the user might be able to open a
+highly confidential document in their
+
+00:14:18.973 --> 00:14:21.113
+web browser and read it perfectly fine.
+
+00:14:21.154 --> 00:14:24.053
+But they'll notice the download
+button is completely grayed out.
+
+00:14:24.523 --> 00:14:27.073
+Or they are blocked from
+copy-pasting the text.
+
+00:14:27.333 --> 00:14:29.103
+I've actually always wondered
+about the mechanics of that.
+
+00:14:29.403 --> 00:14:32.453
+How does Entra actually reach
+into a third-party application
+
+00:14:32.653 --> 00:14:35.603
+and gray out a download button
+without breaking the whole web page?
+
+00:14:35.793 --> 00:14:38.753
+It's essentially acting as a
+highly intelligent middleman.
+
+00:14:38.873 --> 00:14:42.163
+Instead of the user's browser talking
+directly to the application server,
+
+00:14:42.493 --> 00:14:45.673
+conditional access routes the session
+through a reverse proxy service.
+
+00:14:45.693 --> 00:14:46.423
+Oh, I see.
+
+00:14:46.623 --> 00:14:46.873
+Yeah.
+
+00:14:46.873 --> 00:14:50.564
+The application sends the web page,
+the proxy intercepts it, strips
+
+00:14:50.564 --> 00:14:53.493
+out the code that enables the
+download function, and then delivers
+
+00:14:53.493 --> 00:14:55.194
+the restricted page to the user.
+
+00:14:55.423 --> 00:14:59.443
+Or in another session restriction
+scenario, the user might be forced
+
+00:14:59.443 --> 00:15:02.844
+to authenticate again on a much
+shorter timeline than they expect.
+
+00:15:02.883 --> 00:15:03.423
+Exactly.
+
+00:15:03.474 --> 00:15:05.543
+Overriding the normal token lifetime.
+
+00:15:05.974 --> 00:15:10.233
+The conceptual flow to remember
+here is authentication occurs,
+
+00:15:10.544 --> 00:15:14.453
+then access is granted, then a
+session control is layered on top,
+
+00:15:14.773 --> 00:15:16.993
+resulting in a restricted experience.
+
+00:15:17.193 --> 00:15:20.773
+And the danger for the IT admin
+is that the user will submit a
+
+00:15:20.773 --> 00:15:25.233
+furious ticket claiming they are
+being denied access to their files.
+
+00:15:25.283 --> 00:15:26.303
+But they aren't denied.
+
+00:15:26.313 --> 00:15:31.714
+They are experiencing a mathematically
+perfect policy-driven, restricted session.
+
+00:15:31.763 --> 00:15:36.133
+If you don't check the sign-in outcome
+first to verify that access was actually
+
+00:15:36.133 --> 00:15:40.084
+granted, you might go chasing ghosts in
+your authentication policies when the
+
+00:15:40.084 --> 00:15:41.914
+system is actually functioning flawlessly.
+
+00:15:41.923 --> 00:15:42.673
+Exactly.
+
+00:15:42.713 --> 00:15:42.993
+Okay.
+
+00:15:43.033 --> 00:15:47.183
+We've comprehensively mapped out all
+these distinct ways a login can silently
+
+00:15:47.184 --> 00:15:51.473
+fail or heavily restrict a user even
+after their MFA succeeds perfectly.
+
+00:15:51.473 --> 00:15:52.603
+We covered a lot of ground.
+
+00:15:52.684 --> 00:15:55.083
+Now we need to bridge the gap
+between theory and practice.
+
+00:15:55.503 --> 00:15:58.483
+How do we systematically
+hunt down the root cause in a
+
+00:15:58.483 --> 00:16:00.243
+chaotic real-world environment?
+
+00:16:00.553 --> 00:16:04.573
+The source material lays out an
+incredibly robust evidence-first
+
+00:16:04.654 --> 00:16:09.053
+troubleshooting model culminating in this
+eighteen-check administrator checklist.
+
+00:16:09.083 --> 00:16:13.163
+And the entire foundation of this
+model rests on one immovable rule.
+
+00:16:13.633 --> 00:16:17.223
+You must never, ever start your
+troubleshooting by changing the
+
+00:16:17.223 --> 00:16:19.014
+conditional access policy itself.
+
+00:16:19.443 --> 00:16:20.194
+Never guess.
+
+00:16:20.473 --> 00:16:24.453
+Always start with the exact
+specific sign-in event in the
+
+00:16:24.453 --> 00:16:26.173
+Microsoft Entra sign-in logs.
+
+00:16:26.544 --> 00:16:29.904
+I wanna dig into the psychology of
+why this rule is broken so often.
+
+00:16:30.742 --> 00:16:35.182
+Why is it so incredibly tempting
+for admins to just weaken the MFA
+
+00:16:35.422 --> 00:16:37.002
+policy when they see these errors?
+
+00:16:37.052 --> 00:16:38.972
+Because it's the path of least resistance.
+
+00:16:39.022 --> 00:16:39.332
+Right.
+
+00:16:39.422 --> 00:16:40.831
+I see it happen constantly.
+
+00:16:40.872 --> 00:16:43.312
+An executive complains they
+can't get into their email.
+
+00:16:43.522 --> 00:16:47.722
+The ticket subject line says, "MFA
+failed." And the admin, wanting to
+
+00:16:47.722 --> 00:16:51.491
+provide good customer service, just adds
+that executive to an exclusion group.
+
+00:16:51.602 --> 00:16:53.132
+Completely bypassing the policy.
+
+00:16:53.141 --> 00:16:53.551
+Yes.
+
+00:16:53.651 --> 00:16:56.471
+It happens because administrators
+are constantly under intense
+
+00:16:56.481 --> 00:17:00.021
+time pressure, and without taking
+the time to parse the logs, they
+
+00:17:00.022 --> 00:17:02.012
+blindly trust the user's report.
+
+00:17:02.282 --> 00:17:06.512
+The user says, "My MFA is broken," and
+the admin wants to be immediately helpful.
+
+00:17:06.771 --> 00:17:08.711
+So they dial back the security perimeter.
+
+00:17:08.781 --> 00:17:13.681
+It's a dangerous knee-jerk security
+downgrade, and the most tragic
+
+00:17:13.682 --> 00:17:16.801
+part is that it often doesn't
+even resolve the user's issue.
+
+00:17:17.101 --> 00:17:21.301
+Because if the root cause was actually
+a non-compliant device, exempting
+
+00:17:21.301 --> 00:17:23.811
+them from MFA does absolutely nothing.
+
+00:17:23.911 --> 00:17:27.072
+They are still blocked, and now
+your environment is less secure.
+
+00:17:27.362 --> 00:17:28.982
+That is the ultimate cell phone.
+
+00:17:29.182 --> 00:17:32.291
+You rip out the security cameras,
+and the door is still locked anyway
+
+00:17:32.292 --> 00:17:33.841
+because their iPad isn't managed.
+
+00:17:33.871 --> 00:17:34.491
+Exactly.
+
+00:17:34.901 --> 00:17:38.071
+So let's explore the philosophy
+of this 18-check progression.
+
+00:17:38.541 --> 00:17:41.672
+It's deliberately designed to
+prevent that exact scenario.
+
+00:17:42.581 --> 00:17:46.012
+We aren't gonna list all 18
+steps, but let's talk about why
+
+00:17:46.012 --> 00:17:47.101
+it's structured as a funnel.
+
+00:17:47.312 --> 00:17:49.091
+The funnel metaphor is perfect.
+
+00:17:49.192 --> 00:17:52.542
+The checklist forces you to evaluate
+the transaction chronologically
+
+00:17:52.562 --> 00:17:54.581
+exactly as the system processes it.
+
+00:17:54.611 --> 00:17:57.861
+You are pouring all the evidence
+into the top of this funnel to
+
+00:17:57.861 --> 00:17:59.952
+isolate the single failing variable.
+
+00:18:00.022 --> 00:18:03.192
+So you start at the very top
+with authentication validity.
+
+00:18:03.251 --> 00:18:06.072
+Mm. Did the primary
+authentication even succeed?
+
+00:18:06.091 --> 00:18:07.261
+Was the password right?
+
+00:18:07.601 --> 00:18:10.541
+Did the MFA mechanism actually
+complete its handshake?
+
+00:18:10.712 --> 00:18:14.821
+What specific method push,
+SMS hardware key was recorded?
+
+00:18:15.001 --> 00:18:19.611
+You have to establish that baseline first,
+because if you skip straight to looking
+
+00:18:19.611 --> 00:18:23.822
+at conditional access policies, you might
+miss the fact that the user was trying to
+
+00:18:23.822 --> 00:18:28.052
+use a legacy authentication protocol that
+the system doesn't even support anymore.
+
+00:18:28.431 --> 00:18:32.261
+And once you verify the authentication
+was valid, you move down the
+
+00:18:32.261 --> 00:18:34.161
+funnel to authentication strength.
+
+00:18:34.292 --> 00:18:34.621
+Right.
+
+00:18:35.152 --> 00:18:39.321
+You ask the data, did the policy
+demand a stronger method than
+
+00:18:39.321 --> 00:18:41.002
+what the user actually provided?
+
+00:18:41.222 --> 00:18:46.682
+If they used SMS but the policy demanded
+a FIDO2 key, you stop right there.
+
+00:18:46.771 --> 00:18:48.051
+You found your failure.
+
+00:18:48.101 --> 00:18:51.841
+But if the strength was sufficient, you
+drop further down the funnel into the
+
+00:18:51.841 --> 00:18:53.641
+conditional access evaluation phase.
+
+00:18:53.951 --> 00:18:56.951
+Which policies actively
+applied to this user session?
+
+00:18:57.061 --> 00:18:59.262
+Which ones evaluated as a success?
+
+00:18:59.281 --> 00:19:02.091
+And crucially, which
+specific policy failed?
+
+00:19:02.222 --> 00:19:05.422
+From there, you dig into the grant
+controls within that failing policy.
+
+00:19:05.582 --> 00:19:07.292
+Was a compliant device required?
+
+00:19:07.311 --> 00:19:09.331
+Was an approved client app required?
+
+00:19:09.711 --> 00:19:14.071
+Did multiple controls combine with that
+strict AND logic to create a roadblock?
+
+00:19:14.152 --> 00:19:16.942
+Next, you scan for those
+hidden tripwires we discussed.
+
+00:19:17.131 --> 00:19:19.661
+Was an authentication context involved?
+
+00:19:19.972 --> 00:19:24.091
+Was the user trying to execute a
+sensitive action that triggered a
+
+00:19:24.091 --> 00:19:26.031
+step-up requirement mid-session?
+
+00:19:26.091 --> 00:19:30.222
+And finally, at the very bottom of the
+funnel, you check the session outcomes.
+
+00:19:30.361 --> 00:19:34.711
+Was access truly denied at the front
+door, or was it technically granted but
+
+00:19:34.711 --> 00:19:36.951
+crippled by a restricted session control?
+
+00:19:37.012 --> 00:19:40.432
+The entire purpose of this
+meticulous methodology is to
+
+00:19:40.432 --> 00:19:41.821
+find the failed requirement.
+
+00:19:42.402 --> 00:19:45.371
+Everything you do before you find
+it is just gathering evidence.
+
+00:19:45.371 --> 00:19:49.351
+And everything you do after you find
+it is applying a targeted remediation.
+
+00:19:49.361 --> 00:19:52.541
+Which brings us to the final
+critical phase of the deep dive:
+
+00:19:53.111 --> 00:19:55.141
+remediation and validation.
+
+00:19:55.152 --> 00:19:56.031
+The scary part.
+
+00:19:56.051 --> 00:19:56.451
+Yeah.
+
+00:19:56.891 --> 00:19:58.991
+Let's say you faithfully
+followed the funnel.
+
+00:19:59.281 --> 00:20:01.121
+You found the exact failing requirement.
+
+00:20:01.934 --> 00:20:05.964
+It turns out a newly deployed conditional
+access policy is accidentally blocking
+
+00:20:05.964 --> 00:20:10.094
+an entire department because it strictly
+requires a hybrid-joined Windows device,
+
+00:20:10.584 --> 00:20:12.634
+and that department entirely uses Macs.
+
+00:20:12.653 --> 00:20:13.604
+Well, classic.
+
+00:20:13.624 --> 00:20:14.723
+You have to fix the policy.
+
+00:20:14.993 --> 00:20:18.033
+But how do you execute that fix
+without causing a massive outage
+
+00:20:18.043 --> 00:20:19.364
+for everyone else in the company?
+
+00:20:19.643 --> 00:20:24.193
+Modifying a live production conditional
+access policy without testing it
+
+00:20:24.453 --> 00:20:27.604
+is like changing the locks on an
+office building while hundreds of
+
+00:20:27.614 --> 00:20:29.074
+people are still working inside.
+
+00:20:29.123 --> 00:20:31.004
+You are absolutely gonna trap someone.
+
+00:20:31.073 --> 00:20:35.593
+That operational risk is exactly
+why report-only mode and the what-if
+
+00:20:35.594 --> 00:20:37.573
+tool must become your best friends.
+
+00:20:37.803 --> 00:20:39.203
+They are your safety nets.
+
+00:20:39.474 --> 00:20:42.813
+Let's explore the mechanical difference
+between those two tools because they
+
+00:20:42.813 --> 00:20:44.903
+serve very different validation purposes.
+
+00:20:45.423 --> 00:20:48.414
+I like to think of the what-if
+tool as a crash test simulator.
+
+00:20:48.414 --> 00:20:50.004
+It's a hypothetical sandbox.
+
+00:20:50.323 --> 00:20:51.303
+That's highly accurate.
+
+00:20:51.353 --> 00:20:55.073
+The what-if tool lets you simulate
+a conditional access evaluation for
+
+00:20:55.073 --> 00:20:59.214
+a highly specific scenario without
+generating any real-world traffic.
+
+00:20:59.726 --> 00:21:03.626
+You manually plug in the user's name,
+the application they want, their
+
+00:21:03.666 --> 00:21:05.506
+IP address, and their device state.
+
+00:21:05.706 --> 00:21:08.096
+And the engine runs the math
+and shows you exactly how your
+
+00:21:08.096 --> 00:21:09.405
+proposed fix would behave.
+
+00:21:09.535 --> 00:21:13.576
+You can verify that your new rule
+works in theory before you ever
+
+00:21:13.576 --> 00:21:15.006
+touch the production environment.
+
+00:21:15.256 --> 00:21:16.765
+But theory isn't practice.
+
+00:21:17.386 --> 00:21:21.605
+If what if is the simulator,
+then report-only mode is like
+
+00:21:21.605 --> 00:21:25.125
+putting a ghost passenger in a
+real car on the actual highway.
+
+00:21:25.406 --> 00:21:27.115
+It shadows real-world behavior.
+
+00:21:27.156 --> 00:21:27.886
+Exactly.
+
+00:21:28.105 --> 00:21:31.515
+Report-only mode allows you to
+deploy a policy into the production
+
+00:21:31.515 --> 00:21:34.916
+environment, but it strips the
+policy of its enforcement teeth.
+
+00:21:35.165 --> 00:21:39.426
+So it evaluates every single real-world
+sign-in against your new rule.
+
+00:21:39.535 --> 00:21:43.905
+And it writes the would-be result to the
+logs, but it never actually blocks anyone.
+
+00:21:43.915 --> 00:21:48.895
+It is a completely safe way to observe
+a policy's true impact across thousands
+
+00:21:48.895 --> 00:21:51.145
+of diverse endpoints over a week or two.
+
+00:21:51.226 --> 00:21:55.546
+Ensuring you don't accidentally lock out
+the CEO when you flip the switch to on.
+
+00:21:55.615 --> 00:21:58.525
+Which perfectly reiterates
+the core operational lesson
+
+00:21:58.525 --> 00:21:59.986
+of this entire deep dive.
+
+00:22:00.445 --> 00:22:03.955
+Your remediation efforts must
+surgically target the specific
+
+00:22:03.955 --> 00:22:05.475
+requirement that actually failed.
+
+00:22:05.486 --> 00:22:09.815
+Do not try to fix an MFA policy if
+device compliance is the root cause.
+
+00:22:09.855 --> 00:22:13.025
+And do not weaken your authentication
+strength requirements just because a
+
+00:22:13.025 --> 00:22:17.195
+session control is graying out a download
+button exactly as it was designed to do.
+
+00:22:17.465 --> 00:22:21.096
+The ultimate goal of troubleshooting
+conditional access is never to
+
+00:22:21.096 --> 00:22:25.595
+blindly make the system less
+restrictive just to make an angry
+
+00:22:25.595 --> 00:22:27.275
+user's error message disappear.
+
+00:22:27.476 --> 00:22:32.785
+The goal is to make every single access
+decision understandable, evidence-based,
+
+00:22:32.805 --> 00:22:34.135
+and mathematically precise.
+
+00:22:34.565 --> 00:22:38.445
+If the telemetry proves that MFA
+succeeded but device compliance
+
+00:22:38.455 --> 00:22:41.046
+failed, your job isn't to touch Entra.
+
+00:22:41.315 --> 00:22:44.776
+Your job is to investigate why
+Intune isn't talking to that device.
+
+00:22:44.915 --> 00:22:48.065
+That is the fundamental difference
+between true systems engineering just
+
+00:22:48.075 --> 00:22:49.735
+guessing in the dark to close a ticket.
+
+00:22:49.906 --> 00:22:53.865
+It requires a permanent mental shift
+from the simplistic statement MFA worked
+
+00:22:54.135 --> 00:22:58.825
+to the nuanced reality of MFA worked
+perfectly, but this other highly specific
+
+00:22:58.825 --> 00:23:00.735
+architectural requirement did not.
+
+00:23:01.035 --> 00:23:03.825
+So we want to leave you with a
+lingering question to ponder as
+
+00:23:03.825 --> 00:23:05.245
+you go back to your desk today.
+
+00:23:05.675 --> 00:23:07.855
+Think about your current
+IT ticketing system.
+
+00:23:08.615 --> 00:23:13.035
+How many of the so-called MFA failures
+currently sitting in your queue are
+
+00:23:13.035 --> 00:23:17.496
+actually device compliance issues or
+authentication strength mismatches
+
+00:23:17.815 --> 00:23:19.436
+secretly disguised as a broken login?
+
+00:23:20.196 --> 00:23:24.496
+We highly encourage you to open your Entra
+sign-in logs today, pick just one of those
+
+00:23:24.496 --> 00:23:27.905
+noisy tickets, and run it through the
+funnel to look at the actual evidence.
+
+00:23:27.916 --> 00:23:28.276
+Right.
+
+00:23:28.435 --> 00:23:30.875
+You've been listening to
+Support Engineering Weekly from
+
+00:23:30.875 --> 00:23:32.175
+the Support Engineering blog.
+
+00:23:32.185 --> 00:23:32.685
+Right.
+
+00:23:32.735 --> 00:23:35.736
+For the full articles, references,
+and technical resources from today's
+
+00:23:35.736 --> 00:23:38.685
+discussion, visit the URL blog.satan.ch.
+
+00:23:39.175 --> 00:23:43.255
+Until next week, keep troubleshooting,
+keep learning, and keep engineering.
+
+00:23:44.136 --> 00:23:47.195
+Thanks for listening to
+Support Engineering Weekly.
